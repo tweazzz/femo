@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/dist/style.css" rel="stylesheet" />
+    <script defer src="src/scripts/showpass.js"></script>
+  </head>
+
+  <body class="bg-gray-background">
+    <div class="mx-auto my-8 max-w-lg rounded-3xl bg-white p-5 shadow-md">
+      <div class="mx-auto mb-2 h-64 w-64">
+        <img src="src/assets/images/registerImg.png" alt="reg" />
+      </div>
+
+      <div class="mb-2 text-center text-2xl font-bold">
+        <p>Добро пожаловать в FEMO!</p>
+        <p>Зарегистрируйся и начни свои приключения</p>
+      </div>
+
+      <div class="text-primary mb-6 rounded-lg text-center text-sm">
+        Если вам меньше 14 лет, вам потребуется подтверждение от родителя или
+        опекуна.
+      </div>
+
+      <form class="space-y-6">
+        <div>
+          <label class="text-gray-primary mb-1 block text-sm">Кто вы?</label>
+          <select class="input-base border-default custom-select">
+            <option>Участник</option>
+            <option>Тренер</option>
+            <option>Организатор</option>
+            <option>Родитель</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-gray-primary mb-1 block text-sm">Email</label>
+          <input
+            type="email"
+            placeholder="Ivani.varavo@example.com"
+            class="input-base border-default"
+          />
+        </div>
+
+        <div>
+          <label class="text-gray-primary mb-1 block text-sm">ФИО</label>
+          <input
+            type="text"
+            placeholder="Айжан Ахметова"
+            class="input-base border-default"
+          />
+        </div>
+
+        <div class="relative">
+          <label class="text-primary mb-1 block text-sm"
+            >Придумайте пароль</label
+          >
+          <input
+            id="password"
+            type="password"
+            placeholder="Введите пароль"
+            class="input-base border-default"
+          />
+          <button
+            type="button"
+            data-target="password"
+            class="toggle-pw text-gray-primary hover:text-primary absolute top-1/2 right-2 mt-0.5 -translate-y-1/2 transform cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+              />
+            </svg>
+          </button>
+          <p class="text-gray-primary mt-1 text-xs">
+            8 или более символов, включающие буквы, цифры и символы
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-orange-primary w-full cursor-pointer rounded-xl py-2 text-white transition"
+        >
+          Зарегистрироваться и начать
+        </button>
+
+        <p class="text-gray-primary text-center text-sm">
+          Создавая ученику о запись, вы соглашаетесь с
+          <a href="#" class="underline underline-offset-2"
+            >Условиями использования</a
+          >
+          и
+          <a href="#" class="underline underline-offset-2"
+            >Практикой конфиденциальности</a
+          >.
+        </p>
+      </form>
+
+      <!-- Ссылка на вход -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          Уже есть аккаунт?
+          <a
+            href="index.html"
+            class="text-orange-primary font-bold underline underline-offset-2"
+            >Войти</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
+<script defer src="register.js"></script>

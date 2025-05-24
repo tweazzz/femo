@@ -1,0 +1,477 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/ProximaNova-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/Proxima Nova Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/Proxima Nova Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/Proxima Nova Semibold Italic.otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/Proxima Nova Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/Proxima Nova Extrabold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url('./assets/fonts/Proxima Nova Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@theme {
+  --font-main: 'Proxima Nova', sans-serif;
+
+  --text-xss: 10px;
+
+  --color-primary: hsl(0, 0%, 13%);
+
+  --color-white-secondary: hsla(0 0% 93.7% / 0.4);
+
+  --color-blue-primary: hsl(206 73.8% 58%);
+  --color-blue-secondary: hsl(208 76.5% 96.7%);
+
+  --color-orange-primary: hsl(30 90.7% 53.7%);
+  --color-orange-secondary: hsl(30, 93%, 95%);
+  --color-orange-third: hsl(32, 89%, 96%);
+
+  --color-gray-primary: hsl(0, 0%, 38%);
+  --color-gray-secondary: hsl(0 0% 44.7%);
+  --color-gray-border: hsl(0, 0%, 94%);
+  --color-gray-background: hsl(0, 0%, 92%);
+
+  --color-red-primary: hsl(356 81.6% 51%);
+  --color-red-secondary: hsl(356 80% 96.1%);
+
+  --color-violet-primary: hsl(270 77.3% 51.6%);
+  --color-violet-secondary: hsl(270 80% 96.1%);
+
+  --color-green-primary: hsl(147 86.5% 37.8%);
+  --color-green-secondary: hsl(148 52% 95.1%);
+}
+
+/* Apply base font globally */
+* {
+  font-family: var(--font-main);
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+/* Component Styles */
+.border-default {
+  @apply border-gray-border border-1;
+}
+
+.input-base {
+  @apply focus:border-orange-primary w-full rounded-xl px-3 py-2 transition focus:outline-none;
+}
+
+.custom-select {
+  @apply block cursor-pointer;
+}
+
+.sidebar {
+  @apply border-gray-border fixed z-20 flex h-full w-64 flex-col border-e bg-white transition lg:relative;
+}
+
+.sidebar-link {
+  @apply mb-2 flex items-center rounded-lg px-4 py-3;
+}
+
+.sidebar-link:not(.active) {
+  @apply text-gray-primary hover:bg-gray-background;
+}
+
+.sidebar-link.active {
+  @apply bg-orange-secondary text-orange-primary;
+}
+
+.btn-base {
+  @apply bg-orange-primary block rounded-lg py-2 text-center text-white;
+}
+
+.btn-outline {
+  @apply flex cursor-pointer items-center gap-1 rounded-lg border bg-white px-2.5 py-1.5 text-center text-sm;
+}
+
+.btn--red {
+  @apply border-red-primary text-red-primary;
+}
+
+.btn--orange {
+  @apply border-orange-primary text-orange-primary;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide spinners in Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.btn-orange {
+  @apply border-orange-primary bg-orange-primary flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-center text-sm text-white;
+}
+
+.btn-red {
+  @apply border-red-primary bg-red-primary flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-center text-sm text-white;
+}
+
+.btn-red-b {
+  @apply border-red-primary text-red-primary flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-center text-sm;
+}
+
+.btn-gray-b {
+  @apply border-gray-border flex cursor-pointer items-center gap-1 rounded-lg border-1 px-2.5 py-1.5 text-center text-sm;
+}
+
+.btn-white {
+  @apply border-orange-primary text-orange-primary flex cursor-pointer items-center gap-1 rounded-lg border bg-white px-2.5 py-1.5 text-center text-sm;
+}
+
+.btn-option {
+  @apply border-gray-border text-primary cursor-pointer rounded-lg border bg-white px-4 py-2 text-sm font-medium outline-none;
+}
+
+.btn-option:has(input:checked) {
+  @apply focus:border-orange-primary text-orange-primary bg-orange-secondary;
+}
+
+.tabs {
+  @apply border-gray-border mb-6 flex space-x-3 border-b text-sm font-medium;
+}
+
+.tabs .tabs-link {
+  @apply text-gray-primary hover:text-orange-primary pb-2;
+}
+
+.tabs .tabs-link.active {
+  @apply border-orange-primary text-orange-primary border-b-2;
+}
+
+.count-msg {
+  @apply bg-orange-secondary text-orange-primary hidden rounded-md px-2 py-0.5;
+}
+
+.tabs-link.active .count-msg {
+  @apply inline;
+}
+
+.tabs-content {
+  @apply space-y-4;
+}
+
+.tabs-content > .tabs-notification {
+  @apply border-gray-border border;
+}
+
+.filter .select-filter {
+  @apply focus:border-orange-primary block cursor-pointer rounded-xl px-3 py-2 transition focus:outline-none;
+}
+
+.card {
+  @apply border-gray-border flex w-fit items-center gap-1 rounded-2xl border px-2 py-1 text-sm;
+}
+
+/* Сложность */
+.card.easy {
+  @apply text-green-primary bg-green-secondary;
+}
+
+.card.middle {
+  @apply text-orange-primary bg-orange-secondary;
+}
+
+.card.hard {
+  @apply text-red-primary bg-red-secondary;
+}
+
+.tasks .card {
+  @apply max-sm:hidden;
+}
+
+/* Статус */
+.card.active {
+  @apply text-green-primary bg-green-secondary;
+}
+
+.card.draft {
+  @apply text-violet-primary bg-violet-secondary;
+}
+
+.card.archive {
+  @apply text-gray-primary;
+}
+
+.card.waiting {
+  @apply text-blue-primary bg-blue-secondary;
+}
+
+.card.ongoing {
+  @apply text-orange-primary bg-orange-secondary;
+}
+
+.card.finished {
+  @apply text-green-primary bg-green-secondary;
+}
+
+/* category */
+.card.participant {
+  @apply text-blue-primary bg-blue-secondary;
+}
+
+.card.winner {
+  @apply text-orange-primary bg-orange-secondary;
+}
+
+/* payment */
+.card.paid {
+  @apply text-green-primary bg-green-secondary;
+}
+
+.card.unpaid {
+  @apply text-gray-primary rounded-full py-0.5;
+}
+
+.card.error {
+  @apply text-red-primary bg-red-secondary;
+}
+
+.card.onprocess {
+  @apply text-violet-primary bg-violet-secondary;
+}
+
+.grid-cards {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-areas: 'a b b c';
+}
+
+@media screen and (max-width: 80rem) {
+  .grid-cards {
+    grid-template-areas:
+      'a c'
+      'b b';
+  }
+}
+
+.grid-cards > * {
+  height: 183px;
+}
+
+.grid-item-a {
+  grid-area: a;
+}
+
+.grid-item-b {
+  grid-area: b;
+}
+
+.grid-item-c {
+  grid-area: c;
+}
+
+.tbody-rate tr > td:first-child {
+  text-align: center;
+}
+
+.tbody-overall tr > td:is(:first-child, :nth-child(2)) {
+  @apply text-center;
+}
+
+.switch-btn {
+  @apply border-gray-border cursor-pointer rounded-xl border-1 px-3 py-1.5;
+}
+
+.switch-btn.active {
+  @apply border-orange-primary text-orange-primary bg-orange-secondary;
+}
+
+.switch-btn:has(input:checked) {
+  @apply border-orange-primary text-orange-primary bg-orange-secondary;
+}
+
+.truncate {
+  @apply max-sm:max-w-[7.5rem];
+}
+
+.btn-switch {
+  @apply border-gray-border flex cursor-pointer items-center gap-1 border-1 px-4 py-2.5;
+}
+
+.btn-switch.active {
+  @apply border-orange-primary text-orange-primary;
+}
+
+.btn-switch:has(input:checked) {
+  @apply border-orange-primary text-orange-primary;
+}
+
+/* banner */
+/* .banner {
+  @apply 
+} */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+}
+
+.scrollbar {
+  @apply [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent;
+}
+
+/* Table Styles */
+.table-tr {
+  @apply text-primary py-6 text-left text-[.765rem] font-bold tracking-wider uppercase;
+}
+
+:is(.table-rate) tbody td:first-child {
+  @apply text-center;
+}
+
+.table-certificates tbody td:nth-child(2) {
+  @apply text-center;
+}
+
+:is(.table-tasks, .table-olympiads, .table-overall, .table-certificates)
+  tbody
+  td {
+  @apply px-6 py-3;
+}
+
+.p-table {
+  @apply px-6 py-3 text-start;
+}
+
+:is(.table-overall, .table-payments) thead th.p-table {
+  @apply px-4 py-5 text-sm;
+}
+
+.table-payments {
+  @apply w-full;
+}
+
+.table-payments tr > td:nth-child(4) > div {
+  @apply w-full;
+}
+
+.table-payments tr > td:nth-child(4) div p {
+  @apply max-w-2xs truncate;
+}
+
+:is(.table-overall, .table-payments) tbody td {
+  @apply px-4 py-3;
+}
+
+.table-overall tbody td:first-child {
+  @apply text-center;
+}
+
+:is(.table-overall, .table-payments) tbody td:last-child {
+  @apply text-orange-primary text-sm font-bold;
+}
+
+.chat .me {
+  @apply self-end;
+}
+
+.time-msg {
+  @apply mx-auto w-fit rounded-xl bg-black px-2 py-0.5 text-center text-sm font-bold text-white;
+}
+
+.chatarea {
+  @apply max-h-28 w-full resize-none px-3 py-4 focus:outline-none;
+}
+
+.textarea {
+  @apply min-h-28 w-full resize-none px-3 py-2 focus:outline-none;
+}
+
+.d-level {
+  @apply border-gray-border rounded-xl border px-2 py-0.5 text-sm;
+}
+
+.d-level.easy {
+  @apply bg-green-secondary text-green-primary;
+}
+
+.chart-tab {
+  @apply border-blue-primary cursor-pointer rounded-xl border-1 px-3 py-1.5;
+}
+
+.chart-tab.active {
+  @apply bg-blue-primary text-white;
+}
+
+.tab-pane.active {
+  @apply block;
+}
+
+/* Chart Styles */
+.chart-line {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.chart-dot {
+  fill: #111827;
+}
+
+.chart-grid {
+  stroke: #e5e7eb;
+  stroke-width: 1;
+}
+
+.grayed {
+  @apply opacity-25;
+}
+
+.grayed div > p {
+  color: #616161;
+}
+
+.chart-container {
+  height: 344px; /* или h-[344px] в Tailwind */
+}
+

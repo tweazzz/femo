@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/dist/style.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-background">
+    <div class="mx-auto my-8 max-w-lg rounded-3xl bg-white p-5 shadow-md">
+      <div class="mx-auto mb-10 h-64 w-64">
+        <img src="src/assets/images/resetImg.png" alt="reset" />
+      </div>
+
+      <div class="text-center text-2xl font-bold text-gray-800">
+        <p>Восстановить доступ</p>
+      </div>
+
+      <div class="mt-2 mb-6 text-center">
+        <p class="text-sm text-gray-600">
+          Мы отправим ссылку на восстановление пароля на указанный email
+        </p>
+      </div>
+
+      <form class="space-y-6">
+        <div>
+          <label class="text-gray-primary mb-1 block text-sm">Email</label>
+          <input type="email" class="input-base border-default" />
+        </div>
+
+        <button
+          type="submit"
+          class="bg-orange-primary w-full cursor-pointer rounded-full py-3 font-bold text-white transition"
+        >
+          Отправить
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

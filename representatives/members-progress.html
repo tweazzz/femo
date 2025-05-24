@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/dist/style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/@lucide/web@latest"></script>
+  <script defer src="src/scripts/showpass.js"></script>
+</head>
+
+<body>
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="mb-10 px-6 py-7">
+        <img src="/src/assets/images/logo.png" alt="Logo" class="h-5" />
+      </div>
+
+      <nav class="flex-1 px-4">
+        <a href="/representatives/index.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+          </svg>
+
+          Главная
+        </a>
+        <a href="/representatives/members.html" class="sidebar-link active">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          </svg>
+
+          Участники
+        </a>
+        <a href="/representatives/results.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+          </svg>
+
+          Результаты
+        </a>
+
+        <a href="/representatives/chat.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+          </svg>
+
+          Чат
+        </a>
+      </nav>
+
+      <div class="p-4">
+        <a href="/representatives/profile.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          </svg>
+
+          Профиль
+        </a>
+      </div>
+    </aside>
+
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 z-10 hidden cursor-pointer bg-black/50 transition lg:hidden"
+      onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <!-- Top Bar -->
+      <header class="border-gray-border border-b bg-white">
+        <div class="flex items-center justify-between px-6 py-4">
+          <div class="flex items-center">
+            <button class="mr-4 cursor-pointer text-gray-600 hover:text-gray-900 lg:hidden" onclick="toggleSidebar()">
+              <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+            <h1 class="text-xl max-md:hidden">Добро пожаловать, Айжан 👋</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button type="button" onclick="toggleModal('modalNotification')"
+              class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+              </svg>
+            </button>
+            <div class="flex items-center space-x-3">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
+                class="h-10 w-10 rounded-full" />
+              <div>
+                <p class="font-bold">Айжан Ахметова</p>
+                <div class="text-primary flex items-center space-x-1 text-sm">
+                  <span>Представитель</span>
+                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <main class="flex-1 overflow-y-auto p-6">
+        <p class="mb-6 text-sm text-gray-900">
+          Управление участниками &gt
+          <a href="#" class="text-orange-primary">Айжан Ахметова</a>
+        </p>
+
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl font-semibold">Айжан Ахметова</h1>
+          <span class="text-green-primary bg-green-secondary rounded-full p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path
+                d="M3.505 2.365A41.369 41.369 0 0 1 9 2c1.863 0 3.697.124 5.495.365 1.247.167 2.18 1.108 2.435 2.268a4.45 4.45 0 0 0-.577-.069 43.141 43.141 0 0 0-4.706 0C9.229 4.696 7.5 6.727 7.5 8.998v2.24c0 1.413.67 2.735 1.76 3.562l-2.98 2.98A.75.75 0 0 1 5 17.25v-3.443c-.501-.048-1-.106-1.495-.172C2.033 13.438 1 12.162 1 10.72V5.28c0-1.441 1.033-2.717 2.505-2.914Z" />
+              <path
+                d="M14 6c-.762 0-1.52.02-2.271.062C10.157 6.148 9 7.472 9 8.998v2.24c0 1.519 1.147 2.839 2.71 2.935.214.013.428.024.642.034.2.009.385.09.518.224l2.35 2.35a.75.75 0 0 0 1.28-.531v-2.07c1.453-.195 2.5-1.463 2.5-2.915V8.998c0-1.526-1.157-2.85-2.729-2.936A41.645 41.645 0 0 0 14 6Z" />
+            </svg>
+          </span>
+        </div>
+
+        <div class="space" style="height: 20px"></div>
+
+        <!-- Tabs -->
+        <div class="tabs w-fit">
+          <a href="/representatives/members-progress.html" class="tabs-link active">Прогресс</a>
+          <a href="/representatives/members-personal-data.html" class="tabs-link">Личные данные
+          </a>
+          <a href="/representatives/members-payments.html" class="tabs-link">Баланс и платежи</a>
+        </div>
+
+        <div class="mb-2 flex items-center justify-between">
+          <h1 class="text text-base font-semibold">Прогресс</h1>
+        </div>
+
+        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1 -->
+          <div class="bg-orange-secondary border-default flex items-center space-x-1 rounded-xl p-6">
+            <div class="w-full">
+              <span class="text-orange-primary text-2xl font-semibold">7</span>
+              <span class="ml-2 text-black">уровень</span>
+
+              <!-- Горизонтальный блок: прогресс + текст -->
+              <div class="mt-2 flex items-center space-x-4">
+                <!-- Прогресс бар -->
+                <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div class="h-full rounded-full bg-orange-500" style="width: 30%"></div>
+                </div>
+                <!-- Иконка справа от прогресса -->
+                <img src="/src/assets/images/coin.png" alt="coin" class="h-8 w-8" />
+              </div>
+
+              <span class="ml-1 text-xs text-black">Осталось</span>
+              <span class="text-1xl text-orange-primary font-semibold">48xp</span>
+              <span class="ml-1 text-xs text-black">до следующего уровня. Вперед!</span>
+            </div>
+          </div>
+
+          <!-- Card 2--->
+
+          <div class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <div>
+              <p class="text-sm">Заработано</p>
+              <p class="text-green-primary text-2xl font-semibold">0 XP</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-2 flex items-center justify-between">
+          <h1 class="text text-base font-semibold">Результаты олимпиады</h1>
+        </div>
+
+        <div class="border-default mb-6 overflow-x-auto rounded-2xl border max-w-200">
+          <table class="table-olympiads w-full rounded-2xl pb-6 min-w-max">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="p-table">Олимпиада</th>
+                <th class="p-table">Баллы</th>
+                <th class="p-table">Задачи решено</th>
+                <th class="p-table">Место</th>
+                <th class="p-table">Действия</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr class="hover:bg-gray-50">
+                <td>FEMO Весенний тур 2024</td>
+                <td>92</td>
+                <td>6/7</td>
+                <td>4-ое</td>
+                <td>
+                  <div class="flex cursor-pointer items-center gap-1">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5 text-orange-500">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                      </svg>
+                    </span>
+                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td>FEMO Зимний тур 2024</td>
+                <td>86</td>
+                <td>6/7</td>
+                <td>6-ое</td>
+                <td>
+                  <div class="flex cursor-pointer items-center gap-1">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5 text-orange-500">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                      </svg>
+                    </span>
+                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td>FEMO Весенний тур 2022</td>
+                <td>34</td>
+                <td>6/7</td>
+                <td>48-ое</td>
+                <td>
+                  <div class="flex cursor-pointer items-center gap-1">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5 text-orange-500">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                      </svg>
+                    </span>
+                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td>FEMO Летний тур 2020</td>
+                <td>90</td>
+                <td>6/7</td>
+                <td>3-е</td>
+                <td>
+                  <div class="flex cursor-pointer items-center gap-1">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5 text-orange-500">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                      </svg>
+                    </span>
+                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mb-2 flex items-center justify-between">
+          <h1 class="text text-base font-semibold">Достижения</h1>
+        </div>
+
+        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1 -->
+          <div class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <img src="/src/assets/images/login56x56.png" alt="paper" />
+            <div>
+              <div class="flex w-full items-center justify-between">
+                <p class="mr-4 text-xs">Заполнил профиль</p>
+                <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
+                  <p class="text text-xs font-semibold text-orange-500">
+                    5 XP
+                  </p>
+                  <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
+                </div>
+              </div>
+              <p class="text-orange-primary text-2xl font-semibold">
+                Первый шаг
+              </p>
+            </div>
+          </div>
+          <!-- Card 2--->
+
+          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <img src="/src/assets/images/stars.png" alt="stars" />
+            <div>
+              <div class="flex w-full items-center justify-between">
+                <p class="mr-4 text-xs">Вошел в ТОП-10</p>
+                <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
+                  <p class="text text-xs font-semibold text-orange-500">
+                    70 XP
+                  </p>
+                  <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
+                </div>
+              </div>
+              <p class="text-red-primary text-2xl font-semibold">Максимум</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1 -->
+          <div class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <img src="/src/assets/images/login56x56.png" alt="paper" />
+            <div>
+              <div class="flex w-full items-center justify-between">
+                <p class="mr-4 text-xs">7 дней без пропусков</p>
+                <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
+                  <p class="text text-xs font-semibold text-orange-500">
+                    25 XP
+                  </p>
+                  <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
+                </div>
+              </div>
+              <p class="text-blue-primary text-2xl font-semibold">Комбо 7</p>
+            </div>
+          </div>
+          <!-- Card 2--->
+
+          <div class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <img src="/src/assets/images/stars.png" alt="stars" />
+            <div>
+              <div class="flex w-full items-center justify-between">
+                <p class="mr-4 text-xs">1000+ набранных баллов</p>
+                <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
+                  <p class="text text-xs font-semibold text-orange-500">
+                    50 XP
+                  </p>
+                  <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
+                </div>
+              </div>
+              <p class="text-violet-primary text-2xl font-semibold">
+                Элитный участник
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1 -->
+          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <img src="/src/assets/images/login56x56.png" alt="paper" />
+            <div>
+              <div class="flex w-full items-center justify-between">
+                <p class="mr-4 text-xs">Участие в 3+ олимпиадах</p>
+                <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
+                  <p class="text text-xs font-semibold text-orange-500">
+                    5 XP
+                  </p>
+                  <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
+                </div>
+              </div>
+              <p class="text-red-primary text-2xl font-semibold">Умник</p>
+            </div>
+          </div>
+          <!-- Card 2--->
+
+          <div class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+            <img src="/src/assets/images/stars.png" alt="stars" />
+            <div>
+              <div class="flex w-full items-center justify-between">
+                <p class="mr-4 text-xs">1-е место на олимпиаде</p>
+                <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
+                  <p class="text text-xs font-semibold text-orange-500">
+                    100 XP
+                  </p>
+                  <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
+                </div>
+              </div>
+              <p class="text-green-primary text-2xl font-semibold">
+                Победитель
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+
+    <div id="modalNotification"
+                class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full">
+                <div class="relative">
+                  <div class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base">
+                    <p class="text-xl font-bold">Уведомление</p>
+
+                    <div class="tabs !mb-4 justify-between overflow-x-auto">
+                      <div class="tabs-link active flex cursor-pointer items-center gap-1" data-tab="all">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                          </svg>
+                        </span>
+                        Все
+                        <span class="count-msg">4</span>
+                      </div>
+                      <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="users">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                          </svg>
+                        </span>
+                        Пользователи
+                        <span class="count-msg">0</span>
+                      </div>
+                      <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="olympiads">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                          </svg>
+                        </span>
+                        Олимпиады
+                        <span class="count-msg">1</span>
+                      </div>
+                      <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="results">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                          </svg>
+                        </span>
+                        Результаты
+                        <span class="count-msg">2</span>
+                      </div>
+                    </div>
+
+                    <div class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2">
+                      <div class="tabs-notification" data-tab="users">
+                        ...
+                      </div>
+
+                      <!-- Notification 2 (Olympiad-related) -->
+                      <div class="tabs-notification" data-tab="olympiads">
+                        ...
+                      </div>
+
+                      <!-- Notification 3 (Result-related) -->
+                      <div class="tabs-notification" data-tab="results">
+                        ...
+                      </div>
+
+                      <!-- Notification 1 -->
+                      <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
+                        <span class="text-violet-primary bg-violet-secondary rounded-full p-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
+                          </svg>
+                        </span>
+
+                        <div class="w-full space-y-3">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                              <p class="text-sm font-bold">
+                                Задача №2 проверена
+                              </p>
+
+                              <div class="card easy font-bold">9 / 10</div>
+                            </div>
+
+                            <a href="#">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </a>
+                          </div>
+
+                          <p class="text-gray-primary flex items-center gap-1 text-xs">
+                            <span>5 минут назад</span>
+                            |
+                            <span>Задачи</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
+                        <span class="text-blue-primary bg-blue-secondary rounded-full p-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="size-6">
+                            <path
+                              d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+                          </svg>
+                        </span>
+
+                        <div class="w-full space-y-3">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                              <p class="text-sm font-bold">
+                                Задача №2 проверена
+                              </p>
+
+                              <div class="card easy font-bold">9 / 10</div>
+                            </div>
+
+                            <a href="#">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </a>
+                          </div>
+
+                          <p class="text-gray-primary flex items-center gap-1 text-xs">
+                            <span>5 минут назад</span>
+                            |
+                            <span>Задачи</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
+                        <span class="text-violet-primary bg-violet-secondary rounded-full p-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                          </svg>
+                        </span>
+
+                        <div class="w-full space-y-3">
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                              <p class="text-sm font-bold">
+                                Задача №2 проверена
+                              </p>
+
+                              <!-- <div class="card easy font-bold">
+                                9 / 10
+                              </div> -->
+                            </div>
+
+                            <a href="#">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </a>
+                          </div>
+
+                          <p class="text-gray-primary flex items-center gap-1 text-xs">
+                            <span>5 минут назад</span>
+                            |
+                            <span>Задачи</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="absolute top-6 right-5 cursor-pointer" onclick="toggleModal('modalNotification')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                      <path fill-rule="evenodd"
+                        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+    <div id="overlayModal" class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"></div>
+  </div>
+
+  <script>
+    lucide.createIcons()
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar')
+      const overlay = document.getElementById('overlay')
+      sidebar.classList.toggle('active')
+      overlay.classList.toggle('hidden')
+    }
+
+    function toggleModal(modalId, show = null) {
+      const modal = document.getElementById(modalId)
+      const overlay = document.getElementById('overlayModal')
+
+      // Determine visibility
+      const shouldShow =
+        show !== null ? show : modal.classList.contains('hidden')
+
+      // Manage overlay
+      overlay.classList.toggle('hidden', !shouldShow)
+
+      // Toggle modal
+      modal.classList.toggle('hidden', !shouldShow)
+
+      // Close other modals
+      document.querySelectorAll('.modal').forEach((m) => {
+        if (m.id !== modalId) m.classList.add('hidden')
+      })
+
+      // Body scroll control
+      document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const tabs = document.querySelectorAll('.tabs-link')
+      const notifications = document.querySelectorAll('.tabs-notification')
+
+      // Add click event listeners to tabs
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', function () {
+          const tabType = this.dataset.tab
+
+          // Remove active class from all tabs
+          tabs.forEach((t) => t.classList.remove('active'))
+
+          // Add active class to clicked tab
+          this.classList.add('active')
+
+          // Filter notifications
+          notifications.forEach((notification) => {
+            if (tabType === 'all' || notification.dataset.tab === tabType) {
+              notification.style.display = 'flex'
+            } else {
+              notification.style.display = 'none'
+            }
+          })
+        })
+      })
+    })
+  
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/dist/style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/@lucide/web@latest"></script>
+  <script defer src="/src/scripts/showpass.js"></script>
+</head>
+
+<body>
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="mb-10 px-6 py-7">
+        <img src="/src/assets/images/logo.png" alt="Logo" class="h-5" />
+      </div>
+
+      <nav class="flex-1 px-4">
+        <a href="/representatives/index.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+          </svg>
+
+          Главная
+        </a>
+        <a href="/representatives/members.html" class="sidebar-link active">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          </svg>
+
+          Участники
+        </a>
+        <a href="/representatives/results.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+          </svg>
+
+          Результаты
+        </a>
+
+        <a href="/representatives/chat.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+          </svg>
+
+          Чат
+        </a>
+      </nav>
+
+      <div class="p-4">
+        <a href="/representatives/profile.html" class="sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="mr-3 size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          </svg>
+
+          Профиль
+        </a>
+      </div>
+    </aside>
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 z-10 hidden cursor-pointer bg-black/50 transition lg:hidden"
+      onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <!-- Top Bar -->
+      <header class="border-gray-border border-b bg-white">
+        <div class="flex items-center justify-between px-6 py-4">
+          <div class="flex items-center">
+            <button class="mr-4 cursor-pointer text-gray-600 hover:text-gray-900 lg:hidden" onclick="toggleSidebar()">
+              <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+            <h1 class="text-xl max-md:hidden">Добро пожаловать, Айжан 👋</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button type="button" onclick="toggleModal('modalNotification')"
+              class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+              </svg>
+            </button>
+            <div class="flex items-center space-x-3">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
+                class="h-10 w-10 rounded-full" />
+              <div>
+                <p class="font-bold">Айжан Ахметова</p>
+                <div class="text-primary flex items-center space-x-1 text-sm">
+                  <span>Представитель</span>
+                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content -->
+      <main class="flex-1 overflow-y-auto p-6">
+        <!-- Header -->
+        <div class="mb-6 flex items-center justify-between">
+          <h1 class="text-2xl font-semibold">Управление участниками</h1>
+          <div class="flex items-center gap-4">
+            <button
+              class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Скачать данные
+            </button>
+
+            <div id="overlayModal" class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"></div>
+          </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="my-10 rounded-lg bg-white">
+          <div class="flex flex-wrap gap-4">
+            <!-- Search -->
+            <div class="relative w-full max-w-[350px]">
+              <input type="text" placeholder="Искать участника по имени или ID"
+                class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none" />
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            <!-- Filters -->
+            <select class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2">
+              <option>Все классы</option>
+              <option>6 класс</option>
+              <option>7 класс</option>
+              <option>8 класс</option>
+              <option>9 класс</option>
+              <option>10 класс</option>
+              <option>11 класс</option>
+            </select>
+          </div>
+        </div>
+        <div class="border-default mb-6 overflow-x-auto rounded-2xl">
+          <table class="table-rate w-full">
+            <thead>
+              <tr class="table-tr border-gray-border border-b">
+                <th class="p-table flex items-center gap-1">
+                  <div class="flex items-center gap-1">
+                    Имя участника
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                        <path fill-rule="evenodd"
+                          d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </th>
+                <th class="p-table">
+                  <div class="flex items-center gap-1">
+                    ID участника
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                        <path fill-rule="evenodd"
+                          d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </th>
+                <th class="p-table">Класс</th>
+                <th class="p-table">Город</th>
+                <th class="p-table">
+                  <div class="flex items-center gap-1">
+                    Общие Баллы
+                    <span>
+                      <img src="/src/assets/images/coin.png" alt="coin" class="h-5 w-5" />
+                    </span>
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                        <path fill-rule="evenodd"
+                          d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </th>
+                <th class="p-table">Действия</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&auto=format&fit=crop&q=60"
+                      alt="" />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        Айдана Ержанова
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">123456</td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">11</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class="text-sm text-gray-900">Алматы</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap" style="color: orange; font-weight: bold">
+                  1520
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                  <div class="flex justify-between gap-2 *:cursor-pointer">
+                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                    <button class="hover:text-blue-primary text-gray-400" onclick="toggleModal('modalEdit')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&auto=format&fit=crop&q=60"
+                      alt="" />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        Айдана Ержанова
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">123456</td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">10</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class="text-sm text-gray-900">Астана</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap" style="color: orange; font-weight: bold">
+                  1600
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                  <div class="flex justify-between gap-2 *:cursor-pointer">
+                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                    <button class="hover:text-blue-primary text-gray-400" onclick="toggleModal('modalEdit')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&auto=format&fit=crop&q=60"
+                      alt="" />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        Айдана Ержанова
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">123456</td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">11</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class="text-sm text-gray-900">Шымкент</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap" style="color: orange; font-weight: bold">
+                  1420
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                  <div class="flex justify-between *:cursor-pointer">
+                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                    <button class="hover:text-blue-primary text-gray-400" onclick="toggleModal('modalEdit')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&auto=format&fit=crop&q=60"
+                      alt="" />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        Айдана Ержанова
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">123456</td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">10</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class="text-sm text-gray-900">Караганда</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap" style="color: orange; font-weight: bold">
+                  1320
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                  <div class="flex justify-between gap-2 *:cursor-pointer">
+                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                    <button class="hover:text-blue-primary text-gray-400" onclick="toggleModal('modalEdit')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&auto=format&fit=crop&q=60"
+                      alt="" />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        Айдана Ержанова
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">123456</td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">11</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <span class="text-sm text-gray-900">Алматы</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap" style="color: orange; font-weight: bold">
+                  1820
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                  <div class="flex justify-between gap-2 *:cursor-pointer">
+                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                    <button class="hover:text-blue-primary text-gray-400" onclick="toggleModal('modalEdit')">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between">
+          <div class="text-gray-primary text-sm">Всего 85 участников</div>
+          <div class="flex items-center gap-0.5 *:cursor-pointer">
+            <button class="cursor-pointer px-3 py-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
+                <path fill-rule="evenodd"
+                  d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div class="flex gap-1 *:cursor-pointer">
+              <button class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1">
+                1
+              </button>
+              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
+                2
+              </button>
+              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
+                3
+              </button>
+              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
+                4
+              </button>
+              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
+                5
+              </button>
+            </div>
+            <button class="cursor-pointer px-3 py-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
+                <path fill-rule="evenodd"
+                  d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Delete User -->
+    <div id="modalDel"
+      class="modal fixed top-1/2 left-1/2 z-30 hidden w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4 sm:px-0">
+      <div class="relative">
+        <form class="flex flex-col rounded-3xl bg-white shadow-xl">
+          <div class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4">
+            <p class="text-xl font-bold">Удалить аккаунт</p>
+            <button type="button" onclick="toggleModal('modalDel')" class="text-gray-400 hover:text-gray-500">
+              <i data-lucide="x" class="h-5 w-5 cursor-pointer"></i>
+            </button>
+          </div>
+
+          <div class="px-6 py-4">
+            <p class="mb-4 text-sm">
+              Вы точно уверены, что хотите удалить участника?
+            </p>
+          </div>
+
+          <div class="flex items-center justify-end gap-4 px-6 pb-6">
+            <button type="button" onclick="toggleModal('modalDel')" class="btn-red">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+              </span>
+              Удалить
+            </button>
+
+            <button type="button" onclick="toggleModal('modalDel')" class="btn-gray-b">
+              Отмена
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit User -->
+    <div id="modalEdit"
+      class="modal fixed top-18 z-30 hidden max-w-xl max-sm:inset-x-4 sm:top-10 sm:left-1/2 sm:w-full sm:-translate-x-1/2">
+      <div class="relative">
+        <div class="flex flex-col rounded-3xl bg-white">
+          <p class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold">
+            Редактировать участника
+          </p>
+
+          <div class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 sm:px-6">
+
+            <!-- Participant Form (shown by default) -->
+            <form id="participant-form" class="role-form">
+              <div class="mt-6 space-y-6">
+                <div>
+                  <p class="mb-4 text-lg font-semibold text-gray-900">
+                    Личные данные
+                  </p>
+                  <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2">
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Email
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="ivan.ivanov@example.com" type="email" name="email"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="Айжан Ахметова" type="text" name="fullname"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="Казахстан" type="text" name="country"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Город
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="Алматы" type="text" name="city" class="input-base border-default"
+                        required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Школа
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="Название школы" type="text" name="school"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Класс
+                        <span class="text-red-primary">*</span></label>
+                      <input min="1" max="11" maxlength="2" placeholder="10" type="number" name="class"
+                        class="input-base border-default" required />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Данные родителя -->
+                <div>
+                  <p class="mb-4 text-lg font-semibold text-gray-900">
+                    Данные родителя
+                  </p>
+                  <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2">
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО родителя</label>
+                      <input type="text" name="parent_name" placeholder="Ivan Ivanov"
+                        class="input-base border-default" />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
+                        родителя</label>
+                      <input type="tel" name="parent_phone" placeholder="+7 707 777 77 70"
+                        class="input-base border-default" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Данные учителя -->
+                <div>
+                  <p class="mb-3 text-lg font-semibold text-gray-900">
+                    Данные учителя
+                  </p>
+                  <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2">
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО учителя</label>
+                      <input type="text" name="teacher_name" class="input-base border-default"
+                        placeholder="Ivan Ivanov" />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
+                        учителя</label>
+                      <input type="tel" name="teacher_phone" class="input-base border-default"
+                        placeholder="+7 700 777 70 70" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="toggleModal('modalEdit')" class="btn-outline btn--orange">
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
+                    </span>
+                    Отменить
+                  </button>
+                  <button class="btn-orange">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
+                    </span>
+                    Сохранить
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Representative Form (hidden by default) -->
+            <form id="representative-form" class="role-form hidden">
+              <div class="mt-6 space-y-6">
+                <!-- Representative form content -->
+                <div>
+                  <p class="mb-4 text-lg font-semibold text-gray-900">
+                    Личные данные
+                  </p>
+                  <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2">
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Email
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="ivan.ivanov@example.com" type="email" name="email"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="Айжан Ахметова" type="text" name="fullname"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
+                        <span class="text-red-primary">*</span></label>
+                      <input placeholder="Казахстан" type="text" name="country"
+                        class="input-base border-default" required />
+                    </div>
+                    <div>
+                      <label class="text-gray-primary mb-1 block text-sm font-medium">Пароль
+                        <span class="text-red-primary">*</span></label>
+                      <div class="relative">
+                        <input id="password" type="password" placeholder="Введите пароль"
+                          class="input-base border-default" />
+                        <button type="button" data-target="password"
+                          class="toggle-pw text-gray-primary hover:text-primary absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 flex items-center justify-between">
+                <button class="btn-outline btn--red">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                      stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                  </span>
+                  Удалить
+                </button>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="toggleModal('modalEdit')" class="btn-outline btn--orange">
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
+                    </span>
+                    Отменить
+                  </button>
+                  <button class="btn-orange">
+                    <span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
+                    </span>
+                    Сохранить
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <button type="button" class="absolute top-6 right-5 cursor-pointer" onclick="toggleModal('modalEdit')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd"
+              d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="modalNotification"
+        class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full">
+        <div class="relative">
+          <div class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base">
+            <p class="text-xl font-bold">Уведомление</p>
+
+            <div class="tabs !mb-4 justify-between overflow-x-auto">
+              <div class="tabs-link active flex cursor-pointer items-center gap-1" data-tab="all">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                  </svg>
+                </span>
+                Все
+                <span class="count-msg">4</span>
+              </div>
+              <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="users">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                  </svg>
+                </span>
+                Пользователи
+                <span class="count-msg">0</span>
+              </div>
+              <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="olympiads">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                  </svg>
+                </span>
+                Олимпиады
+                <span class="count-msg">1</span>
+              </div>
+              <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="results">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                  </svg>
+                </span>
+                Результаты
+                <span class="count-msg">2</span>
+              </div>
+            </div>
+
+            <div class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2">
+              <div class="tabs-notification" data-tab="users">
+                ...
+              </div>
+
+              <!-- Notification 2 (Olympiad-related) -->
+              <div class="tabs-notification" data-tab="olympiads">
+                ...
+              </div>
+
+              <!-- Notification 3 (Result-related) -->
+              <div class="tabs-notification" data-tab="results">
+                ...
+              </div>
+
+              <!-- Notification 1 -->
+              <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
+                <span class="text-violet-primary bg-violet-secondary rounded-full p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
+                  </svg>
+                </span>
+
+                <div class="w-full space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-bold">
+                        Задача №2 проверена
+                      </p>
+
+                      <div class="card easy font-bold">9 / 10</div>
+                    </div>
+
+                    <a href="#">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                      </svg>
+                    </a>
+                  </div>
+
+                  <p class="text-gray-primary flex items-center gap-1 text-xs">
+                    <span>5 минут назад</span>
+                    |
+                    <span>Задачи</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
+                <span class="text-blue-primary bg-blue-secondary rounded-full p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                    class="size-6">
+                    <path
+                      d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+                  </svg>
+                </span>
+
+                <div class="w-full space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-bold">
+                        Задача №2 проверена
+                      </p>
+
+                      <div class="card easy font-bold">9 / 10</div>
+                    </div>
+
+                    <a href="#">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                      </svg>
+                    </a>
+                  </div>
+
+                  <p class="text-gray-primary flex items-center gap-1 text-xs">
+                    <span>5 минут назад</span>
+                    |
+                    <span>Задачи</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
+                <span class="text-violet-primary bg-violet-secondary rounded-full p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                  </svg>
+                </span>
+
+                <div class="w-full space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-bold">
+                        Задача №2 проверена
+                      </p>
+
+                      <!-- <div class="card easy font-bold">
+                        9 / 10
+                      </div> -->
+                    </div>
+
+                    <a href="#">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                      </svg>
+                    </a>
+                  </div>
+
+                  <p class="text-gray-primary flex items-center gap-1 text-xs">
+                    <span>5 минут назад</span>
+                    |
+                    <span>Задачи</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="absolute top-6 right-5 cursor-pointer" onclick="toggleModal('modalNotification')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+              <path fill-rule="evenodd"
+                d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+  </div>
+
+  <script>
+    lucide.createIcons()
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar')
+      const overlay = document.getElementById('overlay')
+      sidebar.classList.toggle('active')
+      overlay.classList.toggle('hidden')
+    }
+
+    function toggleModal(modalId, show = null) {
+      const modal = document.getElementById(modalId)
+      const overlay = document.getElementById('overlayModal')
+
+      // Determine visibility
+      const shouldShow =
+        show !== null ? show : modal.classList.contains('hidden')
+
+      // Manage overlay
+      overlay.classList.toggle('hidden', !shouldShow)
+
+      // Toggle modal
+      modal.classList.toggle('hidden', !shouldShow)
+
+      // Close other modals
+      document.querySelectorAll('.modal').forEach((m) => {
+        if (m.id !== modalId) m.classList.add('hidden')
+      })
+
+      // Body scroll control
+      document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const tabs = document.querySelectorAll('.tabs-link')
+      const notifications = document.querySelectorAll('.tabs-notification')
+
+      // Add click event listeners to tabs
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', function () {
+          const tabType = this.dataset.tab
+
+          // Remove active class from all tabs
+          tabs.forEach((t) => t.classList.remove('active'))
+
+          // Add active class to clicked tab
+          this.classList.add('active')
+
+          // Filter notifications
+          notifications.forEach((notification) => {
+            if (tabType === 'all' || notification.dataset.tab === tabType) {
+              notification.style.display = 'flex'
+            } else {
+              notification.style.display = 'none'
+            }
+          })
+        })
+      })
+    })
+  
+  </script>
+</body>
+
+</html>
