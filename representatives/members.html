@@ -96,15 +96,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -116,7 +117,7 @@
         <div class="mb-6 flex items-center justify-between">
           <h1 class="text-2xl font-semibold">Управление участниками</h1>
           <div class="flex items-center gap-4">
-            <button
+            <button id="export-btn"
               class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-5">
@@ -135,7 +136,7 @@
           <div class="flex flex-wrap gap-4">
             <!-- Search -->
             <div class="relative w-full max-w-[350px]">
-              <input type="text" placeholder="Искать участника по имени или ID"
+              <input id="search-input" type="text" placeholder="Искать участника по имени или ID"
                 class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none" />
               <svg xmlns="http://www.w3.org/2000/svg"
                 class="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24"
@@ -146,7 +147,7 @@
             </div>
 
             <!-- Filters -->
-            <select class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2">
+            <select id="grade-filter" class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2">
               <option>Все классы</option>
               <option>6 класс</option>
               <option>7 класс</option>
@@ -161,7 +162,7 @@
           <table class="table-rate w-full">
             <thead>
               <tr class="table-tr border-gray-border border-b">
-                <th class="p-table flex items-center gap-1">
+                <th class="p-table flex items-center gap-1 cursor-pointer" data-sort-field="full_name">
                   <div class="flex items-center gap-1">
                     Имя участника
                     <span>
@@ -173,7 +174,7 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table">
+                <th class="p-table cursor-pointer" data-sort-field="id">
                   <div class="flex items-center gap-1">
                     ID участника
                     <span>
@@ -187,7 +188,7 @@
                 </th>
                 <th class="p-table">Класс</th>
                 <th class="p-table">Город</th>
-                <th class="p-table">
+                <th class="p-table cursor-pointer" data-sort-field="scores">
                   <div class="flex items-center gap-1">
                     Общие Баллы
                     <span>
@@ -205,7 +206,7 @@
                 <th class="p-table">Действия</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody id="participants-tbody" class="divide-y divide-gray-200">
               <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
@@ -231,7 +232,7 @@
                 </td>
                 <td class="px-6 py-4 text-sm whitespace-nowrap">
                   <div class="flex justify-between gap-2 *:cursor-pointer">
-                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')">
+                    <button class="text-gray-400 hover:text-red-500" onclick="toggleModal('modalDel')" data-id="${user.id}">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -426,8 +427,8 @@
 
         <!-- Pagination -->
         <div class="flex items-center justify-between">
-          <div class="text-gray-primary text-sm">Всего 85 участников</div>
-          <div class="flex items-center gap-0.5 *:cursor-pointer">
+          <div id="participants-count" class="text-gray-primary text-sm">Всего 0 участников</div>
+          <div id="pagination-container" class="flex items-center gap-0.5 *:cursor-pointer">
             <button class="cursor-pointer px-3 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
                 <path fill-rule="evenodd"
@@ -483,7 +484,7 @@
           </div>
 
           <div class="flex items-center justify-end gap-4 px-6 pb-6">
-            <button type="button" onclick="toggleModal('modalDel')" class="btn-red">
+            <button type="button" onclick="toggleModal('modalDel')" class="btn-red" id="confirm-delete-btn">
               <span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                   stroke="currentColor" class="size-5">
@@ -970,6 +971,8 @@
     })
   
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/members.js" defer></script>
 </body>
 
 </html>

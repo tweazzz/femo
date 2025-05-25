@@ -97,15 +97,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -115,11 +116,11 @@
       <main class="flex-1 overflow-y-auto p-6">
         <p class="mb-6 text-sm text-gray-900">
           Управление участниками &gt
-          <a href="#" class="text-orange-primary">Айжан Ахметова</a>
+          <a href="#" id="participant-name-link" class="text-orange-primary">Айжан Ахметова</a>
         </p>
 
         <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-semibold">Айжан Ахметова</h1>
+          <h1 id="participant-name-heading" class="text-2xl font-semibold">Айжан Ахметова</h1>
           <span class="text-green-primary bg-green-secondary rounded-full p-2">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
               <path
@@ -134,10 +135,10 @@
 
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="/representatives/members-progress.html" class="tabs-link active">Прогресс</a>
-          <a href="/representatives/members-personal-data.html" class="tabs-link">Личные данные
+          <a href="#" id="tab-progress" class="tabs-link active">Прогресс</a>
+          <a href="#" id="tab-personal" class="tabs-link">Личные данные
           </a>
-          <a href="/representatives/members-payments.html" class="tabs-link">Баланс и платежи</a>
+          <a href="#" id="tab-payments" class="tabs-link">Баланс и платежи</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
@@ -148,21 +149,21 @@
           <!-- Card 1 -->
           <div class="bg-orange-secondary border-default flex items-center space-x-1 rounded-xl p-6">
             <div class="w-full">
-              <span class="text-orange-primary text-2xl font-semibold">7</span>
+              <span id="level-value" class="text-orange-primary text-2xl font-semibold">7</span>
               <span class="ml-2 text-black">уровень</span>
 
               <!-- Горизонтальный блок: прогресс + текст -->
               <div class="mt-2 flex items-center space-x-4">
                 <!-- Прогресс бар -->
                 <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-                  <div class="h-full rounded-full bg-orange-500" style="width: 30%"></div>
+                  <div id="progress-bar" class="h-full rounded-full bg-orange-500" style="width: 30%"></div>
                 </div>
                 <!-- Иконка справа от прогресса -->
                 <img src="/src/assets/images/coin.png" alt="coin" class="h-8 w-8" />
               </div>
 
               <span class="ml-1 text-xs text-black">Осталось</span>
-              <span class="text-1xl text-orange-primary font-semibold">48xp</span>
+              <span id="xp-to-next" class="text-1xl text-orange-primary font-semibold">48xp</span>
               <span class="ml-1 text-xs text-black">до следующего уровня. Вперед!</span>
             </div>
           </div>
@@ -172,7 +173,7 @@
           <div class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Заработано</p>
-              <p class="text-green-primary text-2xl font-semibold">0 XP</p>
+              <p id="xp-today" class="text-green-primary text-2xl font-semibold">0 XP</p>
             </div>
           </div>
         </div>
@@ -278,7 +279,7 @@
 
         <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <!-- Card 1 -->
-          <div class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6" data-achievement-code="profile">
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <div class="flex w-full items-center justify-between">
@@ -297,7 +298,7 @@
           </div>
           <!-- Card 2--->
 
-          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6" data-achievement-code="profile">
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <div class="flex w-full items-center justify-between">
@@ -316,7 +317,7 @@
 
         <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <!-- Card 1 -->
-          <div class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6" data-achievement-code="profile">
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <div class="flex w-full items-center justify-between">
@@ -333,7 +334,7 @@
           </div>
           <!-- Card 2--->
 
-          <div class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6" data-achievement-code="profile">
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <div class="flex w-full items-center justify-between">
@@ -354,7 +355,7 @@
 
         <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <!-- Card 1 -->
-          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6" data-achievement-code="profile">
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <div class="flex w-full items-center justify-between">
@@ -371,7 +372,7 @@
           </div>
           <!-- Card 2--->
 
-          <div class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6" data-achievement-code="profile">
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <div class="flex w-full items-center justify-between">
@@ -645,6 +646,8 @@
     })
   
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/members-progress.js" defer></script>
 </body>
 
 </html>

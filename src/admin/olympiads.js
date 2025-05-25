@@ -79,7 +79,7 @@ async function loadOlympiads() {
   }
 
   try {
-    const response = await fetch(
+    const response = await authorizedFetch(
       'https://portal.gradients.academy/olympiads/dashboard/',
       {
         headers: {

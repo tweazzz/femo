@@ -97,15 +97,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -134,10 +135,10 @@
 
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="/representatives/members-progress.html" class="tabs-link">Прогресс</a>
-          <a href="/representatives/members-personal-data.html" class="tabs-link active">Личные данные
+          <a href="#" id="tab-progress" class="tabs-link">Прогресс</a>
+          <a href="#" id="tab-personal" class="tabs-link active">Личные данные
           </a>
-          <a href="/representatives/members-payments.html" class="tabs-link">Баланс и платежи</a>
+          <a href="#" id="tab-payments" class="tabs-link">Баланс и платежи</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
@@ -149,51 +150,51 @@
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ID участника
               </label>
-              <p class="input-base border-default">010203</p>
+              <p id="profile-id" class="input-base border-default">010203</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Email
               </label>
-              <p class="input-base border-default">ivan.ivanov@example.com</p>
+              <p id="profile-email" class="input-base border-default">ivan.ivanov@example.com</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
               </label>
-              <p class="input-base border-default">Айжан Ахметова</p>
+              <p id="profile-full-name-ru" class="input-base border-default">Айжан Ахметова</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
               </label>
-              <p class="input-base border-default">Ayzhan Akhmetova</p>
+              <p id="profile-full-name-en" class="input-base border-default">Ayzhan Akhmetova</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
               </label>
-              <p class="input-base border-default">Казахстан</p>
+              <p id="profile-country" class="input-base border-default">Казахстан</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Город
               </label>
-              <p class="input-base border-default">Алматы</p>
+              <p id="profile-city" class="input-base border-default">Алматы</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Школа
               </label>
-              <p class="input-base border-default">Название школы</p>
+              <p id="profile-school" class="input-base border-default">Название школы</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Класс
               </label>
-              <p class="input-base border-default">10</p>
+              <p id="profile-grade" class="input-base border-default">10</p>
             </div>
             <div class="relative">
               <p class="text-primary text-xs">Изображение</p>
               <div class="space" style="height: 5px"></div>
               <div class="flex items-center space-x-3">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
+                <img id="participant-photo" src="" alt="Profile"
                   class="h-15 w-15 rounded-full" />
                 <div>
-                  <p class="text-primary text-sm">file-name.jpeg</p>
+                  <p id="profile-image" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -201,24 +202,24 @@
 
           <!-- Данные родителя -->
           <div>
-            <p class="mb-4 text-lg font-semibold text-gray-900">
+            <p id="parent-fullname" class="mb-4 text-lg font-semibold text-gray-900">
               Данные родителя
             </p>
             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2 max-w-200">
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
                 </label>
-                <p class="input-base border-default">Иван Иванов</p>
+                <p id="parent-name-ru" class="input-base border-default">Иван Иванов</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
                 </label>
-                <p class="input-base border-default">Ivan Ivanov</p>
+                <p id="parent-name-en" class="input-base border-default">Ivan Ivanov</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
                 </label>
-                <p class="input-base border-default">+7 702 772 41 14</p>
+                <p id="parent-phone" class="input-base border-default">+7 702 772 41 14</p>
               </div>
             </div>
           </div>
@@ -232,17 +233,17 @@
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
                 </label>
-                <p class="input-base border-default">Иван Иванов</p>
+                <p id="teacher-name-ru" class="input-base border-default">Иван Иванов</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
                 </label>
-                <p class="input-base border-default">Ivan Ivanov</p>
+                <p id="teacher-name-en" class="input-base border-default">Ivan Ivanov</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
                 </label>
-                <p class="input-base border-default">+7 702 772 41 14</p>
+                <p id="teacher-phone" class="input-base border-default">+7 702 772 41 14</p>
               </div>
             </div>
           </div>
@@ -554,6 +555,8 @@
     })
   
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/members-progress.js" defer></script>
 </body>
 
 </html>

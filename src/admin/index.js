@@ -77,6 +77,9 @@ async function loadDashboardSummary() {
 }
 
 async function loadCurrentOlympiad() {
+  const block = document.querySelector('.olympiad-block')
+  if (!block) return
+
   try {
     const res = await authorizedFetch(
       'https://portal.gradients.academy/results/dashboard/current/'
@@ -85,17 +88,29 @@ async function loadCurrentOlympiad() {
     if (!res.ok) {
       const errorData = await res.json()
       if (errorData.detail === 'No active Olympiad.') {
-        console.warn('Нет активной олимпиады — блок не будет отображён.')
+        console.warn('Нет активной олимпиады — отображаем заглушку.')
+
+        block.querySelector('p.font-bold').textContent = 'Нет активной олимпиады'
+        block.querySelector('p.text-sm').textContent = 'Ожидается запуск'
+
+        const stageBlocks = block.querySelectorAll('.date')
+        stageBlocks.forEach((el) => (el.textContent = '—'))
+
+        // Имена этапов тоже подставим явно
+        const stageTitleSpans = block.querySelectorAll('.date')
+        stageTitleSpans.forEach((dateEl) => {
+          const titleSpan = dateEl.previousElementSibling?.querySelector('span.font-bold')
+          if (titleSpan) titleSpan.textContent = 'Этап'
+        })
+
         return
       }
+
       throw new Error('Ошибка при получении текущей олимпиады')
     }
 
     const olympiad = await res.json()
     console.log('Текущая олимпиада:', olympiad)
-
-    const block = document.querySelector('.olympiad-block')
-    if (!block) return
 
     block.querySelector('p.font-bold').textContent = olympiad.title
     block.querySelector('p.text-sm').textContent = olympiad.description
@@ -112,9 +127,14 @@ async function loadCurrentOlympiad() {
     })
   } catch (err) {
     console.error('Ошибка при загрузке текущей олимпиады:', err)
+
+    // Безопасный fallback
+    block.querySelector('p.font-bold').textContent = 'Нет активной олимпиады'
+    block.querySelector('p.text-sm').textContent = 'Ошибка загрузки данных'
+    const stageBlocks = block.querySelectorAll('.date')
+    stageBlocks.forEach((el) => (el.textContent = '—'))
   }
 }
-
 
 async function loadCurrentOlympiadStats() {
   try {

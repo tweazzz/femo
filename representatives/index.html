@@ -97,17 +97,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div class="flex items-center space-x-2">
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <div class="text-primary flex items-center space-x-1 text-sm">
-                    <span>Представитель</span>
-                    <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
-                  </div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -121,7 +120,7 @@
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <p class="text-sm">Всего участников</p>
-              <p class="text-violet-primary text-2xl font-semibold">250</p>
+              <p id="total-participants" class="text-violet-primary text-2xl font-semibold">-</p>
             </div>
           </div>
           <!-- Card 2--->
@@ -130,17 +129,17 @@
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <p class="text-sm">Средний балл</p>
-              <p class="text-orange-primary text-2xl font-semibold">78/100</p>
+              <p id="average-score" class="text-orange-primary text-2xl font-semibold">-/-</p>
             </div>
           </div>
         </div>
 
         <div class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div class="bg-blue-secondary col-span-1 overflow-hidden rounded-xl px-4 pt-6" style="max-height: 280px">
+          <div class="overflow-y-scroll bg-blue-secondary col-span-1 overflow-hidden rounded-xl px-4 pt-6" style="max-height: 280px">
             <!-- Notifications -->
             <div class="mb-6 flex items-center justify-between">
               <h2 class="text-lg font-bold">Последние уведомление</h2>
-              <button class="text-blue-primary flex cursor-pointer text-sm font-bold" onclick="toggleModal()">
+              <button class="text-blue-primary flex cursor-pointer text-sm font-bold" onclick="toggleModal('modalNotification')">
                 Посмотреть все
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path fill-rule="evenodd"
@@ -494,7 +493,7 @@
             <div class="bg-orange-secondary rounded-xl p-5">
               <p class="mb-4 text-lg font-bold">Текущая олимпиада</p>
 
-              <div class="flex flex-col rounded-2xl bg-white p-4">
+              <div class="olympiad-block flex flex-col rounded-2xl bg-white p-4">
                 <p class="mb-2 font-bold">FEMO Весенний тур 2024</p>
                 <p class="mb-4 text-sm">
                   Зимний этап международной олимпиады для 5–11 классов
@@ -553,9 +552,9 @@
           <div class="w-full border-default overflow-hidden rounded-xl bg-white">
             <div class="mb-6 flex items-center justify-between px-6 pt-6">
               <h2 class="text-2xl font-bold">Общий рейтинг</h2>
-              <a href="#" class="flex items-center font-bold text-orange-500 hover:text-orange-600">
+              <a href="#" data-show-all class="flex items-center font-bold text-orange-500 hover:text-orange-600">
                 Посмотреть все
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 ml-1">
                   <path fill-rule="evenodd"
                     d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
                     clip-rule="evenodd" />
@@ -567,14 +566,14 @@
               <table class="table-rate min-w-full">
                 <thead>
                   <tr class="table-tr">
-                    <th class="p-table flex items-center">
-                      Ранк
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-                        <path fill-rule="evenodd"
-                          d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                          clip-rule="evenodd" />
-                      </svg>
-                    </th>
+                  <th class="p-table flex items-center cursor-pointer select-none" data-sort-rank>
+                    Ранк
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 ml-1">
+                      <path fill-rule="evenodd"
+                        d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </th>
                     <th class="p-table">Имя участника</th>
                     <th class="p-table">Класс</th>
                     <th class="p-table">Страна</th>
@@ -583,7 +582,7 @@
                     <th class="p-table">Баллы за задачи</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody id="ranking-table-body" class="divide-y divide-gray-200">
                   <tr>
                     <td class="px-6 py-4 text-center text-sm font-medium whitespace-nowrap text-gray-900">
                       👑
@@ -992,6 +991,8 @@
       })
     })
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/index.js" defer></script>
 </body>
 
 </html>
