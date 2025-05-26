@@ -67,71 +67,40 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-      //await loadAssignments()
-      //setupAssignmentFilters()
+    await loadGlobalStats() // 👈 добавили вызов функции загрузки статистики
+    // await loadAssignments()
+    // setupAssignmentFilters()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
 })
 
 
-let allAssignments = []
-let currentAssignmentPage = 1
-const assignmentPageSize = 20
-let totalAssignmentCount = 0
-let certificateIdToDelete = null
-let certificateBeingEditedId = null
-
-let assignmentFilters = {
-  search: '',
-  category: '',
-  status: '',
-  olympiad: '',
-}
-
-
-async function loadAssignments(page = 1) {
-  const token = localStorage.getItem('access_token')
+async function loadGlobalStats() {
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
+    console.warn('Токен не найден. Пропускаем загрузку статистики.');
+    return;
   }
-
-  const params = new URLSearchParams()
-  params.append('page', page)
-  if (assignmentFilters.search)
-    params.append('search', assignmentFilters.search)
-  if (assignmentFilters.grade) params.append('category', assignmentFilters.category)
-  if (assignmentFilters.level) params.append('status', assignmentFilters.status)
-  if (assignmentFilters.type) params.append('olympiad', assignmentFilters.olympiad)
 
   try {
-    const response = await fetch(
-      `https://portal.gradients.academy/assignments/dashboard/?${params.toString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    const response = await fetch('https://portal.gradients.academy/results/dashboard/results/stats/', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
-      throw new Error(`Ошибка загрузки: ${response.status}`)
+      throw new Error(`Ошибка загрузки статистики: ${response.status}`);
     }
 
-    const data = await response.json()
-    allAssignments = data.results
-    totalAssignmentCount = data.count
-    currentAssignmentPage = page
+    const data = await response.json();
 
-    renderAssignmentTable(allAssignments)
-    renderAssignmentPagination()
-    document.getElementById('total-assignments-count').textContent =
-      totalAssignmentCount
+    // Записываем данные в карточки
+    document.getElementById('participants').textContent = data.total_participants ?? '—';
+    document.getElementById('average_score').textContent = data.average_score?.toFixed(2) ?? '—';
   } catch (err) {
-    console.error('Ошибка при загрузке задач:', err)
-    document.getElementById('assignments-tbody').innerHTML = `
-      <tr><td colspan="8" class="text-center text-red-500 py-4">${err.message}</td></tr>
-    `
+    console.error('Ошибка при загрузке общей статистики:', err);
   }
 }
+

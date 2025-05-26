@@ -29,7 +29,9 @@ async function ensureUserAuthenticated() {
   // Проверяем роль
   const role = user.profile?.role
   if (role !== 'administrator') {
-    console.warn(`Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`)
+    console.warn(
+      `Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`
+    )
     window.location.href = '/index.html'
     return null
   }
@@ -57,6 +59,37 @@ function renderUserInfo(user) {
   }
   roleEl.textContent = roleMap[user.profile.role] || user.profile.role
 }
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await ensureUserAuthenticated()
+  if (!user) return
+
+  renderUserInfo(user)
+  setupSearch()
+
+  await populateCountryAndClassOptions()
+
+  document
+    .getElementById('participant-form')
+    .addEventListener('submit', (e) => {
+      e.preventDefault()
+      addUser('participant-form', 'participant')
+    })
+
+  document
+    .getElementById('representative-form')
+    .addEventListener('submit', (e) => {
+      e.preventDefault()
+      addUser('representative-form', 'representative')
+    })
+
+  try {
+    await loadAllUsers()
+  } catch (err) {
+    console.error('Ошибка инициализации:', err)
+  }
+})
 
 let allUsers = []
 let currentFilters = {
@@ -268,22 +301,6 @@ function setupSearch() {
   })
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = await ensureUserAuthenticated()
-  if (!user) return
-
-  renderUserInfo(user)
-  setupSearch()
-
-  await populateCountryAndClassOptions()
-
-  try {
-    await loadAllUsers()
-  } catch (err) {
-    console.error('Ошибка инициализации:', err)
-  }
-})
 
 // Функция debounce
 function debounce(func, delay) {
@@ -303,7 +320,7 @@ async function downloadAllUsersExcel() {
       return
     }
 
-    const response = await fetch(
+    const response = await authorizedFetch(
       'https://portal.gradients.academy/users/dashboard/export/',
       {
         method: 'GET',
@@ -461,7 +478,7 @@ async function addUser(formId, role = 'participant') {
       throw new Error('Токен не найден в localStorage')
     }
 
-    const response = await fetch(
+    const response = await authorizedFetch(
       'https://portal.gradients.academy/users/dashboard/',
       {
         method: 'POST',
@@ -508,21 +525,6 @@ async function addUser(formId, role = 'participant') {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document
-    .getElementById('participant-form')
-    .addEventListener('submit', (e) => {
-      e.preventDefault()
-      addUser('participant-form', 'participant')
-    })
-
-  document
-    .getElementById('representative-form')
-    .addEventListener('submit', (e) => {
-      e.preventDefault()
-      addUser('representative-form', 'representative')
-    })
-})
 
 async function deleteUser(userId) {
   const token = localStorage.getItem('access_token')
@@ -532,7 +534,7 @@ async function deleteUser(userId) {
   }
 
   try {
-    const response = await fetch(
+    const response = await authorizedFetch(
       `https://portal.gradients.academy/users/dashboard/${userId}/`,
       {
         method: 'DELETE',
@@ -644,7 +646,7 @@ async function updateUserFromEditForm() {
   }
 
   try {
-    const response = await fetch(
+    const response = await authorizedFetch(
       `https://portal.gradients.academy/users/dashboard/${userId}/`,
       {
         method: 'PUT',
@@ -684,42 +686,33 @@ function openEditModal(userId) {
   )
   if (roleRadio) roleRadio.checked = true
 
-  // Показать нужную форму
+  // Скрыть все формы и показать нужную
   document.querySelectorAll('#modalEdit .role-form').forEach((form) => {
     form.classList.add('hidden')
   })
   const activeForm = document.getElementById(`${role}-form-edit`)
   activeForm.classList.remove('hidden')
 
-  // Установить значения в форму
-  const email = activeForm.querySelector('input[name="email"]')
-  if (email) {
-    email.value = user.email
-    email.setAttribute('data-user-id', user.id)
-  }
+  // Заполнить форму данными пользователя
+  fillEditForm(activeForm, user)
 
-  const fullName = activeForm.querySelector('input[name="fullname"]')
-  if (fullName) fullName.value = user.full_name_ru
-
-  const country = activeForm.querySelector('input[name="country"]')
-  if (country) country.value = user.country
-
-  if (role === 'participant') {
-    activeForm.querySelector('input[name="city"]').value = user.city || ''
-    activeForm.querySelector('input[name="school"]').value = user.school || ''
-    activeForm.querySelector('input[name="class"]').value = user.grade || ''
-    activeForm.querySelector('input[name="parent_name"]').value =
-      user.parent_name_ru || ''
-    activeForm.querySelector('input[name="parent_phone"]').value =
-      user.parent_phone_number || ''
-    activeForm.querySelector('input[name="teacher_name"]').value =
-      user.teacher_name_ru || ''
-    activeForm.querySelector('input[name="teacher_phone"]').value =
-      user.teacher_phone_number || ''
-  }
+  // Обновление формы при переключении роли
+  const roleRadios = document.querySelectorAll('#modalEdit input[name="role"]')
+  roleRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      const selectedRole = radio.value
+      document.querySelectorAll('#modalEdit .role-form').forEach((form) => {
+        form.classList.add('hidden')
+      })
+      const newForm = document.getElementById(`${selectedRole}-form-edit`)
+      newForm.classList.remove('hidden')
+      fillEditForm(newForm, user)
+    })
+  })
 
   toggleModal('modalEdit', true)
 }
+
 
 let countryList = []
 
@@ -741,7 +734,7 @@ const classMap = {
 async function populateCountryAndClassOptions() {
   try {
     // Загрузка стран
-    const res = await fetch(
+    const res = await authorizedFetch(
       'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
     )
     const data = await res.json()
@@ -750,28 +743,34 @@ async function populateCountryAndClassOptions() {
 
     const countryInputs = document.querySelectorAll('input[name="country"]')
     countryInputs.forEach((input) => {
-      const datalistId = input.id + '-list'
-      input.setAttribute('list', datalistId)
+    console.log('Обрабатываем поле страны:', input.id)
+  let datalistId = input.getAttribute('list')
 
-      let datalist = document.getElementById(datalistId)
-      if (!datalist) {
-        datalist = document.createElement('datalist')
-        datalist.id = datalistId
-        document.body.appendChild(datalist)
-      }
+  // Если list не задан — создаём уникальный
+  if (!datalistId) {
+    datalistId = input.id + '-list'
+    input.setAttribute('list', datalistId)
+  }
 
-      datalist.innerHTML = countries
-        .map((c) => `<option value="${c.name}" data-code="${c.code}"></option>`)
-        .join('')
+  let datalist = document.getElementById(datalistId)
+  if (!datalist) {
+    datalist = document.createElement('datalist')
+    datalist.id = datalistId
+    document.body.appendChild(datalist)
+  }
 
-      // Обработчик выбора страны
-      input.addEventListener('change', () => {
-        const selected = countries.find((c) => c.name === input.value)
-        if (selected) {
-          input.value = selected.code
+  datalist.innerHTML = countries
+    .map((c) => `<option value="${c.name}" data-code="${c.code}"></option>`)
+    .join('')
+
+  input.addEventListener('change', () => {
+    const selected = countries.find((c) => c.name === input.value)
+    if (selected) {
+      input.value = selected.code
         }
       })
     })
+
 
     // Классы
 
@@ -803,3 +802,30 @@ async function populateCountryAndClassOptions() {
     console.error('Ошибка загрузки стран или классов:', err)
   }
 }
+
+
+function fillEditForm(form, user) {
+  const email = form.querySelector('input[name="email"]')
+  if (email) {
+    email.value = user.email || ''
+    email.setAttribute('data-user-id', user.id) // 🔥 ВАЖНО!
+  }
+
+  const fullName = form.querySelector('input[name="fullname"]')
+  if (fullName) fullName.value = user.full_name_ru
+
+  const country = form.querySelector('input[name="country"]')
+  if (country) country.value = user.country
+
+  if (form.id === 'participant-form-edit') {
+    form.querySelector('input[name="city"]').value = user.city || ''
+    form.querySelector('input[name="school"]').value = user.school || ''
+    form.querySelector('input[name="class"]').value = user.grade || ''
+    form.querySelector('input[name="parent_name"]').value = user.parent_name_ru || ''
+    form.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
+    form.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
+    form.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
+  }
+}
+
+

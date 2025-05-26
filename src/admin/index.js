@@ -29,7 +29,9 @@ async function ensureUserAuthenticated() {
   // Проверяем роль
   const role = user.profile?.role
   if (role !== 'administrator') {
-    console.warn(`Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`)
+    console.warn(
+      `Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`
+    )
     window.location.href = '/index.html'
     return null
   }
@@ -115,7 +117,6 @@ async function loadCurrentOlympiad() {
   }
 }
 
-
 async function loadCurrentOlympiadStats() {
   try {
     const res = await authorizedFetch(
@@ -146,7 +147,6 @@ async function loadCurrentOlympiadStats() {
   }
 }
 
-
 async function loadParticipantsTrend() {
   try {
     const res = await authorizedFetch(
@@ -164,7 +164,6 @@ async function loadParticipantsTrend() {
 
     console.log('labels:', labels)
     console.log('counts:', counts)
-
 
     // Обновляем график
     const ctx = document.getElementById('participantsChart').getContext('2d')
@@ -242,5 +241,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Ошибка при загрузке данных:', err)
   }
 })
-
-

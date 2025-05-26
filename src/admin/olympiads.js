@@ -29,7 +29,9 @@ async function ensureUserAuthenticated() {
   // Проверяем роль
   const role = user.profile?.role
   if (role !== 'administrator') {
-    console.warn(`Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`)
+    console.warn(
+      `Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`
+    )
     window.location.href = '/index.html'
     return null
   }
@@ -107,6 +109,7 @@ async function loadOlympiads() {
   }
 }
 
+
 function renderOlympiadTable(olympiads) {
   const tbody = document.getElementById('olympiads-tbody')
   if (!tbody) return
@@ -149,6 +152,7 @@ function renderOlympiadTable(olympiads) {
           .join('')
 }
 
+
 function getSeasonLabel(type) {
   const map = {
     spring: '🌸 Весна',
@@ -159,6 +163,7 @@ function getSeasonLabel(type) {
   return map[type] || type
 }
 
+
 function getStatusLabel(status) {
   const map = {
     ongoing: 'Идёт сейчас',
@@ -168,6 +173,7 @@ function getStatusLabel(status) {
   return map[status] || status
 }
 
+
 function getStatusClass(status) {
   const map = {
     ongoing: 'ongoing',
@@ -176,6 +182,7 @@ function getStatusClass(status) {
   }
   return map[status] || ''
 }
+
 
 async function updateTotalCountAndPagination() {
   const params = new URLSearchParams()
@@ -205,6 +212,7 @@ async function updateTotalCountAndPagination() {
 
 let allOlympiads = []
 
+
 function setupFilters() {
   document
     .getElementById('search-olympiads')
@@ -216,6 +224,7 @@ function setupFilters() {
     .getElementById('filter-status')
     .addEventListener('change', applyFilters)
 }
+
 
 function applyFilters() {
   const search = document.getElementById('search-olympiads').value.toLowerCase()
@@ -239,6 +248,7 @@ function applyFilters() {
 let currentPage = 1
 const pageSize = 10
 
+
 function renderPaginatedTable() {
   const start = (currentPage - 1) * pageSize
   const end = start + pageSize
@@ -250,6 +260,7 @@ function renderPaginatedTable() {
   renderOlympiadTable(pageData)
   renderPagination()
 }
+
 
 function renderPagination() {
   const container = document.querySelector('.pagination')
@@ -275,10 +286,12 @@ function renderPagination() {
   `
 }
 
+
 function goToPage(page) {
   currentPage = page
   renderPaginatedTable()
 }
+
 
 function openDeleteModal(title, id) {
   olympiadIdToDelete = id
@@ -337,6 +350,7 @@ async function deleteOlympiad() {
   }
 }
 
+
 function closeModal(id) {
   const modal = document.getElementById(id)
   const overlay = document.getElementById('overlayModal')
@@ -344,6 +358,7 @@ function closeModal(id) {
   if (modal) modal.classList.add('hidden')
   if (overlay) overlay.classList.add('hidden')
 }
+
 
 function openEditModal(title, id) {
   olympiadIdToDelete = id // используем ту же переменную
@@ -358,3 +373,144 @@ function openEditModal(title, id) {
   modal.classList.remove('hidden')
   overlay.classList.remove('hidden')
 }
+
+
+document.getElementById('certificate-background').addEventListener('change', function () {
+  const fileName = this.files[0]?.name || 'Файл не выбран';
+  document.getElementById('file-name').textContent = fileName;
+});
+
+
+async function submitOlympiadForm() {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+
+  const formData = new FormData();
+
+  // 📌 Общие поля
+  const title = document.getElementById('title-add')?.value;
+  const typeLabel = document.getElementById('tour-add')?.value;
+  const typeMap = {
+    'Весна': 'spring',
+    'Осень': 'autumn',
+    'Зима': 'winter',
+    'Лето': 'summer',
+  };
+  const type = typeMap[typeLabel] || 'spring';
+
+  const year = document.getElementById('year-add')?.value;
+  const cost = document.getElementById('price')?.value;
+
+  // 📌 Классы
+  const gradesSelect = document.getElementById('grades-add');
+  const grades = Array.from(gradesSelect.selectedOptions).map(opt => parseInt(opt.value));
+  if (grades.length === 0) {
+    alert('Выберите хотя бы один класс');
+    return;
+  }
+
+  // 📌 Этапы
+    const stepNames = document.querySelectorAll('.step-name-add');
+    const dateRanges = document.querySelectorAll('.date-range-add');
+
+    const stages = [];
+
+    for (let i = 0; i < stepNames.length; i++) {
+      const range = dateRanges[i]?.value.split(' — ');
+      if (!range || range.length !== 2) continue;
+
+      stages.push({
+        name: stepNames[i].value,
+        start_date: formatDate(range[0]),
+        end_date: formatDate(range[1]),
+      });
+    }
+
+
+    console.log('✅ Сформированные stages:', stages);
+    if (!stages.length) {
+  alert('Этапы не выбраны или не распарсились!');
+  return;}
+
+
+
+
+  // 📌 Сертификат
+  const headerText = document.getElementById('title_certificate-add')?.value;
+  const signature1 = document.getElementById('sign-add')?.value.trim();
+  const signature2 = document.getElementById('sign-add')?.value.trim();
+  const background = document.getElementById('certificate-background')?.files[0];
+
+  if (!background) {
+    alert('Пожалуйста, загрузите фон сертификата.');
+    return;
+  }
+
+  // 🧩 Собираем все поля
+  formData.append('title', title);
+  formData.append('type', type);
+  formData.append('year', year);
+  formData.append('cost', cost);
+  grades.forEach(g => formData.append('grades', g));
+    stages.forEach((stage, index) => {
+      formData.append(`stages[${index}][name]`, stage.name);
+      formData.append(`stages[${index}][start_date]`, stage.start_date);
+      formData.append(`stages[${index}][end_date]`, stage.end_date);
+    });
+
+
+
+
+//  formData.append('certificate_template', JSON.stringify({
+//    header_text: headerText,
+//    signature_1: signature1,
+//    signature_2: signature2
+//  }));
+//
+//  formData.append('certificate_template.background', background);
+    formData.append('certificate_template.header_text', headerText);
+    formData.append('certificate_template.signature_1', signature1);
+    formData.append('certificate_template.signature_2', signature2);
+    formData.append('certificate_template.background', background);
+
+
+    console.log('------ FORM DATA ------');
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
+
+
+  try {
+    const res = await fetch('https://portal.gradients.academy/olympiads/dashboard/', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // Content-Type НЕ указывать вручную — FormData сам выставит
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(JSON.stringify(error));
+    }
+
+    alert('Олимпиада успешно добавлена!');
+    toggleModal('modalAdd', false);
+    await loadOlympiads(); // если у тебя есть функция загрузки
+  } catch (err) {
+    console.error('Ошибка при создании олимпиады:', err);
+    alert(`Ошибка: ${err.message}`);
+  }
+}
+
+
+function formatDate(dateStr) {
+  const [d, m, y] = dateStr.split('.');
+  return `${y}-${m}-${d}`;
+}
+

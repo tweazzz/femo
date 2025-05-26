@@ -390,13 +390,12 @@
                                   type="text"
                                   name="country"
                                   class="input-base border-default"
-                                  id="country-participant"
-                                  list="country-participant-list"
+                                  id="country-participant-add"
+                                  list="country-participant-add-list"
                                   required
                                 />
-
                                 <datalist
-                                  id="country-participant-list"
+                                  id="country-participant-add-list"
                                 ></datalist>
                               </div>
                               <div>
@@ -631,13 +630,12 @@
                                   type="text"
                                   name="country"
                                   class="input-base border-default"
-                                  id="country-representative"
-                                  list="country-representative-list"
+                                  id="country-representative-add"
+                                  list="country-representative-add-list"
                                   required
                                 />
-
                                 <datalist
-                                  id="country-representative-list"
+                                  id="country-representative-add-list"
                                 ></datalist>
                               </div>
                               <div>
@@ -822,7 +820,7 @@
                                 />
                               </div>
                               <div>
-                                <label
+                              <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
                                   >Страна
                                   <span class="text-red-primary">*</span></label
@@ -832,8 +830,13 @@
                                   type="text"
                                   name="country"
                                   class="input-base border-default"
+                                  id="country-participant-edit"
+                                  list="country-participant-edit-list"
                                   required
                                 />
+                                <datalist
+                                  id="country-participant-edit-list"
+                                ></datalist>
                               </div>
                               <div>
                                 <label
@@ -870,12 +873,18 @@
                                   <span class="text-red-primary">*</span></label
                                 >
                                 <input
-                                  placeholder="fifth"
+                                  placeholder="5"
                                   type="text"
                                   name="class"
                                   class="input-base border-default"
+                                  id="class-participant-edit"
+                                  list="class-participant-list-edit"
                                   required
                                 />
+
+                                <datalist
+                                  id="class-participant-list-edit"
+                                ></datalist>
                               </div>
                               <div>
                                 <label
@@ -1113,8 +1122,13 @@
                                   type="text"
                                   name="country"
                                   class="input-base border-default"
+                                  id="country-representative-edit"
+                                  list="country-representative-edit-list"
                                   required
                                 />
+                                <datalist
+                                  id="country-representative-edit-list"
+                                ></datalist>
                               </div>
                               <div>
                                 <label
@@ -2420,7 +2434,7 @@
             const selectedValue = this.value
 
             roleForms.forEach((form) => {
-              if (form.id === `${selectedValue}-form`) {
+              if (form.id === `${selectedValue}-form` || form.id === `${selectedValue}-form-edit`) {
                 form.classList.remove('hidden')
               } else {
                 form.classList.add('hidden')
@@ -2429,21 +2443,37 @@
           })
         })
 
-        // Handle form submissions
+        // ✅ Добавить обработчики для форм редактирования
+        document
+          .getElementById('participant-form-edit')
+          .addEventListener('submit', function (e) {
+            e.preventDefault()
+            updateUserFromEditForm()
+          })
+
+        document
+          .getElementById('representative-form-edit')
+          .addEventListener('submit', function (e) {
+            e.preventDefault()
+            updateUserFromEditForm()
+          })
+
+        // ✅ Обработчики для форм добавления (уже были)
         document
           .getElementById('participant-form')
           .addEventListener('submit', function (e) {
             e.preventDefault()
-            // Handle participant form submission
+            addUser('participant-form', 'participant')
           })
 
         document
           .getElementById('representative-form')
           .addEventListener('submit', function (e) {
             e.preventDefault()
-            // Handle representative form submission
+            addUser('representative-form', 'representative')
           })
       })
+
 
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
