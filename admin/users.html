@@ -820,7 +820,7 @@
                                 />
                               </div>
                               <div>
-                              <label
+                                <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
                                   >Страна
                                   <span class="text-red-primary">*</span></label
@@ -2434,7 +2434,10 @@
             const selectedValue = this.value
 
             roleForms.forEach((form) => {
-              if (form.id === `${selectedValue}-form` || form.id === `${selectedValue}-form-edit`) {
+              if (
+                form.id === `${selectedValue}-form` ||
+                form.id === `${selectedValue}-form-edit`
+              ) {
                 form.classList.remove('hidden')
               } else {
                 form.classList.add('hidden')
@@ -2473,7 +2476,6 @@
             addUser('representative-form', 'representative')
           })
       })
-
 
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {

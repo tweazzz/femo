@@ -67,10 +67,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-      await loadAssignments()
-      setupAssignmentFilters()
-      await populateCountryFilter()
-      await populateOlympiadFilter()
+    await loadAssignments()
+    setupAssignmentFilters()
+    await populateCountryFilter()
+    await populateOlympiadFilter()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -97,13 +97,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       try {
-        const response = await fetch('https://portal.gradients.academy/results/dashboard/results/import/', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        })
+        const response = await fetch(
+          'https://portal.gradients.academy/results/dashboard/results/import/',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        )
 
         if (!response.ok) {
           const errorText = await response.text()
@@ -121,48 +124,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const publishButton = document.getElementById('publish-button')
 
-if (publishButton) {
-  publishButton.addEventListener('click', async () => {
-    const token = localStorage.getItem('access_token')
-    if (!token) {
-      alert('Токен не найден. Пожалуйста, войдите заново.')
-      return
-    }
-
-    // Собираем все ID из отфильтрованных данных
-    const ids = allAssignments.map(item => item.id)
-
-    console.log('Ids',ids)
-
-    if (ids.length === 0) {
-      alert('Нет данных для публикации.')
-      return
-    }
-
-    try {
-      const response = await authorizedFetch('https://portal.gradients.academy/results/dashboard/results/publish/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ids }),
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Ошибка публикации: ${response.status} — ${errorText}`)
+  if (publishButton) {
+    publishButton.addEventListener('click', async () => {
+      const token = localStorage.getItem('access_token')
+      if (!token) {
+        alert('Токен не найден. Пожалуйста, войдите заново.')
+        return
       }
 
-      alert('Результаты успешно опубликованы!')
-      await loadAssignments()
-    } catch (err) {
-      console.error('Ошибка при публикации:', err)
-      alert('Ошибка при публикации результатов.')
-    }
-  })
-}
+      // Собираем все ID из отфильтрованных данных
+      const ids = allAssignments.map((item) => item.id)
 
+      console.log('Ids', ids)
+
+      if (ids.length === 0) {
+        alert('Нет данных для публикации.')
+        return
+      }
+
+      try {
+        const response = await authorizedFetch(
+          'https://portal.gradients.academy/results/dashboard/results/publish/',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids }),
+          }
+        )
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(
+            `Ошибка публикации: ${response.status} — ${errorText}`
+          )
+        }
+
+        alert('Результаты успешно опубликованы!')
+        await loadAssignments()
+      } catch (err) {
+        console.error('Ошибка при публикации:', err)
+        alert('Ошибка при публикации результатов.')
+      }
+    })
+  }
 })
 
 let allAssignments = []
@@ -205,18 +212,18 @@ async function loadAssignments(page = 1) {
   params.append('page', page)
   if (assignmentFilters.search)
     params.append('search', assignmentFilters.search)
-  if (assignmentFilters.country) params.append('country', assignmentFilters.country)
+  if (assignmentFilters.country)
+    params.append('country', assignmentFilters.country)
   if (assignmentFilters.grade) {
-      const gradeKey = assignmentFilters.grade
-      const gradeValue = classMap[gradeKey]
-      if (gradeValue) {
-        params.append('grade', gradeValue)
-      }
+    const gradeKey = assignmentFilters.grade
+    const gradeValue = classMap[gradeKey]
+    if (gradeValue) {
+      params.append('grade', gradeValue)
+    }
   }
   if (assignmentFilters.olympiad) {
     params.append('olympiad', assignmentFilters.olympiad)
   }
-
 
   try {
     const response = await authorizedFetch(
@@ -249,7 +256,6 @@ async function loadAssignments(page = 1) {
   }
 }
 
-
 function renderAssignmentTable(assignments) {
   const tbody = document.getElementById('results-tbody')
   if (!tbody) return
@@ -266,7 +272,7 @@ function renderAssignmentTable(assignments) {
         <td>${task.rank}</td>
         <td>${task.participant_name}</td>
         <td>${task.country}</td>
-        <td>${Object.keys(classMap).find(key => classMap[key] === task.grade) || task.grade}</td>
+        <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
         <td>${task.score}</td>
         <td>${task.result}</td>
         <td>
@@ -298,7 +304,6 @@ function renderAssignmentTable(assignments) {
           })
           .join('')
 }
-
 
 function renderAssignmentPagination() {
   const container = document.querySelector('.pagination')
@@ -341,19 +346,19 @@ function renderPaginatedAssignments() {
   renderAssignmentPagination()
 }
 
-
 function applyAssignmentFilters() {
   assignmentFilters.search =
     document.getElementById('search-participant')?.value.trim() || ''
-  assignmentFilters.country = document.getElementById('filter-country')?.value || ''
+  assignmentFilters.country =
+    document.getElementById('filter-country')?.value || ''
   assignmentFilters.grade = document.getElementById('filter-grade')?.value || ''
-  assignmentFilters.olympiad = document.getElementById('filter-olympiad')?.value || ''
+  assignmentFilters.olympiad =
+    document.getElementById('filter-olympiad')?.value || ''
 
   loadOlympiadSummary(assignmentFilters.olympiad)
 
   loadAssignments(1) // всегда загружаем первую страницу при изменении фильтров
 }
-
 
 function setupAssignmentFilters() {
   document
@@ -370,10 +375,11 @@ function setupAssignmentFilters() {
     ?.addEventListener('change', applyAssignmentFilters)
 }
 
-
 async function populateCountryFilter() {
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/common/countries/?page=1&page_size=500')
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+    )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 
     const data = await response.json()
@@ -390,10 +396,11 @@ async function populateCountryFilter() {
   }
 }
 
-
 async function populateOlympiadFilter() {
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/olympiads/dashboard/')
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/olympiads/dashboard/'
+    )
     if (!response.ok) throw new Error('Ошибка загрузки олимпиад')
 
     const data = await response.json()
@@ -410,7 +417,6 @@ async function populateOlympiadFilter() {
   }
 }
 
-
 async function loadOlympiadSummary(olympiadId) {
   if (!olympiadId) {
     // Очистить карточки, если ничего не выбрано
@@ -422,20 +428,23 @@ async function loadOlympiadSummary(olympiadId) {
   }
 
   try {
-    const response = await authorizedFetch(`https://portal.gradients.academy/results/dashboard/results/summary/?olympiad=${olympiadId}`)
+    const response = await authorizedFetch(
+      `https://portal.gradients.academy/results/dashboard/results/summary/?olympiad=${olympiadId}`
+    )
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
     const data = await response.json()
 
     document.getElementById('summary-title').textContent = data.olympiad.title
-    document.getElementById('summary-period').textContent = `с ${data.period.start} до ${data.period.end}`
-    document.getElementById('summary-participants').textContent = data.participant_count
+    document.getElementById('summary-period').textContent =
+      `с ${data.period.start} до ${data.period.end}`
+    document.getElementById('summary-participants').textContent =
+      data.participant_count
     document.getElementById('summary-average').textContent = data.average_score
   } catch (err) {
     console.error('Ошибка при загрузке сводной информации:', err)
   }
 }
-
 
 async function exportTableToExcel() {
   const token = localStorage.getItem('access_token')
@@ -449,10 +458,14 @@ async function exportTableToExcel() {
   let totalPages = 1
 
   const params = new URLSearchParams()
-  if (assignmentFilters.search) params.append('search', assignmentFilters.search)
-  if (assignmentFilters.country) params.append('country', assignmentFilters.country)
-  if (assignmentFilters.grade) params.append('grade', classMap[assignmentFilters.grade])
-  if (assignmentFilters.olympiad) params.append('olympiad', assignmentFilters.olympiad)
+  if (assignmentFilters.search)
+    params.append('search', assignmentFilters.search)
+  if (assignmentFilters.country)
+    params.append('country', assignmentFilters.country)
+  if (assignmentFilters.grade)
+    params.append('grade', classMap[assignmentFilters.grade])
+  if (assignmentFilters.olympiad)
+    params.append('olympiad', assignmentFilters.olympiad)
 
   try {
     do {
@@ -481,19 +494,31 @@ async function exportTableToExcel() {
     }
 
     const worksheetData = [
-      ['id', 'participant_id', 'rank', 'participant_name', 'country', 'grade', 'score', 'total_tasks', 'solved_tasks', 'olympiad_id'],
-      ...allData.map(item => [
+      [
+        'id',
+        'participant_id',
+        'rank',
+        'participant_name',
+        'country',
+        'grade',
+        'score',
+        'total_tasks',
+        'solved_tasks',
+        'olympiad_id',
+      ],
+      ...allData.map((item) => [
         item.id,
         item.participant_id,
         item.rank,
         item.participant_name,
         item.country,
-        Object.keys(classMap).find(key => classMap[key] === item.grade) || item.grade,
+        Object.keys(classMap).find((key) => classMap[key] === item.grade) ||
+          item.grade,
         item.score,
-        item.result.split("/")[1],
-        item.result.split("/")[0],
-        item.olympiad_id
-      ])
+        item.result.split('/')[1],
+        item.result.split('/')[0],
+        item.olympiad_id,
+      ]),
     ]
 
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData)
@@ -507,7 +532,6 @@ async function exportTableToExcel() {
   }
 }
 
-
 async function handleSinglePublish(id) {
   const token = localStorage.getItem('access_token')
   if (!token) {
@@ -516,14 +540,17 @@ async function handleSinglePublish(id) {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/results/dashboard/results/publish/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ids: [id] }),
-    })
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/results/dashboard/results/publish/',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids: [id] }),
+      }
+    )
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -538,136 +565,169 @@ async function handleSinglePublish(id) {
   }
 }
 
-
 function handleEditClick(button) {
-  populateOlympiadSelectInModal();
-  populateClassSelectInModal();
-  populateCountrySelectInModal();
-  const task = JSON.parse(decodeURIComponent(button.dataset.task));
-  resultBeingEditedId = task.id;
+  populateOlympiadSelectInModal()
+  populateClassSelectInModal()
+  populateCountrySelectInModal()
+  const task = JSON.parse(decodeURIComponent(button.dataset.task))
+  resultBeingEditedId = task.id
 
-  document.getElementById('fio').value = task.participant_name || '';
-  document.getElementById('olympiad').value = task.olympiad || '';
-  document.getElementById('grades').value = task.grade || '';
-  document.getElementById('country').value = task.country || '';
-  document.getElementById('solved_task').value = task.result.split("/")[0] || '';
-  document.getElementById('total_task').value = task.result.split("/")[1] || '';
-  document.getElementById('score').value = task.score || '';
+  document.getElementById('fio').value = task.participant_name || ''
+  document.getElementById('olympiad').value = task.olympiad || ''
+  document.getElementById('grades').value = task.grade || ''
+  document.getElementById('country').value = task.country || ''
+  document.getElementById('solved_task').value = task.result.split('/')[0] || ''
+  document.getElementById('total_task').value = task.result.split('/')[1] || ''
+  document.getElementById('score').value = task.score || ''
 
-  toggleModal('modalEdit', true);
+  toggleModal('modalEdit', true)
 }
 
+document
+  .getElementById('save-edit-button')
+  .addEventListener('click', async () => {
+    const token = localStorage.getItem('access_token')
+    if (!token || !resultBeingEditedId) return
 
-document.getElementById('save-edit-button').addEventListener('click', async () => {
-  const token = localStorage.getItem('access_token');
-  if (!token || !resultBeingEditedId) return;
+    const full_name_ru = document.getElementById('fio').value
+    const olympiad = document.getElementById('olympiad').value
+    const grade = document.getElementById('grades').value
+    const country = document.getElementById('country').value
+    const solved_tasks = document.getElementById('solved_task').value
+    const total_tasks = document.getElementById('total_task').value
+    const score = document.getElementById('score').value
 
-  const full_name_ru = document.getElementById('fio').value;
-  const olympiad = document.getElementById('olympiad').value;
-  const grade = document.getElementById('grades').value;
-  const country = document.getElementById('country').value;
-  const solved_tasks = document.getElementById('solved_task').value;
-  const total_tasks = document.getElementById('total_task').value;
-  const score = document.getElementById('score').value;
-
-  const body = {
-    full_name_ru,
-    olympiad,
-    grade,
-    country,
-    solved_tasks,
-    total_tasks,
-    score,
-  };
-   console.log('BODY', body)
-  try {
-    const response = await fetch(`https://portal.gradients.academy/results/dashboard/results/${resultBeingEditedId}/`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Ошибка: ${response.status} — ${errorText}`);
+    const body = {
+      full_name_ru,
+      olympiad,
+      grade,
+      country,
+      solved_tasks,
+      total_tasks,
+      score,
     }
+    console.log('BODY', body)
+    try {
+      const response = await fetch(
+        `https://portal.gradients.academy/results/dashboard/results/${resultBeingEditedId}/`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        }
+      )
 
-    alert('Результат успешно обновлён!');
-    toggleModal('modalEdit', false);
-    await loadAssignments(); // Или другую нужную функцию загрузки
-  } catch (err) {
-    console.error('Ошибка при сохранении:', err);
-    alert('Ошибка при сохранении результата.');
-  }
-});
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Ошибка: ${response.status} — ${errorText}`)
+      }
 
+      alert('Результат успешно обновлён!')
+      toggleModal('modalEdit', false)
+      await loadAssignments() // Или другую нужную функцию загрузки
+    } catch (err) {
+      console.error('Ошибка при сохранении:', err)
+      alert('Ошибка при сохранении результата.')
+    }
+  })
 
 async function populateOlympiadSelectInModal() {
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/olympiads/dashboard/');
-    if (!response.ok) throw new Error('Ошибка загрузки олимпиад');
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/olympiads/dashboard/'
+    )
+    if (!response.ok) throw new Error('Ошибка загрузки олимпиад')
 
-    const data = await response.json();
-    const select = document.getElementById('olympiad');
+    const data = await response.json()
+    const select = document.getElementById('olympiad')
 
     // Очистить старые опции
-    select.innerHTML = '<option value="">Выберите олимпиаду</option>';
+    select.innerHTML = '<option value="">Выберите олимпиаду</option>'
 
     data.results.forEach((olympiad) => {
-      const option = document.createElement('option');
-      option.value = olympiad.id;
-      option.textContent = olympiad.title;
-      select.appendChild(option);
-    });
+      const option = document.createElement('option')
+      option.value = olympiad.id
+      option.textContent = olympiad.title
+      select.appendChild(option)
+    })
   } catch (err) {
-    console.error('Не удалось загрузить олимпиады для модального окна:', err);
+    console.error('Не удалось загрузить олимпиады для модального окна:', err)
   }
 }
 
-
 function populateClassSelectInModal() {
-  const select = document.getElementById('grades');
-  if (!select) return;
+  const select = document.getElementById('grades')
+  if (!select) return
 
-  select.innerHTML = '<option value="">Выберите класс</option>';
+  select.innerHTML = '<option value="">Выберите класс</option>'
 
   Object.entries(classMap).forEach(([key, value]) => {
-    const option = document.createElement('option');
-    option.value = value;         // значение отправляется на сервер
-    option.textContent = `${key} класс`; // отображается пользователю
-    select.appendChild(option);
-  });
+    const option = document.createElement('option')
+    option.value = value // значение отправляется на сервер
+    option.textContent = `${key} класс` // отображается пользователю
+    select.appendChild(option)
+  })
 }
-
 
 async function populateCountrySelectInModal() {
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/common/countries/?page=1&page_size=500')
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+    )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 
     const data = await response.json()
     const select = document.getElementById('country') // id внутри модального окна
 
-    if (!select) return;
+    if (!select) return
 
-    select.innerHTML = '<option value="">Выберите страну</option>';
+    select.innerHTML = '<option value="">Выберите страну</option>'
 
     data.results.forEach((country) => {
-      const option = document.createElement('option');
-      option.value = country.code;         // value — код страны (например, 'KZ')
-      option.textContent = country.name;   // текст — читаемое название
-      select.appendChild(option);
-    });
+      const option = document.createElement('option')
+      option.value = country.code // value — код страны (например, 'KZ')
+      option.textContent = country.name // текст — читаемое название
+      select.appendChild(option)
+    })
   } catch (err) {
-    console.error('Не удалось загрузить список стран:', err);
+    console.error('Не удалось загрузить список стран:', err)
   }
 }
 
-
 function openDeleteModal(title, id) {
-  resultIdToDelete = id;
-  toggleModal('modalDel', true);
+  resultIdToDelete = id
+  toggleModal('modalDel', true)
+}
+
+
+function downloadCertificate(id) {
+  const url = `https://portal.gradients.academy/certificates/dashboard/${id}/download`
+  const token = localStorage.getItem('access_token') // или где вы его храните
+
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке файла')
+      }
+      return response.blob()
+    })
+    .then((blob) => {
+      const link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = `certificate_${id}.pdf` // Можно изменить на нужный формат
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    })
+    .catch((error) => {
+      alert(`Ошибка: ${error.message}`)
+    })
 }

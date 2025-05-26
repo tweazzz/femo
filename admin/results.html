@@ -283,8 +283,14 @@
               >
                 Загрузить оценки олимпиады
               </button>
-              <input type="file" id="upload-xlsx" accept=".xlsx" style="display: none" />
-              <button id="publish-button"
+              <input
+                type="file"
+                id="upload-xlsx"
+                accept=".xlsx"
+                style="display: none"
+              />
+              <button
+                id="publish-button"
                 class="border-orange-primary bg-orange-primary flex cursor-pointer items-center gap-1 rounded-xl border-1 px-4 py-2 text-white"
               >
                 <svg
@@ -543,7 +549,8 @@
                                   >Баллы за олимпиаду
                                   <span class="text-red-primary">*</span></label
                                 >
-                                <input id="score"
+                                <input
+                                  id="score"
                                   type="number"
                                   class="input-base border-default appearance-none"
                                   required
@@ -602,7 +609,11 @@
                             </span>
                             Отменить
                           </button>
-                          <button id="save-edit-button" type="button" class="btn-orange">
+                          <button
+                            id="save-edit-button"
+                            type="button"
+                            class="btn-orange"
+                          >
                             <span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -650,10 +661,13 @@
           </div>
 
           <p class="text-sm">
-            <a href="#" onclick="exportTableToExcel()" class="text-orange-primary">Скачайте шаблон</a>, введите оценки и загрузите обратно
+            <a
+              href="#"
+              onclick="exportTableToExcel()"
+              class="text-orange-primary"
+              >Скачайте шаблон</a
+            >, введите оценки и загрузите обратно
           </p>
-
-
 
           <!-- Control Panel -->
           <div class="my-6 rounded-lg bg-white">
@@ -689,7 +703,6 @@
                 id="filter-country"
               >
                 <option value="">Все страны</option>
-
               </select>
 
               <select
@@ -708,7 +721,6 @@
                 <option value="9">9 класс</option>
                 <option value="10">10 класс</option>
                 <option value="11">11 класс</option>
-
               </select>
 
               <select
@@ -729,8 +741,10 @@
             >
               <div>
                 <p class="text-sm">Олимпиада</p>
-                <p id="summary-title" class="text-blue-primary text-2xl font-semibold">
-                </p>
+                <p
+                  id="summary-title"
+                  class="text-blue-primary text-2xl font-semibold"
+                ></p>
               </div>
             </div>
 
@@ -740,8 +754,10 @@
             >
               <div>
                 <p class="text-sm">Дата проведения</p>
-                <p id="summary-period" class="text-red-primary text-2xl font-semibold">
-                </p>
+                <p
+                  id="summary-period"
+                  class="text-red-primary text-2xl font-semibold"
+                ></p>
               </div>
             </div>
             <!-- Card 3 -->
@@ -751,7 +767,10 @@
             >
               <div>
                 <p class="text-sm">Участники</p>
-                <p id="summary-participants" class="text-violet-primary text-2xl font-semibold"></p>
+                <p
+                  id="summary-participants"
+                  class="text-violet-primary text-2xl font-semibold"
+                ></p>
               </div>
             </div>
 
@@ -761,7 +780,10 @@
             >
               <div>
                 <p class="text-sm">Средний балл участников</p>
-                <p id="summary-average" class="text-orange-primary text-2xl font-semibold"></p>
+                <p
+                  id="summary-average"
+                  class="text-orange-primary text-2xl font-semibold"
+                ></p>
               </div>
             </div>
           </div>
@@ -834,8 +856,10 @@
                   <th class="p-table">Действия</th>
                 </tr>
               </thead>
-              <tbody id="results-tbody" class="divide-y divide-gray-200">
-              </tbody>
+              <tbody
+                id="results-tbody"
+                class="divide-y divide-gray-200"
+              ></tbody>
             </table>
           </div>
 
@@ -1425,9 +1449,9 @@
         flatpickr('#dateRange', {
           dateFormat: 'd.m.Y',
           locale: {
-            firstDayOfWeek: 1
+            firstDayOfWeek: 1,
           },
-        });
+        })
 
         // Add click event listeners to tabs
         tabs.forEach((tab) => {

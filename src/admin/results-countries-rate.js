@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-      //await loadAssignments()
-      //setupAssignmentFilters()
+    //await loadAssignments()
+    //setupAssignmentFilters()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }

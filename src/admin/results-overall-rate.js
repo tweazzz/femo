@@ -75,32 +75,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 })
 
-
 async function loadGlobalStats() {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('access_token')
   if (!token) {
-    console.warn('Токен не найден. Пропускаем загрузку статистики.');
-    return;
+    console.warn('Токен не найден. Пропускаем загрузку статистики.')
+    return
   }
 
   try {
-    const response = await fetch('https://portal.gradients.academy/results/dashboard/results/stats/', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      'https://portal.gradients.academy/results/dashboard/results/stats/',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
 
     if (!response.ok) {
-      throw new Error(`Ошибка загрузки статистики: ${response.status}`);
+      throw new Error(`Ошибка загрузки статистики: ${response.status}`)
     }
 
-    const data = await response.json();
+    const data = await response.json()
 
     // Записываем данные в карточки
-    document.getElementById('participants').textContent = data.total_participants ?? '—';
-    document.getElementById('average_score').textContent = data.average_score?.toFixed(2) ?? '—';
+    document.getElementById('participants').textContent =
+      data.total_participants ?? '—'
+    document.getElementById('average_score').textContent =
+      data.average_score?.toFixed(2) ?? '—'
   } catch (err) {
-    console.error('Ошибка при загрузке общей статистики:', err);
+    console.error('Ошибка при загрузке общей статистики:', err)
   }
 }
-

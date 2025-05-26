@@ -301,7 +301,6 @@ function setupSearch() {
   })
 }
 
-
 // Функция debounce
 function debounce(func, delay) {
   let timeoutId
@@ -525,7 +524,6 @@ async function addUser(formId, role = 'participant') {
   }
 }
 
-
 async function deleteUser(userId) {
   const token = localStorage.getItem('access_token')
   if (!token) {
@@ -713,7 +711,6 @@ function openEditModal(userId) {
   toggleModal('modalEdit', true)
 }
 
-
 let countryList = []
 
 const classMap = {
@@ -743,34 +740,33 @@ async function populateCountryAndClassOptions() {
 
     const countryInputs = document.querySelectorAll('input[name="country"]')
     countryInputs.forEach((input) => {
-    console.log('Обрабатываем поле страны:', input.id)
-  let datalistId = input.getAttribute('list')
+      console.log('Обрабатываем поле страны:', input.id)
+      let datalistId = input.getAttribute('list')
 
-  // Если list не задан — создаём уникальный
-  if (!datalistId) {
-    datalistId = input.id + '-list'
-    input.setAttribute('list', datalistId)
-  }
+      // Если list не задан — создаём уникальный
+      if (!datalistId) {
+        datalistId = input.id + '-list'
+        input.setAttribute('list', datalistId)
+      }
 
-  let datalist = document.getElementById(datalistId)
-  if (!datalist) {
-    datalist = document.createElement('datalist')
-    datalist.id = datalistId
-    document.body.appendChild(datalist)
-  }
+      let datalist = document.getElementById(datalistId)
+      if (!datalist) {
+        datalist = document.createElement('datalist')
+        datalist.id = datalistId
+        document.body.appendChild(datalist)
+      }
 
-  datalist.innerHTML = countries
-    .map((c) => `<option value="${c.name}" data-code="${c.code}"></option>`)
-    .join('')
+      datalist.innerHTML = countries
+        .map((c) => `<option value="${c.name}" data-code="${c.code}"></option>`)
+        .join('')
 
-  input.addEventListener('change', () => {
-    const selected = countries.find((c) => c.name === input.value)
-    if (selected) {
-      input.value = selected.code
+      input.addEventListener('change', () => {
+        const selected = countries.find((c) => c.name === input.value)
+        if (selected) {
+          input.value = selected.code
         }
       })
     })
-
 
     // Классы
 
@@ -803,7 +799,6 @@ async function populateCountryAndClassOptions() {
   }
 }
 
-
 function fillEditForm(form, user) {
   const email = form.querySelector('input[name="email"]')
   if (email) {
@@ -821,11 +816,13 @@ function fillEditForm(form, user) {
     form.querySelector('input[name="city"]').value = user.city || ''
     form.querySelector('input[name="school"]').value = user.school || ''
     form.querySelector('input[name="class"]').value = user.grade || ''
-    form.querySelector('input[name="parent_name"]').value = user.parent_name_ru || ''
-    form.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
-    form.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
-    form.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
+    form.querySelector('input[name="parent_name"]').value =
+      user.parent_name_ru || ''
+    form.querySelector('input[name="parent_phone"]').value =
+      user.parent_phone_number || ''
+    form.querySelector('input[name="teacher_name"]').value =
+      user.teacher_name_ru || ''
+    form.querySelector('input[name="teacher_phone"]').value =
+      user.teacher_phone_number || ''
   }
 }
-
-

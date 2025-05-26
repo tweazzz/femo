@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-      await loadAssignments()
-      setupAssignmentFilters()
+    await loadAssignments()
+    setupAssignmentFilters()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -273,7 +273,7 @@ function applyAssignmentFilters() {
   assignmentFilters.type = document.getElementById('filter-type')?.value || ''
   assignmentFilters.status =
     document.getElementById('filter-status')?.value || ''
-console.log('Фильтры применены:', assignmentFilters)
+  console.log('Фильтры применены:', assignmentFilters)
   loadAssignments(1) // всегда загружаем первую страницу при изменении фильтров
 }
 
@@ -459,7 +459,6 @@ function openEditModal(task) {
 
   toggleModal('modalEdit')
 }
-
 
 function handleEditClick(button) {
   try {

@@ -194,13 +194,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <p class="text-primary text-sm">Участник</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -224,7 +225,7 @@
               />
               <div>
                 <p class="text-sm">Количество олимпиад</p>
-                <p class="text-red-primary text-2xl font-semibold">7</p>
+                <p id="summary-olympiads_count" class="text-red-primary text-2xl font-semibold"></p>
               </div>
             </div>
 
@@ -239,7 +240,7 @@
               />
               <div>
                 <p class="text-sm">Общий балл</p>
-                <p class="text-orange-primary text-2xl font-semibold">1350</p>
+                <p id="summary-total_points" class="text-orange-primary text-2xl font-semibold"></p>
               </div>
             </div>
 
@@ -255,7 +256,7 @@
               />
               <div>
                 <p class="text-sm">Лучший рейтинг</p>
-                <p class="text-green-primary text-2xl font-semibold">1350</p>
+                <p id="summary-best_rank" class="text-green-primary text-2xl font-semibold"></p>
               </div>
 
               <svg
@@ -283,7 +284,7 @@
               />
               <div>
                 <p class="text-sm">Нерешенные задачи</p>
-                <p class="text-violet-primary text-2xl font-semibold">65</p>
+                <p id="summary-unsolved_tasks" class="text-violet-primary text-2xl font-semibold"></p>
               </div>
             </div>
           </div>
@@ -299,9 +300,9 @@
                 </h3>
 
                 <div class="flex items-center gap-2">
-                  <button class="chart-tab active">Неделя</button>
-                  <button class="chart-tab">Месяц</button>
-                  <button class="chart-tab">Год</button>
+                  <button id="week" class="chart-tab active">Неделя</button>
+                  <button id="month" class="chart-tab">Месяц</button>
+                  <button id="year" class="chart-tab">Год</button>
                 </div>
               </div>
 
@@ -830,7 +831,7 @@
                 <table class="table-rate min-w-full">
                   <thead>
                     <tr class="table-tr">
-                      <th class="p-table">
+                      <th id="rank" class="p-table">
                         <span class="flex items-center">
                           Ранк
                           <svg
@@ -847,255 +848,24 @@
                           </svg>
                         </span>
                       </th>
-                      <th class="p-table">Имя участника</th>
-                      <th class="p-table">Класс</th>
-                      <th class="p-table">Страна</th>
-                      <th class="p-table">Общие Баллы</th>
-                      <th class="p-table">Баллы за олимпиады</th>
-                      <th class="p-table">Баллы за задачи</th>
+                      <th id="full_name" class="p-table">Имя участника</th>
+                      <th id="grade" class="p-table">Класс</th>
+                      <th id="country" class="p-table">Страна</th>
+                      <th id="total_points" class="p-table">Общие Баллы</th>
+                      <th id="olympiad_points" class="p-table">Баллы за олимпиады</th>
+                      <th id="assignment_points" class="p-table">Баллы за задачи</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-gray-200">
-                    <tr>
-                      <td
-                        class="px-6 py-4 text-center text-sm font-medium whitespace-nowrap text-gray-900"
-                      >
-                        👑
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        Анель Аскаркызы
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        6
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        <span class="mr-2">🇰🇿</span>
-                        Казахстан
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm font-bold whitespace-nowrap text-orange-500"
-                      >
-                        3400
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        2000
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        1400
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
-                      >
-                        👑
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        Айдана Ержанова
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        7
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        <span class="mr-2">🇬🇪</span>
-                        Грузия
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm font-bold whitespace-nowrap text-orange-500"
-                      >
-                        3000
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        2000
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        1000
-                      </td>
-                    </tr>
-                    <tr>
-                      <td
-                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
-                      >
-                        👑
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        Нурсултан Абдрахимов
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        3
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        <span class="mr-2">🇺🇿</span>
-                        Узбекистан
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm font-bold whitespace-nowrap text-orange-500"
-                      >
-                        2800
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        1800
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        1000
-                      </td>
-                    </tr>
-                    <tr class="bg-white">
-                      <td
-                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
-                      >
-                        4
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        Алина Токтарова
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        5
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        <span class="mr-2">🇰🇬</span>
-                        Кыргызстан
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm font-bold whitespace-nowrap text-orange-500"
-                      >
-                        2788
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        1700
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        920
-                      </td>
-                    </tr>
-                    <tr class="text-center">
-                      <td
-                        colspan="7"
-                        class="text-orange-primary px-6 py-4 text-2xl"
-                      >
-                        • • •
-                      </td>
-                    </tr>
-                    <tr class="bg-orange-secondary">
-                      <td
-                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
-                      >
-                        97
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        Айжан Ахметова
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        8
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        <span class="mr-2">🇷🇺</span>
-                        Россия
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm font-bold whitespace-nowrap text-orange-500"
-                      >
-                        1520
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        600
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        920
-                      </td>
-                    </tr>
-                    <tr class="">
-                      <td
-                        class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900"
-                      >
-                        98
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        Тимур Исатаев
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        10
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        <span class="mr-2">🇬🇧</span>
-                        Великобритания
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm font-bold whitespace-nowrap text-orange-500"
-                      >
-                        1500
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        600
-                      </td>
-                      <td
-                        class="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
-                      >
-                        920
-                      </td>
-                    </tr>
+                  <tbody id="ranking-tbody" class="divide-y divide-gray-200">
                   </tbody>
                 </table>
               </div>
             </div>
+          </div>
+          <!-- Pagination -->
+          <div class="mt-6 flex flex-col gap-2">
+            <div class="text-gray-primary text-sm">Всего строк: <span id="total-rank-count">0</span></div>
+            <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
       </div>
@@ -1131,160 +901,11 @@
         })
 
         // Body scroll control
-        document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
-      }
+        document.body.style.overflow = shouldSh
 
-      // Store chart instances globally
-      let chartInstances = []
-
-      // Chart data for different periods
-      document.addEventListener('DOMContentLoaded', function () {
-        const tabs = document.querySelectorAll('.tabs-link')
-        const notifications = document.querySelectorAll('.tabs-notification')
-
-        // Add click event listeners to tabs
-        tabs.forEach((tab) => {
-          tab.addEventListener('click', function () {
-            const tabType = this.dataset.tab
-
-            // Remove active class from all tabs
-            tabs.forEach((t) => t.classList.remove('active'))
-
-            // Add active class to clicked tab
-            this.classList.add('active')
-
-            // Filter notifications
-            notifications.forEach((notification) => {
-              if (tabType === 'all' || notification.dataset.tab === tabType) {
-                notification.style.display = 'flex'
-              } else {
-                notification.style.display = 'none'
-              }
-            })
-          })
-        })
-
-        const chartsdata = [
-          {
-            labels: [
-              '1 марта',
-              '2 марта',
-              '3 марта',
-              '4 марта',
-              '5 марта',
-              '6 марта',
-              '7 марта',
-            ],
-          },
-          {
-            labels: [
-              '1 сентябрь',
-              '2 октябрь',
-              '3 ноябрь',
-              '4 декабрь',
-              '5 январь',
-              '6 февраль',
-              '7 март',
-            ],
-          },
-          {
-            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-          },
-        ]
-
-        // Initialize first chart
-        initializeSingleChart(0)
-
-        const tabEls = document.querySelectorAll('.chart-tab')
-
-        if (tabEls.length > 0) {
-          tabEls.forEach(function (tabEl, index) {
-            tabEl.addEventListener('click', function (event) {
-              // Remove active class from all tabs
-              tabEls.forEach((el) => el.classList.remove('active'))
-
-              // Add active class to clicked tab
-              this.classList.add('active')
-
-              // Initialize chart for this tab
-              initializeSingleChart(index)
-            })
-          })
-        }
-
-        function initializeSingleChart(index) {
-          const chart = chartsdata[index]
-          const canvasId = 'myChart1' // Using single canvas
-          const ctx = document.getElementById(canvasId).getContext('2d')
-
-          // Destroy previous chart if exists
-          if (chartInstances[canvasId]) {
-            chartInstances[canvasId].destroy()
-          }
-
-          const dataconfig = {
-            borderColor: '#459ee3',
-            backgroundColor: 'rgba(240, 247, 253, 0.5)',
-            borderWidth: 2,
-            pointRadius: 3,
-            pointHoverRadius: 10,
-            pointBackgroundColor: '#fff',
-            tension: 0.6,
-            fill: true,
-            borderCapStyle: 'round',
-            borderJoinStyle: 'round',
-            pointStyle: 'circle',
-          }
-
-          const config = {
-            type: 'line',
-            data: {
-              labels: chart.labels,
-              datasets: [
-                {
-                  data: [0, 1, 2, 3, 4, 5, 6],
-                  ...dataconfig,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  suggestedMax: 6,
-                  precision: 0,
-                  autoSkip: false,
-                  grid: {
-                    drawBorder: false,
-                  },
-                },
-                x: {
-                  grid: {
-                    display: false,
-                  },
-                  ticks: {
-                    autoSkip: false,
-                  },
-                },
-              },
-              plugins: {
-                legend: {
-                  display: false,
-                },
-                tooltip: {
-                  mode: 'index',
-                  intersect: false,
-                },
-              },
-            },
-          }
-
-          // Create new chart and store the instance
-          chartInstances[canvasId] = new Chart(ctx, config)
-        }
       })
     </script>
+    <script src="/auth.js" defer></script>
+    <script src="/src/participant/dashboard.js" defer></script>
   </body>
 </html>
