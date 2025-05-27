@@ -68,127 +68,66 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     await loadAssignments()
-
-    await loadSummary()
-    const buttons = document.querySelectorAll('.chart-tab')
-
-      buttons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          // Удалить активный класс со всех
-          buttons.forEach((b) => b.classList.remove('active'))
-
-          // Добавить активный класс текущей кнопке
-          btn.classList.add('active')
-
-          // Вызывать обновление графика
-          const period = btn.id // id совпадает с параметром: week, month, year
-          loadParticipantsTrend(period)
-        })
-      })
-
-      // Начальная загрузка графика
-      loadParticipantsTrend('week')
-
+    setupAssignmentFilters()
+    const data = await loadSummary();
+    updateProgressBar(data.recommendation.xp_to_next);
+    populateCountryFilter()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
 })
 
+
 async function loadSummary()
  {
+   const token = localStorage.getItem('access_token')
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.')
+    return
+  }
+
     // Очистить карточки, если ничего не выбрано
-    document.getElementById('summary-olympiads_count').textContent = ''
-    document.getElementById('summary-total_points').textContent = ''
-    document.getElementById('summary-best_rank').textContent = ''
-    document.getElementById('summary-unsolved_tasks').textContent = ''
+    document.getElementById('assignment_points').textContent = ''
+    document.getElementById('assignments_percent').textContent = ''
+    document.getElementById('olympiad_points').textContent = ''
+    document.getElementById('olympiad_percentile').textContent = ''
+    document.getElementById('total_points').textContent = ''
+    document.getElementById('total_percentile').textContent = ''
+    document.getElementById('current_level').textContent = ''
+    document.getElementById('xp_to_next').textContent = ''
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/summary/`
+      `https://portal.gradients.academy/results/participant/dashboard/ranking/summary/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
+
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
     const data = await response.json()
-
-    document.getElementById('summary-olympiads_count').textContent = data.olympiads_count
-    document.getElementById('summary-total_points').textContent = data.total_points
-    document.getElementById('summary-best_rank').textContent = data.best_rank
-    document.getElementById('summary-unsolved_tasks').textContent = data.unsolved_tasks
+    console.log(data)
+    document.getElementById('assignment_points').textContent = data.assignment_points
+    document.getElementById('assignments_percent').textContent = data.assignments_percent
+    document.getElementById('olympiad_points').textContent = data.olympiad_points
+    document.getElementById('olympiad_percentile').textContent = data.olympiad_percentile
+        document.getElementById('total_points').textContent = data.total_points
+    document.getElementById('total_percentile').textContent = data.total_percentile
+    document.getElementById('current_level').textContent = data.recommendation.current_level ?? 0
+    document.getElementById('xp_to_next').textContent = data.recommendation.xp_to_next
   } catch (err) {
     console.error('Ошибка при загрузке сводной информации:', err)
   }
 }
 
 
-async function loadParticipantsTrend(period = 'week') {
-  try {
-    const res = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/activity/?period=${period}`
-    )
-    if (!res.ok) throw new Error('Ошибка при получении данных тренда участников')
-
-    const trendData = await res.json()
-
-    const labels = trendData.map((item) => String(item.date))
-    const counts = trendData.map((item) => item.count)
-
-    const ctx = document.getElementById('myChart1').getContext('2d')
-
-    if (window.participantsChartInstance) {
-      window.participantsChartInstance.data.labels = labels
-      window.participantsChartInstance.data.datasets[0].data = counts
-      window.participantsChartInstance.update()
-    } else {
-      window.participantsChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              data: counts,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              borderWidth: 1,
-              pointRadius: 3,
-              pointHoverRadius: 10,
-              pointBackgroundColor: '#fff',
-              tension: 0.6,
-              fill: true,
-              borderCapStyle: 'round',
-              borderJoinStyle: 'round',
-              pointStyle: 'circle',
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              suggestedMax: Math.max(...counts) + 10,
-              ticks: {
-                callback: (value) => (value === 0 ? 0 : value),
-                stepSize: 20,
-              },
-              precision: 0,
-              autoSkip: false,
-            },
-            x: {
-              grid: { display: false },
-              ticks: { autoSkip: false },
-            },
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: { mode: 'index', intersect: false },
-          },
-        },
-      })
-    }
-  } catch (err) {
-    console.error('Ошибка при загрузке тренда участников:', err)
-  }
+function updateProgressBar(xpToNext) {
+  const progressBar = document.getElementById('progress-bar');
+  const progress = Math.max(0, 100 - xpToNext); // Гарантируем, что значение >= 0
+  progressBar.style.width = `${progress}%`;
 }
 
 
@@ -197,6 +136,12 @@ let currentAssignmentPage = 1
 const assignmentPageSize = 20
 let totalAssignmentCount = 0
 
+
+let assignmentFilters = {
+  search: '',
+  country: '',
+  grade: '',
+}
 
 async function loadAssignments(page = 1) {
   const token = localStorage.getItem('access_token')
@@ -207,10 +152,16 @@ async function loadAssignments(page = 1) {
 
   const params = new URLSearchParams()
   params.append('page', page)
+  if (assignmentFilters.search)
+    params.append('search', assignmentFilters.search)
+  if (assignmentFilters.country)
+    params.append('country', assignmentFilters.country)
+  if (assignmentFilters.grade)
+    params.append('grade', assignmentFilters.grade)
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/global/?${params.toString()}`,
+      `https://portal.gradients.academy/results/participant/dashboard/ranking/global/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -229,16 +180,15 @@ async function loadAssignments(page = 1) {
 
     renderAssignmentTable(allAssignments)
     renderAssignmentPagination()
-    document.getElementById('total-rank-count').textContent =
+    document.getElementById('total-rateoverall-count').textContent =
       totalAssignmentCount
   } catch (err) {
     console.error('Ошибка при загрузке задач:', err)
-    document.getElementById('ranking-tbody').innerHTML = `
+    document.getElementById('rateoverall-tbody').innerHTML = `
       <tr><td colspan="8" class="text-center text-red-500 py-4">${err.message}</td></tr>
     `
   }
 }
-
 
 const classMap = {
   1: 'first',
@@ -257,7 +207,7 @@ const classMap = {
 
 
 function renderAssignmentTable(assignments) {
-  const tbody = document.getElementById('ranking-tbody')
+  const tbody = document.getElementById('rateoverall-tbody')
   if (!tbody) return
 
   tbody.innerHTML =
@@ -280,7 +230,6 @@ function renderAssignmentTable(assignments) {
           })
           .join('')
 }
-
 
 function renderAssignmentPagination() {
   const container = document.querySelector('.pagination')
@@ -317,8 +266,54 @@ function renderPaginatedAssignments() {
   const end = start + assignmentPageSize
   const pageData = filteredAssignments.slice(start, end)
 
-  document.getElementById('total-rank-count').textContent =
+  document.getElementById('total-rateoverall-count').textContent =
     filteredAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
+}
+
+function applyAssignmentFilters() {
+  assignmentFilters.search =
+    document.getElementById('filter-search')?.value.trim() || ''
+  assignmentFilters.country =
+    document.getElementById('filter-country')?.value || ''
+  assignmentFilters.grade = document.getElementById('filter-grade')?.value || ''
+
+  loadAssignments(1)
+}
+
+
+function setupAssignmentFilters() {
+  document
+    .getElementById('filter-search')
+    ?.addEventListener('input', applyAssignmentFilters)
+  document
+    .getElementById('filter-country')
+    ?.addEventListener('change', applyAssignmentFilters)
+  document
+    .getElementById('filter-grade')
+    ?.addEventListener('change', applyAssignmentFilters)
+
+}
+
+
+async function populateCountryFilter() {
+  try {
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+    )
+    if (!response.ok) throw new Error('Ошибка загрузки стран')
+
+    const data = await response.json()
+    const select = document.getElementById('filter-country')
+
+    data.results.forEach((country) => {
+      const option = document.createElement('option')
+      option.value = country.code // фильтрация по коду
+      option.textContent = country.name // отображается название
+      select.appendChild(option)
+    })
+  } catch (err) {
+    console.error('Не удалось загрузить список стран:', err)
+  }
 }
