@@ -97,15 +97,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -126,7 +127,7 @@
             <div class="flex flex-wrap gap-4">
               <!-- Filters -->
               <div class="relative">
-                <select class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
+                <select id="grade-filter" class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
                   <option>Все классы</option>
                   <option>1 класс</option>
                   <option>2 класс</option>
@@ -142,7 +143,7 @@
                 </select>
               </div>
               <div class="relative">
-                <select class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5"
+                <select id="olympiad-filter" class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5"
                   style="width: 100%">
                   <option>Выбрать олимпиаду</option>
                   <option>FEMO Весна 2025</option>
@@ -234,7 +235,7 @@
           <div class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Средний балл участников</p>
-              <p class="text-orange-primary text-2xl font-semibold">85</p>
+              <p id="summary-avg-score" class="text-orange-primary text-2xl font-semibold">—</p>
             </div>
           </div>
 
@@ -242,8 +243,8 @@
           <div class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Участники с более 50% баллов</p>
-              <p class="text-violet-primary text-2xl font-semibold">
-                56 (68%)
+              <p id="summary-above-half" class="text-violet-primary text-2xl font-semibold">
+                — (—%)
               </p>
             </div>
           </div>
@@ -252,7 +253,7 @@
           <div class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">ТОП-100 Участников</p>
-              <p class="text-blue-primary text-2xl font-semibold">24 из 67</p>
+              <p id="summary-top100" class="text-blue-primary text-2xl font-semibold">—</p>
             </div>
           </div>
 
@@ -260,7 +261,7 @@
           <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">% выполнения задач страной</p>
-              <p class="text-red-primary text-2xl font-semibold">78%</p>
+              <p id="summary-tasks-percent" class="text-red-primary text-2xl font-semibold">—</p>
             </div>
           </div>
         </div>
@@ -679,84 +680,84 @@
 
 
     // Chart data for different periods
-    document.addEventListener('DOMContentLoaded', function () {
-      const ctx = document
-        .getElementById('participantsChart')
-        .getContext('2d')
+    // document.addEventListener('DOMContentLoaded', function () {
+    //   const ctx = document
+    //     .getElementById('participantsChart')
+    //     .getContext('2d')
 
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-          datasets: [
-            {
-              data: [0, 50, 30, 80, 30, 66, 85], // Fixed to 7 values to match years
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              borderWidth: 1,
-              pointRadius: 3,
-              pointHoverRadius: 10,
-              pointBackgroundColor: '#fff',
-              tension: 0.6,
-              fill: true,
-              borderCapStyle: 'round',
-              borderJoinStyle: 'round',
-              pointStyle: 'circle',
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              suggestedMax: 100, // Force maximum value
-              ticks: {
-                callback: function (value) {
-                  return value === 0 ? 0 : value + ' участников'
-                },
-              },
-              // title: {
-              //     display: true,
-              //     text: 'Количество'
-              // }
-              stepSize: 20, // Force ticks every 20 units
-              precision: 0,
-              autoSkip: false,
-            },
+    //   new Chart(ctx, {
+    //     type: 'line',
+    //     data: {
+    //       labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+    //       datasets: [
+    //         {
+    //           data: [0, 50, 30, 80, 30, 66, 85], // Fixed to 7 values to match years
+    //           borderColor: '#10b981',
+    //           backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    //           borderWidth: 1,
+    //           pointRadius: 3,
+    //           pointHoverRadius: 10,
+    //           pointBackgroundColor: '#fff',
+    //           tension: 0.6,
+    //           fill: true,
+    //           borderCapStyle: 'round',
+    //           borderJoinStyle: 'round',
+    //           pointStyle: 'circle',
+    //         },
+    //       ],
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       maintainAspectRatio: false,
+    //       scales: {
+    //         y: {
+    //           beginAtZero: true,
+    //           suggestedMax: 100, // Force maximum value
+    //           ticks: {
+    //             callback: function (value) {
+    //               return value === 0 ? 0 : value + ' участников'
+    //             },
+    //           },
+    //           // title: {
+    //           //     display: true,
+    //           //     text: 'Количество'
+    //           // }
+    //           stepSize: 20, // Force ticks every 20 units
+    //           precision: 0,
+    //           autoSkip: false,
+    //         },
 
-            x: {
-              grid: {
-                display: false, // Remove vertical grid lines
-              },
-              ticks: {
-                autoSkip: false,
-              },
-              // title: {
-              //     display: true,
-              //     text: 'Год'
-              // }
-            },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-            // legend: {
-            //     position: 'top',
-            //     labels: {
-            //         usePointStyle: true
-            //     }
-            // },
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-            },
-          },
-        },
-      })
-    })
+    //         x: {
+    //           grid: {
+    //             display: false, // Remove vertical grid lines
+    //           },
+    //           ticks: {
+    //             autoSkip: false,
+    //           },
+    //           // title: {
+    //           //     display: true,
+    //           //     text: 'Год'
+    //           // }
+    //         },
+    //       },
+    //       plugins: {
+    //         legend: {
+    //           display: false,
+    //         },
+    //         // legend: {
+    //         //     position: 'top',
+    //         //     labels: {
+    //         //         usePointStyle: true
+    //         //     }
+    //         // },
+    //         tooltip: {
+    //           mode: 'index',
+    //           intersect: false,
+    //         },
+    //       },
+    //     },
+    //   })
+    // })
 
     // Chart data for different periods
     document.addEventListener('DOMContentLoaded', function () {
@@ -850,6 +851,8 @@
     })
   
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/result.js" defer></script>
 </body>
 
 </html>

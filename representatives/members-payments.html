@@ -116,11 +116,11 @@
       <main class="flex-1 overflow-y-auto p-6">
         <p class="mb-6 text-sm text-gray-900">
           Управление участниками &gt
-          <a href="#" class="text-orange-primary">Айжан Ахметова</a>
+          <a href="members.html" id="participant-name-link" class="text-orange-primary"></a>
         </p>
 
         <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-semibold">Айжан Ахметова</h1>
+          <h1 id="participant-name-heading" class="text-2xl font-semibold"></h1>
           <span class="text-green-primary bg-green-secondary rounded-full p-2">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
               <path
@@ -168,7 +168,7 @@
                 <th class="p-table">Действия</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody id="payments-tbody" class="divide-y divide-gray-200">
               <tr class="hover:bg-gray-50">
                 <td>FEMO-PAY-21433</td>
                 <td>15.11.23</td>
@@ -268,33 +268,19 @@
 
         <!-- Pagination -->
         <div class="flex items-center justify-between">
-          <div class="text-gray-primary text-sm">Всего 85 участников</div>
+          <div id="payments-count" class="text-gray-primary text-sm"></div>
           <div class="flex items-center gap-0.5 *:cursor-pointer">
-            <button class="cursor-pointer px-3 py-1">
+            <button id="payments-prev" class="cursor-pointer px-3 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
                 <path fill-rule="evenodd"
                   d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
                   clip-rule="evenodd" />
               </svg>
             </button>
-            <div class="flex gap-1 *:cursor-pointer">
-              <button class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1">
-                1
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                2
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                3
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                4
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                5
-              </button>
+            <div id="payments-pagination" class="flex gap-1 *:cursor-pointer">
+
             </div>
-            <button class="cursor-pointer px-3 py-1">
+            <button id="payments-next" class="cursor-pointer px-3 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
                 <path fill-rule="evenodd"
                   d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
@@ -556,6 +542,7 @@
   </script>
   <script src="/auth.js" defer></script>
   <script src="/src/representatives/members-progress.js" defer></script>
+  <script src="/src/representatives/members-payment.js" defer></script>
 </body>
 
 </html>

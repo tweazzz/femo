@@ -109,9 +109,10 @@ function updateTabsWithParticipantId() {
 }
 function renderParticipantData(profile) {
   const {
+    id,
+    email,
     full_name_ru,
     full_name_en,
-    email,
     country,
     city,
     school,
@@ -122,18 +123,47 @@ function renderParticipantData(profile) {
     teacher_name_ru,
     teacher_name_en,
     teacher_phone,
-    image_url,
-    id
+    image_url
   } = profile;
 
-  // Пока вставим только имя
+  // Вставляем имя в шапку и ссылку
   const nameHeadingEl = document.getElementById('participant-name-heading');
-  const nameLinkEl = document.getElementById('participant-name-link');
-
+  const nameLinkEl    = document.getElementById('participant-name-link');
   if (nameHeadingEl) nameHeadingEl.textContent = full_name_ru || '—';
-  if (nameLinkEl) nameLinkEl.textContent = full_name_ru || '—';
+  if (nameLinkEl)    nameLinkEl.textContent    = full_name_ru || '—';
 
-  // Остальные поля пока просто записаны в переменные — будем подключать по мере необходимости
+  // Личные данные
+  document.getElementById('profile-id').textContent              = id;
+  document.getElementById('profile-email').textContent           = email || '—';
+  document.getElementById('profile-full-name-ru').textContent    = full_name_ru || '—';
+  document.getElementById('profile-full-name-en').textContent    = full_name_en || '—';
+  document.getElementById('profile-country').textContent         = country || '—';
+  document.getElementById('profile-city').textContent            = city || '—';
+  document.getElementById('profile-school').textContent          = school || '—';
+  document.getElementById('profile-grade').textContent           = grade || '—';
+
+  // Фото участника
+  const photoEl     = document.getElementById('participant-photo');
+  const imageNameEl = document.getElementById('profile-image');
+  if (photoEl) {
+    photoEl.src = image_url
+      ? (image_url.startsWith('http') ? image_url : `https://portal.gradients.academy${image_url}`)
+      : '/src/assets/images/user_logo.jpg';
+  }
+  if (imageNameEl) imageNameEl.textContent = image_url
+      ? image_url.split('/').pop()
+      : '—';
+
+  // Данные родителя
+  document.getElementById('parent-fullname').textContent = parent_name_ru ? 'Данные родителя' : '';
+  document.getElementById('parent-name-ru').textContent  = parent_name_ru  || '—';
+  document.getElementById('parent-name-en').textContent  = parent_name_en  || '—';
+  document.getElementById('parent-phone').textContent    = parent_phone    || '—';
+
+  // Данные учителя
+  document.getElementById('teacher-name-ru').textContent = teacher_name_ru  || '—';
+  document.getElementById('teacher-name-en').textContent = teacher_name_en  || '—';
+  document.getElementById('teacher-phone').textContent   = teacher_phone    || '—';
 }
 
 async function loadParticipantProgress() {
@@ -219,6 +249,104 @@ async function loadParticipantAchievements() {
 }
 
 
+// ——————————————————————————————
+// 8) Загружаем результаты олимпиад
+async function loadParticipantResults() {
+  const participantId = new URLSearchParams(location.search).get('id')
+  if (!participantId) return
+  const res = await authorizedFetch(
+    `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/results`
+  )
+  if (!res.ok) throw new Error(res.status)
+  const results = await res.json()
+  renderParticipantResults(results)
+}
+
+// 9) Рендерим таблицу результатов и добавляем кнопку скачивания
+function renderParticipantResults(results) {
+  const tbody = document.querySelector('.table-olympiads tbody')
+  tbody.innerHTML = ''
+  if (!results.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Нет данных</td></tr>`
+    return
+  }
+  const participantId = new URLSearchParams(location.search).get('id')
+  results.forEach(r => {
+    const tr = document.createElement('tr')
+    tr.classList.add('hover:bg-gray-50')
+    tr.innerHTML = `
+      <td class="p-table">${r.olympiad}</td>
+      <td class="p-table">${r.score}</td>
+      <td class="p-table">${r.solved}/${r.total}</td>
+      <td class="p-table">${r.place}-е</td>
+      <td class="p-table">
+        <button class="flex items-center gap-1 text-orange-500" 
+                onclick="downloadCertificate(${participantId}, ${r.id})">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+               stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9
+                     a2.25 2.25 0 0 0 2.25 2.25h9
+                     a2.25 2.25 0 0 0 2.25-2.25v-9
+                     a2.25 2.25 0 0 0-2.25-2.25H15
+                     M9 12l3 3m0 0 3-3m-3 3V2.25"/>
+          </svg>
+          Скачать
+        </button>
+      </td>`
+    tbody.appendChild(tr)
+  })
+}
+
+// 10) Скачиваем сертификат
+async function downloadCertificate(participantId, olympiadId) {
+  try {
+    const res = await authorizedFetch(
+      `https://portal.gradients.academy/results/representatives/dashboard/participants/` +
+      `${participantId}/certificates/${olympiadId}/download`
+    );
+    if (!res.ok) throw new Error(res.status)
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `certificate_${olympiadId}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  } catch (err) {
+    console.error('Ошибка при скачивании сертификата:', err)
+    alert('Не удалось скачать сертификат')
+  }
+}
+
+// ——————————————————————————————
+async function deleteCurrentParticipant() {
+  const params = new URLSearchParams(window.location.search);
+  const participantId = params.get('id');
+  if (!participantId) return alert('ID участника не найден');
+
+  try {
+    const res = await authorizedFetch(
+      `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/`,
+      { method: 'DELETE' }
+    );
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    alert('Участник успешно удалён');
+    // если нужно — редирект на список:
+    window.location.href = '/representatives/members.html';
+  } catch (err) {
+    console.error(err);
+    alert('Ошибка при удалении участника: ' + err.message);
+  }
+}
+
+// после того как определили функцию, вешаем её на кнопку:
+document.getElementById('delete-account-btn')?.addEventListener('click', () => {
+    deleteCurrentParticipant();
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
@@ -229,7 +357,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await loadParticipantProfile();
     await loadParticipantAchievements()
-    // await loadRepresentativeRanking()
+    await loadParticipantResults() 
     // await loadParticipantsTrend()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)

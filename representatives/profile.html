@@ -98,15 +98,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -129,27 +130,27 @@
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ID представителя
               </label>
-              <p class="input-base border-default">010203</p>
+              <p id="rep-id" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Email
               </label>
-              <p class="input-base border-default">ivan.ivanov@example.com</p>
+              <p id="rep-email" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
               </label>
-              <p class="input-base border-default">Айжан Ахметова</p>
+              <p id="rep-full-name-ru" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
               </label>
-              <p class="input-base border-default">Ayzhan Akhmetova</p>
+              <p id="rep-full-name-en" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
               </label>
-              <p class="input-base border-default">Казахстан</p>
+              <p id="rep-country" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="space"></label>
@@ -236,88 +237,6 @@
               </div>
 
               <div class="mt-6 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <button type="button" onclick="toggleModal('modalEdit')" class="btn-outline btn--orange">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                      </svg>
-                    </span>
-                    Отменить
-                  </button>
-                  <button class="btn-orange">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                      </svg>
-                    </span>
-                    Сохранить
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            <!-- Representative Form (hidden by default) -->
-            <form id="representative-form" class="role-form hidden">
-              <div class="mt-6 space-y-6">
-                <!-- Representative form content -->
-                <div>
-                  <p class="mb-4 text-lg font-semibold text-gray-900">
-                    Личные данные
-                  </p>
-                  <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2">
-                    <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">Email
-                        <span class="text-red-primary">*</span></label>
-                      <input placeholder="ivan.ivanov@example.com" type="email" name="email"
-                        class="input-base border-default" required />
-                    </div>
-                    <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
-                        <span class="text-red-primary">*</span></label>
-                      <input placeholder="Айжан Ахметова" type="text" name="fullname"
-                        class="input-base border-default" required />
-                    </div>
-                    <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
-                        <span class="text-red-primary">*</span></label>
-                      <input placeholder="Казахстан" type="text" name="country"
-                        class="input-base border-default" required />
-                    </div>
-                    <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">Пароль
-                        <span class="text-red-primary">*</span></label>
-                      <div class="relative">
-                        <input id="password" type="password" placeholder="Введите пароль"
-                          class="input-base border-default" />
-                        <button type="button" data-target="password"
-                          class="toggle-pw text-gray-primary hover:text-primary absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-6 flex items-center justify-between">
-                <button class="btn-outline btn--red">
-                  <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                    </svg>
-                  </span>
-                  Удалить
-                </button>
                 <div class="flex items-center gap-2">
                   <button type="button" onclick="toggleModal('modalEdit')" class="btn-outline btn--orange">
                     <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -605,6 +524,8 @@
   
 
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/profile.js" defer></script>
 </body>
 
 </html>

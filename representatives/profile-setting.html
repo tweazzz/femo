@@ -117,15 +117,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -153,19 +154,19 @@
               <label class="btn-option flex items-center gap-2">
                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain" />
                 <span>Русский</span>
-                <input type="radio" name="role" value="representative" class="hidden" required checked />
+                <input type="radio" name="language" value="ru" class="hidden" required checked />
               </label>
 
               <label class="btn-option flex items-center gap-2">
                 <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
                 <span>Қазақша</span>
-                <input type="radio" name="role" value="representative" class="hidden" required />
+                <input type="radio" name="language" value="kz" class="hidden" required />
               </label>
 
               <label class="btn-option flex items-center gap-2">
                 <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain" />
                 <span>English</span>
-                <input type="radio" name="role" value="representative" class="hidden" required />
+                <input type="radio" name="language" value="en" class="hidden" required />
               </label>
             </div>
           </div>
@@ -273,7 +274,7 @@
             </div>
           </div>
 
-          <button
+          <button id="reset-password"
             class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
             Обновить пароль
           </button>
@@ -566,7 +567,7 @@
             </div>
 
             <div class="flex items-center justify-end gap-4 px-6 pb-6">
-              <button type="button" onclick="toggleModal('modalDel')" class="btn-red">
+              <button id="delete-account" type="button" onclick="toggleModal('modalDel')" class="btn-red">
                 <span>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-5">
@@ -647,6 +648,8 @@
     })
   
   </script>
+  <script src="/auth.js" defer></script>
+  <script src="/src/representatives/profile-settings.js" defer></script>
 </body>
 
 </html>
