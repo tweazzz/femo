@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadAssignments()
     setupAssignmentFilters()
     const data = await loadSummary();
-    updateProgressBar(data.recommendation.xp_to_next);
+    if (data) updateProgressBar(data.recommendation?.xp_to_next ?? 100);
     populateCountryFilter()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
@@ -78,23 +78,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 
-async function loadSummary()
- {
-   const token = localStorage.getItem('access_token')
+async function loadSummary() {
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return null;
   }
-
-    // Очистить карточки, если ничего не выбрано
-    document.getElementById('assignment_points').textContent = ''
-    document.getElementById('assignments_percent').textContent = ''
-    document.getElementById('olympiad_points').textContent = ''
-    document.getElementById('olympiad_percentile').textContent = ''
-    document.getElementById('total_points').textContent = ''
-    document.getElementById('total_percentile').textContent = ''
-    document.getElementById('current_level').textContent = ''
-    document.getElementById('xp_to_next').textContent = ''
 
   try {
     const response = await authorizedFetch(
@@ -104,24 +93,28 @@ async function loadSummary()
           Authorization: `Bearer ${token}`,
         },
       }
-    )
+    );
 
-    if (!response.ok) throw new Error('Ошибка загрузки сводки')
+    if (!response.ok) throw new Error('Ошибка загрузки сводки');
 
-    const data = await response.json()
-    console.log(data)
-    document.getElementById('assignment_points').textContent = data.assignment_points
-    document.getElementById('assignments_percent').textContent = data.assignments_percent
-    document.getElementById('olympiad_points').textContent = data.olympiad_points
-    document.getElementById('olympiad_percentile').textContent = data.olympiad_percentile
-        document.getElementById('total_points').textContent = data.total_points
-    document.getElementById('total_percentile').textContent = data.total_percentile
-    document.getElementById('current_level').textContent = data.recommendation.current_level ?? 0
-    document.getElementById('xp_to_next').textContent = data.recommendation.xp_to_next
+    const data = await response.json();
+
+    document.getElementById('assignment_points').textContent = data.assignment_points;
+    document.getElementById('assignments_percent').textContent = data.assignments_percent;
+    document.getElementById('olympiad_points').textContent = data.olympiad_points;
+    document.getElementById('olympiad_percentile').textContent = data.olympiad_percentile;
+    document.getElementById('total_points').textContent = data.total_points;
+    document.getElementById('total_percentile').textContent = data.total_percentile;
+    document.getElementById('current_level').textContent = data.recommendation?.current_level ?? 0;
+    document.getElementById('xp_to_next').textContent = data.recommendation?.xp_to_next ?? 100;
+
+    return data; // Теперь функция возвращает данные!
   } catch (err) {
-    console.error('Ошибка при загрузке сводной информации:', err)
+    console.error('Ошибка при загрузке сводной информации:', err);
+    return null; // Возвращаем null, если произошла ошибка
   }
 }
+
 
 
 function updateProgressBar(xpToNext) {
@@ -301,19 +294,31 @@ async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
       'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
-    )
-    if (!response.ok) throw new Error('Ошибка загрузки стран')
+    );
 
-    const data = await response.json()
-    const select = document.getElementById('filter-country')
+    if (!response.ok) throw new Error(`Ошибка загрузки стран: ${response.status}`);
 
+    const data = await response.json();
+
+    const select = document.getElementById('filter-country');
+
+    if (!select) {
+      console.error('Не найден элемент #filter-country');
+      return;
+    }
+
+    // Очистка списка перед заполнением
+    select.innerHTML = '<option value="">Все страны</option>';
+
+    // Заполняем список стран
     data.results.forEach((country) => {
-      const option = document.createElement('option')
-      option.value = country.code // фильтрация по коду
-      option.textContent = country.name // отображается название
-      select.appendChild(option)
-    })
+      const option = document.createElement('option');
+      option.value = country.code;
+      option.textContent = country.name;
+      select.appendChild(option);
+    });
+
   } catch (err) {
-    console.error('Не удалось загрузить список стран:', err)
+    console.error('Не удалось загрузить список стран:', err);
   }
 }

@@ -67,11 +67,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-      await loadOlympiadFilter()
     await loadAssignments()
     setupAssignmentFilters()
-    await loadSummary()
+    loadOlympiadFilter()
     populateCountryFilter()
+    const data = await loadSummary();
+    if (data) updateProgressBar(data.recommendation?.xp_to_next ?? 100);
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -109,17 +110,19 @@ async function loadSummary()
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
     const data = await response.json()
-    console.log(data)
+
     document.getElementById('assignment_points').textContent = data.assignment_points
     document.getElementById('assignments_percent').textContent = data.assignments_percent
     document.getElementById('olympiad_points').textContent = data.olympiad_points
     document.getElementById('olympiad_percentile').textContent = data.olympiad_percentile
-        document.getElementById('total_points').textContent = data.total_points
+    document.getElementById('total_points').textContent = data.total_points
     document.getElementById('total_percentile').textContent = data.total_percentile
     document.getElementById('current_level').textContent = data.recommendation.current_level ?? 0
     document.getElementById('xp_to_next').textContent = data.recommendation.xp_to_next
+  return data; // Теперь функция возвращает данные!
   } catch (err) {
-    console.error('Ошибка при загрузке сводной информации:', err)
+    console.error('Ошибка при загрузке сводной информации:', err);
+    return null; // Возвращаем null, если произошла ошибка
   }
 }
 
@@ -129,24 +132,6 @@ function updateProgressBar(xpToNext) {
   const progress = Math.max(0, 100 - xpToNext); // Гарантируем, что значение >= 0
   progressBar.style.width = `${progress}%`;
 }
-
-// Вызов функции после загрузки данных
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = await ensureUserAuthenticated()
-  if (!user) return
-
-  renderUserInfo(user)
-
-  try {
-    await loadAssignments()
-    setupAssignmentFilters()
-    const data = await loadSummary();
-    updateProgressBar(data.recommendation.xp_to_next);
-    populateCountryFilter()
-  } catch (err) {
-    console.error('Ошибка при загрузке данных:', err)
-  }
-})
 
 
 let allAssignments = []
@@ -178,7 +163,7 @@ async function loadAssignments(page = 1) {
   if (assignmentFilters.grade)
     params.append('grade', assignmentFilters.grade)
     if (assignmentFilters.olympiad)
-    params.append('olympiad', assignmentFilters.olympiad)
+    params.append('olympiad_id', assignmentFilters.olympiad)
 
   try {
     const response = await authorizedFetch(
@@ -191,7 +176,7 @@ async function loadAssignments(page = 1) {
     )
 
     if (!response.ok) {
-      throw new Error(`Ошибка загрузки: ${response.status}`)
+      throw new Error(`Для начала необходимо выбрать олимпиаду!`)
     }
 
     const data = await response.json()
@@ -344,15 +329,27 @@ async function populateCountryFilter() {
 
 
 async function loadOlympiadFilter() {
+    const token = localStorage.getItem('access_token')
+
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.')
+    return
+  }
   const select = document.getElementById('filter-olympiad');
   if (!select) return;
 
   try {
-    const response = await fetch('https://portal.gradients.academy/olympiads/dashboard/');
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/olympiads/participant/dashboard/',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
     if (!response.ok) throw new Error(`Ошибка загрузки олимпиад: ${response.status}`);
 
     const data = await response.json();
-    console.log('Список олимпиад:', data.results);
 
     // Очистка перед заполнением
     select.innerHTML = '';
@@ -368,8 +365,6 @@ async function loadOlympiadFilter() {
     // Устанавливаем первое значение
     select.value = defaultOlympiadId;
     assignmentFilters.olympiad = defaultOlympiadId;
-
-    console.log('Выбранная олимпиада по умолчанию:', defaultOlympiadId);
 
   } catch (error) {
     console.error('Ошибка при загрузке списка олимпиад:', error);

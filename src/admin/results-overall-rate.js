@@ -68,8 +68,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     await loadGlobalStats() // 👈 добавили вызов функции загрузки статистики
-    // await loadAssignments()
-    // setupAssignmentFilters()
+     await loadAssignments()
+     setupAssignmentFilters()
+     populateCountryFilter()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -105,5 +106,202 @@ async function loadGlobalStats() {
       data.average_score?.toFixed(2) ?? '—'
   } catch (err) {
     console.error('Ошибка при загрузке общей статистики:', err)
+  }
+}
+
+let allAssignments = []
+let currentAssignmentPage = 1
+const assignmentPageSize = 20
+let totalAssignmentCount = 0
+
+const classMap = {
+  1: 'first',
+  2: 'second',
+  3: 'third',
+  4: 'fourth',
+  5: 'fifth',
+  6: 'sixth',
+  7: 'seventh',
+  8: 'eights',
+  9: 'ninth',
+  10: 'tenth',
+  11: 'eleventh',
+  12: 'twelfth',
+}
+
+let assignmentFilters = {
+  search: '',
+  country: '',
+  grade: '',
+}
+
+async function loadAssignments(page = 1) {
+  const token = localStorage.getItem('access_token')
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.')
+    return
+  }
+
+  const params = new URLSearchParams()
+  params.append('page', page)
+  if (assignmentFilters.search)
+    params.append('search', assignmentFilters.search)
+  if (assignmentFilters.country)
+    params.append('country', assignmentFilters.country)
+  if (assignmentFilters.grade)
+    params.append('grade', assignmentFilters.grade)
+
+  try {
+    const response = await authorizedFetch(
+      `https://portal.gradients.academy/results/dashboard/participants/?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Ошибка загрузки: ${response.status}`)
+    }
+
+    const data = await response.json()
+    allAssignments = data.results
+    totalAssignmentCount = data.count
+    currentAssignmentPage = page
+
+    renderAssignmentTable(allAssignments)
+    renderAssignmentPagination()
+    document.getElementById('total-resoverall-count').textContent =
+      totalAssignmentCount
+  } catch (err) {
+    console.error('Ошибка при загрузке задач:', err)
+    document.getElementById('resoverall-tbody').innerHTML = `
+      <tr><td colspan="8" class="text-center text-red-500 py-4">${err.message}</td></tr>
+    `
+  }
+}
+
+
+function renderAssignmentTable(assignments) {
+  const tbody = document.getElementById('resoverall-tbody')
+  if (!tbody) return
+
+  tbody.innerHTML =
+    assignments.length === 0
+      ? `<tr><td colspan="8" class="text-center text-gray-500 py-4">Нет данных</td></tr>`
+      : assignments
+          .map((task) => {
+            const encodedTask = encodeURIComponent(JSON.stringify(task))
+            return `
+      <tr class="hover:bg-gray-50">
+        <td>${((task.rank === 1) || (task.rank === 2) || (task.rank === 3)) ? task.rank+'👑' : task.rank}</td>
+        <td>${task.full_name_ru}</td>
+        <td>${task.country}</td>
+        <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
+        <td>${task.olympiad_score}</td>
+        <td>${task.assignment_score}</td>
+        <td>${task.reward_score}</td>
+        <td>${task.total_score}</td>
+      </tr>
+    `
+          })
+          .join('')
+}
+
+function renderAssignmentPagination() {
+  const container = document.querySelector('.pagination')
+  if (!container) return
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalAssignmentCount / assignmentPageSize)
+  )
+  let buttons = ''
+
+  for (let i = 1; i <= totalPages; i++) {
+    buttons += `
+      <button class="${i === currentAssignmentPage ? 'text-orange-primary border-orange-primary border' : 'text-gray-600'} px-3 py-1 rounded"
+        onclick="goToAssignmentPage(${i})">${i}</button>
+    `
+  }
+
+  container.innerHTML = `
+    <div class="flex items-center gap-1">
+      <button onclick="goToAssignmentPage(${Math.max(1, currentAssignmentPage - 1)})" class="px-3 py-1">←</button>
+      ${buttons}
+      <button onclick="goToAssignmentPage(${Math.min(totalPages, currentAssignmentPage + 1)})" class="px-3 py-1">→</button>
+    </div>
+  `
+}
+
+function goToAssignmentPage(page) {
+  loadAssignments(page)
+}
+
+function renderPaginatedAssignments() {
+  const start = (currentAssignmentPage - 1) * assignmentPageSize
+  const end = start + assignmentPageSize
+  const pageData = filteredAssignments.slice(start, end)
+
+  document.getElementById('total-resoverall-count').textContent =
+    filteredAssignments.length
+  renderAssignmentTable(pageData)
+  renderAssignmentPagination()
+}
+
+function applyAssignmentFilters() {
+  assignmentFilters.search =
+    document.getElementById('filter-search')?.value.trim() || ''
+  assignmentFilters.country = document.getElementById('filter-country')?.value || ''
+  assignmentFilters.grade = document.getElementById('filter-grade')?.value || ''
+
+  loadAssignments(1)
+}
+
+
+function setupAssignmentFilters() {
+  document
+    .getElementById('filter-search')
+    ?.addEventListener('input', applyAssignmentFilters)
+  document
+    .getElementById('filter-country')
+    ?.addEventListener('change', applyAssignmentFilters)
+  document
+    .getElementById('filter-grade')
+    ?.addEventListener('change', applyAssignmentFilters)
+}
+
+
+async function populateCountryFilter() {
+  try {
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+    );
+
+    if (!response.ok) throw new Error(`Ошибка загрузки стран: ${response.status}`);
+
+    const data = await response.json();
+
+    const select = document.getElementById('filter-country');
+
+    if (!select) {
+      console.error('Не найден элемент #filter-country');
+      return;
+    }
+
+    // Очистка списка перед заполнением
+    select.innerHTML = '<option value="">Все страны</option>';
+
+    // Заполняем список стран
+    data.results.forEach((country) => {
+      const option = document.createElement('option');
+      option.value = country.code;
+      option.textContent = country.name;
+      select.appendChild(option);
+    });
+
+  } catch (err) {
+    console.error('Не удалось загрузить список стран:', err);
   }
 }
