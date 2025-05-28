@@ -37,32 +37,41 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+function renderUserInfo(profile) {
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl = document.getElementById('user-name');
+  const roleEl = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-  const defaultAvatar = '/src/assets/images/user_logo.jpg'
-  const imgPath = user?.profile?.image
+  const defaultAvatar = '/src/assets/images/user_logo.jpg';
+  const imgPath = profile?.image;
 
-  let finalAvatar = defaultAvatar
+  let finalAvatar = defaultAvatar;
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`
+      : `https://portal.gradients.academy${imgPath}`;
   }
 
-  avatarEl.src = finalAvatar
+  avatarEl.src = finalAvatar;
+  nameEl.textContent = profile.full_name_ru || '';
+  const firstName = profile.full_name_ru?.split(' ')[0] || '';
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
 
-  nameEl.textContent = user.profile.full_name_ru || ''
-  const firstName = user.profile.full_name_ru?.split(' ')[0] || ''
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  const countryCode = profile.country?.code || '';
+  roleEl.textContent = `Представитель${countryCode ? ' ' + countryCode : ''}`;
+}
 
-  const roleMap = {
-    representative: 'Представитель',
+async function loadRepresentativeProfileForHeader() {
+  try {
+    const res = await authorizedFetch('https://portal.gradients.academy/users/representative/profile/');
+    if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
+
+    const profile = await res.json();
+    renderUserInfo(profile);
+  } catch (err) {
+    console.error('Ошибка при загрузке профиля для шапки:', err);
   }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role || ''
 }
 
   // 1) Глобальные переменные
@@ -356,7 +365,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-    await loadParticipants()
+    await loadParticipants();
+    await loadRepresentativeProfileForHeader();
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
