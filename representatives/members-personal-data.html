@@ -150,32 +150,32 @@
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ID участника
               </label>
-              <p id="profile-id" class="input-base border-default">010203</p>
+              <p id="profile-id" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Email
               </label>
-              <p id="profile-email" class="input-base border-default">ivan.ivanov@example.com</p>
+              <p id="profile-email" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
               </label>
-              <p id="profile-full-name-ru" class="input-base border-default">Айжан Ахметова</p>
+              <p id="profile-full-name-ru" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
               </label>
-              <p id="profile-full-name-en" class="input-base border-default">Ayzhan Akhmetova</p>
+              <p id="profile-full-name-en" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
               </label>
-              <p id="profile-country" class="input-base border-default">Казахстан</p>
+              <p id="profile-country" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Город
               </label>
-              <p id="profile-city" class="input-base border-default">Алматы</p>
+              <p id="profile-city" class="input-base border-default">-</p>
             </div>
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Школа
@@ -185,7 +185,7 @@
             <div>
               <label class="text-gray-primary mb-1 block text-sm font-medium">Класс
               </label>
-              <p id="profile-grade" class="input-base border-default">10</p>
+              <p id="profile-grade" class="input-base border-default">-</p>
             </div>
             <div class="relative">
               <p class="text-primary text-xs">Изображение</p>
@@ -209,17 +209,17 @@
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
                 </label>
-                <p id="parent-name-ru" class="input-base border-default">Иван Иванов</p>
+                <p id="parent-name-ru" class="input-base border-default">-</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
                 </label>
-                <p id="parent-name-en" class="input-base border-default">Ivan Ivanov</p>
+                <p id="parent-name-en" class="input-base border-default">-</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
                 </label>
-                <p id="parent-phone" class="input-base border-default">+7 702 772 41 14</p>
+                <p id="parent-phone" class="input-base border-default">-</p>
               </div>
             </div>
           </div>
@@ -233,17 +233,17 @@
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
                 </label>
-                <p id="teacher-name-ru" class="input-base border-default">Иван Иванов</p>
+                <p id="teacher-name-ru" class="input-base border-default">-</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
                 </label>
-                <p id="teacher-name-en" class="input-base border-default">Ivan Ivanov</p>
+                <p id="teacher-name-en" class="input-base border-default">-</p>
               </div>
               <div>
                 <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
                 </label>
-                <p id="teacher-phone" class="input-base border-default">+7 702 772 41 14</p>
+                <p id="teacher-phone" class="input-base border-default">-</p>
               </div>
             </div>
           </div>
@@ -357,18 +357,21 @@
                     </div>
 
                     <div class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2">
+                      <div class="tabs-notification" data-tab="all">
+
+                      </div>
                       <div class="tabs-notification" data-tab="users">
-                        ...
+
                       </div>
 
                       <!-- Notification 2 (Olympiad-related) -->
                       <div class="tabs-notification" data-tab="olympiads">
-                        ...
+
                       </div>
 
                       <!-- Notification 3 (Result-related) -->
                       <div class="tabs-notification" data-tab="results">
-                        ...
+
                       </div>
 
                       <!-- Notification 1 -->
@@ -556,7 +559,8 @@
   
   </script>
   <script src="/auth.js" defer></script>
-  <script src="/src/representatives/members-progress.js" defer></script>
+  <script src="/src/representatives/rep-profile.js" defer></script>
+  <script src="/src/representatives/notification.js" defer></script>
 </body>
 
 </html>
