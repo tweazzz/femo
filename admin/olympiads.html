@@ -320,6 +320,7 @@
                                 type="text"
                                 class="input-base border-default"
                                 value="FEMO Весна 2025"
+                                id="title-add"
                                 required
                               />
                             </div>
@@ -331,7 +332,7 @@
                               >
                               <div class="relative">
                                 <select
-                                  id="tour"
+                                  id="tour-add"
                                   class="input-base border-default appearance-none"
                                   required
                                 >
@@ -370,7 +371,7 @@
                               >
                               <div class="relative">
                                 <select
-                                  id="grades"
+                                  id="grades-add"
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
@@ -413,7 +414,7 @@
                               >
                               <div class="relative">
                                 <select
-                                  id="year"
+                                  id="year-add"
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
@@ -450,13 +451,13 @@
                               </label>
                               <div class="relative">
                                 <select
-                                  id="status"
+                                  id="status-add"
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
                                   <option value="ongoing">Идет сейчас</option>
                                   <option value="completed">Завершено</option>
-                                  <option value="completed">Скоро</option>
+                                  <option value="soon">Скоро</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -489,6 +490,7 @@
                                 name="weblink"
                                 value="https://"
                                 class="input-base border-default"
+                                id="link-add"
                               />
                             </div>
                             <div>
@@ -498,7 +500,7 @@
                               >
                               <div class="relative">
                                 <input
-                                  id="price"
+                                  id="price-add"
                                   type="number"
                                   placeholder="1000"
                                   value="1000"
@@ -541,6 +543,7 @@
                                   rows="2"
                                   placeholder="Введите ваше сообщение..."
                                   class="textarea input-base border-default px-4"
+                                  id="disc-add"
                                 ></textarea>
                               </div>
                             </div>
@@ -561,8 +564,7 @@
                                 >
                                 <div class="relative">
                                   <select
-                                    id="stepName"
-                                    class="multi-select input-base border-default appearance-none"
+                                    class="step-name-add multi-select input-base border-default appearance-none"
                                     required
                                   >
                                     <option value="registration">
@@ -599,8 +601,7 @@
 
                                 <div class="relative">
                                   <input
-                                    id="dateRange"
-                                    class="input-base border-default"
+                                    class="date-range-add input-base border-default"
                                     placeholder="Выберите дату"
                                     readonly
                                   />
@@ -628,8 +629,7 @@
                                 >
                                 <div class="relative">
                                   <select
-                                    id="stepName"
-                                    class="multi-select input-base border-default appearance-none"
+                                    class="step-name-add multi-select input-base border-default appearance-none"
                                     required
                                   >
                                     <option value="registration">
@@ -666,8 +666,7 @@
 
                                 <div class="relative">
                                   <input
-                                    id="dateRange"
-                                    class="input-base border-default"
+                                    class="date-range-add input-base border-default"
                                     placeholder="Выберите дату"
                                     readonly
                                   />
@@ -728,6 +727,7 @@
                                 class="input-base border-default"
                                 placeholder="Диплом участника олимпиады"
                                 value="Диплом участника олимпиады"
+                                id="title_certificate-add"
                               />
                             </div>
 
@@ -742,6 +742,7 @@
                                   rows="2"
                                   placeholder="Введите ваше сообщение..."
                                   class="textarea input-base border-default scrollbar px-4"
+                                  id="disc_certificate-add"
                                 ></textarea>
                               </div>
                             </div>
@@ -753,7 +754,7 @@
                               >
                               <input
                                 type="text"
-                                id="sign"
+                                id="sign-add"
                                 class="input-base border-default"
                                 placeholder="Асел Есангалиева, Директор олимпиады"
                                 value="Асел Есангалиева, Директор олимпиады"
@@ -763,29 +764,19 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Фон сертификата (загрузить файл PNG/JPG)</label
                               >
-                              <a
-                                href="#"
-                                class="text-orange-primary flex items-center gap-1"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="1.5"
-                                  stroke="currentColor"
-                                  class="size-5"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                                  />
-                                </svg>
-
-                                Assignment1.pdf (434 KB)
-                              </a>
+                                Фон сертификата (загрузить файл PNG/JPG)
+                              </label>
+                              <input
+                                type="file"
+                                accept=".png, .jpg, .jpeg"
+                                id="certificate-background"
+                                class="input-base border-default"
+                              />
+                              <p
+                                id="file-name-add"
+                                class="mt-2 text-sm text-gray-500"
+                              ></p>
                             </div>
                           </div>
                         </div>
@@ -795,7 +786,7 @@
                         <div class="flex items-center gap-2">
                           <button
                             type="button"
-                            onclick="toggleMessage()"
+                            onclick="submitOlympiadForm()"
                             class="btn-orange"
                           >
                             <span>
@@ -1131,7 +1122,7 @@
                                 >
                                   <option value="ongoing">Идет сейчас</option>
                                   <option value="completed">Завершено</option>
-                                  <option value="completed">Скоро</option>
+                                  <option value="soon">Скоро</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -1235,8 +1226,7 @@
                                 >
                                 <div class="relative">
                                   <select
-                                    id="stepName"
-                                    class="multi-select input-base border-default appearance-none"
+                                    class="step-name-edit multi-select input-base border-default appearance-none"
                                     required
                                   >
                                     <option value="registration">
@@ -1272,8 +1262,7 @@
                                 >
                                 <div class="relative">
                                   <input
-                                    id="dateRange"
-                                    class="input-base border-default"
+                                    class="date-range-edit input-base border-default"
                                     placeholder="Выберите дату"
                                     readonly
                                   />
@@ -1301,8 +1290,7 @@
                                 >
                                 <div class="relative">
                                   <select
-                                    id="stepName"
-                                    class="multi-select input-base border-default appearance-none"
+                                    class="step-name-edit multi-select input-base border-default appearance-none"
                                     required
                                   >
                                     <option value="registration">
@@ -1339,8 +1327,7 @@
 
                                 <div class="relative">
                                   <input
-                                    id="dateRange"
-                                    class="input-base border-default"
+                                    class="date-range-edit input-base border-default"
                                     placeholder="Выберите дату"
                                     readonly
                                   />
@@ -1638,7 +1625,7 @@
               <thead>
                 <tr class="border-b border-gray-200">
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-id-header" class="flex items-center gap-1 cursor-pointer">
                       ID
                       <span>
                         <svg
@@ -1660,7 +1647,7 @@
                     <div class="flex items-center">Название олимпиады</div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-tour-header" class="flex items-center gap-1 cursor-pointer">
                       Тур
                       <span>
                         <svg
@@ -1680,7 +1667,7 @@
                   </th>
                   <th class="p-table">Класс</th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-year-header" class="flex items-center gap-1 cursor-pointer">
                       Год
                       <span>
                         <svg
@@ -1699,7 +1686,7 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-participant-header" class="flex items-center gap-1 cursor-pointer">
                       Участники
                       <span>
                         <svg
@@ -2369,7 +2356,7 @@
 
       flatpickr.localize(flatpickr.l10ns.ru)
 
-      flatpickr('#dateRange', {
+      flatpickr('.date-range-add', {
         mode: 'range',
         dateFormat: 'd.m.Y',
         locale: {

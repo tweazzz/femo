@@ -194,13 +194,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <p class="text-primary text-sm">Участник</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -214,7 +215,7 @@
             <h1 class="text-2xl font-bold">Сертификаты</h1>
           </div>
 
-          <div class="border-default mb-6 overflow-x-auto rounded-2xl border">
+          <div id="certificate-table-container" class="border-default mb-6 overflow-x-auto rounded-2xl border">
             <table class="table-olympiads w-full rounded-2xl pb-6">
               <thead>
                 <tr class="border-b border-gray-200">
@@ -222,7 +223,7 @@
                     <div class="flex items-center">Название олимпиады</div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-date-header" class="flex items-center gap-1 cursor-pointer">
                       Дата получения
                       <span>
                         <svg
@@ -242,7 +243,7 @@
                   </th>
                   <th class="p-table">Категория</th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-place-header" class="flex items-center gap-1 cursor-pointer">
                       Место
                       <span>
                         <svg
@@ -263,163 +264,18 @@
                   <th class="p-table">Сертификат</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                  <td>FEMO Зима 2025</td>
-                  <td>15 декабря 2025</td>
-                  <td>
-                    <span class="card easy">Победитель</span>
-                  </td>
-                  <td>8-е</td>
-                  <td>
-                    <div
-                      class="text-orange-primary flex cursor-pointer items-center gap-2"
-                    >
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                          />
-                        </svg>
-                      </span>
-                      Скачать
-                    </div>
-                  </td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>FEMO Зима 2025</td>
-                  <td>15 декабря 2025</td>
-
-                  <td>
-                    <span class="card middle">Участник</span>
-                  </td>
-                  <td>👑 2-е</td>
-                  <td>
-                    <div
-                      class="text-orange-primary flex cursor-pointer items-center gap-2"
-                    >
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                          />
-                        </svg>
-                      </span>
-                      Скачать
-                    </div>
-                  </td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>FEMO Зима 2025</td>
-                  <td>15 декабря 2025</td>
-
-                  <td>
-                    <span class="card middle">Участник</span>
-                  </td>
-                  <td>👑 1-е</td>
-                  <td>
-                    <div
-                      class="text-orange-primary flex cursor-pointer items-center gap-2"
-                    >
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                          />
-                        </svg>
-                      </span>
-                      Скачать
-                    </div>
-                  </td>
-                </tr>
+              <tbody id="certificate-tbody" class="divide-y divide-gray-200">
               </tbody>
             </table>
           </div>
 
           <!-- Pagination -->
-          <div class="flex items-center justify-between">
-            <div class="text-gray-primary text-sm">Всего 85 участников</div>
-            <div class="flex items-center gap-0.5 *:cursor-pointer">
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-              <div class="flex gap-1 *:cursor-pointer">
-                <button
-                  class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1"
-                >
-                  1
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  2
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  3
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  4
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  5
-                </button>
-              </div>
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
+          <div class="mt-6 flex flex-col gap-2">
+            <div class="text-gray-primary text-sm">Всего сертификатов: <span id="total-certificate-count">0</span></div>
+            <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
 
-          <div class="mt-6 mb-6 flex items-center justify-between">
+          <div id="no-certificates" class="mt-6 mb-6 flex items-center justify-between">
             <h1 class="text-xl font-bold">
               Твои сертификаты ещё впереди. Пройди первые испытания — и двери
               достижений откроются!
@@ -780,86 +636,6 @@
         document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
       }
 
-      // Chart data for different periods
-      document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document
-          .getElementById('participantsChart')
-          .getContext('2d')
-
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-            datasets: [
-              {
-                data: [15, 80, 60, 40, 20, 10, 0], // Fixed to 7 values to match years
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                borderWidth: 1,
-                pointRadius: 3,
-                pointHoverRadius: 10,
-                pointBackgroundColor: '#fff',
-                tension: 0.6,
-                fill: true,
-                borderCapStyle: 'round',
-                borderJoinStyle: 'round',
-                pointStyle: 'circle',
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                suggestedMax: 100, // Force maximum value
-                ticks: {
-                  callback: function (value) {
-                    return value === 0 ? 0 : value + ' участников'
-                  },
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Количество'
-                // }
-                stepSize: 20, // Force ticks every 20 units
-                precision: 0,
-                autoSkip: false,
-              },
-
-              x: {
-                grid: {
-                  display: false, // Remove vertical grid lines
-                },
-                ticks: {
-                  autoSkip: false,
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Год'
-                // }
-              },
-            },
-            plugins: {
-              legend: {
-                display: false,
-              },
-              // legend: {
-              //     position: 'top',
-              //     labels: {
-              //         usePointStyle: true
-              //     }
-              // },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-            },
-          },
-        })
-      })
-
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
         const tabs = document.querySelectorAll('.tabs-link')
@@ -888,5 +664,7 @@
         })
       })
     </script>
+      <script src="/auth.js" defer></script>
+    <script src="/src/participant/certificates.js" defer></script>
   </body>
 </html>

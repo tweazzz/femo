@@ -610,7 +610,7 @@
             <div class="flex gap-4 max-lg:flex-wrap">
               <!-- Search -->
               <div class="relative w-full max-w-[350px]">
-                <input
+                <input id="filter-search"
                   type="text"
                   placeholder="Поиск по ID участника / имени "
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
@@ -633,13 +633,13 @@
 
               <!-- Filters -->
 
-              <select
+              <select id="filter-status"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все статусы</option>
-                <option>Оплачено</option>
-                <option>Ошибка</option>
-                <option>В процессе</option>
+                <option value="">Все статусы</option>
+                <option value="paid">Оплачено</option>
+                <option value="error">Ошибка</option>
+                <option value="pending">В процессе</option>
               </select>
 
               <!-- Container -->
@@ -668,11 +668,10 @@
                 </svg>
               </div>
 
-              <select
+              <select id="filter-olympiad"
                 class="w-fit cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Выбрать олимпиаду</option>
-                <option>...</option>
+                <option value="">Выбрать олимпиаду</option>
               </select>
             </div>
           </div>
@@ -686,8 +685,7 @@
             >
               <div>
                 <p class="text-sm">Общая сумма поступлений</p>
-                <p class="text-orange-primary text-2xl font-semibold">
-                  1 250 000 ₸
+                <p id="summary-total_amount" class="text-orange-primary text-2xl font-semibold">
                 </p>
               </div>
             </div>
@@ -698,7 +696,7 @@
             >
               <div>
                 <p class="text-sm">Успешных оплат</p>
-                <p class="text-green-primary text-2xl font-semibold">312</p>
+                <p id="summary-successful_payments" class="text-green-primary text-2xl font-semibold"></p>
               </div>
             </div>
             <!-- Card 3 -->
@@ -708,7 +706,7 @@
             >
               <div>
                 <p class="text-sm">Ожидают подтверждения</p>
-                <p class="text-violet-primary text-2xl font-semibold">18</p>
+                <p id="summary-pending_confirmations" class="text-violet-primary text-2xl font-semibold"></p>
               </div>
             </div>
 
@@ -718,7 +716,7 @@
             >
               <div>
                 <p class="text-sm">Платежи с ошибками</p>
-                <p class="text-red-primary text-2xl font-semibold">8</p>
+                <p id="summary-payments_with_errors" class="text-red-primary text-2xl font-semibold"></p>
               </div>
             </div>
           </div>
@@ -756,236 +754,15 @@
                   <th class="p-table">Действия</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                  <td>123456</td>
-                  <td>123456</td>
-                  <td>Айдаров М.</td>
-
-                  <td>
-                    <div>
-                      <p>
-                        FEMO 2023 Зимний тур FEMO 2023 Зимний тур FEMO 2023
-                        Зимний тур
-                      </p>
-                    </div>
-                  </td>
-
-                  <td>
-                    <span class="text-red-primary">-2 000 ₸</span>
-                  </td>
-                  <td>
-                    <span class="card paid">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="size-5"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-                      Оплачено
-                    </span>
-                  </td>
-                  <td>15.11.23</td>
-                  <td>#TXN42901</td>
-                  <td>
-                    <div class="flex cursor-pointer items-center gap-1">
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25"
-                          />
-                        </svg>
-                      </span>
-                      Скачать
-                    </div>
-                  </td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>123456</td>
-                  <td>123456</td>
-                  <td>Айдаров М.</td>
-                  <td>
-                    <div>
-                      <p>Пополнить баланс</p>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="text-green-primary">+4 000 ₸</span>
-                  </td>
-                  <td>
-                    <span class="card error">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="size-5"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-
-                      Ошибка
-                    </span>
-                  </td>
-                  <td>15.11.23</td>
-                  <td>#TXN42901</td>
-                  <td>
-                    <div class="flex cursor-pointer items-center gap-1">
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25"
-                          />
-                        </svg>
-                      </span>
-                      Скачать
-                    </div>
-                  </td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>123456</td>
-                  <td>123456</td>
-                  <td>Айдаров М.</td>
-                  <td>
-                    <div>
-                      <p>FEMO 2023 Зимний тур...</p>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="text-red-primary">-2 000 ₸</span>
-                  </td>
-                  <td>
-                    <span class="card onprocess">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="size-5"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-                      В процессе
-                    </span>
-                  </td>
-                  <td>15.11.23</td>
-                  <td>#TXN42901</td>
-                  <td>
-                    <div class="flex cursor-pointer items-center gap-1">
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-5"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25"
-                          />
-                        </svg>
-                      </span>
-                      Скачать
-                    </div>
-                  </td>
-                </tr>
+              <tbody id="payments-tbody" class="divide-y divide-gray-200">
               </tbody>
             </table>
           </div>
 
           <!-- Pagination -->
-          <div class="flex items-center justify-between">
-            <div class="text-gray-primary text-sm">Всего 85 участников</div>
-            <div class="flex items-center gap-0.5 *:cursor-pointer">
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-              <div class="flex gap-1 *:cursor-pointer">
-                <button
-                  class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1"
-                >
-                  1
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  2
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  3
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  4
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  5
-                </button>
-              </div>
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
+          <div class="mt-6 flex flex-col gap-2">
+            <div class="text-gray-primary text-sm">Всего платежей: <span id="total-payments-count">0</span></div>
+            <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
       </div>
@@ -1584,5 +1361,59 @@
         })
       })
     </script>
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('dateRange')
+
+    flatpickr(dateInput, {
+      mode: 'range',
+      dateFormat: 'Y-m-d',
+      locale: 'ru',
+      onClose: function (selectedDates) {
+        if (selectedDates.length === 2) {
+          const fromDate = selectedDates[0].toISOString().split('T')[0]
+          const toDate = selectedDates[1].toISOString().split('T')[0]
+
+          // Сохраняем в дата-атрибут
+          dateInput.dataset.rangeStart = fromDate
+          dateInput.dataset.rangeEnd = toDate
+
+          // Триггерим обновление фильтра
+          applyAssignmentFilters ()
+        }
+      },
+    })
+
+    // Подключим обработку фильтров
+    const statusFilter = document.getElementById('filter-status')
+    const olympiadFilter = document.getElementById('filter-olympiad')
+
+    statusFilter.addEventListener('change', applyAssignmentFilters )
+    olympiadFilter.addEventListener('change', applyAssignmentFilters )
+
+      function applyAssignmentFilters() {
+    const status = document.getElementById('filter-status')?.value || ''
+    const olympiad = document.getElementById('filter-olympiad')?.value || ''
+    const dateInput = document.getElementById('dateRange')
+
+    const dateFrom = dateInput.dataset.rangeStart
+    const dateTo = dateInput.dataset.rangeEnd
+
+    assignmentFilters.status = status
+    assignmentFilters.olympiad = olympiad
+
+    if (dateFrom && dateTo) {
+      assignmentFilters.date = `${dateFrom}T00:00:00Z,${dateTo}T23:59:59Z`
+    } else {
+      assignmentFilters.date = ''
+    }
+
+    loadAssignments(1)
+  }
+
+  })
+</script>
+    <script src="/auth.js" defer></script>
+    <script src="/src/admin/payments.js" defer></script>
   </body>
 </html>

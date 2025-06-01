@@ -194,13 +194,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <p class="text-primary text-sm">Участник</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -242,6 +243,7 @@
                     value="123456"
                     type="text"
                     class="input-base border-default block"
+                    name="id"
                     required
                   />
                 </div>
@@ -268,7 +270,7 @@
                     placeholder="Айжан Ахметова"
                     value="Айжан Ахметова"
                     type="text"
-                    name="fullname"
+                    name="fullname_ru"
                     class="input-base border-default"
                     required
                   />
@@ -282,7 +284,7 @@
                     placeholder="Айжан Ахметова"
                     value="Айжан Ахметова"
                     type="text"
-                    name="fullname"
+                    name="fullname_en"
                     class="input-base border-default"
                     required
                   />
@@ -474,11 +476,11 @@
               </div>
 
               <div class="mt-6 flex items-center justify-end gap-4">
-                <button class="btn-outline btn--orange">Отменить</button>
+                <button id="cancel-button" type="button" class="btn-outline btn--orange hidden">Отменить</button>
                 <button
-                  type="button"
-                  class="btn-orange"
+                  type="button" class="btn-orange hidden"
                   onclick="toggleModal('modal')"
+                  id="submit-button"
                 >
                   <span>
                     <svg
@@ -572,7 +574,7 @@
               </div>
 
               <div class="mt-6 flex items-center justify-end gap-4">
-                <button class="btn-outline btn--orange">
+                <button id="edit-button" type="button"  class="btn-outline btn--orange">
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -960,85 +962,6 @@
         }
       }
 
-      // Chart data for different periods
-      document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document
-          .getElementById('participantsChart')
-          .getContext('2d')
-
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-            datasets: [
-              {
-                data: [15, 80, 60, 40, 20, 10, 0], // Fixed to 7 values to match years
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                borderWidth: 1,
-                pointRadius: 3,
-                pointHoverRadius: 10,
-                pointBackgroundColor: '#fff',
-                tension: 0.6,
-                fill: true,
-                borderCapStyle: 'round',
-                borderJoinStyle: 'round',
-                pointStyle: 'circle',
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                suggestedMax: 100, // Force maximum value
-                ticks: {
-                  callback: function (value) {
-                    return value === 0 ? 0 : value + ' участников'
-                  },
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Количество'
-                // }
-                stepSize: 20, // Force ticks every 20 units
-                precision: 0,
-                autoSkip: false,
-              },
-
-              x: {
-                grid: {
-                  display: false, // Remove vertical grid lines
-                },
-                ticks: {
-                  autoSkip: false,
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Год'
-                // }
-              },
-            },
-            plugins: {
-              legend: {
-                display: false,
-              },
-              // legend: {
-              //     position: 'top',
-              //     labels: {
-              //         usePointStyle: true
-              //     }
-              // },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-            },
-          },
-        })
-      })
 
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
@@ -1068,5 +991,7 @@
         })
       })
     </script>
+          <script src="/auth.js" defer></script>
+    <script src="/src/participant/personal.js" defer></script>
   </body>
 </html>

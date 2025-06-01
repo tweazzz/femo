@@ -270,7 +270,10 @@
               <img src="/src/assets/images/paper.png" alt="paper" />
               <div>
                 <p class="text-sm">Участники</p>
-                <p class="text-red-primary text-2xl font-semibold">240</p>
+                <p
+                  id="participants"
+                  class="text-red-primary text-2xl font-semibold"
+                ></p>
               </div>
             </div>
             <!-- Card 2--->
@@ -281,7 +284,10 @@
               <img src="/src/assets/images/stars.png" alt="stars" />
               <div>
                 <p class="text-sm">Средний общий балл по системе</p>
-                <p class="text-orange-primary text-2xl font-semibold">1240</p>
+                <p
+                  id="average_score"
+                  class="text-orange-primary text-2xl font-semibold"
+                ></p>
               </div>
             </div>
           </div>
@@ -295,7 +301,7 @@
             <div class="flex flex-wrap gap-4">
               <!-- Search -->
               <div class="relative w-full max-w-[350px]">
-                <input
+                <input id="filter-search"
                   type="text"
                   placeholder="Искать участника"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
@@ -318,40 +324,36 @@
 
               <!-- Filters -->
 
-              <select
+              <select id="filter-country"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все страны</option>
-                <option>Казахстан</option>
-                <option>Россия</option>
-                <option>Кыргызстан</option>
-                <option>Грузия</option>
+                <option value="">Все страны</option>
               </select>
 
-              <select
+              <select id="filter-grade"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все классы</option>
-                <option>1 класс</option>
-                <option>2 класс</option>
-                <option>3 класс</option>
-                <option>4 класс</option>
-                <option>5 класс</option>
-                <option>6 класс</option>
-                <option>7 класс</option>
-                <option>8 класс</option>
-                <option>9 класс</option>
-                <option>10 класс</option>
-                <option>11 класс</option>
+                <option value="">Все классы</option>
+                <option value="first">1 класс</option>
+                <option value="second">2 класс</option>
+                <option value="third">3 класс</option>
+                <option value="fourth">4 класс</option>
+                <option value="fifth">5 класс</option>
+                <option value="sixth">6 класс</option>
+                <option value="seventh">7 класс</option>
+                <option value="eights">8 класс</option>
+                <option value="ninth">9 класс</option>
+                <option value="tenth">10 класс</option>
+                <option value="eleventh">11 класс</option>
               </select>
 
-              <select
+              <!--<select
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
                 <option>Выбрать олимпиаду</option>
                 <option>Идёт сейчас</option>
                 <option>Завершено</option>
-              </select>
+              </select>-->
             </div>
           </div>
 
@@ -360,7 +362,7 @@
               <thead>
                 <tr class="border-b border-gray-200">
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-rank-header" class="flex items-center gap-1 cursor-pointer">
                       Ранк
                       <span>
                         <svg
@@ -382,7 +384,7 @@
                   <th class="p-table">Страна</th>
                   <th class="p-table">Класс</th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-score-header" class="flex items-center gap-1 cursor-pointer">
                       Баллы за олимпиаду
                       <span>
                         <svg
@@ -401,7 +403,7 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-scoretask-header" class="flex items-center gap-1 cursor-pointer">
                       Баллы за задачи
                       <span>
                         <svg
@@ -420,7 +422,7 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-scorerew-header" class="flex items-center gap-1 cursor-pointer">
                       Баллы за награды
                       <span>
                         <svg
@@ -439,7 +441,7 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-allscore-header" class="flex items-center gap-1 cursor-pointer">
                       Общее Баллы
                       <span>
                         <img
@@ -466,110 +468,15 @@
                   </th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                  <td>👑</td>
-                  <td>Айдана Ержанова</td>
-                  <td>🇰🇿, Казахстан</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>3400</td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>👑</td>
-                  <td>Айдана Ержанова</td>
-                  <td>🇰🇿, Казахстан</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>3400</td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>👑</td>
-                  <td>Айдана Ержанова</td>
-                  <td>🇰🇿, Казахстан</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>3400</td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>4</td>
-                  <td>Айдана Ержанова</td>
-                  <td>🇰🇿, Казахстан</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>600</td>
-                  <td>3400</td>
-                </tr>
+              <tbody id="resoverall-tbody" class="divide-y divide-gray-200">
               </tbody>
             </table>
           </div>
 
           <!-- Pagination -->
-          <div class="flex items-center justify-between">
-            <div class="text-gray-primary text-sm">Всего 85 участников</div>
-            <div class="flex items-center gap-0.5 *:cursor-pointer">
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-              <div class="flex gap-1 *:cursor-pointer">
-                <button
-                  class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1"
-                >
-                  1
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  2
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  3
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  4
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  5
-                </button>
-              </div>
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
+          <div class="mt-6 flex flex-col gap-2">
+            <div class="text-gray-primary text-sm">Всего рейтингов: <span id="total-resoverall-count">0</span></div>
+            <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
       </div>
@@ -1168,5 +1075,7 @@
         })
       })
     </script>
+    <script src="/auth.js" defer></script>
+    <script defer src="/src/admin/results-overall-rate.js"></script>
   </body>
 </html>

@@ -194,13 +194,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <p class="text-primary text-sm">Участник</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -233,30 +234,25 @@
             <div class="grid gap-6 lg:grid-cols-2">
               <div class="bg-orange-third/60 space-y-2 rounded-2xl p-6">
                 <p class="text-sm">
-                  <span class="text-orange-primary text-2xl font-bold">7</span>
-                  Уровень
-                </p>
+                  <span id="current_level" class="text-orange-primary text-2xl font-bold"></span>
+                Уровень
+              </p>
 
-                <div class="flex items-center gap-6">
-                  <div class="bg-orange-secondary h-3 w-full rounded-full">
-                    <div
-                      class="bg-orange-primary h-3 w-[76%] rounded-full"
-                    ></div>
-                  </div>
-                  <p class="text-2xl">👑</p>
-                </div>
+              <div class="progress-container bg-gray-200 rounded-md h-6 w-full">
+                <div id="progress-bar" class="bg-orange-500 h-full rounded-md transition-all" style="width: 0%;"></div>
+              </div>
 
                 <!-- Текст с XP -->
                 <p class="text-sm">
                   Осталось
-                  <span class="text-orange-primary font-bold">24 XP</span> до
+                  <span id="xp_to_next" class="text-orange-primary font-bold">0</span> XP до
                   следующего уровня
                 </p>
               </div>
 
               <div class="bg-green-secondary h-fit rounded-2xl p-6">
                 <p class="text-sm">Заработано сегодня</p>
-                <p class="text-green-primary text-2xl font-bold">0 XP</p>
+                <p id="xp_today" class="text-green-primary text-2xl font-bold">0 XP</p>
               </div>
             </div>
           </div>
@@ -264,7 +260,7 @@
           <div class="table-group">
             <p class="mb-4 text-xl font-bold">Результаты олимпиады</p>
 
-            <div class="border-default mb-6 overflow-x-auto rounded-2xl border">
+            <div id="my_way-table-container" class="border-default mb-6 overflow-x-auto rounded-2xl border">
               <table class="table-olympiads w-full rounded-2xl pb-6">
                 <thead>
                   <tr class="border-b border-gray-200">
@@ -275,129 +271,15 @@
                     <th class="p-table">Действия</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                  <tr class="hover:bg-gray-50">
-                    <td>Айдана Ержанова</td>
-                    <td class="text-orange-primary font-bold">4-e</td>
-                    <td>100</td>
-                    <td>6/7</td>
-                    <td>
-                      <div
-                        class="text-orange-primary flex cursor-pointer items-center gap-1"
-                      >
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="size-5"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            />
-                          </svg>
-                        </span>
-                        Скачать
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr class="hover:bg-gray-50">
-                    <td>Айдана Ержанова</td>
-                    <td class="text-orange-primary font-bold">4-e</td>
-                    <td>100</td>
-                    <td>6/7</td>
-                    <td>
-                      <div
-                        class="text-orange-primary flex cursor-pointer items-center gap-2"
-                      >
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="size-5"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            />
-                          </svg>
-                        </span>
-                        Скачать
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr class="hover:bg-gray-50">
-                    <td>Айдана Ержанова</td>
-                    <td class="text-orange-primary font-bold">4-e</td>
-                    <td>100</td>
-                    <td>6/7</td>
-                    <td>
-                      <div
-                        class="text-orange-primary flex cursor-pointer items-center gap-2"
-                      >
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="size-5"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            />
-                          </svg>
-                        </span>
-                        Скачать
-                      </div>
-                    </td>
-                  </tr>
-
-                  <tr class="hover:bg-gray-50">
-                    <td>Айдана Ержанова</td>
-                    <td class="text-orange-primary font-bold">4-e</td>
-                    <td>100</td>
-                    <td>6/7</td>
-                    <td>
-                      <div
-                        class="text-orange-primary flex cursor-pointer items-center gap-2"
-                      >
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="size-5"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            />
-                          </svg>
-                        </span>
-                        Скачать
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="my_way-tbody" class="divide-y divide-gray-200">
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="mt-6 flex flex-col gap-2">
+            <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
 
           <div>
@@ -939,85 +821,6 @@
         document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
       }
 
-      // Chart data for different periods
-      document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document
-          .getElementById('participantsChart')
-          .getContext('2d')
-
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-            datasets: [
-              {
-                data: [15, 80, 60, 40, 20, 10, 0], // Fixed to 7 values to match years
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                borderWidth: 1,
-                pointRadius: 3,
-                pointHoverRadius: 10,
-                pointBackgroundColor: '#fff',
-                tension: 0.6,
-                fill: true,
-                borderCapStyle: 'round',
-                borderJoinStyle: 'round',
-                pointStyle: 'circle',
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                suggestedMax: 100, // Force maximum value
-                ticks: {
-                  callback: function (value) {
-                    return value === 0 ? 0 : value + ' участников'
-                  },
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Количество'
-                // }
-                stepSize: 20, // Force ticks every 20 units
-                precision: 0,
-                autoSkip: false,
-              },
-
-              x: {
-                grid: {
-                  display: false, // Remove vertical grid lines
-                },
-                ticks: {
-                  autoSkip: false,
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Год'
-                // }
-              },
-            },
-            plugins: {
-              legend: {
-                display: false,
-              },
-              // legend: {
-              //     position: 'top',
-              //     labels: {
-              //         usePointStyle: true
-              //     }
-              // },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-            },
-          },
-        })
-      })
 
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
@@ -1047,5 +850,7 @@
         })
       })
     </script>
+        <script src="/auth.js" defer></script>
+    <script src="/src/participant/my-way.js" defer></script>
   </body>
 </html>

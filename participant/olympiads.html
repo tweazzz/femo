@@ -194,13 +194,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <p class="text-primary text-sm">Участник</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -227,213 +228,6 @@
 
           <!-- Cards Grid -->
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <!-- Card 1 -->
-            <div class="border-default flex flex-col rounded-xl bg-white p-4">
-              <div
-                class="text-red-primary mb-2 w-fit rounded-full bg-red-100 px-2 py-1 text-xs"
-              >
-                Идёт сейчас
-              </div>
-              <h3 class="mb-1 text-lg font-semibold">FEMO Весенний тур 2024</h3>
-              <p class="text-gray-primary mb-3 text-sm">
-                Весенний этап международной олимпиады для 5–11 классов
-              </p>
-              <div class="mt-auto mb-4 flex">
-                <div>
-                  <span class="text-gray-secondary mb-1 text-xs">Осталось</span>
-                  <p class="text-orange-primary text-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="mb-1 inline-block size-5"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-
-                    1 день 6 час : 45 мин
-                  </p>
-                </div>
-              </div>
-              <a href="#" class="btn-base"> Подробнее </a>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="border-default flex flex-col rounded-xl bg-white p-4">
-              <div
-                class="text-orange-primary mb-2 w-fit rounded-full bg-orange-100 px-2 py-1 text-xs"
-              >
-                Регистрация открыта
-              </div>
-              <h3 class="mb-1 text-lg font-semibold">FEMO Весенний тур 2024</h3>
-              <p class="text-gray-primary mb-3 text-sm">
-                Весенний этап международной олимпиады для 5–11 классов
-              </p>
-              <div class="mt-auto mb-4 flex">
-                <div>
-                  <span class="text-gray-secondary mb-1 text-xs">Осталось</span>
-                  <p class="text-red-primary text-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="mb-1 inline-block size-5"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    1 ч : 36 м : 23 c
-                  </p>
-                </div>
-              </div>
-
-              <a href="#" class="btn-base"> Подробнее </a>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="border-default flex flex-col rounded-xl bg-white p-4">
-              <div
-                class="mb-2 w-fit rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-600"
-              >
-                Регистрация скоро откроется
-              </div>
-              <h3 class="mb-1 text-lg font-semibold">FEMO Летний тур 2025</h3>
-              <p class="text-gray-primary mb-3 text-sm">
-                Летний этап международной олимпиады для 5–11 классов
-              </p>
-              <div class="mt-auto mb-4 flex">
-                <div>
-                  <span class="text-gray-secondary mb-1 text-xs"
-                    >Откроется:</span
-                  >
-                  <p class="text-gray-primary text-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="mb-1 inline-block size-5"
-                    >
-                      <path
-                        d="M10 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H10ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V12ZM11.25 10.005c0-.417.338-.755.755-.755h2a.755.755 0 1 1 0 1.51h-2a.755.755 0 0 1-.755-.755ZM6.005 11.25a.755.755 0 1 0 0 1.51h4a.755.755 0 1 0 0-1.51h-4Z"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-
-                    10 мая 2025
-                  </p>
-                </div>
-              </div>
-              <a href="#" class="btn-base"> Подробнее </a>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="border-default flex flex-col rounded-xl bg-white p-4">
-              <div
-                class="mb-2 w-fit rounded-full bg-green-100 px-2 py-1 text-xs text-green-600"
-              >
-                Вы участвуете
-              </div>
-              <h3 class="mb-1 text-lg font-semibold">FEMO Летний тур 2025</h3>
-              <p class="text-gray-primary mb-3 text-sm">
-                Летний этап международной олимпиады для 5–11 классов
-              </p>
-              <div class="mt-auto mb-4 flex">
-                <div>
-                  <span class="text-gray-secondary mb-1 text-xs">
-                    Олимпиада начнётся
-                  </span>
-                  <p class="text-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="mb-1 inline-block size-5"
-                    >
-                      <path
-                        d="M10 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H10ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V12ZM11.25 10.005c0-.417.338-.755.755-.755h2a.755.755 0 1 1 0 1.51h-2a.755.755 0 0 1-.755-.755ZM6.005 11.25a.755.755 0 1 0 0 1.51h4a.755.755 0 1 0 0-1.51h-4Z"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-
-                    15 марта 2025
-                  </p>
-                </div>
-              </div>
-              <a href="#" class="btn-base"> Подробнее </a>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="border-default flex flex-col rounded-xl bg-white p-4">
-              <div
-                class="mb-2 w-fit rounded-full bg-green-100 px-2 py-1 text-xs text-green-600"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="mb-0.5 inline-block size-5"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                Завершено
-              </div>
-              <h3 class="mb-1 text-lg font-semibold">FEMO Весенний тур 2024</h3>
-              <p class="text-gray-primary mb-3 text-sm">
-                Зимний этап международной олимпиады для 5–11 классов
-              </p>
-              <div class="mt-auto mb-4 flex">
-                <div>
-                  <span class="text-gray-secondary mb-1 text-xs">
-                    Даты олимпиады
-                  </span>
-                  <p class="text-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="mb-1 inline-block size-5"
-                    >
-                      <path
-                        d="M10 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H10ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V12ZM11.25 10.005c0-.417.338-.755.755-.755h2a.755.755 0 1 1 0 1.51h-2a.755.755 0 0 1-.755-.755ZM6.005 11.25a.755.755 0 1 0 0 1.51h4a.755.755 0 1 0 0-1.51h-4Z"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-
-                    12–15 марта
-                  </p>
-                </div>
-                <div class="ms-12">
-                  <span class="text-gray-secondary mb-1 text-xs"> Место </span>
-                  <p class="text-sm">
-                    <span class="mb-1 inline-block"></span>3-е место
-                  </p>
-                </div>
-              </div>
-              <a href="#" class="btn-base mt-auto">Посмотреть результаты </a>
-            </div>
           </div>
         </main>
       </div>
@@ -809,5 +603,7 @@
         })
       })
     </script>
+          <script src="/auth.js" defer></script>
+    <script src="/src/participant/olympiads.js" defer></script>
   </body>
 </html>
