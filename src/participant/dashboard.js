@@ -89,6 +89,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Начальная загрузка графика
       loadParticipantsTrend('week')
 
+      let sortAscending = true
+
+  const sortHeader = document.getElementById('sort-rank-header')
+  if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.rank
+        const B = b.rank
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -210,7 +223,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/global/?${params.toString()}`,
+      `https://portal.gradients.academy/users/participant/dashboard/global/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -227,8 +240,7 @@ async function loadAssignments(page = 1) {
     totalAssignmentCount = data.count
     currentAssignmentPage = page
 
-    renderAssignmentTable(allAssignments)
-    renderAssignmentPagination()
+    renderPaginatedAssignments()
     document.getElementById('total-rank-count').textContent =
       totalAssignmentCount
   } catch (err) {
@@ -315,10 +327,10 @@ function goToAssignmentPage(page) {
 function renderPaginatedAssignments() {
   const start = (currentAssignmentPage - 1) * assignmentPageSize
   const end = start + assignmentPageSize
-  const pageData = filteredAssignments.slice(start, end)
+  const pageData = allAssignments.slice(start, end)
 
   document.getElementById('total-rank-count').textContent =
-    filteredAssignments.length
+    allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
 }

@@ -223,7 +223,7 @@
                     <div class="flex items-center">Название олимпиады</div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-date-header" class="flex items-center gap-1 cursor-pointer">
                       Дата получения
                       <span>
                         <svg
@@ -243,7 +243,7 @@
                   </th>
                   <th class="p-table">Категория</th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div id="sort-place-header" class="flex items-center gap-1 cursor-pointer">
                       Место
                       <span>
                         <svg
@@ -635,86 +635,6 @@
         // Body scroll control
         document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
       }
-
-      // Chart data for different periods
-      document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document
-          .getElementById('participantsChart')
-          .getContext('2d')
-
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-            datasets: [
-              {
-                data: [15, 80, 60, 40, 20, 10, 0], // Fixed to 7 values to match years
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                borderWidth: 1,
-                pointRadius: 3,
-                pointHoverRadius: 10,
-                pointBackgroundColor: '#fff',
-                tension: 0.6,
-                fill: true,
-                borderCapStyle: 'round',
-                borderJoinStyle: 'round',
-                pointStyle: 'circle',
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: true,
-                suggestedMax: 100, // Force maximum value
-                ticks: {
-                  callback: function (value) {
-                    return value === 0 ? 0 : value + ' участников'
-                  },
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Количество'
-                // }
-                stepSize: 20, // Force ticks every 20 units
-                precision: 0,
-                autoSkip: false,
-              },
-
-              x: {
-                grid: {
-                  display: false, // Remove vertical grid lines
-                },
-                ticks: {
-                  autoSkip: false,
-                },
-                // title: {
-                //     display: true,
-                //     text: 'Год'
-                // }
-              },
-            },
-            plugins: {
-              legend: {
-                display: false,
-              },
-              // legend: {
-              //     position: 'top',
-              //     labels: {
-              //         usePointStyle: true
-              //     }
-              // },
-              tooltip: {
-                mode: 'index',
-                intersect: false,
-              },
-            },
-          },
-        })
-      })
 
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {

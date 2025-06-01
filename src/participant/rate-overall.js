@@ -72,6 +72,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await loadSummary();
     if (data) updateProgressBar(data.recommendation?.xp_to_next ?? 100);
     populateCountryFilter()
+    let sortAscending = true
+
+      const sortHeader = document.getElementById('sort-rank-header')
+
+        if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.rank
+        const B = b.rank
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -257,10 +271,10 @@ function goToAssignmentPage(page) {
 function renderPaginatedAssignments() {
   const start = (currentAssignmentPage - 1) * assignmentPageSize
   const end = start + assignmentPageSize
-  const pageData = filteredAssignments.slice(start, end)
+  const pageData = allAssignments.slice(start, end)
 
   document.getElementById('total-rateoverall-count').textContent =
-    filteredAssignments.length
+    allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
 }
