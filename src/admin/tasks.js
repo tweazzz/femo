@@ -69,6 +69,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await loadAssignments()
     setupAssignmentFilters()
+
+    let sortAscending = true
+
+    const sortHeader = document.getElementById('sort-id-header')
+    const sortHeader2 = document.getElementById('sort-name-header')
+    if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.id
+        const B = b.id
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+    let sortDescriptionAsc = true
+
+            if (sortHeader2) {
+    sortHeader2.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const descA = a.title.toLowerCase()
+        const descB = b.title.toLowerCase()
+        return sortDescriptionAsc ? descA.localeCompare(descB) : descB.localeCompare(descA)
+
+      })
+      sortDescriptionAsc = !sortDescriptionAsc
+      renderPaginatedAssignments()
+    })}
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -257,10 +286,10 @@ function goToAssignmentPage(page) {
 function renderPaginatedAssignments() {
   const start = (currentAssignmentPage - 1) * assignmentPageSize
   const end = start + assignmentPageSize
-  const pageData = filteredAssignments.slice(start, end)
+  const pageData = allAssignments.slice(start, end)
 
   document.getElementById('total-assignments-count').textContent =
-    filteredAssignments.length
+    allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
 }

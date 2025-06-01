@@ -355,39 +355,13 @@
           <!-- Control Panel -->
           <div class="mt-4 mb-5 rounded-lg bg-white">
             <div class="flex flex-wrap gap-4">
-              <!-- Search -->
-              <div class="relative w-full max-w-[350px]">
-                <input
-                  type="text"
-                  placeholder="Искать участника"
-                  class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </div>
 
               <!-- Filters -->
 
-              <select
+              <select id="country-filter"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все страны</option>
-                <option>Казахстан</option>
-                <option>Россия</option>
-                <option>Кыргызстан</option>
-                <option>Грузия</option>
+                <option value="all">Все страны</option>
               </select>
             </div>
           </div>
@@ -395,16 +369,15 @@
           <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center">
             <div class="bg-red-secondary w-full rounded-2xl p-5">
               <p class="text-sm">Всего стран</p>
-              <p class="text-red-primary text-2xl font-bold">4</p>
+              <p id="total-countries" class="text-red-primary text-2xl font-bold">0</p>
             </div>
             <div class="bg-orange-secondary w-full rounded-2xl p-5">
               <p class="text-sm">Средний балл участников</p>
-              <p class="text-orange-primary text-2xl font-bold">85</p>
+              <p id="average-score" class="text-orange-primary text-2xl font-bold">0</p>
             </div>
             <div class="bg-green-secondary w-full rounded-2xl p-5">
               <p class="text-sm">ТОП-страна по рейтингу</p>
-              <p class="text-green-primary text-2xl font-bold">
-                Казахстан (640)
+              <p id="top-country" class="text-green-primary text-2xl font-bold">
               </p>
             </div>
           </div>
@@ -493,264 +466,18 @@
                   <th class="p-table">Дейсвия</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                  <td>🇰🇿 Казахстан</td>
-                  <td>500</td>
-                  <td>600</td>
-
-                  <td>11</td>
-                  <td>2</td>
-
-                  <td>
-                    <div class="flex justify-between gap-2 *:cursor-pointer">
-                      <button class="text-gray-400 hover:text-red-500">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onclick="toggleModal('modalEdit')"
-                        class="hover:text-blue-primary text-gray-400"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      </button>
-                      <button class="hover:text-orange-primary text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>🇰🇿 Казахстан</td>
-                  <td>500</td>
-                  <td>600</td>
-
-                  <td>11</td>
-                  <td>2</td>
-
-                  <td>
-                    <div class="flex justify-between gap-2 *:cursor-pointer">
-                      <button class="text-gray-400 hover:text-red-500">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onclick="toggleModal('modalEdit')"
-                        class="hover:text-blue-primary text-gray-400"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      </button>
-                      <button class="hover:text-orange-primary text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>🇰🇿 Казахстан</td>
-                  <td>500</td>
-                  <td>600</td>
-
-                  <td>11</td>
-                  <td>2</td>
-
-                  <td>
-                    <div class="flex justify-between gap-2 *:cursor-pointer">
-                      <button class="text-gray-400 hover:text-red-500">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onclick="toggleModal('modalEdit')"
-                        class="hover:text-blue-primary text-gray-400"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      </button>
-                      <button class="hover:text-orange-primary text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-6"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+              <tbody id="countries-table-body" class="divide-y divide-gray-200">
               </tbody>
             </table>
           </div>
 
           <!-- Pagination -->
-          <div class="flex items-center justify-between">
-            <div class="text-gray-primary text-sm">Всего 85 участников</div>
-            <div class="flex items-center gap-0.5 *:cursor-pointer">
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-              <div class="flex gap-1 *:cursor-pointer">
-                <button
-                  class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1"
-                >
-                  1
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  2
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  3
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  4
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  5
-                </button>
-              </div>
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
 
           <div class="mt-10 mb-5 rounded-lg bg-white">
             <div class="flex flex-wrap gap-4">
               <!-- Search -->
               <div class="relative w-full max-w-[350px]">
-                <input
+                <input id="participant-search"
                   type="text"
                   placeholder="Искать участника"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
@@ -773,44 +500,33 @@
 
               <!-- Filters -->
 
-              <select
+              <select id="grade-filter">
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все страны</option>
-                <option>Казахстан</option>
-                <option>Россия</option>
-                <option>Кыргызстан</option>
-                <option>Грузия</option>
+                <option value="">Все классы</option>
+                <option value="1">1 класс</option>
+                <option value="2">2 класс</option>
+                <option value="3">3 класс</option>
+                <option value="4">4 класс</option>
+                <option value="5">5 класс</option>
+                <option value="6">6 класс</option>
+                <option value="7">7 класс</option>
+                <option value="8">8 класс</option>
+                <option value="9">9 класс</option>
+                <option value="10">10 класс</option>
+                <option value="11">11 класс</option>
+
               </select>
 
-              <select
+              <select id="olympiad-filter">
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все классы</option>
-                <option>1 класс</option>
-                <option>2 класс</option>
-                <option>3 класс</option>
-                <option>4 класс</option>
-                <option>5 класс</option>
-                <option>6 класс</option>
-                <option>7 класс</option>
-                <option>8 класс</option>
-                <option>9 класс</option>
-                <option>10 класс</option>
-                <option>11 класс</option>
-              </select>
-
-              <select
-                class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
-              >
-                <option>Выбрать олимпиаду</option>
-                <option>Идёт сейчас</option>
-                <option>Завершено</option>
+                <option value="">Выбрать олимпиаду</option>
               </select>
             </div>
           </div>
 
-          <div class="border-default mb-6 overflow-x-auto rounded-2xl border">
+          <div  id="participants-section" class="border-default mb-6 overflow-x-auto rounded-2xl border">
             <table class="table-olympiads w-full min-w-5xl rounded-2xl pb-6">
               <thead>
                 <tr class="border-b border-gray-200">
@@ -888,39 +604,7 @@
                   </th>
                 </tr>
               </thead>
-              <tbody class="tbody-overall divide-y divide-gray-200">
-                <tr class="hover:bg-gray-50">
-                  <td>1</td>
-                  <td>👑</td>
-                  <td>Айдана Ержанова</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>6/6</td>
-                  <td class="text-orange-primary font-bold">3400</td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>1</td>
-                  <td>👑</td>
-                  <td>Айдана Ержанова</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>6/6</td>
-                  <td class="text-orange-primary font-bold">3400</td>
-                </tr>
-
-                <tr class="hover:bg-gray-50">
-                  <td>1</td>
-                  <td>👑</td>
-                  <td>Айдана Ержанова</td>
-
-                  <td>11</td>
-                  <td>600</td>
-                  <td>6/6</td>
-                  <td class="text-orange-primary font-bold">3400</td>
-                </tr>
+              <tbody id="participants-table-body" class="tbody-overall divide-y divide-gray-200">
               </tbody>
             </table>
           </div>
@@ -1687,5 +1371,7 @@
         })
       })
     </script>
+      <script src="/auth.js" defer></script>
+    <script defer src="/src/admin/results-countries-rate.js"></script>
   </body>
 </html>

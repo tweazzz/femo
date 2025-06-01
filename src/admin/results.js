@@ -71,6 +71,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupAssignmentFilters()
     await populateCountryFilter()
     await populateOlympiadFilter()
+
+    let sortAscending = true
+
+    const sortHeader = document.getElementById('sort-id-header')
+    const sortHeader2 = document.getElementById('sort-rank-header')
+    const sortHeader3 = document.getElementById('sort-score-header')
+    if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.id
+        const B = b.id
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+        if (sortHeader2) {
+    sortHeader2.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.rank
+        const B = b.rank
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+        if (sortHeader3) {
+    sortHeader3.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.score
+        const B = b.score
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -338,10 +377,10 @@ function goToAssignmentPage(page) {
 function renderPaginatedAssignments() {
   const start = (currentAssignmentPage - 1) * assignmentPageSize
   const end = start + assignmentPageSize
-  const pageData = filteredAssignments.slice(start, end)
+  const pageData = allAssignments.slice(start, end)
 
   document.getElementById('total-results-count').textContent =
-    filteredAssignments.length
+    allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
 }

@@ -71,6 +71,68 @@ document.addEventListener('DOMContentLoaded', async () => {
      await loadAssignments()
      setupAssignmentFilters()
      populateCountryFilter()
+
+     let sortAscending = true
+
+    const sortHeader = document.getElementById('sort-scoretask-header')
+    const sortHeader2 = document.getElementById('sort-rank-header')
+    const sortHeader3 = document.getElementById('sort-score-header')
+    const sortHeader4 = document.getElementById('sort-scorerew-header')
+    const sortHeader5 = document.getElementById('sort-allscore-header')
+    if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.olympiad_score
+        const B = b.olympiad_score
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+        if (sortHeader2) {
+    sortHeader2.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.rank
+        const B = b.rank
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+        if (sortHeader3) {
+    sortHeader3.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.olympiad_score
+        const B = b.olympiad_score
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+            if (sortHeader4) {
+    sortHeader4.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.reward_score
+        const B = b.reward_score
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+            if (sortHeader5) {
+    sortHeader5.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.total_score
+        const B = b.total_score
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -200,7 +262,7 @@ function renderAssignmentTable(assignments) {
         <td>${task.country}</td>
         <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
         <td>${task.olympiad_score}</td>
-        <td>${task.assignment_score}</td>
+        <td>${task.olympiad_score}</td>
         <td>${task.reward_score}</td>
         <td>${task.total_score}</td>
       </tr>
@@ -242,10 +304,10 @@ function goToAssignmentPage(page) {
 function renderPaginatedAssignments() {
   const start = (currentAssignmentPage - 1) * assignmentPageSize
   const end = start + assignmentPageSize
-  const pageData = filteredAssignments.slice(start, end)
+  const pageData = allAssignments.slice(start, end)
 
   document.getElementById('total-resoverall-count').textContent =
-    filteredAssignments.length
+    allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
 }

@@ -68,10 +68,65 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     await loadOlympiads()
+
+    let sortAscending = true
+
+    const sortHeader = document.getElementById('sort-year-header')
+    const sortHeader2 = document.getElementById('sort-id-header')
+    const sortHeader3 = document.getElementById('sort-tour-header')
+    const sortHeader4 = document.getElementById('sort-participant-header')
+    if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const A = a.year
+        const B = b.year
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedTable()
+    })}
+
+        if (sortHeader2) {
+    sortHeader2.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const A = a.id
+        const B = b.id
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedTable()
+    })}
+
+
+    let sortDescriptionAsc = true
+
+            if (sortHeader3) {
+    sortHeader3.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const descA = a.type.toLowerCase()
+        const descB = b.type.toLowerCase()
+        return sortDescriptionAsc ? descA.localeCompare(descB) : descB.localeCompare(descA)
+
+      })
+      sortDescriptionAsc = !sortDescriptionAsc
+      renderPaginatedTable()
+    })}
+
+            if (sortHeader4) {
+    sortHeader4.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const A = a.participant_count
+        const B = b.participant_count
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedTable()
+    })}
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
 })
+
 
 async function loadOlympiads() {
   const token = localStorage.getItem('access_token')
