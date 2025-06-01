@@ -97,15 +97,16 @@
               </svg>
             </button>
             <div class="flex items-center space-x-3">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
-                class="h-10 w-10 rounded-full" />
-              <div>
-                <p class="font-bold">Айжан Ахметова</p>
-                <div class="text-primary flex items-center space-x-1 text-sm">
-                  <span>Представитель</span>
-                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
+                <img
+                  id="user-avatar"
+                  src=""
+                  alt="Profile"
+                  class="h-10 w-10 rounded-full"
+                />
+                <div>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -121,14 +122,12 @@
           <!-- Activity Chart 1 -->
           <div class="border-default bg-blue-secondary rounded-xl p-6 max-h-350">
             <div class="mb-4 flex items-center justify-between">
-              <h3 class="text-lg font-bold">
-                Распределение баллов участников
-              </h3>
+              <h3 class="text-lg font-bold">Распределение % участников</h3>
             </div>
             <div class="flex flex-wrap gap-4">
               <!-- Filters -->
               <div class="relative">
-                <select class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
+                <select id="grade-filter" class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
                   <option>Все классы</option>
                   <option>1 класс</option>
                   <option>2 класс</option>
@@ -144,12 +143,12 @@
                 </select>
               </div>
               <div class="relative">
-                <select class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5"
-                  style="width: 100%">
-                  <option>Выбрать олимпиаду</option>
+                <select id="olympiad-filter" class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5"
+                  >
+                  <!-- <option>Выбрать олимпиаду</option>
                   <option>FEMO Весна 2025</option>
                   <option>FEMO Осень 2025</option>
-                  <option>FEMO Лето 2025</option>
+                  <option>FEMO Лето 2025</option> -->
                 </select>
               </div>
             </div>
@@ -164,7 +163,7 @@
             <div class="mb-6 flex items-center justify-between">
               <h3 class="text-lg font-bold">Динамика участников по годам</h3>
             </div>
-            <div class="chart-container relative h-86" style="height: 260px">
+            <div class="chart-container relative" style="height: 260px">
               <canvas id="participantsChart"></canvas>
             </div>
           </div>
@@ -180,7 +179,7 @@
         <div class="mb-6 flex items-center justify-between">
           <h1 class="text-2xl text-xl font-semibold">Рейтинг по олимпиаде</h1>
           <div class="flex items-center gap-4">
-            <button
+            <button id="download-ranking"
               class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-5">
@@ -198,7 +197,7 @@
           <div class="flex flex-wrap gap-4">
             <!-- Search -->
             <div class="relative w-full max-w-[350px]">
-              <input type="text" placeholder="Искать участника по имени"
+              <input id="search-name" type="text" placeholder="Искать участника по имени"
                 class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none" />
               <svg xmlns="http://www.w3.org/2000/svg"
                 class="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24"
@@ -211,7 +210,7 @@
             <!-- Filters -->
 
             <div class="relative">
-              <select class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
+              <select id="filter-grade" class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
                 <option>Все классы</option>
                 <option>1 класс</option>
                 <option>2 класс</option>
@@ -228,11 +227,11 @@
             </div>
 
             <div class="relative">
-              <select class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5">
-                <option>FEMO Зима 2025</option>
+              <select id="summary-olympiad-filter" class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5">
+                <!-- <option>FEMO Зима 2025</option>
                 <option>FEMO Весна 2025</option>
                 <option>FEMO Осень 2025</option>
-                <option>FEMO Лето 2025</option>
+                <option>FEMO Лето 2025</option> -->
               </select>
             </div>
           </div>
@@ -241,7 +240,7 @@
         <!-- Summary Cards -->
         <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <!-- Card 1 -->
-          <div class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div id="summary-title" class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Олимпиада</p>
               <p class="text-blue-primary text-2xl font-semibold">
@@ -251,7 +250,7 @@
           </div>
 
           <!-- Card 2 -->
-          <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div id="summary-dates" class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Дата проведения</p>
               <p class="text-red-primary text-2xl font-semibold">
@@ -261,7 +260,7 @@
           </div>
           <!-- Card 3 -->
 
-          <div class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div id="summary-participants" class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Участники</p>
               <p class="text-violet-primary text-2xl font-semibold">800</p>
@@ -269,7 +268,7 @@
           </div>
 
           <!-- Card 4 -->
-          <div class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
+          <div id="summary-avg-score" class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
               <p class="text-sm">Средний балл участников</p>
               <p class="text-orange-primary text-2xl font-semibold">85</p>
@@ -281,7 +280,7 @@
           <table class="table-overall w-full rounded-2xl pb-6">
             <thead>
               <tr class="border-b border-gray-200">
-                <th class="p-table">
+                <th data-sort-key="global_rank" class="p-table">
                   <div class="flex items-center gap-1">
                     #
                     <span>
@@ -293,7 +292,7 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table w-13">
+                <th data-sort-key="country_rank" class="p-table w-13">
                   <div class="flex items-center gap-1">
                     # в стране
                     <span>
@@ -307,7 +306,7 @@
                 </th>
                 <th class="p-table">Имя участника</th>
                 <th class="p-table">Класс</th>
-                <th class="p-table">
+                <th data-sort-key="olympiad_score" class="p-table">
                   <div class="flex items-center gap-1">
                     Баллы за олимпиаду
                     <span>
@@ -319,7 +318,7 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table">
+                <th data-sort-key="solved_tasks" class="p-table">
                   <div class="flex items-center gap-1">
                     Результат
                     <span>
@@ -331,7 +330,7 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table">
+                <th data-sort-key="total_score" class="p-table">
                   <div class="flex items-center gap-1">
                     Общие Баллы
                     <span>
@@ -393,34 +392,20 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex items-center justify-between">
-          <div class="text-gray-primary text-sm">Всего 85 участников</div>
-          <div class="flex items-center gap-0.5 *:cursor-pointer">
-            <button class="cursor-pointer px-3 py-1">
+        <div class="flex items-center justify-between mb-6">
+          <div id="total-count" class="text-gray-primary text-sm">Всего 0 участников</div>
+          <div class="flex items-center gap-0.5" id="pagination-controls">
+            <button id="pagination-prev" class="cursor-pointer px-3 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
                 <path fill-rule="evenodd"
                   d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
                   clip-rule="evenodd" />
               </svg>
             </button>
-            <div class="flex gap-1 *:cursor-pointer">
-              <button class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1">
-                1
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                2
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                3
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                4
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                5
-              </button>
+            <div id="pagination-pages" class="flex gap-1">
+              <!-- Кнопки страниц будут генерироваться JS -->
             </div>
-            <button class="cursor-pointer px-3 py-1">
+            <button id="pagination-next" class="cursor-pointer px-3 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
                 <path fill-rule="evenodd"
                   d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
@@ -468,197 +453,130 @@
 
       </main>
     </div>
-    <div id="modalNotification"
-                class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full">
-                <div class="relative">
-                  <div class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base">
-                    <p class="text-xl font-bold">Уведомление</p>
-
-                    <div class="tabs !mb-4 justify-between overflow-x-auto">
-                      <div class="tabs-link active flex cursor-pointer items-center gap-1" data-tab="all">
-                        <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-                          </svg>
-                        </span>
-                        Все
-                        <span class="count-msg">4</span>
-                      </div>
-                      <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="users">
-                        <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                          </svg>
-                        </span>
-                        Пользователи
-                        <span class="count-msg">0</span>
-                      </div>
-                      <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="olympiads">
-                        <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-                          </svg>
-                        </span>
-                        Олимпиады
-                        <span class="count-msg">1</span>
-                      </div>
-                      <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="results">
-                        <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-                          </svg>
-                        </span>
-                        Результаты
-                        <span class="count-msg">2</span>
-                      </div>
-                    </div>
-
-                    <div class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2">
-                      <div class="tabs-notification" data-tab="all">
-
-                      </div>
-                      <div class="tabs-notification" data-tab="users">
-
-                      </div>
-
-                      <!-- Notification 2 (Olympiad-related) -->
-                      <div class="tabs-notification" data-tab="olympiads">
-
-                      </div>
-
-                      <!-- Notification 3 (Result-related) -->
-                      <div class="tabs-notification" data-tab="results">
-
-                      </div>
-
-                      <!-- Notification 1 -->
-                      <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
-                        <span class="text-violet-primary bg-violet-secondary rounded-full p-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
-                          </svg>
-                        </span>
-
-                        <div class="w-full space-y-3">
-                          <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                              <p class="text-sm font-bold">
-                                Задача №2 проверена
-                              </p>
-
-                              <div class="card easy font-bold">9 / 10</div>
-                            </div>
-
-                            <a href="#">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                              </svg>
-                            </a>
-                          </div>
-
-                          <p class="text-gray-primary flex items-center gap-1 text-xs">
-                            <span>5 минут назад</span>
-                            |
-                            <span>Задачи</span>
-                          </p>
-                        </div>
-                      </div>
-
-                      <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
-                        <span class="text-blue-primary bg-blue-secondary rounded-full p-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            class="size-6">
-                            <path
-                              d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
-                          </svg>
-                        </span>
-
-                        <div class="w-full space-y-3">
-                          <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                              <p class="text-sm font-bold">
-                                Задача №2 проверена
-                              </p>
-
-                              <div class="card easy font-bold">9 / 10</div>
-                            </div>
-
-                            <a href="#">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                              </svg>
-                            </a>
-                          </div>
-
-                          <p class="text-gray-primary flex items-center gap-1 text-xs">
-                            <span>5 минут назад</span>
-                            |
-                            <span>Задачи</span>
-                          </p>
-                        </div>
-                      </div>
-
-                      <div class="tabs-notification flex items-start gap-4 rounded-2xl bg-white p-4">
-                        <span class="text-violet-primary bg-violet-secondary rounded-full p-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-                          </svg>
-                        </span>
-
-                        <div class="w-full space-y-3">
-                          <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                              <p class="text-sm font-bold">
-                                Задача №2 проверена
-                              </p>
-
-                              <!-- <div class="card easy font-bold">
-                                9 / 10
-                              </div> -->
-                            </div>
-
-                            <a href="#">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="size-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                              </svg>
-                            </a>
-                          </div>
-
-                          <p class="text-gray-primary flex items-center gap-1 text-xs">
-                            <span>5 минут назад</span>
-                            |
-                            <span>Задачи</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button class="absolute top-6 right-5 cursor-pointer" onclick="toggleModal('modalNotification')">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
-                      <path fill-rule="evenodd"
-                        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                        clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+    <!-- Полупрозрачный фон для затемнения -->
     <div id="overlayModal" class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"></div>
+
+    <!-- Попап уведомлений -->
+    <div id="modalNotification"
+        class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full">
+      <div class="relative">
+        <div class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base">
+          <p class="text-xl font-bold">Уведомление</p>
+
+          <!-- Секция с табами (порядок: Все - Пользователи - Чаты - Результаты) -->
+          <div class="tabs !mb-4 justify-between overflow-x-auto">
+            <div class="tabs-link active flex cursor-pointer items-center gap-1" data-tab="all">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.310A8.967 8.967 0 0 1 18 9.750
+                          V9A6 6 0 0 0 6 9v.750a8.967 8.967 0 0 1-2.312 6.022
+                          c1.733.640 3.560 1.085 5.455 1.310m5.714 0a24.255 24.255 0 0 1-5.714 0
+                          m5.714 0a3 3 0 1 1-5.714 0"/>
+                </svg>
+              </span>
+              Все
+              <span class="count-msg">0</span>
+            </div>
+            <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="users">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15 19.128a9.380 9.380 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952
+                          4.125 4.125 0 0 0-7.533-2.493
+                          M15 19.128v-.003c0-1.113-.285-2.160-.786-3.070
+                          M15 19.128v.106A12.318 12.318 0 0 1 8.624 21
+                          c-2.331 0-4.512-.645-6.374-1.766l-.001-.109
+                          a6.375 6.375 0 0 1 11.964-3.070
+                          M12 6.375a3.375 3.375 0 1 1-6.750 0a3.375 3.375 0 0 1 6.750 0
+                          Z
+                          M20.250 8.625a2.625 2.625 0 1 1-5.250 0
+                          a2.625 2.625 0 0 1 5.250 0"/>
+                </svg>
+              </span>
+              Пользователи
+              <span class="count-msg">0</span>
+            </div>
+            <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="chats">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                  <path d="M3.505 2.365A41.369 41.369 0 0 1 9 2
+                          c1.863 0 3.697.124 5.495.365
+                          1.247.167 2.18 1.108 2.435 2.268
+                          a4.45 4.45 0 0 0-.577-.069
+                          43.141 43.141 0 0 0-4.706 0
+                          C9.229 4.696 7.5 6.727 7.5 8.998
+                          v2.240c0 1.413.670 2.735 1.760 3.562
+                          l-2.980 2.980A.750.750 0 0 1 5 17.250
+                          v-3.443c-.501-.048-1-.106-1.495-.172
+                          C2.033 13.438 1 12.162 1 10.720V5.280
+                          c0-1.441 1.033-2.717 2.505-2.914Z"/>
+                  <path d="M14 6c-.762 0-1.520.020-2.271.062
+                          C10.157 6.148 9 7.472 9 8.998
+                          v2.240c0 1.519 1.147 2.839 2.710 2.935
+                          .214.013.428.024.642.034
+                          .200.009.385.090.518.224l2.350 2.350
+                          a.750.750 0 0 0 1.280-.531v-2.070
+                          c1.453-.195 2.500-1.463 2.500-2.915
+                          V8.998c0-1.526-1.157-2.850-2.729-2.936
+                          A41.645 41.645 0 0 0 14 6Z"/>
+                </svg>
+              </span>
+              Чаты
+              <span class="count-msg">0</span>
+            </div>
+            <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="results">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4.260 10.147a60.438 60.438 0 0 0-.491 6.347
+                          A48.620 48.620 0 0 1 12 20.904
+                          a48.620 48.620 0 0 1 8.232-4.410
+                          a60.460 60.460 0 0 0-.491-6.347
+                          m-15.482 0a50.636 50.636 0 0 0-2.658-.813
+                          A59.906 59.906 0 0 1 12 3.493
+                          a59.903 59.903 0 0 1 10.399 5.840
+                          c-.896.248-1.783.520-2.658.814
+                          m-15.482 0A50.717 50.717 0 0 1 12 13.489
+                          a50.702 50.702 0 0 1 7.740-3.342
+                          M6.750 15a.750.750 0 1 0 0-1.500
+                          a.750.750 0 0 0 0 1.500Z
+                          m0 0v-3.675A55.378 55.378 0 0 1 12 8.443
+                          m-7.007 11.550A5.981 5.981 0 0 0 6.750 15.750v-1.500"/>
+                </svg>
+              </span>
+              Результаты
+              <span class="count-msg">0</span>
+            </div>
+          </div>
+
+          <!-- Контейнер для уведомлений -->
+          <div class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2">
+            <div class="tabs-notification" data-tab="all"></div>
+            <div class="tabs-notification" data-tab="users"></div>
+            <div class="tabs-notification" data-tab="chats"></div>
+            <div class="tabs-notification" data-tab="results"></div>
+          </div>
+        </div>
+
+        <button class="absolute top-6 right-5 cursor-pointer"
+                onclick="toggleModal('modalNotification')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="currentColor" class="size-5">
+            <path fill-rule="evenodd"
+                  d="M5.470 5.470a.750.750 0 0 1 1.060 0L12 10.940l5.470-5.470
+                    a.750.750 0 1 1 1.060 1.060L13.060 12l5.470 5.470
+                    a.750.750 0 1 1-1.060 1.060L12 13.060l-5.470 5.470
+                    a.750.750 0 0 1-1.060-1.060L10.940 12 5.470 6.530
+                    a.750.750 0 0 1 0-1.060Z"
+                  clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -696,154 +614,154 @@
 
 
     // Chart data for different periods
-    document.addEventListener('DOMContentLoaded', function () {
-      const ctx = document
-        .getElementById('participantsChart')
-        .getContext('2d')
+    // document.addEventListener('DOMContentLoaded', function () {
+    //   const ctx = document
+    //     .getElementById('participantsChart')
+    //     .getContext('2d')
 
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-          datasets: [
-            {
-              data: [0, 50, 30, 80, 30, 66, 85], // Fixed to 7 values to match years
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              borderWidth: 1,
-              pointRadius: 3,
-              pointHoverRadius: 10,
-              pointBackgroundColor: '#fff',
-              tension: 0.6,
-              fill: true,
-              borderCapStyle: 'round',
-              borderJoinStyle: 'round',
-              pointStyle: 'circle',
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              suggestedMax: 100, // Force maximum value
-              ticks: {
-                callback: function (value) {
-                  return value === 0 ? 0 : value + ' участников'
-                },
-              },
-              // title: {
-              //     display: true,
-              //     text: 'Количество'
-              // }
-              stepSize: 20, // Force ticks every 20 units
-              precision: 0,
-              autoSkip: false,
-            },
+    //   new Chart(ctx, {
+    //     type: 'line',
+    //     data: {
+    //       labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+    //       datasets: [
+    //         {
+    //           data: [0, 50, 30, 80, 30, 66, 85], // Fixed to 7 values to match years
+    //           borderColor: '#10b981',
+    //           backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    //           borderWidth: 1,
+    //           pointRadius: 3,
+    //           pointHoverRadius: 10,
+    //           pointBackgroundColor: '#fff',
+    //           tension: 0.6,
+    //           fill: true,
+    //           borderCapStyle: 'round',
+    //           borderJoinStyle: 'round',
+    //           pointStyle: 'circle',
+    //         },
+    //       ],
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       maintainAspectRatio: false,
+    //       scales: {
+    //         y: {
+    //           beginAtZero: true,
+    //           suggestedMax: 100, // Force maximum value
+    //           ticks: {
+    //             callback: function (value) {
+    //               return value === 0 ? 0 : value + ' участников'
+    //             },
+    //           },
+    //           // title: {
+    //           //     display: true,
+    //           //     text: 'Количество'
+    //           // }
+    //           stepSize: 20, // Force ticks every 20 units
+    //           precision: 0,
+    //           autoSkip: false,
+    //         },
 
-            x: {
-              grid: {
-                display: false, // Remove vertical grid lines
-              },
-              ticks: {
-                autoSkip: false,
-              },
-              // title: {
-              //     display: true,
-              //     text: 'Год'
-              // }
-            },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-            // legend: {
-            //     position: 'top',
-            //     labels: {
-            //         usePointStyle: true
-            //     }
-            // },
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-            },
-          },
-        },
-      })
-    })
+    //         x: {
+    //           grid: {
+    //             display: false, // Remove vertical grid lines
+    //           },
+    //           ticks: {
+    //             autoSkip: false,
+    //           },
+    //           // title: {
+    //           //     display: true,
+    //           //     text: 'Год'
+    //           // }
+    //         },
+    //       },
+    //       plugins: {
+    //         legend: {
+    //           display: false,
+    //         },
+    //         // legend: {
+    //         //     position: 'top',
+    //         //     labels: {
+    //         //         usePointStyle: true
+    //         //     }
+    //         // },
+    //         tooltip: {
+    //           mode: 'index',
+    //           intersect: false,
+    //         },
+    //       },
+    //     },
+    //   })
+    // })
 
-    // Chart data for different periods
-    document.addEventListener('DOMContentLoaded', function () {
-      const ctx = document
-        .getElementById('participantsChart2')
-        .getContext('2d')
+    // // Chart data for different periods
+    // document.addEventListener('DOMContentLoaded', function () {
+    //   const ctx = document
+    //     .getElementById('participantsChart2')
+    //     .getContext('2d')
 
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [
-            '0-20 PX',
-            '21-40 PX',
-            '41-60 PX',
-            '61-80 PX',
-            '81-100 PX',
-          ],
-          datasets: [
-            {
-              label: 'Количество участников',
-              data: [50, 60, 40, 70, 50],
-              backgroundColor: 'rgba(54, 162, 235, 1)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1,
-              borderSkipped: false,
-              borderRadius: {
-                topLeft: 10,
-                topRight: 10,
-                bottomLeft: 10,
-                bottomRight: 10,
-              },
-              barThickness: 25,
-              maxBarThickness: 25,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { autoSkip: false },
-            },
+    //   new Chart(ctx, {
+    //     type: 'bar',
+    //     data: {
+    //       labels: [
+    //         '0-20 PX',
+    //         '21-40 PX',
+    //         '41-60 PX',
+    //         '61-80 PX',
+    //         '81-100 PX',
+    //       ],
+    //       datasets: [
+    //         {
+    //           label: 'Количество участников',
+    //           data: [50, 60, 40, 70, 50],
+    //           backgroundColor: 'rgba(54, 162, 235, 1)',
+    //           borderColor: 'rgba(54, 162, 235, 1)',
+    //           borderWidth: 1,
+    //           borderSkipped: false,
+    //           borderRadius: {
+    //             topLeft: 10,
+    //             topRight: 10,
+    //             bottomLeft: 10,
+    //             bottomRight: 10,
+    //           },
+    //           barThickness: 25,
+    //           maxBarThickness: 25,
+    //         },
+    //       ],
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       maintainAspectRatio: false,
+    //       scales: {
+    //         x: {
+    //           grid: { display: false },
+    //           ticks: { autoSkip: false },
+    //         },
 
-            y: {
-              beginAtZero: true,
-              suggestedMax: 100, // Force maximum value
-              ticks: {
-                callback: function (value) {
-                  return value === 0 ? 0 : value + ' участников'
-                },
-              },
-              stepSize: 20, // Force ticks every 20 units
-              precision: 0,
-              autoSkip: false,
-            },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-            },
-          },
-        },
-      })
-    })
+    //         y: {
+    //           beginAtZero: true,
+    //           suggestedMax: 100, // Force maximum value
+    //           ticks: {
+    //             callback: function (value) {
+    //               return value === 0 ? 0 : value + ' участников'
+    //             },
+    //           },
+    //           stepSize: 20, // Force ticks every 20 units
+    //           precision: 0,
+    //           autoSkip: false,
+    //         },
+    //       },
+    //       plugins: {
+    //         legend: {
+    //           display: false,
+    //         },
+    //         tooltip: {
+    //           mode: 'index',
+    //           intersect: false,
+    //         },
+    //       },
+    //     },
+    //   })
+    // })
 
     document.addEventListener('DOMContentLoaded', function () {
       const tabs = document.querySelectorAll('.tabs-link')
@@ -873,7 +791,9 @@
     })
   
   </script>
+  <script src="/auth.js" defer></script>
   <script src="/src/representatives/notification.js" defer></script>
+  <script src="/src/representatives/result-rate.js" defer></script>
 </body>
 
 </html>
