@@ -66,6 +66,61 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     await loadOlympiads()
+
+    let sortAscending = true
+
+    const sortHeader = document.getElementById('sort-year-header')
+    const sortHeader2 = document.getElementById('sort-id-header')
+    const sortHeader3 = document.getElementById('sort-tour-header')
+    const sortHeader4 = document.getElementById('sort-participant-header')
+    if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const A = a.year
+        const B = b.year
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedTable()
+    })}
+
+        if (sortHeader2) {
+    sortHeader2.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const A = a.id
+        const B = b.id
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedTable()
+    })}
+
+
+    let sortDescriptionAsc = true
+
+            if (sortHeader3) {
+    sortHeader3.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const descA = a.type.toLowerCase()
+        const descB = b.type.toLowerCase()
+        return sortDescriptionAsc ? descA.localeCompare(descB) : descB.localeCompare(descA)
+
+      })
+      sortDescriptionAsc = !sortDescriptionAsc
+      renderPaginatedTable()
+    })}
+
+            if (sortHeader4) {
+    sortHeader4.addEventListener('click', () => {
+      allOlympiads.sort((a, b) => {
+        const A = a.participant_count
+        const B = b.participant_count
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedTable()
+    })}
+
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -357,4 +412,140 @@ function openEditModal(title, id) {
 
   modal.classList.remove('hidden')
   overlay.classList.remove('hidden')
+}
+
+
+document
+  .getElementById('certificate-background')
+  .addEventListener('change', function () {
+    const fileName = this.files[0]?.name || 'Файл не выбран'
+    document.getElementById('file-name').textContent = fileName
+  })
+
+async function submitOlympiadForm() {
+  const token = localStorage.getItem('access_token')
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.')
+    return
+  }
+
+  const formData = new FormData()
+
+  // 📌 Общие поля
+  const title = document.getElementById('title-add')?.value
+  const typeLabel = document.getElementById('tour-add')?.value
+  const typeMap = {
+    Весна: 'spring',
+    Осень: 'autumn',
+    Зима: 'winter',
+    Лето: 'summer',
+  }
+  const type = typeMap[typeLabel] || 'spring'
+
+  const year = document.getElementById('year-add')?.value
+  const cost = document.getElementById('price')?.value
+
+  // 📌 Классы
+  const gradesSelect = document.getElementById('grades-add')
+  const grades = Array.from(gradesSelect.selectedOptions).map((opt) =>
+    parseInt(opt.value)
+  )
+  if (grades.length === 0) {
+    alert('Выберите хотя бы один класс')
+    return
+  }
+
+  // 📌 Этапы
+  const stepNames = document.querySelectorAll('.step-name-add')
+  const dateRanges = document.querySelectorAll('.date-range-add')
+
+  const stages = []
+
+  for (let i = 0; i < stepNames.length; i++) {
+    const range = dateRanges[i]?.value.split(' — ')
+    if (!range || range.length !== 2) continue
+
+    stages.push({
+      name: stepNames[i].value,
+      start_date: formatDate(range[0]),
+      end_date: formatDate(range[1]),
+    })
+  }
+
+  console.log('✅ Сформированные stages:', stages)
+  if (!stages.length) {
+    alert('Этапы не выбраны или не распарсились!')
+    return
+  }
+
+  // 📌 Сертификат
+  const headerText = document.getElementById('title_certificate-add')?.value
+  const signature1 = document.getElementById('sign-add')?.value.trim()
+  const signature2 = document.getElementById('sign-add')?.value.trim()
+  const background = document.getElementById('certificate-background')?.files[0]
+
+  if (!background) {
+    alert('Пожалуйста, загрузите фон сертификата.')
+    return
+  }
+
+  // 🧩 Собираем все поля
+  formData.append('title', title)
+  formData.append('type', type)
+  formData.append('year', year)
+  formData.append('cost', cost)
+  grades.forEach((g) => formData.append('grades', g))
+  stages.forEach((stage, index) => {
+    formData.append(`stages[${index}][name]`, stage.name)
+    formData.append(`stages[${index}][start_date]`, stage.start_date)
+    formData.append(`stages[${index}][end_date]`, stage.end_date)
+  })
+
+  //  formData.append('certificate_template', JSON.stringify({
+  //    header_text: headerText,
+  //    signature_1: signature1,
+  //    signature_2: signature2
+  //  }));
+  //
+  //  formData.append('certificate_template.background', background);
+  formData.append('certificate_template.header_text', headerText)
+  formData.append('certificate_template.signature_1', signature1)
+  formData.append('certificate_template.signature_2', signature2)
+  formData.append('certificate_template.background', background)
+
+  console.log('------ FORM DATA ------')
+  for (let pair of formData.entries()) {
+    console.log(`${pair[0]}:`, pair[1])
+  }
+
+  try {
+    const res = await fetch(
+      'https://portal.gradients.academy/olympiads/dashboard/',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // Content-Type НЕ указывать вручную — FormData сам выставит
+        },
+        body: formData,
+      }
+    )
+
+    if (!res.ok) {
+      const error = await res.json()
+      throw new Error(JSON.stringify(error))
+    }
+
+    alert('Олимпиада успешно добавлена!')
+    toggleModal('modalAdd', false)
+    await loadOlympiads() // если у тебя есть функция загрузки
+  } catch (err) {
+    console.error('Ошибка при создании олимпиады:', err)
+    alert(`Ошибка: ${err.message}`)
+  }
+}
+
+function formatDate(dateStr) {
+  const [d, m, y] = dateStr.split('.')
+  return `${y}-${m}-${d}`
 }
