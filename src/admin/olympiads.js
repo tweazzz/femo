@@ -458,7 +458,6 @@ async function submitOlympiadForm() {
   // 📌 Этапы
   const stepNames = document.querySelectorAll('.step-name-add')
   const dateRanges = document.querySelectorAll('.date-range-add')
-
   const stages = []
 
   for (let i = 0; i < stepNames.length; i++) {
