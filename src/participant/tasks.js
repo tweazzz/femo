@@ -178,7 +178,7 @@ function renderDailyTasks(tasks) {
           </div>
           <div class="flex w-full items-center space-x-4">
             <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-              <div class="h-full w-full rounded-full bg-orange-500" style="width: ${task.solved ? '100%' : '0%'}"></div>
+              <div class="h-full w-full rounded-full ${task.solved ? 'bg-gray-primary' : 'bg-orange-500'}" style="width: ${task.solved ? '100%' : '0%'}"></div>
             </div>
             <span class="w-4 text-sm">${task.solved ? '1/1' : '0/1'}</span>
           </div>
@@ -278,8 +278,7 @@ function renderAllTasks(tasks) {
           </div>
           <div class="flex w-full items-center space-x-4">
             <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-              <div class="${task.solved ? 'bg-gray-primary' : 'bg-orange-500'} h-full rounded-full" style="width: ${task.solved ? '100%' : '0%'}"></div>
-            </div>
+              <div class="h-full rounded-full ${task.solved ? 'bg-gray-300' : 'bg-orange-500'}" style="width: ${task.solved ? '100%' : '0%'}"></div>
             <span class="w-4 text-sm">${task.solved ? '1/1' : '0/1'}</span>
           </div>
         </div>

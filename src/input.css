@@ -117,7 +117,7 @@
 }
 
 .btn-base {
-  @apply bg-orange-primary block rounded-lg py-2 text-center text-white;
+  @apply bg-orange-primary block rounded-2xl py-2 text-center text-white font-light;
 }
 
 .btn-outline {
