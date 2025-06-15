@@ -1828,7 +1828,7 @@
                       <p class="text-xl font-bold">Удалить задачу</p>
                       <button
                         type="button"
-                        onclick="openDeleteModal('${task.title}', ${task.id})"
+                        onclick="openDeleteModal('${task.title}', '${task.id}')"
                         class="text-gray-400 hover:text-gray-500"
                       >
                         <i data-lucide="x" class="h-5 w-5 cursor-pointer"></i>
@@ -2608,54 +2608,23 @@
         document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
       }
 
+      // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
-        const roleRadios = document.querySelectorAll('input[name="role"]')
-        const roleForms = document.querySelectorAll('.role-form')
-
-        roleRadios.forEach((radio) => {
-          radio.addEventListener('change', function () {
-            const selectedValue = this.value
-
-            roleForms.forEach((form) => {
-              const formId = form.id
-              if (
-                form.id === `${selectedValue}-form` ||
-                form.id === `${selectedValue}-form2`
-              ) {
-                form.classList.remove('hidden')
-              } else {
-                form.classList.add('hidden')
-              }
-            })
-          })
-        })
-
-        // Формы
-        document
-          .getElementById('participant-form')
-          .addEventListener('submit', function (e) {
-            e.preventDefault()
-            // ...
-          })
-
-        document
-          .getElementById('representative-form')
-          .addEventListener('submit', function (e) {
-            e.preventDefault()
-            // ...
-          })
-
-        // 🟢 Tabs functionality — просто продолжай внутри этого блока
         const tabs = document.querySelectorAll('.tabs-link')
         const notifications = document.querySelectorAll('.tabs-notification')
 
+        // Add click event listeners to tabs
         tabs.forEach((tab) => {
           tab.addEventListener('click', function () {
             const tabType = this.dataset.tab
 
+            // Remove active class from all tabs
             tabs.forEach((t) => t.classList.remove('active'))
+
+            // Add active class to clicked tab
             this.classList.add('active')
 
+            // Filter notifications
             notifications.forEach((notification) => {
               if (tabType === 'all' || notification.dataset.tab === tabType) {
                 notification.style.display = 'flex'
@@ -2669,5 +2638,6 @@
     </script>
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/tasks.js"></script>
+    <script src="/src/admin/notifications.js" defer></script>
   </body>
 </html>

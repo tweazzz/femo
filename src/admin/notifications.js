@@ -1,183 +1,413 @@
 // notifications.js
 
-// Ждём, пока DOM загрузится и пользователь будет аутентифицирован
+// Предполагается:
+// - ensureUserAuthenticated(): async возвращает user или null.
+// - В localStorage есть 'access_token'.
+// - Основной контейнер: <div class="space-y-4 pr-2 pb-4"></div>
+// - Popup-модал с overlay и .tabs, .tabs-content внутри.
+
 document.addEventListener('DOMContentLoaded', async () => {
-  // Убедимся, что пользователь залогинен и token положен в localStorage
-  const user = await ensureUserAuthenticated()
-  if (!user) return
+  // Аутентификация
+  const user = await ensureUserAuthenticated();
+  if (!user) return;
 
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    console.error('Access token not found')
-    return
+    console.error('Access token not found');
+    return;
   }
 
-  // Контейнер для уведомлений
-  const container = document.querySelector('div.space-y-4.pr-2.pb-4')
-  if (!container) {
-    console.error('Контейнер для уведомлений не найден')
-    return
+  // Селекторы
+  const mainContainer = document.querySelector('div.space-y-4.pr-2.pb-4');
+  if (!mainContainer) {
+    console.warn('Основной контейнер для уведомлений не найден');
+  }
+  const overlay = document.getElementById('overlayModal');
+  const modal = document.getElementById('modalNotification');
+  if (!overlay || !modal) {
+    console.warn('Overlay или modal не найдены');
+  }
+  const tabsContainer = modal?.querySelector('.tabs');
+  const tabsContent = modal?.querySelector('.tabs-content');
+  if (!tabsContainer || !tabsContent) {
+    console.warn('В модале не найдены .tabs или .tabs-content');
   }
 
-  // Открываем WebSocket
-  const socket = new WebSocket(
-    `wss://portal.gradients.academy/ws/notifications/?token=${token}`
-  )
 
-  socket.addEventListener('open', () => {
-    console.log('WebSocket подключен')
-  })
 
-  socket.addEventListener('message', (event) => {
-    let data
+  // Храним все уведомления
+  let allNotifications = [];
+
+  // WebSocket
+  const ws = new WebSocket(`wss://portal.gradients.academy/ws/notifications/?token=${token}`);
+  ws.addEventListener('open', () => console.log('WebSocket подключен'));
+  ws.addEventListener('error', err => console.error('WebSocket ошибка:', err));
+  ws.addEventListener('close', () => console.log('WebSocket закрыт'));
+  ws.addEventListener('message', event => {
+    let data;
     try {
-      data = JSON.parse(event.data)
+      data = JSON.parse(event.data);
     } catch (err) {
-      console.error('Некорректный JSON из WebSocket:', err)
-      return
+      console.error('Некорректный JSON из WebSocket:', err);
+      return;
     }
-    const notes = data.latest_notifications || []
-    notes.forEach((n) => {
-      const el = createNotificationElement(n)
-      // вставляем в начало контейнера
-      container.prepend(el)
-    })
-  })
+    const notes = data.latest_notifications || [];
+    allNotifications = notes;
+    // Рендер в основной блок
+    if (mainContainer) renderContainer(mainContainer, allNotifications);
+    // Рендер в popup
+    rebuildTabsAndContent();
+  });
 
-  socket.addEventListener('error', (err) => {
-    console.error('WebSocket ошибка:', err)
-  })
+  // Утилиты
 
-  socket.addEventListener('close', () => {
-    console.log('WebSocket закрыт')
-  })
-
-  // --- Вспомогательные функции ---
-
-  // Форматирует created_at в «N минут назад»
   function timeAgo(dateStr) {
-    const now = Date.now()
-    const then = new Date(dateStr).getTime()
-    const diffSec = Math.floor((now - then) / 1000)
-    if (diffSec < 60) return 'несколько секунд назад'
-    const diffMin = Math.floor(diffSec / 60)
-    if (diffMin < 60)
-      return diffMin === 1 ? '1 минуту назад' : `${diffMin} минут назад`
-    const diffH = Math.floor(diffMin / 60)
-    if (diffH < 24) return diffH === 1 ? '1 час назад' : `${diffH} часов назад`
-    const diffD = Math.floor(diffH / 24)
-    return diffD === 1 ? '1 день назад' : `${diffD} дней назад`
+    const now = Date.now();
+    const then = new Date(dateStr).getTime();
+    const diffMs = now - then;
+    const diffSec = Math.floor(diffMs / 1000);
+    if (diffSec < 60) return 'несколько секунд назад';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return diffMin === 1 ? '1 минуту назад' : `${diffMin} минут назад`;
+    const diffH = Math.floor(diffMin / 60);
+    if (diffH < 24) return diffH === 1 ? '1 час назад' : `${diffH} часов назад`;
+    const diffD = Math.floor(diffH / 24);
+    if (diffD < 30) return diffD === 1 ? '1 день назад' : `${diffD} дней назад`;
+    const diffM = Math.floor(diffD / 30);
+    if (diffM < 12) return diffM === 1 ? '1 месяц назад' : `${diffM} месяцев назад`;
+    const diffY = Math.floor(diffM / 12);
+    return diffY === 1 ? '1 год назад' : `${diffY} лет назад`;
   }
 
-  // Парсит notification.message в массив строк без пустых элементов
   function parseLines(msg) {
-    return msg
-      .split(/\r?\n/)
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0)
+    return msg.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
   }
 
-  // Создаёт DOM-элемент уведомления в зависимости от type_display
-  function createNotificationElement(n) {
-    const lines = parseLines(n.message)
-    const title = n.title
-    const ago = timeAgo(n.created_at)
+  function getIconSVG(type) {
+    const map = {
+      Requests: {
+        classes: 'text-blue-primary bg-blue-secondary',
+        svg: `<svg width="32" height="32" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.3086 7.8999H14.6836" stroke="#8324E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="#8324E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.3086 13.7334H14.6836" stroke="#8324E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="#8324E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.5013 18.8334H12.5013C16.668 18.8334 18.3346 17.1667 18.3346 13.0001V8.00008C18.3346 3.83341 16.668 2.16675 12.5013 2.16675H7.5013C3.33464 2.16675 1.66797 3.83341 1.66797 8.00008V13.0001C1.66797 17.1667 3.33464 18.8334 7.5013 18.8334Z" stroke="#8324E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`
+      },
+      Chats: {
+        classes: 'text-orange-primary bg-orange-secondary',
+        svg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="16" fill="#FEF6ED"/>
+<path d="M21.3922 20.0251L21.7172 22.6584C21.8005 23.3501 21.0589 23.8334 20.4672 23.4751L16.9755 21.4001C16.5922 21.4001 16.2172 21.3751 15.8505 21.3251C16.4672 20.6001 16.8339 19.6834 16.8339 18.6917C16.8339 16.3251 14.7839 14.4084 12.2505 14.4084C11.2839 14.4084 10.3922 14.6834 9.65053 15.1667C9.62553 14.9584 9.61719 14.7501 9.61719 14.5334C9.61719 10.7417 12.9089 7.66675 16.9755 7.66675C21.0422 7.66675 24.3339 10.7417 24.3339 14.5334C24.3339 16.7834 23.1755 18.7751 21.3922 20.0251Z" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.8346 18.6917C16.8346 19.6834 16.468 20.6001 15.8513 21.3251C15.0263 22.3251 13.718 22.9667 12.2513 22.9667L10.0763 24.2584C9.70964 24.4834 9.24297 24.1751 9.29297 23.7501L9.5013 22.1084C8.38463 21.3334 7.66797 20.0917 7.66797 18.6917C7.66797 17.2251 8.45131 15.9334 9.65131 15.1668C10.393 14.6834 11.2846 14.4084 12.2513 14.4084C14.7846 14.4084 16.8346 16.3251 16.8346 18.6917Z" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`
+      },
+      Payments: {
+        classes: 'text-green-primary bg-green-secondary',
+        svg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="16" fill="#FEF6ED"/>
+<path d="M21.3922 20.0251L21.7172 22.6584C21.8005 23.3501 21.0589 23.8334 20.4672 23.4751L16.9755 21.4001C16.5922 21.4001 16.2172 21.3751 15.8505 21.3251C16.4672 20.6001 16.8339 19.6834 16.8339 18.6917C16.8339 16.3251 14.7839 14.4084 12.2505 14.4084C11.2839 14.4084 10.3922 14.6834 9.65053 15.1667C9.62553 14.9584 9.61719 14.7501 9.61719 14.5334C9.61719 10.7417 12.9089 7.66675 16.9755 7.66675C21.0422 7.66675 24.3339 10.7417 24.3339 14.5334C24.3339 16.7834 23.1755 18.7751 21.3922 20.0251Z" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.8346 18.6917C16.8346 19.6834 16.468 20.6001 15.8513 21.3251C15.0263 22.3251 13.718 22.9667 12.2513 22.9667L10.0763 24.2584C9.70964 24.4834 9.24297 24.1751 9.29297 23.7501L9.5013 22.1084C8.38463 21.3334 7.66797 20.0917 7.66797 18.6917C7.66797 17.2251 8.45131 15.9334 9.65131 15.1668C10.393 14.6834 11.2846 14.4084 12.2513 14.4084C14.7846 14.4084 16.8346 16.3251 16.8346 18.6917Z" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`
+      },
+      Users: {
+        classes: 'text-blue-primary bg-blue-secondary',
+        svg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="16" fill="#F0F7FD"/>
+<path d="M13.6341 15.0584C13.5508 15.0501 13.4508 15.0501 13.3591 15.0584C11.3758 14.9917 9.80078 13.3667 9.80078 11.3667C9.80078 9.32508 11.4508 7.66675 13.5008 7.66675C15.5424 7.66675 17.2008 9.32508 17.2008 11.3667C17.1924 13.3667 15.6174 14.9917 13.6341 15.0584Z" stroke="#459FE3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M19.6747 9.33325C21.2914 9.33325 22.5914 10.6416 22.5914 12.2499C22.5914 13.8249 21.3414 15.1083 19.7831 15.1666C19.7164 15.1583 19.6414 15.1583 19.5664 15.1666" stroke="#459FE3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.46563 18.1333C7.44896 19.4833 7.44896 21.6833 9.46563 23.0249C11.7573 24.5583 15.5156 24.5583 17.8073 23.0249C19.824 21.6749 19.824 19.4749 17.8073 18.1333C15.524 16.6083 11.7656 16.6083 9.46563 18.1333Z" stroke="#459FE3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M21.2852 22.6667C21.8852 22.5417 22.4518 22.3001 22.9185 21.9417C24.2185 20.9667 24.2185 19.3584 22.9185 18.3834C22.4602 18.0334 21.9018 17.8001 21.3102 17.6667" stroke="#459FE3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`
+      }
+    };
+    return map[type] || { classes: 'text-gray-primary bg-gray-secondary', svg: '' };
+  }
 
-    // Корневой элемент карточки
-    const wrap = document.createElement('div')
-    wrap.className = 'flex items-start gap-4 rounded-2xl bg-white p-4 mb-2'
+  async function handleRequestAction(id, approve) {
+    const action = approve ? 'accept' : 'decline';
+    const url = `https://portal.gradients.academy/notifications/${id}/${action}/`;
+    try {
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!resp.ok) {
+        console.error(`Ошибка при ${action} уведомления ${id}:`, await resp.text());
+      } else {
+        console.log(`Уведомление ${id} ${approve ? 'принято' : 'отклонено'}`);
+        // Удаляем из all и перерендерим
+        allNotifications = allNotifications.filter(n => n.id !== id);
+        if (mainContainer) renderContainer(mainContainer, allNotifications);
+        rebuildTabsAndContent();
+      }
+    } catch (err) {
+      console.error('Ошибка сети при запросе действий:', err);
+    }
+  }
+
+  function createNotificationElement(n) {
+    const lines = parseLines(n.message);
+    const title = n.title;
+    const ago = timeAgo(n.created_at);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'flex items-start gap-4 rounded-2xl bg-white p-4';
+    wrap.dataset.notifId = n.id;
 
     // Иконка
-    const iconWrapper = document.createElement('span')
-    iconWrapper.className =
-      {
-        Requests: 'text-blue-primary bg-blue-secondary',
-        Chats: 'text-orange-primary bg-orange-secondary',
-        Payments: 'text-blue-primary bg-blue-secondary',
-        Users: 'text-blue-primary bg-blue-secondary',
-      }[n.type_display] + ' rounded-full p-2'
-
-    // Вставляем нужный SVG
-    iconWrapper.innerHTML = {
-      Requests: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" /></svg>`,
-      Chats: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M3.505 2.365A41.369 41.369 0 0 1 9 2c1.863 0 3.697.124 5.495.365 1.247.167 2.18 1.108 2.435 2.268a4.45 4.45 0 0 0-.577-.069 43.141 43.141 0 0 0-4.706 0C9.229 4.696 7.5 6.727 7.5 8.998v2.24c0 1.413.67 2.735 1.76 3.562l-2.98 2.98A.75.75 0 0 1 5 17.25v-3.443c-.501-.048-1-.106-1.495-.172C2.033 13.438 1 12.162 1 10.72V5.28c0-1.441 1.033-2.717 2.505-2.914Z"/><path d="M14 6c-.762 0-1.52.02-2.271.062C10.157 6.148 9 7.472 9 8.998v2.24c0 1.519 1.147 2.839 2.71 2.935.214.013.428.024.642.034.2.009.385.09.518.224l2.35 2.35a.75.75 0 0 0 1.28-.531v-2.07c1.453-.195 2.5-1.463 2.5-2.915V8.998c0-1.526-1.157-2.85-2.729-2.936A41.645 41.645 0 0 0 14 6Z"/></svg>`,
-      Payments: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M2.5 4A1.5 1.5 0 0 0 1 5.5V6h18v-.5A1.5 1.5 0 0 0 17.5 4h-15ZM19 8.5H1v6A1.5 1.5 0 0 0 2.5 16h15a1.5 1.5 0 0 0 1.5-1.5v-6ZM3 13.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75Zm4.75-.75a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z" clip-rule="evenodd"/></svg>`,
-      Users: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" /></svg>`,
-      Chats: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M3.505 2.365A41.369 41.369 0 0 1 9 2c1.863 0 3.697.124 5.495.365 1.247.167 2.18 1.108 2.435 2.268a4.45 4.45 0 0 0-.577-.069 43.141 43.141 0 0 0-4.706 0C9.229 4.696 7.5 6.727 7.5 8.998v2.24c0 1.413.67 2.735 1.76 3.562l-2.98 2.98A.75.75 0 0 1 5 17.25v-3.443c-.501-.048-1-.106-1.495-.172C2.033 13.438 1 12.162 1 10.72V5.28c0-1.441 1.033-2.717 2.505-2.914Z"/><path d="M14 6c-.762 0-1.52.02-2.271.062C10.157 6.148 9 7.472 9 8.998v2.24c0 1.519 1.147 2.839 2.71 2.935.214.013.428.024.642.034.2.009.385.09.518.224l2.35 2.35a.75.75 0 0 0 1.28-.531v-2.07c1.453-.195 2.5-1.463 2.5-2.915V8.998c0-1.526-1.157-2.85-2.729-2.936A41.645 41.645 0 0 0 14 6Z"/></svg>`,
-    }[n.type_display]
-    wrap.appendChild(iconWrapper)
+    const iconInfo = getIconSVG(n.type_display);
+    const iconWrapper = document.createElement('span');
+    iconWrapper.className = `${iconInfo.classes} rounded-full p-2`;
+    iconWrapper.innerHTML = iconInfo.svg;
+    wrap.appendChild(iconWrapper);
 
     // Контент
-    const content = document.createElement('div')
-    content.className = 'w-full space-y-3'
+    const content = document.createElement('div');
+    content.className = 'w-full space-y-3';
 
-    // Заголовок
-    const hdr = document.createElement('div')
-    hdr.className = 'flex items-center justify-between'
-    hdr.innerHTML = `<p class="text-sm font-bold">${title}</p><a href="#"></a>`
-    content.appendChild(hdr)
+    // Заголовок + ссылка
+    const hdr = document.createElement('div');
+    hdr.className = 'flex items-center justify-between';
+    const titleP = document.createElement('p');
+    titleP.className = 'text-sm font-bold';
+    titleP.textContent = title;
+    hdr.appendChild(titleP);
 
-    // Сектор с данными
-    const body = document.createElement('div')
-    body.className = 'bg-white-secondary rounded-2xl p-2 text-sm'
-
-    // Первая строка всегда имя/ID
-    const firstLine = document.createElement('p')
-    firstLine.innerHTML = lines[0]
-    body.appendChild(firstLine)
-
-    // Остальные строки в список
-    const ul = document.createElement('ul')
-    ul.className = 'ms-4 mt-1 list-inside list-disc'
-    lines.slice(1).forEach((line) => {
-      const li = document.createElement('li')
-
-      // Разделяем строку на ключ и значение
-      const colonIndex = line.indexOf(':')
-      if (colonIndex > -1) {
-        const key = line.substring(0, colonIndex + 1)
-        const value = line.substring(colonIndex + 1).trim()
-
-        // Обрабатываем стрелки и добавляем стили
-        li.innerHTML = `${key} <span class="text-gray-primary">${value.replace(/→/g, '➜')}</span>`
-      } else {
-        // Для строк без двоеточия просто заменяем стрелки
-        li.innerHTML = line.replace(/→/g, '➜')
+    if (n.type_display === 'Requests') {
+      let profileHref = '#';
+      if (lines.length > 0) {
+        const match = lines[0].match(/ID:\s*(\d+)/);
+        // if (match) profileHref = `/participants/${match[1]}/profile/`;
       }
+      const link = document.createElement('a');
+      link.href = profileHref;
+      link.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>`;
+      hdr.appendChild(link);
+    } else {
+      hdr.appendChild(document.createElement('span'));
+    }
+    content.appendChild(hdr);
 
-      ul.appendChild(li)
-    })
-    body.appendChild(ul)
-    content.appendChild(body)
+    // Тело
+    const body = document.createElement('div');
+    body.className = 'bg-white-secondary rounded-2xl p-2 text-sm';
+    if (lines.length > 0) {
+      const p0 = document.createElement('p');
+      p0.textContent = lines[0];
+      body.appendChild(p0);
+    }
+    if (lines.length > 1) {
+      const ul = document.createElement('ul');
+      ul.className = 'ms-4 mt-1 list-inside list-disc';
+      lines.slice(1).forEach(line => {
+        const li = document.createElement('li');
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > -1) {
+          const key = line.substring(0, colonIndex + 1);
+          const value = line.substring(colonIndex + 1).trim().replace(/→/g, '➜');
+          li.innerHTML = `${key} <span class="text-gray-primary">${value}</span>`;
+        } else {
+          li.textContent = line.replace(/→/g, '➜');
+        }
+        ul.appendChild(li);
+      });
+      body.appendChild(ul);
+    }
+    content.appendChild(body);
 
     // Кнопки для Requests
-    if (n.type_display === 'Requests') {
-      const actions = document.createElement('div')
-      actions.className = 'flex items-center gap-4'
-      actions.innerHTML = `
-        <button class="btn-white">
-          <span>✖</span> Отклонить
-        </button>
-        <button class="btn-orange">
-          <span>✔</span> Одобрить
-        </button>`
-      content.appendChild(actions)
+    if (n.type_display === 'Requests' && n.actionable) {
+      const actions = document.createElement('div');
+      actions.className = 'flex items-center gap-4';
+      const btnDecline = document.createElement('button');
+      btnDecline.className = 'btn-white';
+      btnDecline.innerHTML = `<span>✖</span> Отклонить`;
+      btnDecline.addEventListener('click', () => handleRequestAction(n.id, false));
+      actions.appendChild(btnDecline);
+      const btnApprove = document.createElement('button');
+      btnApprove.className = 'btn-orange';
+      btnApprove.innerHTML = `<span>✔</span> Одобрить`;
+      btnApprove.addEventListener('click', () => handleRequestAction(n.id, true));
+      actions.appendChild(btnApprove);
+      content.appendChild(actions);
     }
 
-    // Нижняя строка с временем и ссылкой
-    const footer = document.createElement('p')
-    footer.className = 'text-gray-primary flex items-center gap-1 text-xs'
-    footer.innerHTML = `<span>${ago}</span> | <span>${
-      {
-        Requests: 'Профиль участника',
-        Chats: 'Пользователи',
-        Payments: 'Платежи',
-        Users: 'Пользователи',
-      }[n.type_display]
-    }</span>`
-    content.appendChild(footer)
+    // Футер
+    const footer = document.createElement('p');
+    footer.className = 'text-gray-primary flex items-center gap-1 text-xs';
+    const sectionNameMap = {
+      Requests: 'Профиль участника',
+      Chats: 'Пользователи',
+      Payments: 'Платежи',
+      Users: 'Пользователи'
+    };
+    const sectionName = sectionNameMap[n.type_display] || '';
+    footer.innerHTML = `<span>${ago}</span>${sectionName ? ' | ' : ''}${sectionName ? `<span>${sectionName}</span>` : ''}`;
+    content.appendChild(footer);
 
-    wrap.appendChild(content)
-    return wrap
+    wrap.appendChild(content);
+    return wrap;
   }
-})
+
+  // Рендер в основной контейнер
+  function renderContainer(container, notes) {
+    container.innerHTML = '';
+    if (notes.length === 0) {
+      const p = document.createElement('p');
+      p.className = 'text-gray-primary text-sm';
+      p.textContent = 'Нет уведомлений';
+      container.appendChild(p);
+    } else {
+      notes.forEach(n => {
+        const el = createNotificationElement(n);
+        container.appendChild(el);
+      });
+    }
+  }
+
+  // Popup: построение табов
+  function rebuildTabsAndContent() {
+    if (!tabsContainer || !tabsContent) return;
+
+    // Очищаем
+    tabsContainer.innerHTML = '';
+    tabsContent.innerHTML = '';
+
+    // Фиксированные вкладки: all, users, requests, payments
+    const tabsConfig = [
+      { key: 'all', label: 'Все', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.0175 2.92505C7.25914 2.92505 5.01747 5.16672 5.01747 7.92505V10.3334C5.01747 10.8417 4.80081 11.6167 4.54247 12.05L3.58414 13.6417C2.99247 14.625 3.40081 15.7167 4.48414 16.0834C8.07581 17.2834 11.9508 17.2834 15.5425 16.0834C16.5508 15.7501 16.9925 14.5584 16.4425 13.6417L15.4841 12.05C15.2341 11.6167 15.0175 10.8417 15.0175 10.3334V7.92505C15.0175 5.17505 12.7675 2.92505 10.0175 2.92505Z" stroke="#F4891E" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M11.5599 3.1667C11.3016 3.0917 11.0349 3.03337 10.7599 3.00003C9.9599 2.90003 9.19323 2.95837 8.47656 3.1667C8.71823 2.55003 9.31823 2.1167 10.0182 2.1167C10.7182 2.1167 11.3182 2.55003 11.5599 3.1667Z" stroke="#F4891E" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12.5156 16.3833C12.5156 17.7583 11.3906 18.8833 10.0156 18.8833C9.33229 18.8833 8.69896 18.6 8.24896 18.15C7.79896 17.7 7.51562 17.0666 7.51562 16.3833" stroke="#F4891E" stroke-miterlimit="10"/>
+</svg>
+` }, // подставьте нужный SVG
+      { key: 'users', label: 'Пользователи', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.63411 9.55841C7.55078 9.55008 7.45078 9.55008 7.35911 9.55841C5.37578 9.49175 3.80078 7.86675 3.80078 5.86675C3.80078 3.82508 5.45078 2.16675 7.50078 2.16675C9.54245 2.16675 11.2008 3.82508 11.2008 5.86675C11.1924 7.86675 9.61745 9.49175 7.63411 9.55841Z" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.6747 3.83325C15.2914 3.83325 16.5914 5.14159 16.5914 6.74992C16.5914 8.32492 15.3414 9.60825 13.7831 9.66659C13.7164 9.65825 13.6414 9.65825 13.5664 9.66659" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3.46563 12.6333C1.44896 13.9833 1.44896 16.1833 3.46563 17.5249C5.75729 19.0583 9.51563 19.0583 11.8073 17.5249C13.824 16.1749 13.824 13.9749 11.8073 12.6333C9.52396 11.1083 5.76562 11.1083 3.46563 12.6333Z" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15.2852 17.1667C15.8852 17.0417 16.4518 16.8001 16.9185 16.4417C18.2185 15.4667 18.2185 13.8584 16.9185 12.8834C16.4602 12.5334 15.9018 12.3001 15.3102 12.1667" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>` },
+      { key: 'requests', label: 'Запросы', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.3086 7.8999H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.3086 13.7334H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.5013 18.8334H12.5013C16.668 18.8334 18.3346 17.1667 18.3346 13.0001V8.00008C18.3346 3.83341 16.668 2.16675 12.5013 2.16675H7.5013C3.33464 2.16675 1.66797 3.83341 1.66797 8.00008V13.0001C1.66797 17.1667 3.33464 18.8334 7.5013 18.8334Z" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>` },
+      { key: 'payments', label: 'Платежи', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.3086 7.8999H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.3086 13.7334H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.5013 18.8334H12.5013C16.668 18.8334 18.3346 17.1667 18.3346 13.0001V8.00008C18.3346 3.83341 16.668 2.16675 12.5013 2.16675H7.5013C3.33464 2.16675 1.66797 3.83341 1.66797 8.00008V13.0001C1.66797 17.1667 3.33464 18.8334 7.5013 18.8334Z" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+` },
+    ];
+
+    // Создаём табы
+    tabsConfig.forEach((tabConf, idx) => {
+      const tabEl = document.createElement('div');
+      tabEl.className = 'tabs-link flex cursor-pointer items-center gap-1' + (idx === 0 ? ' active' : '');
+      tabEl.dataset.tab = tabConf.key;
+      tabEl.innerHTML = `<span>${tabConf.icon}</span> ${tabConf.label} <span class="count-msg"></span>`;
+      tabsContainer.appendChild(tabEl);
+    });
+
+    // Навешиваем клики
+    const tabElems = Array.from(tabsContainer.querySelectorAll('.tabs-link'));
+    tabElems.forEach(tabEl => {
+      tabEl.addEventListener('click', () => {
+        tabElems.forEach(t => t.classList.remove('active'));
+        tabEl.classList.add('active');
+        const sel = tabEl.dataset.tab;
+        Array.from(tabsContent.children).forEach(child => {
+          child.classList.toggle('hidden', child.dataset.tab !== sel);
+        });
+      });
+    });
+
+    // Создаём контейнеры для содержимого
+    tabsConfig.forEach((tabConf, idx) => {
+      const cont = document.createElement('div');
+      cont.dataset.tab = tabConf.key;
+      if (idx !== 0) cont.className = 'hidden'; // первый (all) виден по умолчанию
+      tabsContent.appendChild(cont);
+    });
+
+    // Заполняем и обновляем счётчики
+    updateCountsAndFill();
+  }
+
+
+function updateCountsAndFill() {
+  if (!tabsContainer || !tabsContent) return;
+
+  // Подсчёты
+  const countByTab = {
+    all: allNotifications.length,
+    users: 0,
+    requests: 0,
+    payments: 0
+  };
+  allNotifications.forEach(n => {
+    const t = n.type_display;
+    if (t === 'Users' || t === 'Chats') {
+      countByTab.users += 1;
+    } else if (t === 'Requests') {
+      countByTab.requests += 1;
+    } else if (t === 'Payments') {
+      countByTab.payments += 1;
+    }
+  });
+
+  // Обновляем счётчики в табах
+  const tabElems = Array.from(tabsContainer.querySelectorAll('.tabs-link'));
+  tabElems.forEach(tabEl => {
+    const key = tabEl.dataset.tab;
+    const span = tabEl.querySelector('.count-msg');
+    if (span && countByTab.hasOwnProperty(key)) {
+      span.textContent = countByTab[key];
+    }
+  });
+
+  // Заполняем контейнеры
+  const contElems = Array.from(tabsContent.children);
+  contElems.forEach(cont => {
+    const key = cont.dataset.tab;
+    cont.innerHTML = '';
+    let toRender = [];
+    if (key === 'all') {
+      toRender = allNotifications;
+    } else if (key === 'users') {
+      toRender = allNotifications.filter(n => n.type_display === 'Users' || n.type_display === 'Chats');
+    } else if (key === 'requests') {
+      toRender = allNotifications.filter(n => n.type_display === 'Requests');
+    } else if (key === 'payments') {
+      toRender = allNotifications.filter(n => n.type_display === 'Payments');
+    }
+    if (toRender.length === 0) {
+      const p = document.createElement('p');
+      p.className = 'text-gray-primary text-sm';
+      p.textContent = 'Нет уведомлений';
+      cont.appendChild(p);
+    } else {
+      toRender.forEach(n => {
+        const el = createNotificationElement(n);
+        cont.appendChild(el);
+      });
+    }
+  });
+}
+
+
+  // Если при загрузке уже есть старые уведомления, можно запросить их через REST API,
+  // а затем рендерить сразу. Но WebSocket сам при подключении обычно шлёт сразу данные.
+});
