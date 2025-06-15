@@ -518,15 +518,59 @@ document.getElementById('overlayModal')?.addEventListener('click', () => toggleM
 // 12. Инициализация после загрузки документа
 document.addEventListener('DOMContentLoaded', async () => {
   // 1) Проверяем и получаем user
-  const user = await ensureUserAuthenticated();
-  if (!user) return;  // редирект уже выполнен внутри
-  // 2) Рендерим инфо о пользователе
-  renderUserInfo(user);
-  // 3) Настраиваем фильтры
-  setupAssignmentFilters();
-  // 4) Загружаем первую страницу заданий
-  await loadAssignments(1);
+const user = await ensureUserAuthenticated()
+  if (!user) return
+
+  renderUserInfo(user)
+
+  try {
+    await loadAssignments()
+    setupAssignmentFilters()
+
+    let sortAscending = true
+
+    const sortHeader = document.getElementById('sort-id-header')
+    const sortHeader2 = document.getElementById('sort-name-header')
+    if (sortHeader) {
+    sortHeader.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const A = a.id
+        const B = b.id
+        return sortAscending ? A - B : B - A
+      })
+      sortAscending = !sortAscending
+      renderPaginatedAssignments()
+    })}
+
+    let sortDescriptionAsc = true
+
+            if (sortHeader2) {
+    sortHeader2.addEventListener('click', () => {
+      allAssignments.sort((a, b) => {
+        const descA = a.title.toLowerCase()
+        const descB = b.title.toLowerCase()
+        return sortDescriptionAsc ? descA.localeCompare(descB) : descB.localeCompare(descA)
+
+      })
+      sortDescriptionAsc = !sortDescriptionAsc
+      renderPaginatedAssignments()
+    })}
+  } catch (err) {
+    console.error('Ошибка при загрузке данных:', err)
+  }
 
   // Если нужно: инициализировать уведомления или другие модули
   // initNotifications();  // например, если есть функция для уведомлений
 });
+
+
+function renderPaginatedAssignments() {
+  const start = (currentAssignmentPage - 1) * assignmentPageSize
+  const end = start + assignmentPageSize
+  const pageData = allAssignments.slice(start, end)
+
+  document.getElementById('total-assignments-count').textContent =
+    allAssignments.length
+  renderAssignmentTable(pageData)
+  renderAssignmentPagination()
+}

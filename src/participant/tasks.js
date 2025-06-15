@@ -151,7 +151,7 @@ function renderDailyTasks(tasks) {
     const levelText = levelMap[task.level] || task.level
 
     const taskHTML = `
-      <a href="/participant/task.html?id=${task.id}" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
+      <a href="/participant/task.html?id=${task.id}&source=daily" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
         <div class="bg-violet-secondary rounded-xl p-2">
           <img src="/src/assets/images/cube.png" alt="cube" />
         </div>
@@ -254,7 +254,7 @@ function renderAllTasks(tasks) {
     const levelClass = levelClassMap[task.level] || 'bg-gray-200'
 
     const taskHTML = `
-      <a href="/participant/task.html?id=${task.id}" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
+      <a href="/participant/task.html?id=${task.id}&source=general" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
         <div class="bg-violet-secondary rounded-xl p-2">
           <img src="/src/assets/images/cube.png" alt="cube" />
         </div>
@@ -323,7 +323,7 @@ function renderAllTasks(tasks) {
     const levelClass = levelClassMap[task.level] || 'bg-gray-200'
 
     const taskHTML = `
-      <a href="/participant/task.html?id=${task.id}" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
+      <a href="/participant/task.html?id=${task.id}&source=general" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
         <div class="bg-violet-secondary rounded-xl p-2">
           <img src="/src/assets/images/cube.png" alt="cube" />
         </div>

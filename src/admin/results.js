@@ -316,7 +316,7 @@ function renderAssignmentTable(assignments) {
         <td>${task.result}</td>
         <td>
           <div class="flex justify-between gap-2 *:cursor-pointer">
-            <button onclick="openDeleteModal('${task.title}', ${task.id})" class="text-gray-400 hover:text-red-500">
+            <button onclick="openDeleteModal('${task.participant_name}', ${task.id})" class="text-gray-400 hover:text-red-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -769,4 +769,48 @@ function downloadCertificate(id) {
     .catch((error) => {
       alert(`Ошибка: ${error.message}`)
     })
+}
+
+
+function openDeleteModal(title, id) {
+  resultIdToDelete = id;
+  const modal = document.getElementById('modalDel');
+  const textBlock = modal.querySelector('.modal-task-title');
+  if (textBlock) {
+    textBlock.textContent = `Вы точно уверены, что хотите удалить результат "${title}"?`;
+  }
+  toggleModal('modalDel', true);
+}
+
+
+async function deleteResult() {
+  if (!resultIdToDelete) return;
+
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://portal.gradients.academy/results/dashboard/results/${resultIdToDelete}/`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Ошибка удаления: ${response.status}`);
+    }
+
+    toggleModal('modalDel', false);
+    await loadAssignments(currentAssignmentPage);
+  } catch (err) {
+    console.error('Ошибка при удалении результата:', err);
+    alert('Не удалось удалить результат.');
+  }
 }

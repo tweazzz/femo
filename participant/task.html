@@ -125,13 +125,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Айжан Ахметова</p>
-                  <p class="text-primary text-sm">Участник</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -143,7 +144,7 @@
           <!-- Breadcrumbs -->
           <div class="pt-2 text-sm">
             <nav class="flex items-center space-x-1">
-              <a href="#" class="text-gray-primary hover:underline">Задачи</a>
+              <a href="/participant/tasks.html" class="text-gray-primary hover:underline">Задачи</a>
 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -158,8 +159,8 @@
                 />
               </svg>
 
-              <span class="text-orange-primary font-medium"
-                >Код числового замка</span
+              <span class="text-orange-primary font-medium" id="task-title"
+                ></span
               >
             </nav>
           </div>
@@ -167,13 +168,13 @@
           <!-- Task Description -->
 
           <div>
-            <h2 class="mb-1 text-2xl font-semibold">Код числового замка</h2>
-            <p class="text-gray-600">6 класс</p>
+            <h2 id="task-title2" class="mb-1 text-2xl font-semibold"></h2>
+            <p id="task-grade" class="text-gray-600"></p>
           </div>
 
           <div class="grid gap-4 xl:grid-cols-3">
             <div class="xl:col-span-2">
-              <div
+              <div id="win-info"
                 class="card border-default text-green-primary bg-green-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3"
               >
                 <span>
@@ -193,7 +194,7 @@
                 Ты победил(а) ! Ответ верный и вовремя — ты получаешь +40 XP
               </div>
 
-              <div
+              <div id="lose-info"
                 class="card border-default text-red-primary bg-red-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3"
               >
                 <span>
@@ -219,59 +220,11 @@
                   Условие задачи
                 </h3>
                 <div class="text border-gray-border mb-5 border-b pb-4">
-                  <p>На доске написано число 2025. За один ход разрешается:</p>
-                  <ol class="list-inside list-decimal">
-                    <li>Уменьшить его на 1.</li>
-                    <li>Разделить на 5, если оно делится на 5 без остатка.</li>
-                  </ol>
-                  <p>
-                    Сколько различных чисел можно получить, выполнив любое
-                    количество таких ходов?
-                  </p>
+                  <p id="task-description"></p>
                 </div>
 
                 <!-- Download Links -->
-                <div class="space-y-3">
-                  <a
-                    href="#"
-                    class="text-orange-primary flex items-center gap-2"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Assignment.pdf (434 KB)
-                  </a>
-                  <a
-                    href="#"
-                    class="text-orange-primary flex items-center gap-2"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Assignment1.pdf (434 KB)
-                  </a>
+                <div id='task-attachments' class="space-y-3">
                 </div>
               </div>
 
@@ -281,6 +234,7 @@
                   >Ваш ответ</span
                 >
                 <input
+                  id="answer-input"
                   type="text"
                   placeholder="Введите цифру"
                   class="input-base border-default mt-1"
@@ -297,7 +251,7 @@
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-primary">Сдать до</span>
                     <span class="text-primary"
-                      >Четверг, 14 Сентября, 12:00</span
+                      ></span
                     >
                   </div>
 
@@ -306,23 +260,6 @@
                     <div
                       class="timer flex items-center gap-1 text-center text-sm font-bold text-orange-500"
                     >
-                      <span
-                        class="border-default bg-orange-secondary rounded-sm p-2.5"
-                      >
-                        23 ч
-                      </span>
-                      :
-                      <span
-                        class="border-default bg-orange-secondary rounded-sm p-2.5"
-                      >
-                        36 м
-                      </span>
-                      :
-                      <span
-                        class="border-default bg-orange-secondary rounded-sm p-2.5"
-                      >
-                        23 с
-                      </span>
                     </div>
                   </div>
 
@@ -330,51 +267,51 @@
                     <span class="text-gray-primary text-sm"
                       >Уровень сложности</span
                     >
-                    <span class="d-level easy">Лёгкий</span>
+                    <span id="task-level" class="d-level easy"></span>
                   </div>
 
                   <div class="flex items-center justify-between">
                     <span class="text-gray-primary text-sm"
                       >За правильный ответ:
                     </span>
-                    <span class="">25 XP 🟢</span>
+                    <span id="task-points" class=""></span>
                   </div>
                   <div class="flex items-center justify-between">
                     <span class="text-gray-primary text-sm"
                       >Бонус за скорость:
                     </span>
-                    <span class="">15 XP 🟣</span>
+                    <span id="task-bonus" class=""></span>
                   </div>
 
                   <div class="flex items-center justify-between">
                     <span class="text-gray-primary text-sm">Статус</span>
-                    <span class="card archive">Не отправлено</span>
-                    <span class="card error">
-                      <span class="">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-4"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      </span>
-                      Ошибка</span
-                    >
+                    <span id="task-status" class="card archive"></span>
+<!--                    <span class="card error">-->
+<!--                      <span class="">-->
+<!--                        <svg-->
+<!--                          xmlns="http://www.w3.org/2000/svg"-->
+<!--                          fill="none"-->
+<!--                          viewBox="0 0 24 24"-->
+<!--                          stroke-width="1.5"-->
+<!--                          stroke="currentColor"-->
+<!--                          class="size-4"-->
+<!--                        >-->
+<!--                          <path-->
+<!--                            stroke-linecap="round"-->
+<!--                            stroke-linejoin="round"-->
+<!--                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"-->
+<!--                          />-->
+<!--                        </svg>-->
+<!--                      </span>-->
+<!--                      Ошибка</span-->
+<!--                    >-->
                   </div>
                 </div>
               </div>
 
               <div class="space-y-4">
                 <button
-                  onclick="toggleModal('modal')"
+                  id="submit-button1"
                   class="bg-orange-primary hover:bg-orange-primary/90 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 text-white transition-colors"
                 >
                   <span>
@@ -397,14 +334,14 @@
                 </button>
 
                 <button
-                  onclick="toggleModal()"
+                  id="clear-button"
                   class="text-orange-primary border-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg border-1 px-4 py-2 transition-colors"
                 >
                   Очистить ответ
                 </button>
 
                 <button
-                  onclick="toggleModal()"
+                  id="submit-button2"
                   class="bg-gray-background text-gray-primary hover:bg-gray-primary/5 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 transition-colors"
                 >
                   <span>
@@ -440,12 +377,13 @@
                       />
                       <div>
                         <p class="text-2xl font-bold">Миссия выполнена</p>
-                        <p class="mt-1 text-sm">
-                          Ответ верный и вовремя — ты получаешь +15 XP
+                        <p id="modal-xp"  class="mt-1 text-sm">
+                          Ответ верный и вовремя — ты получаешь +XX XP
                         </p>
                       </div>
 
                       <a
+                        id="next-task-button"
                         class="bg-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-xl p-2.5 text-white"
                       >
                         <span>
@@ -676,6 +614,8 @@
         })
       })
     </script>
+    <script src="/auth.js" defer></script>
     <script src="/src/participant/notifications.js" defer></script>
+  <script src="/src/participant/task.js" defer></script>
   </body>
 </html>
