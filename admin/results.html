@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Результаты</title>
     <link rel="stylesheet" href="/dist/style.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@lucide/web@latest"></script>
@@ -1305,7 +1305,7 @@
         <p class="text-xl font-bold">Удалить результат</p>
         <button
           type="button"
-          onclick="openDeleteModal('${task.title}', ${task.id})"
+          onclick="openDeleteModal('${task.title}', '${task.id}')"
           class="text-gray-400 hover:text-gray-500"
         >
           <i data-lucide="x" class="h-5 w-5 cursor-pointer"></i>
