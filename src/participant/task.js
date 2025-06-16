@@ -67,12 +67,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(user)
 
   try {
-//    await loadDailyTasks();
-
+      await loadTaskMock()
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
+
+
+  // Скрыть кнопку очистки при загрузке
+  const clearButton = document.getElementById('clear-button');
+  if (clearButton) clearButton.style.display = 'none';
+
+
+  const hasValue = answerInput.value.trim() !== '';
+  submitBtn1.style.display = hasValue ? 'flex' : 'none';
+  submitBtn2.style.display = hasValue ? 'none' : 'flex';
 })
+
+const answerInput = document.getElementById('answer-input');
+const clearButton = document.getElementById('clear-button');
+const submitBtn1 = document.getElementById('submit-button1');
+const submitBtn2 = document.getElementById('submit-button2');
+const winInfo = document.getElementById('win-info');
+const loseInfo = document.getElementById('lose-info');
 
 
 async function loadTaskDetails() {
@@ -85,7 +101,7 @@ async function loadTaskDetails() {
     return
   }
 
-  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/${taskId}/${source}`
+  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/41/${source}`
 
   try {
     const token = JSON.parse(localStorage.getItem('user'))?.tokens?.access
@@ -98,6 +114,7 @@ async function loadTaskDetails() {
     if (!response.ok) throw new Error('Ошибка при получении задачи')
 
     const task = await response.json()
+    console.log(task)
     renderTask(task)
   } catch (err) {
     console.error('Ошибка загрузки задачи:', err)
@@ -154,10 +171,200 @@ function renderTask(task) {
   })
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = await ensureUserAuthenticated()
-  if (!user) return
 
-  renderUserInfo(user)
-  await loadTaskDetails()
-})
+async function loadTaskMock() {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const taskId = urlParams.get('id');
+  const source = urlParams.get('source'); // 'daily' или 'general'
+
+  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/${taskId}/${source}`;
+
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+
+  try {
+    const response = await authorizedFetch(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) throw new Error('Ошибка при получении задачи');
+
+    const task = await response.json();
+    console.log(task)
+
+    // Проставляем данные в DOM
+    document.getElementById('task-title').textContent = task.title;
+    document.getElementById('task-title2').textContent = task.title;
+    document.getElementById('task-grade').textContent = `${task.grade} класс`;
+    document.getElementById('task-description').textContent = task.description;
+
+    const attachmentsContainer = document.getElementById('task-attachments');
+    attachmentsContainer.innerHTML = '';
+    task.attachments.forEach(file => {
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.textContent = file.name;
+      link.target = '_blank';
+      attachmentsContainer.appendChild(link);
+      attachmentsContainer.appendChild(document.createElement('br'));
+    });
+
+    const levelMap = {
+      easy: 'Лёгкий',
+      medium: 'Средний',
+      hard: 'Сложный',
+    };
+
+    const levelClassMap = {
+      easy: 'text-green-primary bg-green-secondary',
+      medium: 'text-orange-primary bg-orange-secondary',
+      hard: 'text-red-primary bg-red-secondary',
+    }
+
+    const StatusClassMap = {
+      'Не отправлено': 'text-gray-primary bg-gray-secondary',
+      'Завершено': 'text-green-primary bg-green-secondary',
+    }
+
+    const levelText = levelMap[task.level] || task.level;
+    const levelClass = levelClassMap[task.level] || 'text-gray-500 bg-gray-100';
+
+    const levelEl = document.getElementById('task-level');
+    levelEl.textContent = levelText;
+    levelEl.className = `${levelClass} border-default rounded-xl px-2 py-0.5 text-sm`;
+
+    const pointsEl = document.getElementById('task-points');
+    pointsEl.innerHTML = `<span class="font-bold">${task.points} XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
+    pointsEl.className = 'text-orange-primary bg-orange-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
+
+    const bonusEl = document.getElementById('task-bonus');
+    bonusEl.innerHTML = `<span class="font-bold">${task.points} XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
+    bonusEl.className = 'text-blue-primary bg-blue-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
+
+    const statusText = task.status
+    const statusClass = levelClassMap[task.status]
+    const statusEl = document.getElementById('task-status');
+    statusEl.textContent = statusText;
+    statusEl.className = `${statusClass} border-default rounded-xl px-2 py-0.5 text-sm`;
+
+    if (task.status === 'Не отправлено') {
+      winInfo.style.display = 'none';
+      loseInfo.style.display = 'none';
+    } else if (task.status === 'Завершена') {
+      winInfo.style.display = 'block';
+      loseInfo.style.display = 'none';
+
+      // Скрыть кнопки
+      submitBtn1.style.display = 'none';
+      submitBtn2.style.display = 'none';
+      clearButton.style.display = 'none';
+    }
+
+    window.taskPoints = task.points;
+
+  } catch (err) {
+    console.error('Ошибка загрузки задачи:', err);
+  }
+}
+
+
+// Показывать/скрывать кнопку очистки при вводе
+answerInput.addEventListener('input', () => {
+  if (answerInput.value.trim() !== '') {
+    clearButton.style.display = 'inline-flex';
+  } else {
+    clearButton.style.display = 'none';
+  }
+
+  const hasValue = answerInput.value.trim() !== '';
+  submitBtn1.style.display = hasValue ? 'flex' : 'none';
+  submitBtn2.style.display = hasValue ? 'none' : 'flex';
+
+
+});
+
+// Очистка поля и скрытие кнопки
+clearButton.addEventListener('click', () => {
+  answerInput.value = '';
+  clearButton.style.display = 'none';
+
+  // Скрыть оранжевую кнопку, показать серую
+  submitBtn1.style.display = 'none';
+  submitBtn2.style.display = 'flex';
+});
+
+
+submitBtn1.addEventListener('click', async () => {
+  const answer = answerInput.value.trim();
+  if (!answer) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const taskId = urlParams.get('id');
+  const source = urlParams.get('source'); // 'daily' или 'general'
+
+  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/${taskId}/${source}/submit/`;
+
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ 'answer': answer }),
+    });
+
+    if (!response.ok) throw new Error('Ошибка при отправке ответа');
+
+    const result = await response.json();
+
+    if (result.correct) {
+      // Успешный ответ
+      winInfo.style.display = 'block';
+      loseInfo.style.display = 'none';
+
+      // Скрыть кнопки
+      submitBtn1.style.display = 'none';
+      submitBtn2.style.display = 'none';
+      clearButton.style.display = 'none';
+
+      const modalXP = document.getElementById('modal-xp');
+      if (modalXP) {
+        modalXP.textContent = `Ответ верный и вовремя — ты получаешь +${window.taskPoints * 2} XP`;
+      }
+
+      const nextTaskBtn = document.getElementById('next-task-button');
+      if (nextTaskBtn) {
+        nextTaskBtn.addEventListener('click', () => {
+          window.location.href = '/participant/tasks.html';
+        });
+      }
+
+      // Открыть модалку
+      toggleModal('modal');
+    } else {
+      // Неверный ответ
+      winInfo.style.display = 'none';
+      loseInfo.style.display = 'block';
+    }
+
+  } catch (err) {
+    console.error('Ошибка при отправке:', err);
+    alert('Ошибка при отправке ответа.');
+    // Неверный ответ
+    winInfo.style.display = 'none';
+    loseInfo.style.display = 'block';
+  }
+});

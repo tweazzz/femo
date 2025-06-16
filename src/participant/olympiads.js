@@ -74,6 +74,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 
+function formatDate(dateStr) {
+    const months = [
+    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+    }
+
 
 async function loadOlympiadCards() {
   const token = localStorage.getItem('access_token');
@@ -110,16 +122,26 @@ async function loadOlympiadCards() {
 
         // Определяем текст для даты олимпиады
       if (olympiad.status == 'Завершена') dateInfoText =`Даты олимпиады`
-      if (olympiad.status == 'Завершена') dateInfo =`${olympiad.first_start_date} - ${olympiad.last_end_date}`
+      if (olympiad.status == 'Завершена') dateInfo =`${formatDate(olympiad.first_start_date)} - ${formatDate(olympiad.last_end_date)}`;
       if (olympiad.status == 'Регистрация открыта') dateInfoText =`Осталось`
       if (olympiad.status == 'Регистрация открыта') dateInfo =`${Math.round(Date(olympiad.last_end_date)-Date(olympiad.first_start_date))/ (1000 * 60 * 60 * 24)} дней`
       if (olympiad.status == 'Идет сейчас') dateInfoText =`Осталось`
       if (olympiad.status == 'Идет сейчас') dateInfo =`${Math.round(Date(olympiad.last_end_date)-Date(olympiad.first_start_date))/ (1000 * 60 * 60 * 24)} дней`
       if (olympiad.status == 'Регистрация скоро откроется') dateInfoText =`Откроется`
-      if (olympiad.status == 'Регистрация скоро откроется') dateInfo =`${olympiad.first_start_date}`
+      if (olympiad.status == 'Регистрация скоро откроется') dateInfo =`${oformatDate(olympiad.first_start_date)}`
       if (olympiad.status == 'Вы участвуете') dateInfoText =`Олимпиада начнется`
-      if (olympiad.status == 'Вы участвуете') dateInfo =`${olympiad.first_start_date}`
+      if (olympiad.status == 'Вы участвуете') dateInfo =`${formatDate(olympiad.first_start_date)}`
 
+      // Определяем текст кнопки
+      const buttonText = olympiad.status === 'Завершена' ? 'Посмотреть результаты' : 'Подробнее';
+
+
+    const useVuesaxIcon = ['Завершена', 'Вы участвуете', 'Регистрация скоро откроется'].includes(olympiad.status);
+    const iconHTML = useVuesaxIcon
+    ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block size-5" />`
+    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mb-1 inline-block size-5">
+    <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/>
+    </svg>`;
 
       card.innerHTML = `
         <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">
@@ -130,15 +152,14 @@ async function loadOlympiadCards() {
         <div class="mt-auto mb-4 flex">
           <div>
             <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
-            <p class="text-orange-primary text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mb-1 inline-block size-5">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/>
-              </svg>
+
+<p class="text-black-primary text-sm">${iconHTML}
+
               ${dateInfo}
             </p>
           </div>
         </div>
-        <a href="${olympiad.url}" class="btn-base">Подробнее</a>
+        <a href="${olympiad.url}" class="btn-base">${buttonText}</a>
       `;
 
       container.appendChild(card);

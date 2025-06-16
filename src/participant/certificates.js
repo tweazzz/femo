@@ -169,18 +169,21 @@ function getCertificateCategoryClass(category) {
 function renderAssignmentTable(assignments) {
   const tbody = document.getElementById('certificate-tbody')
   const noCertificatesEl = document.getElementById('no-certificates')
+  const noCertificatesElPNG = document.getElementById('no-certificates-png')
   const tableContainer = document.getElementById('certificate-table-container') // Добавим id на обертку таблицы
   if (!tbody || !noCertificatesEl || !tableContainer) return
 
   if (assignments.length === 0) {
     // Показываем заглушку
     noCertificatesEl.classList.remove('hidden')
+    noCertificatesElPNG.classList.remove('hidden')
     tableContainer.classList.add('hidden')
     return
   }
 
   // Иначе показываем таблицу и скрываем заглушку
   noCertificatesEl.classList.add('hidden')
+  noCertificatesElPNG.classList.add('hidden')
   tableContainer.classList.remove('hidden')
   tbody.innerHTML =
     assignments.length === 0

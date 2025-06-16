@@ -59,6 +59,14 @@ function renderUserInfo(user) {
   }
   roleEl.textContent = roleMap[user.profile.role] || user.profile.role
 }
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await ensureUserAuthenticated()
+  if (!user) return
+
+  renderUserInfo(user)
+
+  // остальной код...
+})
 
 document.addEventListener('DOMContentLoaded', async () => {
   const token = localStorage.getItem('access_token')

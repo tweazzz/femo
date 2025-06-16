@@ -104,50 +104,74 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 function initTopUpHandler() {
-  const topUpForm = document.querySelector('#modal form')
-  const topUpButton = topUpForm.querySelector('button.btn-orange')
+  const topUpForm = document.querySelector('#modal form');
+  const topUpButton = topUpForm.querySelector('button.btn-orange');
 
   topUpButton.addEventListener('click', async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const input = topUpForm.querySelector('input[type="number"]')
-    const amount = parseInt(input.value, 10)
+    const input = topUpForm.querySelector('input[type="number"]');
+    const amount = parseInt(input.value, 10);
 
     if (isNaN(amount) || amount <= 0) {
-      alert('Введите корректную сумму для пополнения.')
-      return
+      alert('Введите корректную сумму для пополнения.');
+      return;
     }
 
-  const token = localStorage.getItem('access_token')
-  if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
-  }
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('Токен не найден. Пожалуйста, войдите заново.');
+      return;
+    }
+
+    // Открываем новое окно заранее, чтобы не блокировалось браузером
+    const payWindow = window.open('', '_blank');
+    if (!payWindow) {
+      alert('Не удалось открыть новое окно. Проверьте блокировщик всплывающих окон.');
+      return;
+    }
+    // Показатель загрузки можно вставить в payWindow, например:
+    payWindow.document.write('<p>Подготовка к оплате...</p>');
 
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/payments/participant/dashboard/topup/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ amount })
-      })
+      const response = await authorizedFetch(
+        'https://portal.gradients.academy/payments/participant/dashboard/topup/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ amount })
+        }
+      );
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (response.ok && result.pg_status === 'ok') {
-        toggleModal('modal', false)
-        location.reload()
+        toggleModal('modal', false);
+        if (result.pg_redirect_url) {
+          // Перенаправляем новое окно на оплату
+          payWindow.location.href = result.pg_redirect_url;
+        } else {
+          // Закрываем окно и обновляем страницу
+          payWindow.close();
+          location.reload();
+        }
       } else {
-        alert('Ошибка при пополнении: ' + (result?.pg_status || 'Неизвестная ошибка'))
+        // При ошибке закрываем окно и показываем сообщение
+        payWindow.close();
+        alert('Ошибка при пополнении: ' + (result?.pg_status || 'Неизвестная ошибка'));
       }
     } catch (err) {
-      console.error('Ошибка запроса:', err)
-      alert('Произошла ошибка при отправке запроса.')
+      console.error('Ошибка запроса:', err);
+      payWindow.close();
+      alert('Произошла ошибка при отправке запроса.');
     }
-  })
+  });
 }
+
+
 
 let allAssignments = []
 let currentAssignmentPage = 1
