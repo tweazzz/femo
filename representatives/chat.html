@@ -92,186 +92,150 @@
       </header>
 
       <!-- Dashboard Content -->
-      <main class="flex flex-1 overflow-hidden p-6">
-        <!-- Left Chat -->
-        <div class="border-default flex overflow-y-auto rounded-2xl">
-          <div class="flex w-72 flex-col border-r border-gray-200 bg-white">
-            <!-- Search -->
-            <div class="p-4">
-              <div class="relative">
-                <input type="text" placeholder="Поиск по имени" class="input-base border-default !pl-9" />
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="text-gray-primary absolute top-1/2 left-2.5 size-5 -translate-y-1/2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-              </div>
-            </div>
-
-            <!-- Menu Items -->
-            <div class="flex-1">
-              <div class="space-y-1 px-2">
-                <a href="#" class="flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50">
-                  <div>
-                    <p class="text-sm font-bold">Организатор</p>
-                    <p class="mt-1 text-xs">Прикрепите файл, пожалуйста</p>
-                  </div>
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
-                </a>
-                <a href="#" class="flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50">
-                  <div>
-                    <p class="text-sm font-bold">Объявления</p>
-                    <p class="mt-1 text-xs">Прикрепите файл, пожалуйста</p>
-                  </div>
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" />
-                  </svg>
-                </a>
-              </div>
+      <!-- Главное содержимое -->
+      <main class="flex flex-1 overflow-hidden p-6 h-screen">
+        <!-- Левая панель: список чатов -->
+        <div id="chatMenu" class="flex flex-col border-r border-gray-200 bg-white
+                                w-full sm:w-72 max-w-[360px]:w-full
+                                overflow-y-auto">
+          <!-- Search -->
+          <div class="p-4">
+            <div class="relative">
+              <input 
+                type="text" 
+                placeholder="Поиск по имени" 
+                class="input-base border-default !pl-9 w-full" 
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor"
+                  class="text-gray-primary absolute top-1/2 left-2.5 size-5 -translate-y-1/2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
             </div>
           </div>
 
-          <!-- Chat Area -->
-          <div class="hidden md:block flex flex-1 flex-col bg-white sm:block">
-            <!-- Chat Header -->
-            <div class="p-4">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2 text-lg font-bold">
-                  <span>Чат с организатором</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Messages -->
-            <div class="chat flex flex-col space-y-6 overflow-y-scroll p-4">
-              <span class="time-msg">18.01.2025</span>
-
-              <!-- Message 1 -->
-              <div class="me flex max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Алихан Ахметов</span>
-                    <span>- Представитель</span>
-                    <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain" />
-                  </div>
-                  <div class="bg-orange-secondary text-orange-primary rounded-lg p-3">
-                    <p>
-                      Здравствуйте! У меня возник вопрос по участникам из
-                      Узбекистана. Двое не отображаются в общем списке, хотя
-                      были зарегистрированы.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:17</div>
-                </div>
-              </div>
-
-              <!-- Message 2 -->
-              <div class="flex max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Иван Иванович</span>
-                    <span>- Организатор</span>
-                  </div>
-                  <div class="rounded-lg bg-gray-100 p-3">
-                    <p>
-                      Добрый день! Уточните, пожалуйста, ID участников или их
-                      ФИО — проверим вручную.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:18</div>
-                </div>
-              </div>
-
-              <div class="flex max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Иван Иванович</span>
-                    <span>- Организатор</span>
-                  </div>
-                  <div class="rounded-lg bg-gray-100 p-3">
-                    <p>
-                      Добрый день! Уточните, пожалуйста, ID участников или их
-                      ФИО — проверим вручную.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:18</div>
-                </div>
-              </div>
-
-              <div class="flex max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Иван Иванович</span>
-                    <span>- Организатор</span>
-                  </div>
-                  <div class="rounded-lg bg-gray-100 p-3">
-                    <p>
-                      Добрый день! Уточните, пожалуйста, ID участников или их
-                      ФИО — проверим вручную.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:18</div>
-                </div>
-              </div>
-
-              <div class="flex max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Иван Иванович</span>
-                    <span>- Организатор</span>
-                  </div>
-                  <div class="rounded-lg bg-gray-100 p-3">
-                    <p>
-                      Добрый день! Уточните, пожалуйста, ID участников или их
-                      ФИО — проверим вручную.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:18</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Message Input -->
-            <div class="mx-3 mb-3 rounded-xl border border-gray-200 px-4">
-              <div class="flex items-center gap-2 rounded-lg bg-white">
-                <button class="cursor-pointer p-2 text-gray-400 hover:text-gray-600">
-                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <!-- Menu Items -->
+          <div class="flex-1">
+            <div class="space-y-1 px-2">
+              <!-- Организатор -->
+              <a href="#" 
+                class="chat-menu-item flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
+                data-chat="organizer">
+                <div class="flex items-center gap-2">
+                  <!-- SVG-/img-аватар -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-gray-400">
+                    <!-- Пример иконки пользователя -->
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
                   </svg>
-                </button>
-                <textarea oninput="auto_grow(this)" rows="1" placeholder="Введите ваше сообщение..."
-                  class="chatarea"></textarea>
-                <button class="cursor-pointer p-2 text-orange-500 hover:text-orange-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                  <div class="flex flex-col">
+                    <p class="text-[14px] leading-[124%] font-proxima font-bold text-[#222222]">
+                      Организатор
+                    </p>
+                    <p class="mt-1 text-[12px] leading-[100%] font-proxima font-normal text-[#222222]">
+                      Прикрепите файл, пожалуйста
+                    </p>
+                  </div>
+                </div>
+                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+              <!-- Групповой чат -->
+              <a href="#" 
+                class="chat-menu-item flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
+                data-chat="group">
+                <div class="flex items-center gap-2">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-gray-400">
+                    <!-- Иконка группового чата -->
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
+                    <path d="M6 18c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4v1H6v-1z"/>
                   </svg>
-                </button>
-              </div>
+                  <div class="flex flex-col">
+                    <p class="text-[14px] leading-[124%] font-proxima font-bold text-[#222222]">
+                      Групповой чат
+                    </p>
+                    <p class="mt-1 text-[12px] leading-[100%] font-proxima font-normal text-[#222222]">
+                      Обсуждения в группе
+                    </p>
+                  </div>
+                </div>
+                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+              <!-- Объявления -->
+              <a href="#" 
+                class="chat-menu-item flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
+                data-chat="announcements">
+                <div class="flex items-center gap-2">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-gray-400">
+                    <!-- Иконка объявления -->
+                    <path d="M12 2L2 7v6c0 5 4 9 10 9s10-4 10-9V7L12 2z"/>
+                    <path d="M12 22v-8" stroke="#fff" stroke-width="2"/>
+                  </svg>
+                  <div class="flex flex-col">
+                    <p class="text-[14px] leading-[124%] font-proxima font-bold text-[#222222]">
+                      Объявления
+                    </p>
+                    <p class="mt-1 text-[12px] leading-[100%] font-proxima font-normal text-[#222222]">
+                      Важные новости
+                    </p>
+                  </div>
+                </div>
+                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Контейнер для чата -->
+        <div id="chatsContainer" class="hidden flex-1 flex flex-col bg-white">
+          <!-- Chat Header -->
+          <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+            <!-- Кнопка "назад" для мобильных -->
+            <button id="backToMenuBtn" class="md:hidden text-gray-500 mr-2">
+              ←
+            </button>
+            <div class="flex items-center gap-2 text-lg font-bold font-proxima text-[#222222]">
+              <span id="chatTitle">Чат</span>
+              <span id="chatTime" class="text-sm font-normal text-gray-500">—</span>
+            </div>
+          </div>
+
+          <!-- Сообщения -->
+          <div id="chatMessages" class="flex-1 overflow-y-scroll p-4 chat space-y-6">
+            <!-- Здесь динамически появляются сообщения -->
+          </div>
+
+          <!-- Message Input -->
+          <div class="mx-3 mb-3 rounded-xl border border-gray-200 px-4">
+            <div class="flex items-center gap-2 rounded-lg bg-white">
+              <button class="cursor-pointer p-2 text-gray-400 hover:text-gray-600">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </button>
+              <textarea oninput="auto_grow(this)" rows="1" placeholder="Введите ваше сообщение..."
+                        class="chatarea flex-1 resize-none border-none outline-none font-proxima text-[#222222] text-sm"></textarea>
+              <button id="sendBtn" class="cursor-pointer p-2 text-orange-500 hover:text-orange-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
       </main>
+
     </div>
 
     <!-- Полупрозрачный фон для затемнения -->
@@ -468,6 +432,191 @@
   </script>
 
   <script src="/src/representatives/notification.js" defer></script>
+  <!-- Скрипт переключения чатов -->
+  <script>
+    function auto_grow(element) {
+      element.style.height = "auto";
+      element.style.height = element.scrollHeight + "px";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuItems = document.querySelectorAll('.chat-menu-item');
+      const menuContainer = document.getElementById('chatMenu');
+      const chatsContainer = document.getElementById('chatsContainer');
+      const backBtn = document.getElementById('backToMenuBtn');
+      const chatTitleEl = document.getElementById('chatTitle');
+      const chatTimeEl = document.getElementById('chatTime');
+      const chatMessagesEl = document.getElementById('chatMessages');
+      const sendBtn = document.getElementById('sendBtn');
+
+      // Пример данных сообщений для демонстрации
+      const chatData = {
+        organizer: [
+          { from: 'me', name: 'Алихан Ахметов', role: 'Представитель', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40', flag: 'https://flagcdn.com/w40/kz.png', text: 'Здравствуйте! У меня возник вопрос по участникам из Узбекистана. Двое не отображаются в общем списке, хотя были зарегистрированы.', time: '21:17' },
+          { from: 'other', name: 'Иван Иванович', role: 'Организатор', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40', text: 'Добрый день! Уточните, пожалуйста, ID участников или их ФИО — проверим вручную.', time: '21:18' },
+          // ...повтор
+        ],
+        group: [
+          { from: 'other', name: 'Групповой чат', role: '', avatar: 'https://via.placeholder.com/40', text: 'Добро пожаловать в групповой чат!', time: '20:00' },
+          // ...
+        ],
+        announcements: [
+          { from: 'other', name: 'Система', role: '', avatar: 'https://via.placeholder.com/40', text: 'Новое объявление: Завтра собрание в 10:00.', time: '09:00' },
+          // ...
+        ]
+      };
+
+      function showChat(id) {
+        // На мобильных скрыть меню
+        if (window.innerWidth < 640) {
+          menuContainer.classList.add('hidden');
+        }
+        // Показать контейнер чата
+        chatsContainer.classList.remove('hidden');
+        // Установить заголовок и время (пример: всегда "1 мин назад" или текущее время)
+        if (id === 'organizer') {
+          chatTitleEl.textContent = 'Чат с организатором';
+          chatTimeEl.textContent = '1 мин назад';
+        } else if (id === 'group') {
+          chatTitleEl.textContent = 'Групповой чат';
+          chatTimeEl.textContent = '—';
+        } else if (id === 'announcements') {
+          chatTitleEl.textContent = 'Объявления';
+          chatTimeEl.textContent = '—';
+        }
+        // Отметить активный пункт меню
+        menuItems.forEach(mi => {
+          if (mi.dataset.chat === id) {
+            mi.classList.add('bg-gray-100');
+          } else {
+            mi.classList.remove('bg-gray-100');
+          }
+        });
+        // Загрузить сообщения из chatData
+        renderMessages(id);
+      }
+
+      function renderMessages(id) {
+        chatMessagesEl.innerHTML = '';
+        const msgs = chatData[id] || [];
+        let lastDate = null;
+        msgs.forEach(msg => {
+          // Можно группировать по дате: если дата изменилась, вставить <span class="time-msg">...</span>
+          // Для простоты здесь не группируем по дате, вставляем сразу
+          const wrapper = document.createElement('div');
+          const isMe = msg.from === 'me';
+          wrapper.className = (isMe ? 'me self-start flex max-w-7/12 gap-3' : 'flex max-w-7/12 gap-3 self-start');
+          // Аватар
+          const img = document.createElement('img');
+          img.src = msg.avatar;
+          img.alt = 'Avatar';
+          img.className = 'h-8 w-8 rounded-full';
+          wrapper.appendChild(img);
+          // Контент
+          const content = document.createElement('div');
+          // Заголовок: имя, роль, флаг
+          const hdr = document.createElement('div');
+          hdr.className = 'mb-1 flex items-center gap-2 text-sm font-bold font-proxima text-[#222222]';
+          const nameSpan = document.createElement('span');
+          nameSpan.textContent = msg.name;
+          hdr.appendChild(nameSpan);
+          if (msg.role) {
+            const roleSpan = document.createElement('span');
+            roleSpan.className = 'font-normal text-sm text-gray-500';
+            roleSpan.textContent = '- ' + msg.role;
+            hdr.appendChild(roleSpan);
+          }
+          if (msg.flag) {
+            const flagImg = document.createElement('img');
+            flagImg.src = msg.flag;
+            flagImg.alt = 'Флаг';
+            flagImg.className = 'h-3 w-5 object-contain';
+            hdr.appendChild(flagImg);
+          }
+          content.appendChild(hdr);
+          // Текст
+          const bubble = document.createElement('div');
+          if (isMe) {
+            bubble.className = 'bg-orange-secondary text-orange-primary rounded-lg p-3';
+          } else {
+            bubble.className = 'rounded-lg bg-gray-100 p-3';
+          }
+          const p = document.createElement('p');
+          p.className = 'text-sm font-proxima text-[#222222]';
+          p.textContent = msg.text;
+          bubble.appendChild(p);
+          content.appendChild(bubble);
+          // Время
+          const timeDiv = document.createElement('div');
+          timeDiv.className = 'mt-1 text-xs text-gray-500';
+          timeDiv.textContent = msg.time;
+          content.appendChild(timeDiv);
+
+          wrapper.appendChild(content);
+          chatMessagesEl.appendChild(wrapper);
+        });
+        // Прокрутка вниз
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+      }
+
+      // Обработчики меню
+      menuItems.forEach(item => {
+        item.addEventListener('click', e => {
+          e.preventDefault();
+          const chatId = item.dataset.chat;
+          showChat(chatId);
+        });
+      });
+
+      // Кнопка "назад" для мобильных
+      backBtn.addEventListener('click', () => {
+        chatsContainer.classList.add('hidden');
+        menuContainer.classList.remove('hidden');
+      });
+
+      // По умолчанию открыть первый чат
+      if (menuItems.length) {
+        const first = menuItems[0].dataset.chat;
+        showChat(first);
+      }
+
+      // Обработка отправки (пример, добавляет сообщение в конец текущего чата)
+      sendBtn.addEventListener('click', () => {
+        const textEl = document.querySelector('.chatarea');
+        const text = textEl.value.trim();
+        if (!text) return;
+        // Определить текущий чат
+        const activeMenu = Array.from(menuItems).find(mi => mi.classList.contains('bg-gray-100'));
+        const chatId = activeMenu?.dataset.chat;
+        if (!chatId) return;
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const timeStr = `${hh}:${mm}`;
+        // Добавить в данные и перерендить
+        if (!chatData[chatId]) chatData[chatId] = [];
+        chatData[chatId].push({
+          from: 'me',
+          name: 'Вы',
+          role: '',
+          avatar: 'https://via.placeholder.com/40',
+          text,
+          time: timeStr
+        });
+        textEl.value = '';
+        auto_grow(textEl);
+        renderMessages(chatId);
+      });
+
+      // При ресайзе экрана: если вернулись к desktop, показать меню и чат
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 640) {
+          menuContainer.classList.remove('hidden');
+          chatsContainer.classList.remove('hidden');
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
