@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadCountryList()
     await loadCountryRanking()
     await loadOlympiadList()
+    await loadAverageChart();
+    await loadSuccessRateChart();
+
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -403,6 +406,24 @@ async function loadOlympiadList() {
 
     const data = await response.json()
     const select = document.getElementById('olympiad-filter')
+
+    const select1 = document.getElementById('chart-olympiad-filter-1');
+    const select2 = document.getElementById('chart-olympiad-filter-2');
+
+    [select1, select2].forEach(select => {
+      if (select) {
+        select.innerHTML = '<option value="">Выбрать олимпиаду</option>';
+        data.results.forEach((olympiad) => {
+          const option = document.createElement('option');
+          option.value = olympiad.id;
+          option.textContent = olympiad.title;
+          select.appendChild(option);
+        });
+      }
+    });
+
+
+
     if (!select) return
 
     // Очищаем и добавляем дефолтный пункт
@@ -420,5 +441,145 @@ async function loadOlympiadList() {
   }
 }
 
+
+async function loadChartsWithCountryNames() {
+  const token = localStorage.getItem("access_token");
+  if (!token) return;
+
+  try {
+    // Получаем список стран
+    const countryRes = await fetch("https://portal.gradients.academy/common/countries/?page=1&page_size=300", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const countryData = await countryRes.json();
+    const countryMap = {};
+    countryData.results.forEach(c => {
+      countryMap[c.code] = c.name;
+    });
+
+    // Получаем данные графиков
+    const olympiadId1 = document.getElementById("chart-olympiad-filter-1")?.value;
+    const olympiadId2 = document.getElementById("chart-olympiad-filter-2")?.value;
+
+    const url = new URL("https://portal.gradients.academy/results/dashboard/countries/charts/");
+    if (olympiadId1) url.searchParams.append("olympiad", olympiadId1);
+
+    const chartRes = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const chartData = await chartRes.json();
+
+    // Обновляем график среднего балла
+    const averageLabels = chartData.average_by_country.map(item => countryMap[item.country] || item.country);
+    const averageScores = chartData.average_by_country.map(item => parseFloat(item.average_score));
+    averageChart.data.labels = averageLabels;
+    averageChart.data.datasets[0].data = averageScores;
+    averageChart.update();
+
+    // Обновляем график процента успеха
+    const resultsContainer = document.getElementById("resultsContainer");
+    resultsContainer.innerHTML = "";
+    chartData.success_rate_by_country.forEach(item => {
+      const percent = parseFloat(item.success_rate) * 100;
+      const name = countryMap[item.country] || item.country;
+      const div = document.createElement("div");
+      div.className = "flex flex-col sm:flex-row justify-between gap-1 sm:gap-4 sm:items-center p-3";
+      div.innerHTML = `
+        <p class="font-medium w-26 text-start">${name}</p>
+        <div class="w-full flex items-center justify-between gap-4">
+          <div class="w-full rounded-2xl bg-white flex h-2">
+            <div style="width: ${percent}%" class="bg-green-primary h-full rounded-2xl"></div>
+          </div>
+          <span>${percent.toFixed(1)}%</span>
+        </div>
+      `;
+      resultsContainer.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error("Ошибка при загрузке графиков:", err);
+  }
+}
+
+
+document.getElementById("chart-olympiad-filter-1")?.addEventListener("change", loadAverageChart);
+document.getElementById("chart-olympiad-filter-2")?.addEventListener("change", loadSuccessRateChart);
+
+
+async function loadAverageChart() {
+  const token = localStorage.getItem("access_token");
+  if (!token) return;
+
+  const olympiadId = document.getElementById("chart-olympiad-filter-1")?.value;
+  const url = new URL("https://portal.gradients.academy/results/dashboard/countries/charts/");
+  if (olympiadId) url.searchParams.append("olympiad", olympiadId);
+
+  const countryRes = await fetch("https://portal.gradients.academy/common/countries/?page=1&page_size=300", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const countryData = await countryRes.json();
+  const countryMap = {};
+  countryData.results.forEach(c => countryMap[c.code] = c.name);
+
+  const chartRes = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const chartData = await chartRes.json();
+
+  const averageLabels = chartData.average_by_country.map(item => countryMap[item.country] || item.country);
+  const averageScores = chartData.average_by_country.map(item => parseFloat(item.average_score));
+
+  averageChart.data.labels = averageLabels;
+  averageChart.data.datasets[0].data = averageScores;
+  averageChart.update();
+}
+
+
+async function loadSuccessRateChart() {
+  const token = localStorage.getItem("access_token");
+  if (!token) return;
+
+  const olympiadId = document.getElementById("chart-olympiad-filter-2")?.value;
+  const url = new URL("https://portal.gradients.academy/results/dashboard/countries/charts/");
+  if (olympiadId) url.searchParams.append("olympiad", olympiadId);
+
+  const countryRes = await fetch("https://portal.gradients.academy/common/countries/?page=1&page_size=300", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const countryData = await countryRes.json();
+  const countryMap = {};
+  countryData.results.forEach(c => countryMap[c.code] = c.name);
+
+  const chartRes = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  const chartData = await chartRes.json();
+
+  const resultsContainer = document.getElementById("resultsContainer");
+  resultsContainer.innerHTML = "";
+
+  if (chartData.success_rate_by_country.length === 0) {
+    resultsContainer.innerHTML = "<p class='text-gray-500'>Нет данных для выбранной олимпиады.</p>";
+    return;
+  }
+
+  chartData.success_rate_by_country.forEach(item => {
+    const percent = parseFloat(item.success_rate) * 100;
+    const name = countryMap[item.country] || item.country;
+    const div = document.createElement("div");
+    div.className = "flex flex-col sm:flex-row justify-between gap-1 sm:gap-4 sm:items-center p-3";
+    div.innerHTML = `
+      <p class="font-medium w-26 text-start">${name}</p>
+      <div class="w-full flex items-center justify-between gap-4">
+        <div class="w-full rounded-2xl bg-white flex h-2">
+          <div style="width: ${percent}%" class="bg-green-primary h-full rounded-2xl"></div>
+        </div>
+        <span>${percent.toFixed(1)}%</span>
+      </div>
+    `;
+    resultsContainer.appendChild(div);
+  });
+}
 
 

@@ -419,7 +419,7 @@ document
   .getElementById('certificate-background')
   .addEventListener('change', function () {
     const fileName = this.files[0]?.name || 'Файл не выбран'
-    document.getElementById('file-name').textContent = fileName
+    document.getElementById('file-name-add').textContent = fileName
   })
 
 async function submitOlympiadForm() {

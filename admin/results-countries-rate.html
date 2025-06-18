@@ -161,17 +161,14 @@
               </h2>
               <div class="mb-4">
                 <label
-                  for="dataSelector"
+                  for="chart-olympiad-filter-1"
                   class="block text-sm font-medium text-gray-700"
-                  >Выбрать синтетику</label
+                  >Выбрать олимпиаду</label
                 >
                 <select
-                  id="dataSelector"
+                  id="chart-olympiad-filter-1"
                   class="border-default input-base mt-1 bg-white"
                 >
-                  <option value="option1">Вариант 1</option>
-                  <option value="option2">Вариант 2</option>
-                  <option value="option3">Вариант 3</option>
                 </select>
               </div>
               <div class="relative h-70">
@@ -186,18 +183,15 @@
               </h2>
               <div class="mb-2 sm:mb-6">
                 <label
-                  for="olympiadSelector"
+                  for="chart-olympiad-filter-2"
                   class="mb-1 block text-sm font-medium text-gray-700"
                   >Выбрать олимпиаду</label
                 >
                 <select
-                  id="olympiadSelector"
+                  id="chart-olympiad-filter-2"
                   class="input-base border-default mt-1 bg-white"
                 >
                   <option value="math">Выбрать олимпиаду</option>
-                  <option value="physics">Физика</option>
-                  <option value="chemistry">Химия</option>
-                  <option value="biology">Биология</option>
                 </select>
               </div>
 
@@ -1066,78 +1060,12 @@
         document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
       }
 
-      // Data for different options
-      const chartDataOptions = {
-        option1: {
-          label: 'Данные вариант 1',
-          data: [90, 60, 40, 30, 80],
-        },
-        option2: {
-          label: 'Данные вариант 2',
-          data: [70, 50, 30, 20, 10],
-        },
-        option3: {
-          label: 'Данные вариант 3',
-          data: [80, 70, 60, 50, 40],
-        },
-      }
 
       // First Chart - Средний % по странам
       document.addEventListener('DOMContentLoaded', function () {
         const averageCtx = document
           .getElementById('averageChart')
           .getContext('2d')
-        let averageChart = new Chart(averageCtx, {
-          type: 'bar',
-          data: {
-            labels: [
-              'Казахстан',
-              'Узбекистан',
-              'Турция',
-              'Кыргызстан',
-              'Азербайджан',
-            ],
-            datasets: [
-              {
-                label: chartDataOptions.option1.label,
-                data: chartDataOptions.option1.data,
-                backgroundColor: ['#459FE3'],
-                borderWidth: 1,
-                borderRadius: 15,
-                borderSkipped: false,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 20, // Force ticks every 20 units
-                  callback: function (value) {
-                    return value === 0 ? 0 : value + ' %'
-                  },
-                },
-              },
-              x: {
-                grid: {
-                  display: false, // Remove vertical grid lines
-                },
-                ticks: {
-                  autoSkip: false,
-                },
-                beginAtZero: true,
-              },
-            },
-            barThickness: 20,
-            plugins: {
-              legend: {
-                display: false,
-              },
-            },
-          },
-        })
 
         // Dropdown change handler
         document
@@ -1160,45 +1088,6 @@
         const olympiadSelector = document.getElementById('olympiadSelector')
         const resultsContainer = document.getElementById('resultsContainer')
 
-        // Данные для разных олимпиад
-        const olympiadData = {
-          math: {
-            countries: [
-              { name: 'Казахстан', percent: 35 },
-              { name: 'Узбекистан', percent: 45 },
-              { name: 'Турция', percent: 65 },
-              { name: 'Кыргызстан', percent: 35 },
-              { name: 'Азербайджан', percent: 45 },
-            ],
-          },
-          physics: {
-            countries: [
-              { name: 'Казахстан', percent: 75 },
-              { name: 'Узбекистан', percent: 72 },
-              { name: 'Турция', percent: 68 },
-              { name: 'Кыргызстан', percent: 65 },
-              { name: 'Азербайджан', percent: 60 },
-            ],
-          },
-          chemistry: {
-            countries: [
-              { name: 'Казахстан', percent: 80 },
-              { name: 'Узбекистан', percent: 78 },
-              { name: 'Турция', percent: 75 },
-              { name: 'Кыргызстан', percent: 70 },
-              { name: 'Азербайджан', percent: 65 },
-            ],
-          },
-          biology: {
-            countries: [
-              { name: 'Казахстан', percent: 70 },
-              { name: 'Узбекистан', percent: 68 },
-              { name: 'Турция', percent: 65 },
-              { name: 'Кыргызстан', percent: 62 },
-              { name: 'Азербайджан', percent: 60 },
-            ],
-          },
-        }
 
         // Функция для обновления отображаемых данных
         function updateResults(olympiadKey) {
@@ -1260,6 +1149,91 @@
         })
       })
     </script>
+
+    <script>
+    let averageChart; // глобально
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      const averageCtx = document.getElementById("averageChart").getContext("2d");
+      averageChart = new Chart(averageCtx, {
+        type: "bar",
+        data: {
+          labels: [],
+          datasets: [{
+            label: "Средний балл",
+            data: [],
+            backgroundColor: "#459FE3",
+            borderWidth: 1,
+            borderRadius: 15,
+            borderSkipped: false,
+            barThickness: 40
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 20,
+                callback: value => value === 0 ? 0 : value + " %"
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { autoSkip: false }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+
+      // теперь можно безопасно делать fetch
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+
+      try {
+        const response = await fetch("https://portal.gradients.academy/results/dashboard/countries/charts/", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        // обновляем график
+        const labels = data.average_by_country.map(item => item.country);
+        const values = data.average_by_country.map(item => parseFloat(item.average_score));
+        averageChart.data.labels = labels;
+        averageChart.data.datasets[0].data = values;
+        averageChart.update();
+
+        // обновляем второй график
+        const resultsContainer = document.getElementById("resultsContainer");
+        resultsContainer.innerHTML = "";
+        data.success_rate_by_country.forEach(item => {
+          const percent = parseFloat(item.success_rate) * 100;
+          const div = document.createElement("div");
+          div.className = "flex flex-col sm:flex-row justify-between gap-1 sm:gap-4 sm:items-center p-3";
+          div.innerHTML = `
+            <p class="font-medium w-26 text-start">${item.country}</p>
+            <div class="w-full flex items-center justify-between gap-4">
+              <div class="w-full rounded-2xl bg-white flex h-2">
+                <div style="width: ${percent}%" class="bg-green-primary h-full rounded-2xl"></div>
+              </div>
+              <span>${percent.toFixed(1)}%</span>
+            </div>
+          `;
+          resultsContainer.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Ошибка при загрузке графиков:", err);
+      }
+    });
+
+    </script>
+
+
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/results-countries-rate.js"></script>
     <script src="/src/admin/notifications.js" defer></script>
