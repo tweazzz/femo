@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/dist/style.css" rel="stylesheet" />
     <script defer src="src/scripts/showpass.js"></script>
+    <title>Установите новый пароль</title>
   </head>
 
   <body class="bg-gray-background">
@@ -98,5 +99,63 @@
         </button>
       </form>
     </div>
+
   </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector("form");
+      const password1 = document.getElementById("password1");
+      const password2 = document.getElementById("password2");
+    
+      // Извлекаем uid и token из URL
+      const pathParts = window.location.pathname.split("/");
+      const uid = pathParts[pathParts.length - 2];
+      const token = pathParts[pathParts.length - 1];
+    
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+    
+        const pw1 = password1.value.trim();
+        const pw2 = password2.value.trim();
+    
+        if (!pw1 || !pw2) {
+          alert("Пожалуйста, заполните оба поля.");
+          return;
+        }
+    
+        if (pw1 !== pw2) {
+          alert("Пароли не совпадают.");
+          return;
+        }
+    
+        try {
+          const response = await fetch("https://portal.gradients.academy/reset-password/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uid: uid,
+              token: token,
+              new_password: pw1,
+            }),
+          });
+    
+          if (response.ok) {
+            alert("Пароль успешно сброшен!");
+            // Можно перенаправить пользователя, например:
+            // window.location.href = "/login";
+          } else {
+            const errorData = await response.json();
+            alert("Ошибка: " + (errorData.message || "Не удалось сбросить пароль."));
+          }
+        } catch (error) {
+          console.error("Ошибка запроса:", error);
+          alert("Произошла ошибка при отправке запроса.");
+        }
+      });
+    });
+  </script>
+    
+    
 </html>
