@@ -419,7 +419,7 @@ document
   .getElementById('certificate-background')
   .addEventListener('change', function () {
     const fileName = this.files[0]?.name || 'Файл не выбран'
-    document.getElementById('file-name').textContent = fileName
+    document.getElementById('file-name-add').textContent = fileName
   })
 
 async function submitOlympiadForm() {
@@ -462,7 +462,11 @@ async function submitOlympiadForm() {
 
   for (let i = 0; i < stepNames.length; i++) {
     const range = dateRanges[i]?.value.split(' — ')
-    if (!range || range.length !== 2) continue
+      if (!stepNames[i].value || !range || range.length !== 2 || !range[0] || !range[1]) {
+    alert(`Пожалуйста, заполните все поля этапа №${i + 1}`)
+    return
+  }
+
 
     stages.push({
       name: stepNames[i].value,
@@ -495,9 +499,9 @@ async function submitOlympiadForm() {
   formData.append('cost', cost)
   grades.forEach((g) => formData.append('grades', g))
   stages.forEach((stage, index) => {
-    formData.append(`stages[${index}][name]`, stage.name)
-    formData.append(`stages[${index}][start_date]`, stage.start_date)
-    formData.append(`stages[${index}][end_date]`, stage.end_date)
+    formData.append(`stages[${index}].name`, stage.name)
+    formData.append(`stages[${index}].start_date`, stage.start_date)
+    formData.append(`stages[${index}].end_date`, stage.end_date)
   })
 
   //  formData.append('certificate_template', JSON.stringify({
@@ -548,3 +552,24 @@ function formatDate(dateStr) {
   const [d, m, y] = dateStr.split('.')
   return `${y}-${m}-${d}`
 }
+
+
+function addStageBlock() {
+  const container = document.querySelector('#modalAdd .border-default.rounded-2xl.p-4')
+  const template = container.querySelector('.grid.grid-cols-1') // первый этап
+  const clone = template.cloneNode(true)
+
+  // Очистим значения
+  clone.querySelectorAll('select, input').forEach(el => el.value = '')
+  container.appendChild(clone)
+
+  // Инициализируем flatpickr для нового поля
+  flatpickr(clone.querySelector('.date-range-add'), {
+    mode: 'range',
+    dateFormat: 'd.m.Y',
+    locale: flatpickr.l10ns.ru,
+  })
+}
+
+document.querySelector('#modalAdd .btn-white').addEventListener('click', addStageBlock)
+
