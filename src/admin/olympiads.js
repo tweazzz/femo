@@ -387,6 +387,7 @@ async function deleteOlympiad() {
     applyFilters() // обновит filteredOlympiads и таблицу
 
     closeModal('modalDel')
+    closeModal('modalEdit')
   } catch (err) {
     alert(`Ошибка при удалении олимпиады: ${err.message}`)
   }
@@ -418,9 +419,27 @@ function openEditModal(title, id) {
 document
   .getElementById('certificate-background')
   .addEventListener('change', function () {
-    const fileName = this.files[0]?.name || 'Файл не выбран'
-    document.getElementById('file-name-add').textContent = fileName
+    const file = this.files[0]
+    const display = document.getElementById('file-name-add')
+
+    if (file) {
+      const name = file.name
+      const sizeKB = (file.size / 1024).toFixed(0) + ' KB'
+
+      display.innerHTML = `
+        <span class="text-orange-primary flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+          ${name} (${sizeKB})
+        </span>
+      `
+    } else {
+      display.textContent = ''
+    }
   })
+
+
 
 async function submitOlympiadForm() {
   const token = localStorage.getItem('access_token')
@@ -555,15 +574,47 @@ function formatDate(dateStr) {
 
 
 function addStageBlock() {
-  const container = document.querySelector('#modalAdd .border-default.rounded-2xl.p-4')
-  const template = container.querySelector('.grid.grid-cols-1') // первый этап
+  const template = document.getElementById('stage-template')
+  if (!template) {
+    console.error('Шаблон этапа не найден!')
+    return
+  }
+
+
   const clone = template.cloneNode(true)
-
-  // Очистим значения
+  clone.removeAttribute('id') // чтобы не было дубликатов ID
+  // Очистка значений
   clone.querySelectorAll('select, input').forEach(el => el.value = '')
-  container.appendChild(clone)
 
-  // Инициализируем flatpickr для нового поля
+  // Добавление в контейнер
+  template.parentElement.insertBefore(clone, template.nextSibling)
+
+  // Инициализация flatpickr
+  flatpickr(clone.querySelector('.date-range-add'), {
+    mode: 'range',
+    dateFormat: 'd.m.Y',
+    locale: flatpickr.l10ns.ru,
+  })
+}
+
+
+function addStageBlockEdit() {
+  const template = document.getElementById('stage-template-edit')
+  if (!template) {
+    console.error('Шаблон этапа не найден!')
+    return
+  }
+
+
+  const clone = template.cloneNode(true)
+  clone.removeAttribute('id') // чтобы не было дубликатов ID
+  // Очистка значений
+  clone.querySelectorAll('select, input').forEach(el => el.value = '')
+
+  // Добавление в контейнер
+  template.parentElement.insertBefore(clone, template.nextSibling)
+
+  // Инициализация flatpickr
   flatpickr(clone.querySelector('.date-range-add'), {
     mode: 'range',
     dateFormat: 'd.m.Y',
@@ -572,4 +623,28 @@ function addStageBlock() {
 }
 
 document.querySelector('#modalAdd .btn-white').addEventListener('click', addStageBlock)
+document.querySelector('#modalEdit .btn-white').addEventListener('click', addStageBlockEdit)
 
+
+document
+  .getElementById('certificate-background-edit')
+  .addEventListener('change', function () {
+    const file = this.files[0]
+    const display = document.getElementById('file-name-edit')
+
+    if (file) {
+      const name = file.name
+      const sizeKB = (file.size / 1024).toFixed(0) + ' KB'
+
+      display.innerHTML = `
+        <span class="text-orange-primary flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+          ${name} (${sizeKB})
+        </span>
+      `
+    } else {
+      display.textContent = ''
+    }
+  })

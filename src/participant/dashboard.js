@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadAssignments()
 
     await loadSummary()
+    await loadMyTasks()
+
     const buttons = document.querySelectorAll('.chart-tab')
 
       buttons.forEach((btn) => {
@@ -333,4 +335,73 @@ function renderPaginatedAssignments() {
     allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
+}
+
+
+async function loadMyTasks() {
+  const container = document.querySelector('.tasks')
+  if (!container) return
+
+  container.innerHTML = '' // Очистка перед загрузкой
+  try {
+    const response = await authorizedFetch(
+      'https://portal.gradients.academy/users/participant/dashboard/my-tasks'
+    )
+    if (!response.ok) throw new Error('Ошибка загрузки задач')
+
+    const tasks = await response.json()
+
+    if (tasks.length === 0) {
+      container.innerHTML = '<p class="text-gray-500">Нет доступных задач</p>'
+      return
+    }
+
+    tasks.forEach((task) => {
+      const levelClass = {
+        easy: 'card easy',
+        medium: 'card medium',
+        hard: 'card hard',
+      }[task.level] || 'card'
+
+      const timeLeft =
+        task.time_left === 'expired'
+          ? '<span class="text-red-primary">Время истекло</span>'
+          : task.time_left.replace(/&nbsp;/g, ' ')
+
+      const taskHTML = `
+        <a href="#" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
+          <div class="bg-violet-secondary rounded-xl p-2">
+            <img src="/src/assets/images/cube.png" alt="cube" />
+          </div>
+          <div class="w-full">
+            <div class="mb-2 flex items-center space-x-2">
+              <span class="font-bold">${task.title}</span>
+              <span class="bg-orange-secondary border-default text-orange-primary flex items-center rounded-xl px-1 py-0.5 text-sm leading-2 font-bold">
+                ${task.base_points} XP
+                <img class="ms-[.125rem] mb-[.125rem] h-4 w-4" src="/src/assets/images/coin.png" alt="coin" />
+              </span>
+              <span class="${levelClass}">${task.level === 'easy' ? 'Легкий' : task.level === 'medium' ? 'Средний' : 'Сложный'}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="ms-auto size-5">
+                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="mb-2 flex items-center justify-between text-sm text-gray-600">
+              <span>Для ${task.grade} класса</span>
+              <p class="flex items-center gap-1">${timeLeft}</p>
+            </div>
+            <div class="flex w-full items-center space-x-4">
+              <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                <div class="h-full bg-orange-500 rounded-full" style="width: ${task.solved ? '100%' : '0%'}"></div>
+              </div>
+              <span class="w-4 text-sm">${task.solved ? '1/1' : '0/1'}</span>
+            </div>
+          </div>
+        </a>
+      `
+      container.insertAdjacentHTML('beforeend', taskHTML)
+    })
+  } catch (err) {
+    console.error('Ошибка при загрузке задач:', err)
+    container.innerHTML = `<p class="text-red-500">Ошибка загрузки задач</p>`
+  }
 }
