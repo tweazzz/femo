@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/dist/style.css" rel="stylesheet" />
+    <title>Восстановить доступ</title>
   </head>
 
   <body class="bg-gray-background">
@@ -37,4 +38,41 @@
       </form>
     </div>
   </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.querySelector("form");
+      const emailInput = form.querySelector("input[type='email']");
+    
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault(); // предотвращаем перезагрузку страницы
+    
+        const email = emailInput.value.trim();
+    
+        if (!email) {
+          alert("Пожалуйста, введите email.");
+          return;
+        }
+    
+        try {
+          const response = await fetch("https://portal.gradients.academy/users/forgot-password/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+    
+          if (response.ok) {
+            alert("Мы отправили ссылку на восстановление пароля на вашу почту.");
+          } else {
+            alert("Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.");
+          }
+        } catch (error) {
+          console.error("Ошибка запроса:", error);
+          alert("Произошла ошибка при отправке запроса.");
+        }
+      });
+    });
+    </script>
+    
 </html>
