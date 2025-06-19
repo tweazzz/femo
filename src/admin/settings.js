@@ -40,24 +40,27 @@ async function ensureUserAuthenticated() {
 }
 
 function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl = document.getElementById('user-name');
+  const roleEl = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-  const imgPath = user.profile.image
+  const imgPath = user.profile.image;
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`
+    : `https://portal.gradients.academy${imgPath}`;
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  nameEl.textContent = user.profile.full_name_ru;
+  const firstName = user.profile.full_name_ru.split(' ')[0];
+  if (welcomeEl) {
+    welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+  }
 
   const roleMap = {
     administrator: 'Администратор',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+    // можно добавить другие роли
+  };
+  roleEl.textContent = roleMap[user.profile.role] || 'Администратор';
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -248,3 +251,26 @@ function setupPasswordChangeForm() {
     }
   });
 }
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+
+  try {
+    const response = await fetch('https://portal.gradients.academy/users/administrator/profile/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error('Ошибка запроса профиля');
+    const data = await response.json();
+
+    renderUserInfo({ profile: data });
+  } catch (error) {
+    console.error('Ошибка при получении профиля:', error);
+  }
+});

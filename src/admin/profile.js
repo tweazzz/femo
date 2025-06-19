@@ -40,25 +40,29 @@ async function ensureUserAuthenticated() {
 }
 
 function renderUserInfo(user) {
-    const avatarEl = document.getElementById('user-avatar')
-    const nameEl = document.getElementById('user-name')
-    const roleEl = document.getElementById('user-role')
-    const welcomeEl = document.querySelector('h1.text-xl')
-
-    const imgPath = user.profile.image
+    const avatarEl = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('user-name');
+    const roleEl = document.getElementById('user-role');
+    const welcomeEl = document.querySelector('h1.text-xl');
+    const imgPath = user.profile.image;
+  
     avatarEl.src = imgPath.startsWith('http')
-        ? imgPath
-        : `https://portal.gradients.academy${imgPath}`
-
-    nameEl.textContent = user.profile.full_name_ru
-    const firstName = user.profile.full_name_ru.split(' ')[0]
-    welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
-
+      ? imgPath
+      : `https://portal.gradients.academy${imgPath}`;
+    nameEl.textContent = user.profile.full_name_ru;
+  
+    const firstName = user.profile.full_name_ru.split(' ')[0];
+    welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+  
     const roleMap = {
-        administrator: 'Администратор',
-    }
-    roleEl.textContent = roleMap[user.profile.role] || user.profile.role
-}
+      administrator: 'Администратор',
+      // можно добавить другие роли при необходимости
+    };
+  
+    // Устанавливаем роль по умолчанию, если не найдена
+    roleEl.textContent = roleMap[user.profile.role] || 'Администратор';
+  }
+  
 
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('access_token')
@@ -116,7 +120,7 @@ function fillProfileData(data) {
         img.src = data.image
         img.classList.remove('bg-gray-50')
         const fileNameEl = document.getElementById('fileName')
-        if (fileNameEl) fileNameEl.textContent = getFileNameFromUrl(data.image)
+        // if (fileNameEl) fileNameEl.innerHTML = `<img src="${data.image}">`;
     }
 
     // ID участника — только для чтения
@@ -177,48 +181,52 @@ function getFileNameFromUrl(url) {
 
 
 document.querySelector('#participant-form').addEventListener('submit', async (e) => {
-    e.preventDefault()
-  
-    const form = e.target
-    const formData = new FormData(form)
-  
-    const fileInput = document.getElementById('editImageInput')
-    if (fileInput && fileInput.files.length > 0) {
-      formData.append('image', fileInput.files[0])
-    }
-  
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
     try {
-      const token = localStorage.getItem('access_token')
-      const response = await authorizedFetch('https://portal.gradients.academy/users/administrator/profile/', {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      })
-  
-      if (!response.ok) throw new Error('Ошибка при обновлении профиля')
-  
-      alert('Профиль успешно обновлён!')
-      toggleModal('modalEdit', false)
+      const token = localStorage.getItem('access_token');
+      const response = await fetch(
+        'https://portal.gradients.academy/users/administrator/profile/',
+        {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        }
+      );
+      if (!response.ok) throw new Error('Ошибка при обновлении профиля');
+      const updatedData = await response.json();
+      // Обновляем форму и шапку
+      fillProfileData(updatedData);
+      renderUserInfo({ profile: updatedData });
+      alert('Профиль успешно обновлён!');
+      toggleModal('modalEdit', false);
     } catch (err) {
-      console.error('Ошибка:', err)
-      alert('Не удалось обновить профиль.')
+      console.error('Ошибка:', err);
+      alert('Не удалось обновить профиль.');
     }
-  })
+  });
   
 
 
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const user = await ensureUserAuthenticated()
-    if (!user) return
-  
-    renderUserInfo(user);
-      
+  document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('Токен не найден. Пожалуйста, войдите заново.');
+      return;
+    }
     try {
-      
-    } catch (err) {
-      console.error('Ошибка при загрузке данных:', err)
+      const response = await fetch(
+        'https://portal.gradients.academy/users/administrator/profile/',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!response.ok) throw new Error('Ошибка при получении профиля');
+      const data = await response.json();
+      fillProfileData(data);
+      renderUserInfo({ profile: data });
+      toggleEditMode(false);
+    } catch (error) {
+      console.error('Ошибка при получении профиля:', error);
     }
-  })
+  });
