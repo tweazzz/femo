@@ -345,8 +345,8 @@
                                   required
                                 >
                                   <option value="ongoing">Идет сейчас</option>
-                                  <option value="completed">Завершено</option>
-                                  <option value="soon">Скоро</option>
+                                  <option value="finished">Завершено</option>
+                                  <option value="upcoming">Скоро</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -1001,8 +1001,8 @@
                                   required
                                 >
                                   <option value="ongoing">Идет сейчас</option>
-                                  <option value="completed">Завершено</option>
-                                  <option value="soon">Скоро</option>
+                                  <option value="finished">Завершено</option>
+                                  <option value="upcoming">Скоро</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -1389,7 +1389,7 @@
                             </span>
                             Отменить
                           </button>
-                          <button class="btn-orange">
+                          <button onclick="updateOlympiadForm()" class="btn-orange">
                             <span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
