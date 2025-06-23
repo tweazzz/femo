@@ -2,49 +2,49 @@
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/ProximaNova-Regular.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaRegular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/Proxima Nova Thin.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaThin.otf') format('opentype');
   font-weight: 100;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/Proxima Nova Semibold.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaSemibold.otf') format('opentype');
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/Proxima Nova Semibold Italic.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaSemibold Italic.otf') format('opentype');
   font-weight: 600;
   font-style: italic;
 }
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/Proxima Nova Bold.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaBold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/Proxima Nova Extrabold.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaExtrabold.otf') format('opentype');
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Proxima Nova';
-  src: url('./assets/fonts/Proxima Nova Black.otf') format('opentype');
+  src: url('./assets/fonts/ProximaNovaBlack.otf') format('opentype');
   font-weight: 900;
   font-style: normal;
 }
@@ -101,7 +101,7 @@
 }
 
 .sidebar {
-  @apply border-gray-border fixed z-20 flex h-full w-64 flex-col border-e bg-white transition lg:relative;
+  @apply border-gray-border fixed z-30 flex h-full w-64 flex-col border-e bg-white transition lg:relative;
 }
 
 .sidebar-link {
@@ -475,3 +475,6 @@ input[type='number'] {
   height: 344px; /* или h-[344px] в Tailwind */
 }
 
+th {
+  font-weight: 600;
+}

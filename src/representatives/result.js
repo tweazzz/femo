@@ -401,7 +401,20 @@ async function loadParticipantRanking(page = 1) {
     console.error('Ошибка при загрузке рейтинга:', err)
   }
 }
-
+const reverseClassMap = {
+  first: 1,
+  second: 2,
+  third: 3,
+  fourth: 4,
+  fifth: 5,
+  sixth: 6,
+  seventh: 7,
+  eighth: 8,
+  ninth: 9,
+  tenth: 10,
+  eleventh: 11,
+  twelfth: 12,
+}
 function renderTableBody(data) {
   const tbody = document.querySelector('.table-overall tbody')
   tbody.innerHTML = ''
@@ -412,7 +425,7 @@ function renderTableBody(data) {
       <td class="text-center">${p.rank}</td>
       <td class="text-center">${p.country_rank}</td>
       <td>${p.full_name}</td>
-      <td class="text-center">${p.grade}</td>
+      <td class="text-center">${reverseClassMap[p.grade] || '—'}</td>
       <td class="text-center">${p.olympiad_score ?? 0}</td>
       <td class="text-center">${p.task_score ?? 0}</td>
       <td class="text-center">${p.total_score ?? 0}</td>

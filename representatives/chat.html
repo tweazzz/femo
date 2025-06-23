@@ -53,7 +53,7 @@
     </aside>
 
     <!-- Overlay -->
-    <div id="overlay" class="fixed inset-0 z-10 hidden cursor-pointer bg-black/50 transition lg:hidden"
+    <div id="overlay" class="fixed inset-0 z-20 hidden cursor-pointer bg-black/50 transition lg:hidden"
       onclick="toggleSidebar()"></div>
 
     <!-- Main Content -->
@@ -80,6 +80,7 @@
               <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop" alt="Profile"
                 class="h-10 w-10 rounded-full" />
               <div>
+
                 <p class="font-bold">Айжан Ахметова</p>
                 <div class="text-primary flex items-center space-x-1 text-sm">
                   <span>Представитель</span>
@@ -93,144 +94,202 @@
 
       <!-- Dashboard Content -->
       <!-- Главное содержимое -->
-      <main class="flex flex-1 overflow-hidden p-6 h-screen">
-        <!-- Левая панель: список чатов -->
-        <div id="chatMenu" class="flex flex-col border-r border-gray-200 bg-white
-                                w-full sm:w-72 max-w-[360px]:w-full
-                                overflow-y-auto">
-          <!-- Search -->
-          <div class="p-4">
-            <div class="relative">
-              <input 
-                type="text" 
-                placeholder="Поиск по имени" 
-                class="input-base border-default !pl-9 w-full" 
-              />
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke-width="1.5" stroke="currentColor"
-                  class="text-gray-primary absolute top-1/2 left-2.5 size-5 -translate-y-1/2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-              </svg>
+      <main class="flex flex-1 overflow-hidden md:p-6">
+        <!-- Left Chat -->
+        <div class="border-default relative flex overflow-y-auto rounded-2xl">
+          <div
+            class="flex max-md:absolute max-md:inset-0 z-10 max-md:w-full md:w-72 flex-col border-r border-gray-200 bg-white">
+            <!-- Search -->
+            <div class="p-4">
+              <div class="relative">
+                <input type="text" placeholder="Поиск по имени" class="input-base border-default !pl-9" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="text-gray-primary absolute top-1/2 left-2.5 size-5 -translate-y-1/2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+              </div>
             </div>
-          </div>
 
-          <!-- Menu Items -->
-          <div class="flex-1">
-            <div class="space-y-1 px-2">
-              <!-- Организатор -->
-              <a href="#" 
-                class="chat-menu-item flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
-                data-chat="organizer">
-                <div class="flex items-center gap-2">
-                  <!-- SVG-/img-аватар -->
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-gray-400">
-                    <!-- Пример иконки пользователя -->
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-                  </svg>
-                  <div class="flex flex-col">
-                    <p class="text-[14px] leading-[124%] font-proxima font-bold text-[#222222]">
-                      Организатор
-                    </p>
-                    <p class="mt-1 text-[12px] leading-[100%] font-proxima font-normal text-[#222222]">
+            <div class="px-4 py-2">
+              <button
+                class="hover:text-blue-primar flex cursor-pointer items-center gap-[3ox] text-sm text-blue-500 font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
+                  <path fill-rule="evenodd"
+                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+                Назад
+              </button>
+            </div>
+
+            <!-- User List -->
+            <div class="flex-1 overflow-y-auto">
+              <div class="space-y-1 p-2">
+                <!-- User 1 -->
+                <a onclick="openChatMobile()"
+                  class="btn-chat flex items-center gap-1 rounded-lg p-2 hover:bg-gray-50">
+                  <img
+                    src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=40&h=40&auto=format&fit=crop&q=60"
+                    alt="Avatar" class="h-10 w-10 rounded-full me-1" />
+                  <div>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-medium truncate max-w-34">Нурсултан Абдрахимовasdfadfadf</span>
+                      <span class="text-xs">(🇰🇿)</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 text-nowrap">
                       Прикрепите файл, пожалуйста
                     </p>
                   </div>
-                </div>
-                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </a>
-              <!-- Групповой чат -->
-              <a href="#" 
-                class="chat-menu-item flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
-                data-chat="group">
-                <div class="flex items-center gap-2">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-gray-400">
-                    <!-- Иконка группового чата -->
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/>
-                    <path d="M6 18c0-2.21 1.79-4 4-4h4c2.21 0 4 1.79 4 4v1H6v-1z"/>
-                  </svg>
-                  <div class="flex flex-col">
-                    <p class="text-[14px] leading-[124%] font-proxima font-bold text-[#222222]">
-                      Групповой чат
-                    </p>
-                    <p class="mt-1 text-[12px] leading-[100%] font-proxima font-normal text-[#222222]">
-                      Обсуждения в группе
+                  <div class="flex flex-col items-center justify-between max-md:ms-auto">
+                    <p class="text-[9px] text-[#B2B2B2] text-nowrap">1 мин назад</p>
+                    <span class="ml-auto text-green-500">
+                      <img src="/src/assets/images/done_dot.svg" alt="">
+                    </span>
+                  </div>
+                </a>
+                <!-- User 2 -->
+                <a onclick="openChatMobile()" class="btn-chat flex items-center gap-1 rounded-lg p-2 hover:bg-gray-50">
+                  <img
+                    src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=40&h=40&auto=format&fit=crop&q=60"
+                    alt="Avatar" class="h-10 w-10 rounded-full me-1" />
+                  <div>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-medium truncate max-w-34">Нурсултан Абдрахимовasdfadfadf</span>
+                      <span class="text-xs">(🇰🇿)</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 text-nowrap">
+                      Прикрепите файл, пожалуйста
                     </p>
                   </div>
-                </div>
-                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </a>
-              <!-- Объявления -->
-              <a href="#" 
-                class="chat-menu-item flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
-                data-chat="announcements">
-                <div class="flex items-center gap-2">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6 text-gray-400">
-                    <!-- Иконка объявления -->
-                    <path d="M12 2L2 7v6c0 5 4 9 10 9s10-4 10-9V7L12 2z"/>
-                    <path d="M12 22v-8" stroke="#fff" stroke-width="2"/>
-                  </svg>
-                  <div class="flex flex-col">
-                    <p class="text-[14px] leading-[124%] font-proxima font-bold text-[#222222]">
-                      Объявления
-                    </p>
-                    <p class="mt-1 text-[12px] leading-[100%] font-proxima font-normal text-[#222222]">
-                      Важные новости
-                    </p>
+                  <div class="flex flex-col items-center justify-between max-md:ms-auto">
+                    <p class="text-[9px] text-[#B2B2B2] text-nowrap">1 мин назад</p>
+                    <span class="ml-auto text-green-500">
+                      <img src="/src/assets/images/done2.svg" alt="">
+                    </span>
                   </div>
-                </div>
-                <svg class="h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
 
-        <!-- Контейнер для чата -->
-        <div id="chatsContainer" class="hidden flex-1 flex flex-col bg-white">
-          <!-- Chat Header -->
-          <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-            <!-- Кнопка "назад" для мобильных -->
-            <button id="backToMenuBtn" class="md:hidden text-gray-500 mr-2">
-              ←
-            </button>
-            <div class="flex items-center gap-2 text-lg font-bold font-proxima text-[#222222]">
-              <span id="chatTitle">Чат</span>
-              <span id="chatTime" class="text-sm font-normal text-gray-500">—</span>
+                </a>
+              </div>
             </div>
           </div>
 
-          <!-- Сообщения -->
-          <div id="chatMessages" class="flex-1 overflow-y-scroll p-4 chat space-y-6">
-            <!-- Здесь динамически появляются сообщения -->
-          </div>
+          <!-- Chat Area -->
+          <div id="chatArea" class="flex flex-1 flex-col bg-white h-full">
+            <!-- Chat Header -->
+            <div class="p-4">
+              <div class="flex items-center justify-between">
+                <div onclick="openChatMobile()" class="flex items-center gap-2 text-lg font-bold">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5 md:hidden">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                  </svg>
 
-          <!-- Message Input -->
-          <div class="mx-3 mb-3 rounded-xl border border-gray-200 px-4">
-            <div class="flex items-center gap-2 rounded-lg bg-white">
-              <button class="cursor-pointer p-2 text-gray-400 hover:text-gray-600">
-                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-              </button>
-              <textarea oninput="auto_grow(this)" rows="1" placeholder="Введите ваше сообщение..."
-                        class="chatarea flex-1 resize-none border-none outline-none font-proxima text-[#222222] text-sm"></textarea>
-              <button id="sendBtn" class="cursor-pointer p-2 text-orange-500 hover:text-orange-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                </svg>
-              </button>
+                  <span>Айжан Ахметова</span>
+                  <span>(🇰🇿 Казахстан)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="chat flex max-md:flex-1 flex-col space-y-6 overflow-y-scroll p-4">
+              <span class="time-msg">18.01.2025</span>
+
+              <!-- Message 1 -->
+              <div class="me flex flex-row-reverse max-w-10/12 md:max-w-7/12 gap-3">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+                  alt="Avatar" class="h-8 w-8 rounded-full" />
+                <div class="w-full">
+                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
+                    <span>Аликхан Ахметов (Представитель 🇰🇿)</span>
+                  </div>
+                  <div class="bg-orange-secondary text-orange-primary rounded-lg p-3 text-sm">
+                    <p class="">
+                      Здравствуйте! У меня возник вопрос по участникам из
+                      Узбекистана. Двое не отображаются в общем списке, хотя
+                      были зарегистрированы.
+
+                    <div class="bg-white flex gap-1 items-center p-3 mt-2 rounded-xl">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M6.33203 18.3334H13.6654C15.3222 18.3334 16.6654 16.9903 16.6654 15.3334V8.04655C16.6654 7.17078 16.2827 6.33873 15.6177 5.76878L11.6746 2.38898C11.1309 1.92292 10.4384 1.66675 9.72226 1.66675H6.33203C4.67518 1.66675 3.33203 3.00989 3.33203 4.66675V15.3334C3.33203 16.9903 4.67517 18.3334 6.33203 18.3334Z"
+                          stroke="#F4891E" stroke-linejoin="round" />
+                        <path d="M10.832 2.0835V4.66683C10.832 5.7714 11.7275 6.66683 12.832 6.66683H16.2487"
+                          stroke="#F4891E" stroke-linejoin="round" />
+                        <path d="M6.66406 15.8335H13.3307" stroke="#F4891E" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                        <path d="M10 8.3335V13.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M7.5 10.8335L10 13.3335L12.5 10.8335" stroke="#F4891E" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+
+                      <p class="text-orange-primary">Казахстан_Список_Femo.xlsx</p>
+
+                    </div>
+                    </p>
+                  </div>
+                  <div class="mt-1 text-xs">21:17</div>
+                </div>
+              </div>
+
+              <!-- Message 2 -->
+              <div class="flex max-w-10/12 md:max-w-7/12 gap-3">
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
+                  alt="Avatar" class="h-8 w-8 rounded-full" />
+                <div>
+                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
+                    <span>Иван Иванович- Организатор</span>
+                  </div>
+                  <div class="rounded-lg bg-gray-100 p-3 text-sm">
+                    <p>
+                      Добрый день! Уточните, пожалуйста, ID участников или их
+                      ФИО — проверим вручную.
+                    </p>
+                  </div>
+                  <div class="mt-1 text-xs">21:18</div>
+                </div>
+              </div>
+
+              <div class="flex max-w-10/12 md:max-w-7/12 gap-3">
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
+                  alt="Avatar" class="h-8 w-8 rounded-full" />
+                <div>
+                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
+                    <span>Иван Иванович - Организатор</span>
+                  </div>
+                  <div class="rounded-lg bg-gray-100 p-3 text-sm">
+                    <p>
+                      Добрый день! Уточните, пожалуйста, ID участников или их
+                      ФИО — проверим вручную.
+                    </p>
+                  </div>
+                  <div class="mt-1 text-xs">21:18</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Message Input -->
+            <div class="mx-3 mb-3 rounded-xl border border-gray-200 px-4">
+              <div class="flex items-center gap-2 rounded-lg bg-white">
+                <button class="cursor-pointer p-2 text-gray-400 hover:text-gray-600">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </button>
+                <textarea placeholder="Введите ваше сообщение..." class="chatarea" rows="1"></textarea>
+                <button class="cursor-pointer p-2 text-orange-500 hover:text-orange-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -242,8 +301,7 @@
     <div id="overlayModal" class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"></div>
 
     <!-- Попап уведомлений -->
-    <div id="modalNotification"
-        class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full">
+    <div id="modalNotification" class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full">
       <div class="relative">
         <div class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base">
           <p class="text-xl font-bold">Уведомление</p>
@@ -252,13 +310,12 @@
           <div class="tabs !mb-4 justify-between overflow-x-auto">
             <div class="tabs-link active flex cursor-pointer items-center gap-1" data-tab="all">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor" class="size-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.310A8.967 8.967 0 0 1 18 9.750
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.310A8.967 8.967 0 0 1 18 9.750
                           V9A6 6 0 0 0 6 9v.750a8.967 8.967 0 0 1-2.312 6.022
                           c1.733.640 3.560 1.085 5.455 1.310m5.714 0a24.255 24.255 0 0 1-5.714 0
-                          m5.714 0a3 3 0 1 1-5.714 0"/>
+                          m5.714 0a3 3 0 1 1-5.714 0" />
                 </svg>
               </span>
               Все
@@ -266,10 +323,9 @@
             </div>
             <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="users">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor" class="size-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M15 19.128a9.380 9.380 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.380 9.380 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952
                           4.125 4.125 0 0 0-7.533-2.493
                           M15 19.128v-.003c0-1.113-.285-2.160-.786-3.070
                           M15 19.128v.106A12.318 12.318 0 0 1 8.624 21
@@ -278,7 +334,7 @@
                           M12 6.375a3.375 3.375 0 1 1-6.750 0a3.375 3.375 0 0 1 6.750 0
                           Z
                           M20.250 8.625a2.625 2.625 0 1 1-5.250 0
-                          a2.625 2.625 0 0 1 5.250 0"/>
+                          a2.625 2.625 0 0 1 5.250 0" />
                 </svg>
               </span>
               Пользователи
@@ -297,7 +353,7 @@
                           l-2.980 2.980A.750.750 0 0 1 5 17.250
                           v-3.443c-.501-.048-1-.106-1.495-.172
                           C2.033 13.438 1 12.162 1 10.720V5.280
-                          c0-1.441 1.033-2.717 2.505-2.914Z"/>
+                          c0-1.441 1.033-2.717 2.505-2.914Z" />
                   <path d="M14 6c-.762 0-1.520.020-2.271.062
                           C10.157 6.148 9 7.472 9 8.998
                           v2.240c0 1.519 1.147 2.839 2.710 2.935
@@ -306,7 +362,7 @@
                           a.750.750 0 0 0 1.280-.531v-2.070
                           c1.453-.195 2.500-1.463 2.500-2.915
                           V8.998c0-1.526-1.157-2.850-2.729-2.936
-                          A41.645 41.645 0 0 0 14 6Z"/>
+                          A41.645 41.645 0 0 0 14 6Z" />
                 </svg>
               </span>
               Чаты
@@ -314,10 +370,9 @@
             </div>
             <div class="tabs-link flex cursor-pointer items-center gap-1" data-tab="results">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor" class="size-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M4.260 10.147a60.438 60.438 0 0 0-.491 6.347
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="size-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.260 10.147a60.438 60.438 0 0 0-.491 6.347
                           A48.620 48.620 0 0 1 12 20.904
                           a48.620 48.620 0 0 1 8.232-4.410
                           a60.460 60.460 0 0 0-.491-6.347
@@ -330,7 +385,7 @@
                           M6.750 15a.750.750 0 1 0 0-1.500
                           a.750.750 0 0 0 0 1.500Z
                           m0 0v-3.675A55.378 55.378 0 0 1 12 8.443
-                          m-7.007 11.550A5.981 5.981 0 0 0 6.750 15.750v-1.500"/>
+                          m-7.007 11.550A5.981 5.981 0 0 0 6.750 15.750v-1.500" />
                 </svg>
               </span>
               Результаты
@@ -347,17 +402,13 @@
           </div>
         </div>
 
-        <button class="absolute top-6 right-5 cursor-pointer"
-                onclick="toggleModal('modalNotification')">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-              fill="currentColor" class="size-5">
-            <path fill-rule="evenodd"
-                  d="M5.470 5.470a.750.750 0 0 1 1.060 0L12 10.940l5.470-5.470
+        <button class="absolute top-6 right-5 cursor-pointer" onclick="toggleModal('modalNotification')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M5.470 5.470a.750.750 0 0 1 1.060 0L12 10.940l5.470-5.470
                     a.750.750 0 1 1 1.060 1.060L13.060 12l5.470 5.470
                     a.750.750 0 1 1-1.060 1.060L12 13.060l-5.470 5.470
                     a.750.750 0 0 1-1.060-1.060L10.940 12 5.470 6.530
-                    a.750.750 0 0 1 0-1.060Z"
-                  clip-rule="evenodd"/>
+                    a.750.750 0 0 1 0-1.060Z" clip-rule="evenodd" />
           </svg>
         </button>
       </div>
@@ -428,7 +479,7 @@
         })
       })
     })
-  
+
   </script>
 
   <script src="/src/representatives/notification.js" defer></script>
@@ -437,6 +488,13 @@
     function auto_grow(element) {
       element.style.height = "auto";
       element.style.height = element.scrollHeight + "px";
+    }
+
+    function openChatMobile() {
+      const chatArea = document.getElementById('chatArea');
+      if (chatArea) {
+        chatArea.classList.toggle('z-10'); // Toggle visibility on mobile
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -448,6 +506,9 @@
       const chatTimeEl = document.getElementById('chatTime');
       const chatMessagesEl = document.getElementById('chatMessages');
       const sendBtn = document.getElementById('sendBtn');
+
+      const chatArea = document.getElementById('chatArea')
+
 
       // Пример данных сообщений для демонстрации
       const chatData = {
@@ -505,7 +566,7 @@
           // Для простоты здесь не группируем по дате, вставляем сразу
           const wrapper = document.createElement('div');
           const isMe = msg.from === 'me';
-          wrapper.className = (isMe ? 'me self-start flex max-w-7/12 gap-3' : 'flex max-w-7/12 gap-3 self-start');
+          wrapper.className = (isMe ? 'me self-start flex max-w-10/12 md:max-w-7/12 gap-3' : 'flex max-w-10/12 md:max-w-7/12 gap-3 self-start');
           // Аватар
           const img = document.createElement('img');
           img.src = msg.avatar;

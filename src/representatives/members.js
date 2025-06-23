@@ -167,6 +167,21 @@ function attachFilterHandlers() {
     }
   }
 
+  const reverseClassMap = {
+    first: 1,
+    second: 2,
+    third: 3,
+    fourth: 4,
+    fifth: 5,
+    sixth: 6,
+    seventh: 7,
+    eighth: 8,
+    ninth: 9,
+    tenth: 10,
+    eleventh: 11,
+    twelfth: 12,
+  }
+  
   // 5) Рендерим строки таблицы для текущей страницы
 function renderTable() {
     const tbody = document.getElementById('participants-tbody');
@@ -218,7 +233,7 @@ function renderTable() {
           </a>
         </td>
         <td class="px-6 py-4 text-sm whitespace-nowrap">${user.id}</td>
-        <td class="px-6 py-4 text-sm whitespace-nowrap">${user.grade || ''}</td>
+        <td class="px-6 py-4 text-sm whitespace-nowrap">${reverseClassMap[user.grade] || '—'}</td>
         <td class="px-6 py-4 whitespace-nowrap">
           <span class="text-sm text-gray-900">${user.city || ''}</span>
         </td>

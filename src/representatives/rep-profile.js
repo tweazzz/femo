@@ -139,7 +139,20 @@ function renderParticipantData(profile) {
   const nameLinkEl    = document.getElementById('participant-name-link');
   if (nameHeadingEl) nameHeadingEl.textContent = full_name_ru || '—';
   if (nameLinkEl)    nameLinkEl.textContent    = full_name_ru || '—';
-
+  const reverseClassMap = {
+    first: 1,
+    second: 2,
+    third: 3,
+    fourth: 4,
+    fifth: 5,
+    sixth: 6,
+    seventh: 7,
+    eighth: 8,
+    ninth: 9,
+    tenth: 10,
+    eleventh: 11,
+    twelfth: 12,
+  }
   // Личные данные
   document.getElementById('profile-id').textContent              = id;
   document.getElementById('profile-email').textContent           = email || '—';
@@ -148,7 +161,7 @@ function renderParticipantData(profile) {
   document.getElementById('profile-country').textContent         = country || '—';
   document.getElementById('profile-city').textContent            = city || '—';
   document.getElementById('profile-school').textContent          = school || '—';
-  document.getElementById('profile-grade').textContent           = grade || '—';
+  document.getElementById('profile-grade').textContent           = reverseClassMap[grade] || '—';
 
   // Фото участника
   const photoEl     = document.getElementById('participant-photo');
