@@ -155,6 +155,22 @@ async function loadCurrentOlympiad() {
   let allRankingData = []
   let isExpanded = false
 
+  const reverseClassMap = {
+    first: 1,
+    second: 2,
+    third: 3,
+    fourth: 4,
+    fifth: 5,
+    sixth: 6,
+    seventh: 7,
+    eighth: 8,
+    ninth: 9,
+    tenth: 10,
+    eleventh: 11,
+    twelfth: 12,
+  }
+  
+  
   function renderRankingTable(data, expanded = false) {
     const tbody = document.getElementById('ranking-table-body')
     tbody.innerHTML = ''
@@ -198,8 +214,9 @@ async function loadCurrentOlympiad() {
           ${item.name}
         </td>
         <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-          ${item.grade}
+          ${reverseClassMap[item.grade] || '—'}
         </td>
+      
         <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
           ${item.city}
         </td>

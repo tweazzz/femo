@@ -172,7 +172,20 @@ async function applyFilters() {
     console.error('Ошибка применения фильтров:', err)
   }
 }
-
+const reverseClassMap = {
+  first: 1,
+  second: 2,
+  third: 3,
+  fourth: 4,
+  fifth: 5,
+  sixth: 6,
+  seventh: 7,
+  eighth: 8,
+  ninth: 9,
+  tenth: 10,
+  eleventh: 11,
+  twelfth: 12,
+}
 // Отрисовка пользователей
 function renderUsers(users) {
   const tbody = document.querySelector('tbody')
@@ -224,7 +237,7 @@ function renderUsers(users) {
             <span class="text-xl">•</span> ${roleInfo.label}
           </span>
         </td>
-        <td class="px-6 py-4 text-sm whitespace-nowrap">${user.grade || '-'}</td>
+        <td class="px-6 py-4 text-sm whitespace-nowrap">${reverseClassMap[user.grade] || '—'}</td>
         <td class="px-6 py-4 text-sm whitespace-nowrap">
           <!-- Кнопки действий остаются без изменений -->
             <div class="flex justify-between gap-2 *:cursor-pointer">
