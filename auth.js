@@ -46,10 +46,17 @@ async function authorizedFetch(url, options = {}, retry = true) {
     return
   }
 
+  // Не устанавливаем Content-Type для FormData (загрузка файлов)
+  const isFormData = options.body instanceof FormData
+  
   options.headers = {
     ...options.headers,
     Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
+  }
+  
+  // Устанавливаем Content-Type только если это не FormData
+  if (!isFormData) {
+    options.headers['Content-Type'] = 'application/json'
   }
 
   let response = await fetch(url, options)

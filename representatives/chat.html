@@ -95,10 +95,10 @@
       <!-- Dashboard Content -->
       <!-- Главное содержимое -->
       <main class="flex flex-1 overflow-hidden md:p-6">
-        <!-- Left Chat -->
-        <div class="border-default relative flex overflow-y-auto rounded-2xl">
+        <!-- Chat Container -->
+        <div class="border-default relative flex overflow-y-auto rounded-2xl w-full max-w-6xl mx-auto">
           <div
-            class="flex max-md:absolute max-md:inset-0 z-10 max-md:w-full md:w-72 flex-col border-r border-gray-200 bg-white">
+            class="flex max-md:absolute max-md:inset-0 z-10 max-md:w-full md:w-96 flex-col border-r border-gray-200 bg-white">
             <!-- Search -->
             <div class="p-4">
               <div class="relative">
@@ -111,184 +111,137 @@
               </div>
             </div>
 
-            <div class="px-4 py-2">
-              <button
-                class="hover:text-blue-primar flex cursor-pointer items-center gap-[3ox] text-sm text-blue-500 font-semibold">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
-                  <path fill-rule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clip-rule="evenodd" />
-                </svg>
-
-                Назад
-              </button>
-            </div>
-
-            <!-- User List -->
-            <div class="flex-1 overflow-y-auto">
-              <div class="space-y-1 p-2">
-                <!-- User 1 -->
-                <a onclick="openChatMobile()"
-                  class="btn-chat flex items-center gap-1 rounded-lg p-2 hover:bg-gray-50">
-                  <img
-                    src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar" class="h-10 w-10 rounded-full me-1" />
-                  <div>
-                    <div class="flex items-center gap-1">
-                      <span class="text-xs font-medium truncate max-w-34">Нурсултан Абдрахимовasdfadfadf</span>
-                      <span class="text-xs">(🇰🇿)</span>
+            <!-- Chat Tabs -->
+            <div class="px-4 pb-4">
+              <div class="space-y-1">
+                <!-- Администраторы (динамический список) -->
+                <div id="administrators-list">
+                  <!-- Список администраторов будет загружен динамически -->
+                </div>
+                
+                <!-- Групповой чат -->
+                <a href="#" data-tab="group" class="chat-tab flex w-full items-center rounded-lg p-3 text-left hover:bg-gray-50">
+                  <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="24" fill="#FEF6ED"/>
+                        <path d="M29.9981 19.16C29.9381 19.15 29.8681 19.15 29.8081 19.16C28.4281 19.11 27.3281 17.98 27.3281 16.58C27.3281 15.15 28.4781 14 29.9081 14C31.3381 14 32.4881 15.16 32.4881 16.58C32.4781 17.98 31.3781 19.11 29.9981 19.16Z" stroke="#F4891E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M28.9675 26.4399C30.3375 26.6699 31.8475 26.4299 32.9075 25.7199C34.3175 24.7799 34.3175 23.2399 32.9075 22.2999C31.8375 21.5899 30.3075 21.3499 28.9375 21.5899" stroke="#F4891E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17.9705 19.16C18.0305 19.15 18.1005 19.15 18.1605 19.16C19.5405 19.11 20.6405 17.98 20.6405 16.58C20.6405 15.15 19.4905 14 18.0605 14C16.6305 14 15.4805 15.16 15.4805 16.58C15.4905 17.98 16.5905 19.11 17.9705 19.16Z" stroke="#F4891E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.0014 26.4399C17.6314 26.6699 16.1214 26.4299 15.0614 25.7199C13.6514 24.7799 13.6514 23.2399 15.0614 22.2999C16.1314 21.5899 17.6614 21.3499 19.0314 21.5899" stroke="#F4891E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M23.9981 26.63C23.9381 26.62 23.8681 26.62 23.8081 26.63C22.4281 26.58 21.3281 25.45 21.3281 24.05C21.3281 22.62 22.4781 21.47 23.9081 21.47C25.3381 21.47 26.4881 22.63 26.4881 24.05C26.4781 25.45 25.3781 26.59 23.9981 26.63Z" stroke="#F4891E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21.0888 29.7799C19.6788 30.7199 19.6788 32.2599 21.0888 33.1999C22.6888 34.2699 25.3087 34.2699 26.9087 33.1999C28.3187 32.2599 28.3187 30.7199 26.9087 29.7799C25.3187 28.7199 22.6888 28.7199 21.0888 29.7799Z" stroke="#F4891E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
                     </div>
-                    <p class="text-[10px] text-gray-500 text-nowrap">
-                      Прикрепите файл, пожалуйста
-                    </p>
-                  </div>
-                  <div class="flex flex-col items-center justify-between max-md:ms-auto">
-                    <p class="text-[9px] text-[#B2B2B2] text-nowrap">1 мин назад</p>
-                    <span class="ml-auto text-green-500">
-                      <img src="/src/assets/images/done_dot.svg" alt="">
-                    </span>
+                    <div>
+                      <p class="text-sm font-bold">Групповой чат</p>
+                      <p class="mt-1 text-xs text-gray-500">Прикрепите файл, пожалуйста</p>
+                    </div>
                   </div>
                 </a>
-                <!-- User 2 -->
-                <a onclick="openChatMobile()" class="btn-chat flex items-center gap-1 rounded-lg p-2 hover:bg-gray-50">
-                  <img
-                    src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar" class="h-10 w-10 rounded-full me-1" />
-                  <div>
-                    <div class="flex items-center gap-1">
-                      <span class="text-xs font-medium truncate max-w-34">Нурсултан Абдрахимовasdfadfadf</span>
-                      <span class="text-xs">(🇰🇿)</span>
-                    </div>
-                    <p class="text-[10px] text-gray-500 text-nowrap">
-                      Прикрепите файл, пожалуйста
-                    </p>
-                  </div>
-                  <div class="flex flex-col items-center justify-between max-md:ms-auto">
-                    <p class="text-[9px] text-[#B2B2B2] text-nowrap">1 мин назад</p>
-                    <span class="ml-auto text-green-500">
-                      <img src="/src/assets/images/done2.svg" alt="">
-                    </span>
-                  </div>
 
+                <!-- Объявления -->
+                <a href="#" data-tab="announcements" class="chat-tab active bg-gray-50 flex w-full items-center rounded-lg p-3 text-left hover:bg-gray-50">
+                  <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="24" fill="#ECF9F2"/>
+                        <path d="M19 24C15 24 15 25.79 15 28V29C15 31.76 15 34 20 34H28C32 34 33 31.76 33 29V28C33 25.79 33 24 29 24C28 24 27.72 24.21 27.2 24.6L26.18 25.68C25 26.94 23 26.94 21.81 25.68L20.8 24.6C20.28 24.21 20 24 19 24Z" stroke="#0DB459" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M31 24V18C31 15.79 31 14 27 14H21C17 14 17 15.79 17 18V24" stroke="#0DB459" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22.5508 21.23H25.8808" stroke="#0DB459" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21.7188 18.23H26.7188" stroke="#0DB459" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold">Объявления</p>
+                      <p class="mt-1 text-xs text-gray-500">Прикрепите файл, пожалуйста</p>
+                    </div>
+                  </div>
                 </a>
               </div>
             </div>
           </div>
 
           <!-- Chat Area -->
-          <div id="chatArea" class="flex flex-1 flex-col bg-white h-full">
+          <div class="flex flex-1 flex-col bg-white h-full max-w-4xl">
             <!-- Chat Header -->
             <div class="p-4">
               <div class="flex items-center justify-between">
-                <div onclick="openChatMobile()" class="flex items-center gap-2 text-lg font-bold">
+                <div onclick="openChatMobile()" id="chat-header" class="flex items-center gap-2 text-lg font-bold">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-5 md:hidden">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                   </svg>
-
-                  <span>Айжан Ахметова</span>
-                  <span>(🇰🇿 Казахстан)</span>
+                  <span>Объявления</span>
                 </div>
               </div>
             </div>
 
-            <!-- Messages -->
-            <div class="chat flex max-md:flex-1 flex-col space-y-6 overflow-y-scroll p-4">
-              <span class="time-msg">18.01.2025</span>
-
-              <!-- Message 1 -->
-              <div class="me flex flex-row-reverse max-w-10/12 md:max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div class="w-full">
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Аликхан Ахметов (Представитель 🇰🇿)</span>
+                          <!-- Messages Container -->
+              <div class="flex flex-1 flex-col min-h-0">
+                <!-- Messages -->
+                <div id="chat-content" class="flex-1 overflow-y-auto p-4">
+                  <!-- Private Admin Chats (динамические) -->
+                  <div id="admin-chats-container">
+                    <!-- Чаты с администраторами будут создаваться динамически -->
                   </div>
-                  <div class="bg-orange-secondary text-orange-primary rounded-lg p-3 text-sm">
-                    <p class="">
-                      Здравствуйте! У меня возник вопрос по участникам из
-                      Узбекистана. Двое не отображаются в общем списке, хотя
-                      были зарегистрированы.
-
-                    <div class="bg-white flex gap-1 items-center p-3 mt-2 rounded-xl">
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M6.33203 18.3334H13.6654C15.3222 18.3334 16.6654 16.9903 16.6654 15.3334V8.04655C16.6654 7.17078 16.2827 6.33873 15.6177 5.76878L11.6746 2.38898C11.1309 1.92292 10.4384 1.66675 9.72226 1.66675H6.33203C4.67518 1.66675 3.33203 3.00989 3.33203 4.66675V15.3334C3.33203 16.9903 4.67517 18.3334 6.33203 18.3334Z"
-                          stroke="#F4891E" stroke-linejoin="round" />
-                        <path d="M10.832 2.0835V4.66683C10.832 5.7714 11.7275 6.66683 12.832 6.66683H16.2487"
-                          stroke="#F4891E" stroke-linejoin="round" />
-                        <path d="M6.66406 15.8335H13.3307" stroke="#F4891E" stroke-linecap="round"
-                          stroke-linejoin="round" />
-                        <path d="M10 8.3335V13.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M7.5 10.8335L10 13.3335L12.5 10.8335" stroke="#F4891E" stroke-linecap="round"
-                          stroke-linejoin="round" />
-                      </svg>
-
-                      <p class="text-orange-primary">Казахстан_Список_Femo.xlsx</p>
-
+                  
+                  <!-- Group Chat -->
+                  <div id="group-chat" class="chat-content hidden flex flex-col gap-6 min-h-full">
+                  <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
+                    <div class="text-center">
+                      <p class="text-base">Пока нет сообщений</p>
                     </div>
-                    </p>
                   </div>
-                  <div class="mt-1 text-xs">21:17</div>
+                </div>
+
+                <!-- Announcements Chat (Default) -->
+                <div id="announcements-chat" class="chat-content active flex flex-col gap-6 min-h-full">
+                  <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
+                    <div class="text-center">
+                      <p class="text-base">Пока нет сообщений</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <!-- Message 2 -->
-              <div class="flex max-w-10/12 md:max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Иван Иванович- Организатор</span>
+              <!-- Message Input for Group Chat Only -->
+              <div id="group-chat-input" class="hidden bg-white p-4">
+                <!-- Attached Files Area (hidden by default) -->
+                <div id="attached-files" class="hidden mb-3">
+                  <div id="attached-file-item" class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
+                    <!-- File info will be inserted here -->
                   </div>
-                  <div class="rounded-lg bg-gray-100 p-3 text-sm">
-                    <p>
-                      Добрый день! Уточните, пожалуйста, ID участников или их
-                      ФИО — проверим вручную.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:18</div>
                 </div>
-              </div>
 
-              <div class="flex max-w-10/12 md:max-w-7/12 gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                  alt="Avatar" class="h-8 w-8 rounded-full" />
-                <div>
-                  <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                    <span>Иван Иванович - Организатор</span>
+                <!-- Error Message (hidden by default) -->
+                <div id="error-message" class="hidden mb-3 opacity-0 transition-opacity duration-300">
+                  <div class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                    </svg>
+                    <span id="error-message-text" class="text-red-700 text-sm"></span>
                   </div>
-                  <div class="rounded-lg bg-gray-100 p-3 text-sm">
-                    <p>
-                      Добрый день! Уточните, пожалуйста, ID участников или их
-                      ФИО — проверим вручную.
-                    </p>
-                  </div>
-                  <div class="mt-1 text-xs">21:18</div>
                 </div>
-              </div>
 
-            </div>
-
-            <!-- Message Input -->
-            <div class="mx-3 mb-3 rounded-xl border border-gray-200 px-4">
-              <div class="flex items-center gap-2 rounded-lg bg-white">
-                <button class="cursor-pointer p-2 text-gray-400 hover:text-gray-600">
-                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                </button>
-                <textarea placeholder="Введите ваше сообщение..." class="chatarea" rows="1"></textarea>
-                <button class="cursor-pointer p-2 text-orange-500 hover:text-orange-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
-                  </svg>
-                </button>
+                <!-- Input Container -->
+                <div id="message-input-container" class="rounded-xl border border-gray-200 px-4">
+                  <div class="flex items-center gap-2 rounded-lg bg-white">
+                    <button class="cursor-pointer p-2 text-gray-400 hover:text-gray-600" title="Прикрепить файл">
+                      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                      </svg>
+                    </button>
+                    <textarea placeholder="Введите ваше сообщение..." class="chatarea flex-1 resize-none border-0 bg-transparent py-3 px-0 text-sm focus:outline-none focus:ring-0" rows="1" oninput="auto_grow(this)"></textarea>
+                    <button class="cursor-pointer p-2 text-orange-500 hover:text-orange-600" title="Отправить сообщение">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -482,202 +435,9 @@
 
   </script>
 
+  <script src="/auth.js" defer></script>
   <script src="/src/representatives/notification.js" defer></script>
-  <!-- Скрипт переключения чатов -->
-  <script>
-    function auto_grow(element) {
-      element.style.height = "auto";
-      element.style.height = element.scrollHeight + "px";
-    }
-
-    function openChatMobile() {
-      const chatArea = document.getElementById('chatArea');
-      if (chatArea) {
-        chatArea.classList.toggle('z-10'); // Toggle visibility on mobile
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const menuItems = document.querySelectorAll('.chat-menu-item');
-      const menuContainer = document.getElementById('chatMenu');
-      const chatsContainer = document.getElementById('chatsContainer');
-      const backBtn = document.getElementById('backToMenuBtn');
-      const chatTitleEl = document.getElementById('chatTitle');
-      const chatTimeEl = document.getElementById('chatTime');
-      const chatMessagesEl = document.getElementById('chatMessages');
-      const sendBtn = document.getElementById('sendBtn');
-
-      const chatArea = document.getElementById('chatArea')
-
-
-      // Пример данных сообщений для демонстрации
-      const chatData = {
-        organizer: [
-          { from: 'me', name: 'Алихан Ахметов', role: 'Представитель', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40', flag: 'https://flagcdn.com/w40/kz.png', text: 'Здравствуйте! У меня возник вопрос по участникам из Узбекистана. Двое не отображаются в общем списке, хотя были зарегистрированы.', time: '21:17' },
-          { from: 'other', name: 'Иван Иванович', role: 'Организатор', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40', text: 'Добрый день! Уточните, пожалуйста, ID участников или их ФИО — проверим вручную.', time: '21:18' },
-          // ...повтор
-        ],
-        group: [
-          { from: 'other', name: 'Групповой чат', role: '', avatar: 'https://via.placeholder.com/40', text: 'Добро пожаловать в групповой чат!', time: '20:00' },
-          // ...
-        ],
-        announcements: [
-          { from: 'other', name: 'Система', role: '', avatar: 'https://via.placeholder.com/40', text: 'Новое объявление: Завтра собрание в 10:00.', time: '09:00' },
-          // ...
-        ]
-      };
-
-      function showChat(id) {
-        // На мобильных скрыть меню
-        if (window.innerWidth < 640) {
-          menuContainer.classList.add('hidden');
-        }
-        // Показать контейнер чата
-        chatsContainer.classList.remove('hidden');
-        // Установить заголовок и время (пример: всегда "1 мин назад" или текущее время)
-        if (id === 'organizer') {
-          chatTitleEl.textContent = 'Чат с организатором';
-          chatTimeEl.textContent = '1 мин назад';
-        } else if (id === 'group') {
-          chatTitleEl.textContent = 'Групповой чат';
-          chatTimeEl.textContent = '—';
-        } else if (id === 'announcements') {
-          chatTitleEl.textContent = 'Объявления';
-          chatTimeEl.textContent = '—';
-        }
-        // Отметить активный пункт меню
-        menuItems.forEach(mi => {
-          if (mi.dataset.chat === id) {
-            mi.classList.add('bg-gray-100');
-          } else {
-            mi.classList.remove('bg-gray-100');
-          }
-        });
-        // Загрузить сообщения из chatData
-        renderMessages(id);
-      }
-
-      function renderMessages(id) {
-        chatMessagesEl.innerHTML = '';
-        const msgs = chatData[id] || [];
-        let lastDate = null;
-        msgs.forEach(msg => {
-          // Можно группировать по дате: если дата изменилась, вставить <span class="time-msg">...</span>
-          // Для простоты здесь не группируем по дате, вставляем сразу
-          const wrapper = document.createElement('div');
-          const isMe = msg.from === 'me';
-          wrapper.className = (isMe ? 'me self-start flex max-w-10/12 md:max-w-7/12 gap-3' : 'flex max-w-10/12 md:max-w-7/12 gap-3 self-start');
-          // Аватар
-          const img = document.createElement('img');
-          img.src = msg.avatar;
-          img.alt = 'Avatar';
-          img.className = 'h-8 w-8 rounded-full';
-          wrapper.appendChild(img);
-          // Контент
-          const content = document.createElement('div');
-          // Заголовок: имя, роль, флаг
-          const hdr = document.createElement('div');
-          hdr.className = 'mb-1 flex items-center gap-2 text-sm font-bold font-proxima text-[#222222]';
-          const nameSpan = document.createElement('span');
-          nameSpan.textContent = msg.name;
-          hdr.appendChild(nameSpan);
-          if (msg.role) {
-            const roleSpan = document.createElement('span');
-            roleSpan.className = 'font-normal text-sm text-gray-500';
-            roleSpan.textContent = '- ' + msg.role;
-            hdr.appendChild(roleSpan);
-          }
-          if (msg.flag) {
-            const flagImg = document.createElement('img');
-            flagImg.src = msg.flag;
-            flagImg.alt = 'Флаг';
-            flagImg.className = 'h-3 w-5 object-contain';
-            hdr.appendChild(flagImg);
-          }
-          content.appendChild(hdr);
-          // Текст
-          const bubble = document.createElement('div');
-          if (isMe) {
-            bubble.className = 'bg-orange-secondary text-orange-primary rounded-lg p-3';
-          } else {
-            bubble.className = 'rounded-lg bg-gray-100 p-3';
-          }
-          const p = document.createElement('p');
-          p.className = 'text-sm font-proxima text-[#222222]';
-          p.textContent = msg.text;
-          bubble.appendChild(p);
-          content.appendChild(bubble);
-          // Время
-          const timeDiv = document.createElement('div');
-          timeDiv.className = 'mt-1 text-xs text-gray-500';
-          timeDiv.textContent = msg.time;
-          content.appendChild(timeDiv);
-
-          wrapper.appendChild(content);
-          chatMessagesEl.appendChild(wrapper);
-        });
-        // Прокрутка вниз
-        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-      }
-
-      // Обработчики меню
-      menuItems.forEach(item => {
-        item.addEventListener('click', e => {
-          e.preventDefault();
-          const chatId = item.dataset.chat;
-          showChat(chatId);
-        });
-      });
-
-      // Кнопка "назад" для мобильных
-      backBtn.addEventListener('click', () => {
-        chatsContainer.classList.add('hidden');
-        menuContainer.classList.remove('hidden');
-      });
-
-      // По умолчанию открыть первый чат
-      if (menuItems.length) {
-        const first = menuItems[0].dataset.chat;
-        showChat(first);
-      }
-
-      // Обработка отправки (пример, добавляет сообщение в конец текущего чата)
-      sendBtn.addEventListener('click', () => {
-        const textEl = document.querySelector('.chatarea');
-        const text = textEl.value.trim();
-        if (!text) return;
-        // Определить текущий чат
-        const activeMenu = Array.from(menuItems).find(mi => mi.classList.contains('bg-gray-100'));
-        const chatId = activeMenu?.dataset.chat;
-        if (!chatId) return;
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        const timeStr = `${hh}:${mm}`;
-        // Добавить в данные и перерендить
-        if (!chatData[chatId]) chatData[chatId] = [];
-        chatData[chatId].push({
-          from: 'me',
-          name: 'Вы',
-          role: '',
-          avatar: 'https://via.placeholder.com/40',
-          text,
-          time: timeStr
-        });
-        textEl.value = '';
-        auto_grow(textEl);
-        renderMessages(chatId);
-      });
-
-      // При ресайзе экрана: если вернулись к desktop, показать меню и чат
-      window.addEventListener('resize', () => {
-        if (window.innerWidth >= 640) {
-          menuContainer.classList.remove('hidden');
-          chatsContainer.classList.remove('hidden');
-        }
-      });
-    });
-  </script>
+  <script src="/src/representatives/chat.js" defer></script>
 </body>
 
 </html>
