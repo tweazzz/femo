@@ -1,0 +1,1657 @@
+// chat.js - Управление чатом для админ панели
+
+class AdminChat {
+  constructor() {
+    this.websocket = null
+    this.privateWebsocket = null // Добавляем отдельный WebSocket для приватных чатов
+    this.currentRoom = 'announcements' // По умолчанию объявления
+    this.currentRepresentative = null // Текущий выбранный представитель
+    this.currentPrivateRoomId = null // ID текущей приватной комнаты из WebSocket
+    this.announcementsRoomId = 'announcements' // ID комнаты объявлений
+    this.attachedFile = null // Хранение прикрепленного файла
+    this.pendingFile = null // Файл ожидающий отправки после получения ID сообщения
+    this.pendingMessageTime = null
+    this.pendingMessageContent = null
+    this.representativesLoaded = false
+    this.errorTimeout = null
+    this.currentErrorType = null // Тип текущей ошибки: 'connection', 'validation', 'general'
+    this.shouldReconnectPrivate = false // Флаг для контроля переподключения приватного чата
+    this.shouldReconnectPublic = true // Флаг для контроля переподключения публичного чата
+    this.isClosingIntentionally = false // Флаг для отслеживания намеренного закрытия
+    
+    this.initializeElements()
+    this.setupEventListeners()
+  }
+
+  initializeElements() {
+    this.messageInput = document.querySelector('.chatarea')
+    this.sendButton = document.querySelector('button[class*="text-orange-500"]')
+    this.attachButton = document.querySelector('button[class*="text-gray-400"]')
+    this.chatContent = document.getElementById('chat-content')
+    this.messageInputContainer = document.getElementById('message-input-container')
+    this.errorMessage = document.getElementById('error-message')
+    this.errorMessageText = document.getElementById('error-message-text')
+    
+    // Элементы для переключения панелей
+    this.chatModeContent = document.getElementById('chat-mode-content')
+    this.representativesContent = document.getElementById('representatives-content')
+    this.backToChatButton = document.getElementById('back-to-chat')
+    this.unifiedSearch = document.getElementById('unified-search')
+    this.representativesList = document.getElementById('representatives-list')
+  }
+
+  setupEventListeners() {
+    // Отправка сообщения по клику
+    if (this.sendButton) {
+      this.sendButton.addEventListener('click', () => this.sendMessage())
+    }
+
+    // Отправка сообщения по Enter
+    if (this.messageInput) {
+      this.messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault()
+          this.sendMessage()
+        }
+      })
+      
+      // Обработчик для скрытия ошибок валидации при клике на input
+      this.messageInput.addEventListener('input', () => {
+        this.hideErrorMessage()
+      })
+
+      // Обработчик для скрытия ошибок валидации при клике на input
+      this.messageInput.addEventListener('click', () => {
+        if (this.currentErrorType === 'validation') {
+          this.hideErrorMessage()
+        }
+      })
+      
+      this.messageInput.addEventListener('focus', () => {
+        if (this.currentErrorType === 'validation') {
+          this.hideErrorMessage()
+        }
+      })
+    }
+
+    // Прикрепление файлов
+    if (this.attachButton) {
+      this.attachButton.addEventListener('click', () => this.attachFile())
+    }
+
+    // Кнопка "Назад" к чатам
+    if (this.backToChatButton) {
+      this.backToChatButton.addEventListener('click', () => this.showChatMode())
+    }
+
+    // Единый поиск
+    if (this.unifiedSearch) {
+      this.unifiedSearch.addEventListener('input', (e) => {
+        const query = e.target.value.trim()
+        
+        if (query) {
+          // Если есть поиск, переключаемся на режим представителей
+          this.showRepresentativesMode()
+          this.searchRepresentatives(query)
+        } else {
+          // Если поиск очищен, возвращаемся к режиму чатов
+          this.showChatMode()
+        }
+      })
+    }
+  }
+
+  async connectWebSocket() {
+    // Проверяем, нет ли уже активного соединения
+    if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+      return
+    }
+
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      this.showConnectionError('Токен доступа не найден')
+      return
+    }
+
+    if (this.currentRoom === 'announcements') {
+      // Показываем лоадер
+      this.showLoader()
+      
+      const wsUrl = `wss://portal.gradients.academy/ws/chat/announcements/?token=${token}`
+      
+      try {
+        this.websocket = new WebSocket(wsUrl)
+        
+        this.websocket.onopen = () => {
+          this.hideLoader()
+          
+          // Убираем красную рамку при успешном подключении
+          this.clearErrorState()
+        }
+
+        this.websocket.onmessage = (event) => {
+          const data = JSON.parse(event.data)
+          this.handleMessage(data)
+        }
+
+        this.websocket.onclose = (event) => {
+          this.hideLoader()
+          
+          // Переподключаемся только если нужно и не закрыто намеренно
+          if (event.code !== 1000 && this.shouldReconnectPublic && this.currentRoom === 'announcements') {
+            setTimeout(() => {
+              if (this.shouldReconnectPublic && this.currentRoom === 'announcements') {
+                this.connectWebSocket()
+              }
+            }, 3000)
+          }
+        }
+
+        this.websocket.onerror = (error) => {
+          console.error('Ошибка WebSocket:', error)
+          
+          // Не показываем ошибку если закрываем намеренно
+          if (!this.isClosingIntentionally) {
+            this.showConnectionError('Ошибка подключения к чату')
+          }
+        }
+      } catch (error) {
+        console.error('Ошибка подключения к WebSocket:', error)
+        this.hideLoader()
+      }
+    }
+  }
+
+  async sendMessage() {
+    const messageText = this.messageInput.value.trim()
+    
+    // Проверка наличия текста или файла
+    if (!messageText && !this.attachedFile) {
+      this.showErrorMessage('Введите сообщение или прикрепите файл', 'validation')
+      return
+    }
+
+    try {
+      // Определяем, какой WebSocket использовать
+      const isPrivateChat = this.currentRoom === 'representatives' && this.currentRepresentative
+      const websocketToUse = isPrivateChat ? this.privateWebsocket : this.websocket
+
+      if (!websocketToUse || websocketToUse.readyState !== WebSocket.OPEN) {
+        this.showConnectionError(isPrivateChat ? 'Приватный чат не подключен' : 'Чат не подключен')
+        return
+      }
+
+      // Если есть только файл без текста - отправляем только файл
+      if (!messageText && this.attachedFile) {
+        // Отправляем только файл через HTTP запрос
+        if (isPrivateChat) {
+          await this.uploadPrivateFile(this.currentPrivateRoomId, this.attachedFile)
+        } else {
+          await this.uploadFile(this.attachedFile)
+        }
+        
+        // Очищаем файл и поле ввода
+        this.clearAllFiles()
+        this.messageInput.value = ''
+        this.messageInput.style.height = '5px'
+        this.messageInput.style.height = this.messageInput.scrollHeight + 'px'
+        return
+      }
+
+      // Если есть текст (с файлом или без)
+      if (messageText) {
+        // Сохраняем данные для идентификации нашего сообщения
+        this.pendingMessageTime = Date.now()
+        this.pendingMessageContent = messageText
+        
+        // Если есть файл, сохраняем его для последующей отправки после текста
+        if (this.attachedFile) {
+          this.pendingFile = this.attachedFile
+        }
+
+        // Отправляем текстовое сообщение
+        const messageData = {
+          content: messageText
+        }
+
+
+
+        websocketToUse.send(JSON.stringify(messageData))
+
+        // Очищаем поле ввода
+        this.messageInput.value = ''
+        this.messageInput.style.height = '5px'
+        this.messageInput.style.height = this.messageInput.scrollHeight + 'px'
+
+        // Убираем отображение прикрепленного файла (но сохраняем сам файл для отправки)
+        this.removeAttachedFile()
+      }
+
+    } catch (error) {
+      console.error('Ошибка отправки сообщения:', error)
+      this.showErrorMessage('Не удалось отправить сообщение')
+      
+      // Восстанавливаем интерфейс при ошибке
+      this.clearAllFiles()
+      this.pendingMessageTime = null
+      this.pendingMessageContent = null
+    }
+  }
+
+  handleMessage(data) {
+    if (data.message) {
+      // Добавляем сообщение в чат
+      this.addMessageToChat(data.message, true)
+      
+      // Проверяем, нужно ли отправить файл после текстового сообщения
+      if (this.pendingFile && this.isOurMessage(data.message)) {
+        this.uploadFile(this.pendingFile)
+        this.clearAllFiles()
+      }
+    } else if (data.messages) {
+      // История сообщений
+      this.loadMessageHistory(data.messages)
+    }
+  }
+
+  loadMessageHistory(messages) {
+    const announcementsChat = document.getElementById('announcements-chat')
+    if (!announcementsChat) return
+
+    // Удаляем заглушку если она есть
+    const placeholder = announcementsChat.querySelector('.chat-placeholder')
+    if (placeholder) {
+      placeholder.remove()
+    }
+
+    // Сортируем сообщения по дате (старые сверху)
+    const sortedMessages = messages.sort((a, b) => 
+      new Date(a.created_at) - new Date(b.created_at)
+    )
+
+    // Добавляем все сообщения
+    sortedMessages.forEach(messageData => {
+      this.addMessageToChat(messageData, false) // false = не прокручивать после каждого
+    })
+
+    // Прокручиваем к концу после загрузки всех сообщений
+    this.scrollToBottom()
+  }
+
+  addMessageToChat(messageData, shouldScroll = true) {
+    const announcementsChat = document.getElementById('announcements-chat')
+    if (!announcementsChat) return
+
+    // Удаляем заглушку если она есть
+    const placeholder = announcementsChat.querySelector('.chat-placeholder')
+    if (placeholder) {
+      placeholder.remove()
+    }
+
+    // Проверяем нужно ли добавить метку времени
+    const messageDate = messageData.created_at ? new Date(messageData.created_at) : new Date()
+    this.addDateLabelIfNeeded(announcementsChat, messageDate)
+
+    // Определяем, наше ли это сообщение
+    const isOurMessage = this.isOurMessage(messageData)
+
+    // Создаем HTML для нового сообщения
+    const messageElement = document.createElement('div')
+    messageElement.className = `message flex gap-3 mb-4 ${isOurMessage ? 'justify-end' : 'justify-start'}`
+    
+    // Форматируем время из created_at
+    const messageTime = messageData.created_at 
+      ? new Date(messageData.created_at).toLocaleTimeString('ru-RU', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      : new Date().toLocaleTimeString('ru-RU', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+
+    // Обрабатываем файл (единый стиль для всех типов файлов)
+    let fileHtml = ''
+    if (messageData.file) {
+      const fileUrl = messageData.file.startsWith('http') 
+        ? messageData.file 
+        : `https://portal.gradients.academy${messageData.file}`
+      const fileName = messageData.file.split('/').pop()
+      fileHtml = `
+        <div class="mt-2">
+          <div class="min-h-[44px] flex items-center gap-2 bg-white rounded-[12px] p-4 cursor-pointer select-none" onclick="window.open('${fileUrl}', '_blank')">
+            <span class="flex-shrink-0">
+              <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.33203 17.3334H11.6654C13.3222 17.3334 14.6654 15.9903 14.6654 14.3334V7.04655C14.6654 6.17078 14.2827 5.33873 13.6177 4.76878L9.67463 1.38898C9.1309 0.922925 8.43839 0.666748 7.72226 0.666748H4.33203C2.67518 0.666748 1.33203 2.00989 1.33203 3.66675V14.3334C1.33203 15.9903 2.67517 17.3334 4.33203 17.3334Z" stroke="#F4891E" stroke-linejoin="round"/>
+                <path d="M8.83203 1.0835V3.66683C8.83203 4.7714 9.72746 5.66683 10.832 5.66683H14.2487" stroke="#F4891E" stroke-linejoin="round"/>
+                <path d="M4.66406 14.8335H11.3307" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 7.3335V12.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5.5 9.8335L8 12.3335L10.5 9.8335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="text-[#F4891E] font-medium text-base truncate">${fileName}</span>
+          </div>
+        </div>
+      `
+    }
+
+    // Определяем стили для сообщения в зависимости от отправителя
+    const messageContainerClass = isOurMessage ? 'max-w-xs lg:max-w-md' : 'max-w-xs lg:max-w-md'
+    const messageBgClass = isOurMessage ? 'bg-orange-secondary text-orange-primary' : 'text-gray-900'
+    const messageBgStyle = isOurMessage ? '' : 'background-color: #EFEFEF;'
+    const messageRounding = isOurMessage ? 'rounded-tl-lg rounded-bl-lg rounded-br-lg' : 'rounded-tr-lg rounded-bl-lg rounded-br-lg'
+    const avatarSrc = isOurMessage 
+      ? "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+      : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&auto=format&fit=crop&q=60"
+    const senderRole = isOurMessage ? "(Администратор)" : "(Участник)"
+
+    if (isOurMessage) {
+      // Наше сообщение - аватар справа
+      messageElement.innerHTML = `
+        <div class="${messageContainerClass}">
+          <div class="mb-1 flex items-center gap-4 text-sm font-bold justify-end">
+            <div class="flex items-center gap-2">
+              <span>${messageData.sender_name || 'Администратор'}</span>
+              <span>${senderRole}</span>
+            </div>
+            <img
+              src="${avatarSrc}"
+              alt="Avatar"
+              class="h-8 w-8 rounded-full"
+            />
+          </div>
+          <div class="mr-12">
+            <div class="${messageBgClass} ${messageRounding} p-3" style="${messageBgStyle}">
+              <p>${messageData.content}</p>
+              ${fileHtml}
+            </div>
+            <div class="mt-1 text-xs text-right">${messageTime}</div>
+          </div>
+        </div>
+      `
+    } else {
+      // Чужое сообщение - аватар слева
+      messageElement.innerHTML = `
+        <img
+          src="${avatarSrc}"
+          alt="Avatar"
+          class="h-8 w-8 rounded-full self-start"
+        />
+        <div class="${messageContainerClass}">
+          <div class="mb-1 flex items-center gap-2 text-sm font-bold">
+            <span>${messageData.sender_name || 'Участник'}</span>
+            <span>${senderRole}</span>
+          </div>
+          <div class="${messageBgClass} ${messageRounding} p-3" style="${messageBgStyle}">
+            <p>${messageData.content}</p>
+            ${fileHtml}
+          </div>
+          <div class="mt-1 text-xs">${messageTime}</div>
+        </div>
+      `
+    }
+
+    // Добавляем сообщение в конец чата
+    announcementsChat.appendChild(messageElement)
+    
+    // Прокручиваем к новому сообщению только если нужно
+    if (shouldScroll) {
+      this.scrollToBottom()
+    }
+  }
+
+  async attachFile() {
+    // Создаем input для выбора файла
+    const fileInput = document.createElement('input')
+    fileInput.type = 'file'
+    fileInput.multiple = false
+    fileInput.accept = '*/*' // Принимаем любые файлы
+    
+    fileInput.onchange = async (event) => {
+      const file = event.target.files[0]
+      if (!file) return
+
+      // Заменяем предыдущий файл если он был
+      this.attachedFile = file
+      this.displayAttachedFile(file)
+    }
+
+    // Открываем диалог выбора файла
+    fileInput.click()
+  }
+
+  displayAttachedFile(file) {
+    const attachedFilesArea = document.getElementById('attached-files')
+    const attachedFileItem = document.getElementById('attached-file-item')
+    
+    if (!attachedFilesArea || !attachedFileItem) return
+
+    // Определяем тип файла и иконку
+    const fileName = file.name
+    const fileSize = this.formatFileSize(file.size)
+    const fileExtension = fileName.split('.').pop().toLowerCase()
+    
+    let fileIcon = '📎'
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+      fileIcon = '🖼️'
+    } else if (fileExtension === 'pdf') {
+      fileIcon = '📄'
+    } else if (['doc', 'docx'].includes(fileExtension)) {
+      fileIcon = '📝'
+    } else if (['xls', 'xlsx'].includes(fileExtension)) {
+      fileIcon = '📊'
+    }
+
+    // Создаем HTML для отображения файла
+    attachedFileItem.innerHTML = `
+      <div class="flex items-center gap-3 flex-1">
+        <span class="text-2xl">${fileIcon}</span>
+        <div class="flex-1">
+          <div class="font-medium text-sm text-gray-800">${fileName}</div>
+          <div class="text-xs text-gray-500">${fileSize}</div>
+        </div>
+      </div>
+      <button 
+        class="text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-red-50 transition-colors"
+        onclick="adminChat.removeAttachedFile()"
+        title="Удалить файл"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    `
+
+    // Показываем область с файлом
+    attachedFilesArea.classList.remove('hidden')
+  }
+
+  removeAttachedFile() {
+    const attachedFilesArea = document.getElementById('attached-files')
+    
+    // Удаляем только attachedFile, НЕ pendingFile (он нужен для отправки)
+    this.attachedFile = null
+    // this.pendingFile = null - НЕ очищаем здесь!
+    
+    // Скрываем область с файлом
+    if (attachedFilesArea) {
+      attachedFilesArea.classList.add('hidden')
+    }
+  }
+
+  clearAllFiles() {
+    // Полная очистка всех файлов (используется после успешной отправки)
+    this.attachedFile = null
+    this.pendingFile = null
+    
+    const attachedFilesArea = document.getElementById('attached-files')
+    if (attachedFilesArea) {
+      attachedFilesArea.classList.add('hidden')
+    }
+    
+    // Также очищаем ошибки
+    this.hideErrorMessage()
+  }
+
+  formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes'
+    
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  isOurMessage(message) {
+    // Сначала проверяем по Profile ID пользователя
+    try {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        const user = JSON.parse(userData)
+        if (message.sender_id === user.profile.id) {
+          return true
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка при получении данных пользователя:', error)
+    }
+    
+    // Если есть ожидающий файл с текстом, проверяем по времени и содержимому
+    if (this.pendingMessageTime && this.pendingMessageContent) {
+      const messageTime = new Date(message.created_at).getTime()
+      const timeDiff = Math.abs(messageTime - this.pendingMessageTime)
+      const contentMatches = message.content === this.pendingMessageContent
+      
+      // Если время и содержимое совпадают (в пределах 30 секунд), это наше сообщение
+      return timeDiff < 30000 && contentMatches
+    }
+    
+    return false
+  }
+
+  async uploadFile(file) {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      // Для объявлений всегда используем ID комнаты = 1
+      const url = `https://portal.gradients.academy/chats/rooms/1/attachments/`
+
+      const response = await authorizedFetch(url, {
+        method: 'POST',
+        body: formData,
+        // НЕ указываем Content-Type - браузер сам установит multipart/form-data с boundary
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Ошибка загрузки: ${response.status} - ${errorText}`)
+      }
+
+      const result = await response.json()
+      this.showSuccessMessage(`Файл "${file.name}" успешно прикреплен`)
+      
+    } catch (error) {
+      console.error('Ошибка загрузки файла в объявления:', error)
+      this.showErrorMessage('Не удалось загрузить файл: ' + error.message)
+    }
+  }
+
+  switchRoom(roomName) {
+    // Полностью останавливаем все соединения
+    this.stopAllConnections()
+    
+    this.currentRoom = roomName
+    
+    // Очищаем прикрепленные файлы и поле ввода
+    this.clearAllFiles()
+    if (this.messageInput) {
+      this.messageInput.value = ''
+      this.messageInput.style.height = '5px'
+      this.messageInput.style.height = this.messageInput.scrollHeight + 'px'
+    }
+    
+    // Скрываем все чаты
+    document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    // Показываем выбранный чат
+    const selectedChat = document.querySelector(`#${roomName}-chat`)
+    if (selectedChat) {
+      selectedChat.classList.remove('hidden')
+      selectedChat.classList.add('active', 'flex')
+      selectedChat.style.display = 'flex'
+    }
+    
+    // Подключаемся к нужному чату после небольшой задержки
+    setTimeout(() => {
+      if (roomName === 'announcements') {
+        this.shouldReconnectPublic = true
+        this.currentRepresentative = null
+        this.connectWebSocket()
+      } else if (roomName === 'representatives') {
+        // Приватный WebSocket подключится при выборе представителя
+      }
+    }, 100) // Небольшая задержка для корректного закрытия соединений
+  }
+
+  scrollToBottom() {
+    const activeChatContent = this.currentRoom === 'announcements' 
+      ? document.getElementById('announcements-chat')
+      : document.getElementById('representatives-chat')
+    
+    if (activeChatContent) {
+      // Прокручиваем контейнер чата
+      const chatContainer = document.getElementById('chat-content')
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight
+      }
+    }
+  }
+
+  showLoader() {
+    const announcementsChat = document.getElementById('announcements-chat')
+    if (!announcementsChat) return
+
+    // Проверяем, нет ли уже лоадера
+    const existingLoader = announcementsChat.querySelector('.loader-container')
+    if (existingLoader) {
+      return
+    }
+
+    // Убираем заглушку если она есть
+    const placeholder = announcementsChat.querySelector('.chat-placeholder')
+    if (placeholder) {
+      placeholder.remove()
+    }
+
+    // Добавляем лоадер
+    const loaderElement = document.createElement('div')
+    loaderElement.className = 'loader-container flex items-center justify-center flex-1'
+    loaderElement.innerHTML = `
+      <div class="flex items-center gap-3 text-gray-500">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+        <span>Подключение к чату...</span>
+      </div>
+    `
+    
+    announcementsChat.appendChild(loaderElement)
+  }
+
+  hideLoader() {
+    const announcementsChat = document.getElementById('announcements-chat')
+    if (!announcementsChat) return
+
+    // Удаляем все лоадеры
+    const loaders = announcementsChat.querySelectorAll('.loader-container')
+    loaders.forEach(loader => {
+      loader.remove()
+    })
+
+    // Если чат пустой после удаления лоадера, добавляем заглушку
+    if (announcementsChat.children.length === 0) {
+      const placeholder = document.createElement('div')
+      placeholder.className = 'chat-placeholder flex items-center justify-center flex-1 text-gray-400'
+      placeholder.innerHTML = `
+        <div class="text-center">
+          <p class="text-base">Пока нет сообщений</p>
+        </div>
+      `
+      announcementsChat.appendChild(placeholder)
+    }
+  }
+
+  showErrorMessage(message, type = 'general') {
+    // Сохраняем тип ошибки
+    this.currentErrorType = type
+    
+    // Очищаем предыдущий таймер
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout)
+      this.errorTimeout = null
+    }
+    
+    // Показываем ошибку в интерфейсе
+    if (this.errorMessage && this.errorMessageText) {
+      this.errorMessageText.textContent = message
+      this.errorMessage.classList.remove('hidden')
+      
+      // Плавное появление
+      setTimeout(() => {
+        this.errorMessage.classList.remove('opacity-0')
+        this.errorMessage.classList.add('opacity-100')
+      }, 10)
+    }
+    
+    // Добавляем красную рамку к полю ввода
+    if (this.messageInputContainer) {
+      this.messageInputContainer.classList.remove('border-gray-200')
+      this.messageInputContainer.classList.add('border-red-500', 'border-2')
+    }
+    
+    // Автоматически скрываем только общие ошибки через 5 секунд
+    // Ошибки подключения и валидации не исчезают автоматически
+    if (type === 'general') {
+      this.errorTimeout = setTimeout(() => {
+        this.hideErrorMessage()
+      }, 5000)
+    }
+  }
+
+  hideErrorMessage() {
+    // Очищаем таймер если он есть
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout)
+      this.errorTimeout = null
+    }
+    
+    // Сбрасываем тип ошибки
+    this.currentErrorType = null
+    
+    // Плавное исчезновение
+    if (this.errorMessage) {
+      this.errorMessage.classList.remove('opacity-100')
+      this.errorMessage.classList.add('opacity-0')
+      
+      // Полностью скрываем после анимации
+      setTimeout(() => {
+        this.errorMessage.classList.add('hidden')
+      }, 300)
+    }
+    
+    // Убираем красную рамку
+    if (this.messageInputContainer) {
+      this.messageInputContainer.classList.remove('border-red-500', 'border-2')
+      this.messageInputContainer.classList.add('border-gray-200')
+    }
+  }
+
+  showSuccessMessage(message) {
+    // Можно добавить визуальное отображение успеха в будущем
+  }
+
+  showLoadingMessage(message) {
+    // Можно добавить индикатор загрузки
+  }
+
+  hideLoadingMessage() {
+    // Скрываем индикатор загрузки
+  }
+
+  addDateLabelIfNeeded(chatContainer, messageDate) {
+    const today = messageDate.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+
+    // Проверяем, есть ли уже метка времени для этой даты
+    const existingLabel = chatContainer.querySelector(`[data-date="${today}"]`)
+    if (existingLabel) return
+
+    // Создаем метку времени
+    const timeLabel = document.createElement('span')
+    timeLabel.className = 'time-msg'
+    timeLabel.setAttribute('data-date', today)
+    timeLabel.textContent = today
+
+    chatContainer.appendChild(timeLabel)
+  }
+
+  // Переключение между режимами панели
+  showRepresentativesMode() {
+    // Скрываем контент чатов
+    if (this.chatModeContent) {
+      this.chatModeContent.classList.add('hidden')
+    }
+    
+    // Показываем контент представителей
+    if (this.representativesContent) {
+      this.representativesContent.classList.remove('hidden')
+    }
+    
+    // Показываем кнопку "Назад"
+    if (this.backToChatButton) {
+      this.backToChatButton.classList.remove('hidden')
+      this.backToChatButton.classList.add('flex')
+    }
+    
+    // Показываем заглушку выбора представителя в правой части
+    this.showRepresentativesPlaceholder()
+    
+    // Загружаем список представителей, если еще не загружен
+    if (!this.representativesLoaded) {
+      this.loadRepresentativesInitial()
+      this.representativesLoaded = true
+    }
+  }
+
+  showChatMode() {
+    // Полностью останавливаем все соединения
+    this.stopAllConnections()
+    
+    // Очищаем прикрепленные файлы и поле ввода
+    this.clearAllFiles()
+    if (this.messageInput) {
+      this.messageInput.value = ''
+      this.messageInput.style.height = '5px'
+      this.messageInput.style.height = this.messageInput.scrollHeight + 'px'
+    }
+    
+    // Показываем контент чатов
+    if (this.chatModeContent) {
+      this.chatModeContent.classList.remove('hidden')
+    }
+    
+    // Скрываем контент представителей
+    if (this.representativesContent) {
+      this.representativesContent.classList.add('hidden')
+    }
+    
+    // Скрываем кнопку "Назад"
+    if (this.backToChatButton) {
+      this.backToChatButton.classList.add('hidden')
+      this.backToChatButton.classList.remove('flex')
+    }
+    
+    // Убираем активное выделение со всех представителей
+    if (this.representativesList) {
+      this.representativesList.querySelectorAll('.representative-item').forEach(item => {
+        item.classList.remove('bg-[#FBFBFB]')
+      })
+    }
+    
+    // СРАЗУ очищаем чат объявлений чтобы избежать мерцания ошибки
+    const announcementsChat = document.getElementById('announcements-chat')
+    if (announcementsChat) {
+      announcementsChat.innerHTML = `
+        <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
+          <div class="text-center">
+            <p class="text-base">Пока нет сообщений</p>
+          </div>
+        </div>
+      `
+    }
+
+    // Возвращаемся к чату объявлений
+    this.switchToAnnouncementsChat()
+    
+    // Очищаем поиск
+    if (this.unifiedSearch) {
+      this.unifiedSearch.value = ''
+    }
+    
+    // Подключаемся к объявлениям после небольшой задержки
+    setTimeout(() => {
+      this.shouldReconnectPublic = true
+      this.currentRoom = 'announcements'
+      this.connectWebSocket()
+    }, 100)
+  }
+
+  switchToAnnouncementsChat() {
+    // Убираем активные стили у всех вкладок
+    document.querySelectorAll('.chat-tab').forEach(tab => {
+      tab.classList.remove('active', 'bg-gray-50')
+    })
+    
+    // Добавляем активные стили к вкладке объявлений
+    const announcementsTab = document.querySelector('.chat-tab[data-tab="announcements"]')
+    if (announcementsTab) {
+      announcementsTab.classList.add('active', 'bg-gray-50')
+    }
+    
+    // Скрываем все чаты
+    document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    // Показываем чат объявлений
+    const announcementsChat = document.querySelector('#announcements-chat')
+    if (announcementsChat) {
+      announcementsChat.classList.remove('hidden')
+      announcementsChat.classList.add('active', 'flex')
+      announcementsChat.style.display = 'flex'
+    }
+    
+    // Обновляем заголовок чата
+    const chatHeader = document.getElementById('chat-header')
+    if (chatHeader) {
+      chatHeader.innerHTML = `<span>Объявления</span>`
+    }
+    
+    // Переключаем комнату
+    this.currentRoom = 'announcements'
+  }
+
+  async loadRepresentatives(search = '') {
+    try {
+      const url = search 
+        ? `https://portal.gradients.academy/chats/representatives/?search=${encodeURIComponent(search)}`
+        : 'https://portal.gradients.academy/chats/representatives/'
+      
+      const response = await authorizedFetch(url)
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка загрузки: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      
+      this.renderRepresentativesList(data)
+      
+    } catch (error) {
+      console.error('Ошибка загрузки представителей:', error)
+      this.showErrorMessage('Не удалось загрузить список представителей')
+    }
+  }
+
+  renderRepresentativesList(data) {
+    if (!this.representativesList) return
+    
+    // Очищаем список
+    this.representativesList.innerHTML = ''
+    
+    // Определяем массив представителей из API ответа
+    let representatives = data.results || []
+    
+    if (!representatives || representatives.length === 0) {
+      this.representativesList.innerHTML = `
+        <div class="flex items-center justify-center py-8 text-gray-500">
+          <p>Представители не найдены</p>
+        </div>
+      `
+      return
+    }
+    
+    // Рендерим каждого представителя
+    representatives.forEach(rep => {
+      const representativeElement = document.createElement('div')
+      representativeElement.className = 'representative-item mx-4 mb-4 p-4 rounded-lg cursor-pointer hover:bg-[#FBFBFB] transition-colors'
+      representativeElement.onclick = () => this.selectRepresentative(rep)
+      representativeElement.dataset.profile = rep.profile // Добавляем ID для идентификации
+      
+      // Создаем аватарку или SVG по умолчанию
+      const avatarContent = rep.image 
+        ? `<img src="${rep.image}" alt="${rep.full_name_ru}" class="w-10 h-10 rounded-full object-cover">`
+        : `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+             <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+             </svg>
+           </div>`
+
+      representativeElement.innerHTML = `
+        <div class="flex items-center gap-3">
+          ${avatarContent}
+          <div class="flex-1 min-w-0">
+            <div class="font-bold text-sm text-[#222222] truncate flex items-center gap-2">
+              <p>${rep.full_name_ru}</p>
+              <div class="flex items-center gap-1 text-sm text-gray-500">
+                <img src="https://flagcdn.com/w20/${rep.country.toLowerCase()}.png"
+                    srcset="https://flagcdn.com/w40/${rep.country.toLowerCase()}.png 2x"
+                    alt="${rep.country}" 
+                    class="w-5 h-3">
+              </div>
+            </div>
+            <p class="text-xs text-[#222222]">Прикрепите файл, пожалуйста</p>
+          </div>
+        </div>
+      `
+      
+      this.representativesList.appendChild(representativeElement)
+    })
+  }
+
+  selectRepresentative(representative) {
+    // Останавливаем все соединения перед подключением к приватному чату
+    this.stopAllConnections()
+    
+    // Сбрасываем room_id при смене представителя
+    this.currentPrivateRoomId = null
+    
+    // Убираем активное выделение со всех представителей
+    this.representativesList.querySelectorAll('.representative-item').forEach(item => {
+      item.classList.remove('bg-[#FBFBFB]')
+    })
+    
+    // Добавляем активное выделение к выбранному представителю
+    const selectedElement = this.representativesList.querySelector(`[data-profile="${representative.profile}"]`)
+    if (selectedElement) {
+      selectedElement.classList.add('bg-[#FBFBFB]')
+    }
+    
+    // Сохраняем текущего представителя
+    this.currentRepresentative = representative
+    
+    // Переключаемся на чат с представителями
+    this.switchRoom('representatives')
+    
+    // Обновляем заголовок чата
+    const chatHeader = document.getElementById('chat-header')
+    
+    // Создаем аватарку или SVG по умолчанию для заголовка
+    const headerAvatarContent = representative.image 
+      ? `<img src="${representative.image}" alt="${representative.full_name_ru}" class="w-8 h-8 rounded-full object-cover">`
+      : `<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+           <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+           </svg>
+         </div>`
+    
+    chatHeader.innerHTML = `
+      <div class="flex items-center gap-3">
+        ${headerAvatarContent}
+        <div>
+          <div class="font-semibold">${representative.full_name_ru}</div>
+          <div class="text-sm text-gray-500">
+            <img src="https://flagcdn.com/20x15/${representative.country.toLowerCase()}.png" 
+                 alt="${representative.country}" 
+                 class="inline w-5 h-3 mr-1">
+            ${representative.country}
+          </div>
+        </div>
+      </div>
+    `
+    
+    // Показываем лоадер в чате
+    const representativesChat = document.getElementById('representatives-chat')
+    representativesChat.innerHTML = `
+      <div class="flex items-center justify-center flex-1">
+        <div class="flex items-center gap-3 text-gray-500">
+          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+          <span>Подключение к чату...</span>
+        </div>
+      </div>
+    `
+    
+    // Подключаемся к приватному WebSocket после задержки
+    setTimeout(() => {
+      this.shouldReconnectPrivate = true
+      this.connectPrivateWebSocket(representative.profile)
+    }, 200)
+  }
+
+  highlightSelectedRepresentative(representative) {
+    // Убираем активное состояние у всех представителей
+    document.querySelectorAll('#representatives-list > div').forEach(item => {
+      item.classList.remove('active-representative')
+      item.style.backgroundColor = ''
+    })
+    
+    // Находим и выделяем выбранного представителя по ID профиля
+    const selectedElement = document.querySelector(`#representatives-list > div[data-profile="${representative.profile}"]`)
+    if (selectedElement) {
+      selectedElement.classList.add('active-representative')
+      selectedElement.style.backgroundColor = '#FBFBFB'
+    }
+  }
+
+  showRepresentativeChat(representative) {
+    // Переключаемся на вкладку представителей в правой части
+    this.switchToRepresentativesChat(representative)
+  }
+
+  showRepresentativesPlaceholder() {
+    // Скрываем все чаты
+    document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    // Показываем чат представителей с заглушкой
+    const representativesChat = document.querySelector('#representatives-chat')
+    if (representativesChat) {
+      representativesChat.classList.remove('hidden')
+      representativesChat.classList.add('active', 'flex')
+      representativesChat.style.display = 'flex'
+      
+      // Устанавливаем заглушку
+      representativesChat.innerHTML = `
+        <div class="flex items-center justify-center flex-1 text-gray-500">
+          <div class="text-center">
+            <div class="mb-4">
+              <svg class="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Выберите представителя</h3>
+            <p class="text-sm text-gray-500">Выберите представителя из списка слева, чтобы начать чат</p>
+          </div>
+        </div>
+      `
+    }
+    
+    // Обновляем заголовок чата
+    const chatHeader = document.getElementById('chat-header')
+    if (chatHeader) {
+      chatHeader.innerHTML = `<span>Представители стран</span>`
+    }
+  }
+
+  switchToRepresentativesChat(representative) {
+    // Убираем активные стили у всех вкладок
+    document.querySelectorAll('.chat-tab').forEach(tab => {
+      tab.classList.remove('active', 'bg-gray-50')
+    })
+    
+    // Добавляем активные стили к вкладке представителей
+    const representativesTab = document.querySelector('.chat-tab[data-tab="representatives"]')
+    if (representativesTab) {
+      representativesTab.classList.add('active', 'bg-gray-50')
+    }
+    
+    // Скрываем все чаты
+    document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    // Показываем чат представителей
+    const representativesChat = document.querySelector('#representatives-chat')
+    if (representativesChat) {
+      representativesChat.classList.remove('hidden')
+      representativesChat.classList.add('active', 'flex')
+      representativesChat.style.display = 'flex'
+      
+      // Обновляем содержимое чата с информацией о выбранном представителе
+      const name = representative.full_name_ru || 'Представитель'
+      const country = representative.country || 'Страна'
+      
+      representativesChat.innerHTML = `
+        <div class="flex items-center justify-center flex-1 text-gray-500">
+          <div class="text-center">
+            <div class="mb-4">
+              <img
+                src="${representative.image || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&auto=format&fit=crop&q=60'}"
+                alt="Avatar"
+                class="w-20 h-20 rounded-full mx-auto object-cover"
+                onerror="this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&auto=format&fit=crop&q=60'"
+              />
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-1">${name}</h3>
+            <p class="text-sm text-gray-500 mb-4">${country}</p>
+            <div class="text-sm text-gray-400">
+              <p>Чат с представителем</p>
+              <p class="mt-1">(функция в разработке)</p>
+            </div>
+          </div>
+        </div>
+      `
+    }
+    
+    // Обновляем заголовок чата
+    const chatHeader = document.getElementById('chat-header')
+    if (chatHeader) {
+      const name = representative.full_name_ru || 'Представитель'
+      chatHeader.innerHTML = `<span>${name}</span>`
+    }
+    
+    // Переключаем комнату
+    this.currentRoom = 'representatives'
+  }
+
+  searchRepresentatives(query) {
+    // Debounce поиска - ждем 300мс после последнего ввода
+    clearTimeout(this.searchTimeout)
+    this.searchTimeout = setTimeout(() => {
+      this.loadRepresentatives(query)
+    }, 300)
+  }
+
+  // Метод для загрузки представителей без поиска (при первом переходе)
+  loadRepresentativesInitial() {
+    this.loadRepresentatives('')
+  }
+
+  disconnect() {
+    // Устанавливаем флаг намеренного закрытия
+    this.isClosingIntentionally = true
+    
+    // Останавливаем все переподключения
+    this.shouldReconnectPublic = false
+    this.shouldReconnectPrivate = false
+    
+    // Закрываем все WebSocket соединения
+    if (this.websocket) {
+      this.websocket.close()
+      this.websocket = null
+    }
+    
+    if (this.privateWebsocket) {
+      this.privateWebsocket.close()
+      this.privateWebsocket = null
+    }
+  }
+
+  async connectPrivateWebSocket(profileId) {
+    try {
+      // Проверяем, нет ли уже активного приватного соединения
+      if (this.privateWebsocket && this.privateWebsocket.readyState === WebSocket.OPEN) {
+        return
+      }
+
+      // Закрываем предыдущее приватное соединение
+      if (this.privateWebsocket) {
+        this.privateWebsocket.close()
+        this.privateWebsocket = null
+      }
+
+      // Устанавливаем флаг переподключения для приватного чата
+      this.shouldReconnectPrivate = true
+
+      const token = localStorage.getItem('access_token')
+      if (!token) {
+        this.showConnectionError('Токен доступа не найден')
+        return
+      }
+
+      const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+
+      this.privateWebsocket = new WebSocket(wsUrl)
+
+      this.privateWebsocket.onopen = () => {
+        // Убираем красную рамку при успешном подключении
+        this.clearErrorState()
+      }
+
+      this.privateWebsocket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          this.handlePrivateMessage(data)
+        } catch (error) {
+          console.error('Ошибка парсинга приватного сообщения:', error)
+        }
+      }
+
+      this.privateWebsocket.onclose = (event) => {
+        // Переподключаемся только если нужно и не закрыто намеренно
+        if (event.code !== 1000 && this.shouldReconnectPrivate && this.currentRepresentative) {
+          setTimeout(() => {
+            if (this.shouldReconnectPrivate && this.currentRepresentative) {
+              this.connectPrivateWebSocket(this.currentRepresentative.profile)
+            }
+          }, 5000)
+        }
+      }
+
+      this.privateWebsocket.onerror = (error) => {
+        console.error('Ошибка приватного WebSocket:', error)
+        
+        // Не показываем ошибку если закрываем намеренно
+        if (!this.isClosingIntentionally) {
+          this.showConnectionError('Ошибка подключения к приватному чату')
+        }
+      }
+
+    } catch (error) {
+      console.error('Ошибка подключения к приватному WebSocket:', error)
+      this.showConnectionError('Не удалось подключиться к приватному чату')
+    }
+  }
+
+  handlePrivateMessage(data) {
+    if (data.message) {
+      // Сохраняем room_id из сообщения
+      if (data.message.room_id) {
+        this.currentPrivateRoomId = data.message.room_id
+      }
+      
+      // Добавляем сообщение в чат
+      this.addPrivateMessageToChat(data.message, true)
+      
+      // Проверяем, нужно ли отправить файл после текстового сообщения
+      if (this.pendingFile && this.isOurPrivateMessage(data.message)) {
+        this.uploadPrivateFile(this.currentPrivateRoomId, this.pendingFile)
+        this.clearAllFiles()
+      }
+    } else if (data.messages) {
+      // Сохраняем room_id из первого сообщения в истории
+      if (data.messages.length > 0 && data.messages[0].room_id) {
+        this.currentPrivateRoomId = data.messages[0].room_id
+      }
+      
+      // История сообщений
+      this.loadPrivateMessageHistory(data.messages)
+    }
+  }
+
+  loadPrivateMessageHistory(messages) {
+    const representativesChat = document.getElementById('representatives-chat')
+    if (!representativesChat) return
+
+    // Очищаем чат и убираем заглушку
+    representativesChat.innerHTML = ''
+
+    if (messages.length === 0) {
+      representativesChat.innerHTML = `
+        <div class="flex items-center justify-center flex-1 text-gray-400">
+          <div class="text-center">
+            <p class="text-base">Пока нет сообщений</p>
+          </div>
+        </div>
+      `
+      return
+    }
+
+    // Сортируем сообщения по дате (старые сверху)
+    const sortedMessages = messages.sort((a, b) => 
+      new Date(a.created_at) - new Date(b.created_at)
+    )
+
+    // Добавляем все сообщения
+    sortedMessages.forEach(messageData => {
+      this.addPrivateMessageToChat(messageData, false) // false = не прокручивать после каждого
+    })
+
+    // Прокручиваем к концу после загрузки всех сообщений
+    this.scrollToBottom()
+  }
+
+  addPrivateMessageToChat(messageData, shouldScroll = true) {
+    const representativesChat = document.getElementById('representatives-chat')
+    if (!representativesChat) return
+
+    // Убираем заглушку если она есть
+    const placeholder = representativesChat.querySelector('.flex.items-center.justify-center')
+    if (placeholder) {
+      placeholder.remove()
+    }
+
+    const messageDate = new Date(messageData.created_at)
+    this.addDateLabelIfNeeded(representativesChat, messageDate)
+
+    // Определяем, наше ли это сообщение
+    const isOurMessage = this.isOurPrivateMessage(messageData)
+
+    // Создаем HTML для нового сообщения
+    const messageElement = document.createElement('div')
+    messageElement.className = `message flex gap-3 mb-4 ${isOurMessage ? 'justify-end' : 'justify-start'}`
+    
+    // Форматируем время
+    const messageTime = messageDate.toLocaleTimeString('ru-RU', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    // Обрабатываем файл (единый стиль для всех типов файлов)
+    let fileHtml = ''
+    if (messageData.file) {
+      const fileUrl = messageData.file.startsWith('http') 
+        ? messageData.file 
+        : `https://portal.gradients.academy${messageData.file}`
+      const fileName = messageData.file.split('/').pop()
+      fileHtml = `
+        <div class="mt-2">
+          <div class="min-h-[44px] flex items-center gap-2 bg-white rounded-[12px] p-4 cursor-pointer select-none" onclick="window.open('${fileUrl}', '_blank')">
+            <span class="flex-shrink-0">
+              <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.33203 17.3334H11.6654C13.3222 17.3334 14.6654 15.9903 14.6654 14.3334V7.04655C14.6654 6.17078 14.2827 5.33873 13.6177 4.76878L9.67463 1.38898C9.1309 0.922925 8.43839 0.666748 7.72226 0.666748H4.33203C2.67518 0.666748 1.33203 2.00989 1.33203 3.66675V14.3334C1.33203 15.9903 2.67517 17.3334 4.33203 17.3334Z" stroke="#F4891E" stroke-linejoin="round"/>
+                <path d="M8.83203 1.0835V3.66683C8.83203 4.7714 9.72746 5.66683 10.832 5.66683H14.2487" stroke="#F4891E" stroke-linejoin="round"/>
+                <path d="M4.66406 14.8335H11.3307" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 7.3335V12.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5.5 9.8335L8 12.3335L10.5 9.8335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="text-[#F4891E] font-medium text-base truncate">${fileName}</span>
+          </div>
+        </div>
+      `
+    }
+
+    // Определяем стили для сообщения в зависимости от отправителя
+    const messageContainerClass = isOurMessage ? 'max-w-xs lg:max-w-md' : 'max-w-xs lg:max-w-md'
+    const messageBgClass = isOurMessage ? 'bg-orange-secondary text-orange-primary' : 'text-gray-900'
+    const messageBgStyle = isOurMessage ? '' : 'background-color: #EFEFEF;'
+    const messageRounding = isOurMessage ? 'rounded-tl-lg rounded-bl-lg rounded-br-lg' : 'rounded-tr-lg rounded-bl-lg rounded-br-lg'
+    
+    // Определяем аватар и роль в зависимости от отправителя
+    let avatarSrc, senderRole
+    if (isOurMessage) {
+      // Наше сообщение - администратор
+      avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+      senderRole = "(Администратор)"
+    } else {
+      // Сообщение представителя
+      avatarSrc = this.currentRepresentative && this.currentRepresentative.image 
+        ? `https://portal.gradients.academy${this.currentRepresentative.image}`
+        : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&auto=format&fit=crop&q=60"
+      senderRole = "(Представитель)"
+    }
+
+    if (isOurMessage) {
+      // Наше сообщение - аватар справа
+      messageElement.innerHTML = `
+        <div class="${messageContainerClass}">
+          <div class="mb-1 flex items-center gap-4 text-sm font-bold justify-end">
+            <div class="flex items-center gap-2">
+              <span>${messageData.sender_name || 'Администратор'}</span>
+              <span>${senderRole}</span>
+            </div>
+            <img
+              src="${avatarSrc}"
+              alt="Avatar"
+              class="h-8 w-8 rounded-full"
+            />
+          </div>
+          <div class="mr-12">
+            <div class="${messageBgClass} ${messageRounding} p-3" style="${messageBgStyle}">
+              <p>${messageData.content}</p>
+              ${fileHtml}
+            </div>
+            <div class="mt-1 text-xs text-right">${messageTime}</div>
+          </div>
+        </div>
+      `
+    } else {
+      // Чужое сообщение - аватар слева
+      messageElement.innerHTML = `
+        <img
+          src="${avatarSrc}"
+          alt="Avatar"
+          class="h-8 w-8 rounded-full self-start"
+        />
+        <div class="${messageContainerClass}">
+          <div class="mb-1 flex items-center gap-2 text-sm font-bold">
+            <span>${messageData.sender_name || 'Представитель'}</span>
+            <span>${senderRole}</span>
+          </div>
+          <div class="${messageBgClass} ${messageRounding} p-3" style="${messageBgStyle}">
+            <p>${messageData.content}</p>
+            ${fileHtml}
+          </div>
+          <div class="mt-1 text-xs">${messageTime}</div>
+        </div>
+      `
+    }
+
+    representativesChat.appendChild(messageElement)
+
+    if (shouldScroll) {
+      this.scrollToBottom()
+    }
+  }
+
+  isOurPrivateMessage(message) {
+    // Проверяем по Profile ID пользователя (правильная проверка)
+    try {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        const user = JSON.parse(userData)
+        const matchesProfileId = message.sender_id === user.profile.id
+        
+        if (matchesProfileId) {
+          return true
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка при получении данных пользователя:', error)
+    }
+
+    // Дополнительная проверка по времени и содержимому для недавно отправленных сообщений с текстом
+    if (this.pendingMessageTime && this.pendingMessageContent) {
+      const messageTime = new Date(message.created_at).getTime()
+      const timeDiff = Math.abs(messageTime - this.pendingMessageTime)
+      const contentMatches = message.content === this.pendingMessageContent
+      
+      const isOurMessage = timeDiff < 30000 && contentMatches
+      
+      if (isOurMessage) {
+        return true
+      }
+    }
+    
+    return false
+  }
+
+  async uploadPrivateFile(roomId, file) {
+    try {
+      if (!roomId) {
+        this.showErrorMessage('Ошибка: ID комнаты не определен')
+        return
+      }
+      
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const url = `https://portal.gradients.academy/chats/private/${roomId}/attachments/`
+
+      const response = await authorizedFetch(url, {
+        method: 'POST',
+        body: formData,
+        // НЕ указываем Content-Type - браузер сам установит multipart/form-data с boundary
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Ошибка загрузки: ${response.status} - ${errorText}`)
+      }
+
+      const result = await response.json()
+      this.showSuccessMessage(`Файл "${file.name}" успешно прикреплен`)
+      
+    } catch (error) {
+      console.error('Ошибка загрузки файла в приватный чат:', error)
+      this.showErrorMessage('Не удалось загрузить файл: ' + error.message)
+    }
+  }
+
+  clearErrorState() {
+    // Очищаем ошибки и скрываем сообщение об ошибке
+    this.hideErrorMessage()
+    
+    // Включаем input и кнопки обратно
+    this.setInputDisabled(false)
+  }
+
+  showConnectionError(message) {
+    // Определяем в какой чат показать ошибку
+    const isPrivateChat = this.currentRoom === 'representatives' && this.currentRepresentative
+    const chatContainer = isPrivateChat 
+      ? document.getElementById('representatives-chat')
+      : document.getElementById('announcements-chat')
+    
+    if (chatContainer) {
+      // Очищаем чат и показываем ошибку
+      chatContainer.innerHTML = `
+        <div class="flex items-center justify-center flex-1">
+          <div class="text-center text-red-500">
+            <div class="mb-4">
+              <svg class="w-16 h-16 mx-auto text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-red-700 mb-2">Ошибка подключения</h3>
+            <p class="text-sm text-red-600">${message}</p>
+            <p class="text-xs text-red-500 mt-2">Попытка переподключения...</p>
+          </div>
+        </div>
+      `
+    }
+    
+    // Делаем input и кнопки disabled
+    this.setInputDisabled(true)
+  }
+
+  setInputDisabled(disabled) {
+    if (this.messageInput) {
+      this.messageInput.disabled = disabled
+      if (disabled) {
+        this.messageInput.classList.add('bg-gray-100', 'cursor-not-allowed')
+        this.messageInput.placeholder = 'Подключение к чату...'
+      } else {
+        this.messageInput.classList.remove('bg-gray-100', 'cursor-not-allowed')
+        this.messageInput.placeholder = 'Введите ваше сообщение...'
+      }
+    }
+    
+    // Отключаем кнопки отправки и прикрепления файла
+    const sendButton = this.messageInputContainer?.querySelector('button[title="Отправить сообщение"]')
+    const attachButton = this.messageInputContainer?.querySelector('button[title="Прикрепить файл"]')
+    
+    if (sendButton) {
+      sendButton.disabled = disabled
+      if (disabled) {
+        sendButton.classList.add('opacity-50', 'cursor-not-allowed')
+      } else {
+        sendButton.classList.remove('opacity-50', 'cursor-not-allowed')
+      }
+    }
+    
+    if (attachButton) {
+      attachButton.disabled = disabled
+      if (disabled) {
+        attachButton.classList.add('opacity-50', 'cursor-not-allowed')
+      } else {
+        attachButton.classList.remove('opacity-50', 'cursor-not-allowed')
+      }
+    }
+  }
+
+  stopAllConnections() {
+    // Устанавливаем флаг намеренного закрытия
+    this.isClosingIntentionally = true
+    
+    // Останавливаем все переподключения
+    this.shouldReconnectPublic = false
+    this.shouldReconnectPrivate = false
+    
+    // Сбрасываем room_id при остановке соединений
+    this.currentPrivateRoomId = null
+    
+    // Закрываем публичный WebSocket
+    if (this.websocket) {
+      this.websocket.close()
+      this.websocket = null
+    }
+    
+    // Закрываем приватный WebSocket
+    if (this.privateWebsocket) {
+      this.privateWebsocket.close()
+      this.privateWebsocket = null
+    }
+    
+    // Очищаем ошибки подключения
+    this.hideErrorMessage()
+    
+    // Включаем input обратно
+    this.setInputDisabled(false)
+    
+    // Сбрасываем флаг через небольшую задержку
+    setTimeout(() => {
+      this.isClosingIntentionally = false
+    }, 500)
+  }
+}
+
+// Инициализация чата при загрузке страницы
+let adminChat = null
+
+document.addEventListener('DOMContentLoaded', () => {
+  adminChat = new AdminChat()
+  window.adminChat = adminChat // Делаем доступным глобально
+  
+  // Подключаемся к WebSocket для объявлений по умолчанию
+  adminChat.connectWebSocket()
+})
+
+// Интеграция с переключением вкладок
+const originalSwitchChatTab = window.switchChatTab
+window.switchChatTab = function(tabName) {
+  // Останавливаем все соединения перед переключением табов
+  if (adminChat) {
+    adminChat.stopAllConnections()
+    
+    // Очищаем файлы и input при переключении табов
+    adminChat.clearAllFiles()
+    if (adminChat.messageInput) {
+      adminChat.messageInput.value = ''
+      adminChat.messageInput.style.height = '5px'
+      adminChat.messageInput.style.height = adminChat.messageInput.scrollHeight + 'px'
+    }
+  }
+  
+  // Вызываем оригинальную функцию
+  originalSwitchChatTab(tabName)
+  
+  // Переключаем комнату в чате с задержкой
+  setTimeout(() => {
+    if (adminChat) {
+      adminChat.switchRoom(tabName)
+    }
+  }, 100)
+}
+
+// Очистка при закрытии страницы
+window.addEventListener('beforeunload', () => {
+  if (adminChat) {
+    adminChat.disconnect()
+  }
+}) 
