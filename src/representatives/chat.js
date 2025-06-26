@@ -8,6 +8,7 @@ class RepresentativeChat {
     }
     this.privateWebsockets = {} // Приватные соединения с администраторами
     this.privateRoomIds = {} // Хранение room_id для каждого приватного чата (profileId -> roomId)
+    this.groupRoomId = null // ID комнаты группового чата
     this.currentTab = 'announcements' // По умолчанию объявления
     this.currentAdmin = null // Текущий выбранный администратор
     this.administrators = [] // Список администраторов
@@ -20,23 +21,29 @@ class RepresentativeChat {
     this.currentErrorType = null
     this.shouldReconnect = {
       announcements: true,
-      group: false
+      group: true
     }
     this.shouldReconnectPrivate = {} // Флаги переподключения для приватных чатов
     this.isClosingIntentionally = false
     this.groupRoomId = null // ID групповой комнаты для файлов
     
+    // Новые свойства для системы уведомлений
+    this.unreadChats = new Set() // Множество ID администраторов с непрочитанными сообщениями
+    this.readChats = new Set() // Множество ID администраторов с прочитанными сообщениями
+    this.lastMessageTimes = new Map() // Карта времени последних сообщений по администраторам
+    
+    // Статусы для публичных чатов
+    this.publicChatStatuses = {
+      announcements: 'read', // 'unread', 'read'
+      group: 'read'
+    }
+    
     this.initializeElements()
     this.setupEventListeners()
     this.setupChatTabs()
     
-    // Загружаем список администраторов
-    this.loadAdministrators()
-    
-    // Инициализируем подключение к объявлениям после небольшой задержки
-    setTimeout(() => {
-      this.connectWebSocket('announcements')
-    }, 100)
+    // Инициализируем все чаты сразу
+    this.initializeAllChats()
   }
 
   initializeElements() {
@@ -108,8 +115,14 @@ class RepresentativeChat {
     // Останавливаем текущие соединения
     this.disconnect()
     
-    // Убираем активные стили у всех вкладок
-    document.querySelectorAll('.chat-tab').forEach(tab => {
+    // Отмечаем публичный чат как прочитанный при переключении на него
+    if (tabName === 'announcements' || tabName === 'group') {
+      this.markPublicChatAsRead(tabName)
+      this.updatePublicChatStatus(tabName)
+    }
+    
+    // Убираем активные стили у всех вкладок (включая администраторов)
+    document.querySelectorAll('.chat-tab, .admin-chat-tab').forEach(tab => {
       tab.classList.remove('active', 'bg-gray-50')
     })
     
@@ -119,8 +132,15 @@ class RepresentativeChat {
       selectedTab.classList.add('active', 'bg-gray-50')
     }
     
-    // Скрываем все чаты
+    // Скрываем все чаты (включая приватные)
     document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    // Также скрываем все приватные чаты с администраторами
+    document.querySelectorAll('[id^="admin-chat-"]').forEach(chat => {
       chat.classList.remove('active', 'flex')
       chat.classList.add('hidden')
       chat.style.display = 'none'
@@ -173,6 +193,11 @@ class RepresentativeChat {
     
     // Переключаем вкладку и подключаемся
     this.currentTab = tabName
+    
+    // Сбрасываем текущего администратора при переходе к публичным чатам
+    if (tabName === 'announcements' || tabName === 'group') {
+      this.currentAdmin = null
+    }
     
     // Очищаем поля ввода
     this.clearInputs()
@@ -355,6 +380,20 @@ class RepresentativeChat {
 
   handleMessage(data, tabName) {
     if (data.message) {
+      // Сохраняем room_id для группового чата если получен
+      if (tabName === 'group' && data.message.room_id) {
+        this.groupRoomId = data.message.room_id
+      }
+      
+      // Проверяем, является ли это новым сообщением не от нас
+      if (!this.isOurMessage(data.message)) {
+        // Если мы не в этом чате, отмечаем как непрочитанное
+        if (this.currentTab !== tabName) {
+          this.markPublicChatAsUnread(tabName)
+          this.updatePublicChatStatus(tabName)
+        }
+      }
+      
       // Добавляем сообщение в чат
       this.addMessageToChat(data.message, tabName, true)
       
@@ -396,6 +435,11 @@ class RepresentativeChat {
         loader.remove()
       }
     })
+
+    // Сохраняем room_id для группового чата из истории
+    if (tabName === 'group' && messages.length > 0 && messages[0].room_id) {
+      this.groupRoomId = messages[0].room_id
+    }
 
     // Сортируем сообщения по дате (старые сверху)
     const sortedMessages = messages.sort((a, b) => 
@@ -668,9 +712,9 @@ class RepresentativeChat {
       const formData = new FormData()
       formData.append('file', file)
 
-              // Получаем ID групповой комнаты (предполагаем что это 2, но можно получать динамически)
-        const groupRoomId = 2
-        const url = `https://portal.gradients.academy/chats/rooms/${groupRoomId}/attachments/`
+      // Используем сохраненный room_id группового чата или значение по умолчанию
+      const groupRoomId = this.groupRoomId || 2
+      const url = `https://portal.gradients.academy/chats/rooms/${groupRoomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',
@@ -952,6 +996,211 @@ class RepresentativeChat {
     }
   }
 
+  async initializeAllChats() {
+    // Загружаем всех администраторов и подключаемся к их чатам
+    await this.loadAllAdministrators()
+    
+    // Инициализируем статусы публичных чатов
+    this.initializePublicChatStatuses()
+    
+    // Подключаемся к объявлениям после небольшой задержки
+    setTimeout(() => {
+      this.connectWebSocket('announcements')
+    }, 100)
+    
+    // Подключаемся к групповому чату
+    setTimeout(() => {
+      this.connectWebSocket('group')
+    }, 200)
+  }
+
+  initializePublicChatStatuses() {
+    // Инициализируем статусы для объявлений и группового чата
+    this.updatePublicChatStatus('announcements')
+    this.updatePublicChatStatus('group')
+  }
+
+  movePublicChatToTop(tabName) {
+    const chatContainer = document.querySelector('.space-y-1')
+    if (!chatContainer) return
+    
+    const chatElement = document.querySelector(`[data-tab="${tabName}"]`)
+    if (!chatElement) return
+    
+    // Перемещаем публичный чат в самое начало списка (выше всех администраторов)
+    if (chatContainer.firstElementChild !== chatElement) {
+      chatContainer.insertBefore(chatElement, chatContainer.firstElementChild)
+    }
+  }
+
+  async loadAllAdministrators() {
+    try {
+      const response = await authorizedFetch('https://portal.gradients.academy/chats/administrators')
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка загрузки: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      this.administrators = data.results || []
+      this.administratorsLoaded = true
+      
+      // Рендерим список администраторов
+      this.renderAdministratorsList()
+      
+      // Подключаемся ко всем приватным чатам
+      for (const admin of this.administrators) {
+        this.connectToAdministratorChat(admin.profile)
+      }
+      
+    } catch (error) {
+      console.error('Ошибка загрузки всех администраторов:', error)
+    }
+  }
+
+  async connectToAdministratorChat(profileId) {
+    // Проверяем, нет ли уже активного соединения для этого администратора
+    if (this.privateWebsockets[profileId]) {
+      const existingWs = this.privateWebsockets[profileId]
+      if (existingWs.readyState === WebSocket.OPEN) {
+        return
+      }
+    }
+
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      console.error('Токен доступа не найден для подключения к чату администратора:', profileId)
+      return
+    }
+
+    try {
+      const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+      const websocket = new WebSocket(wsUrl)
+
+      websocket.onopen = () => {
+        console.log(`Подключено к приватному чату с администратором ${profileId}`)
+      }
+
+      websocket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          this.handleAdministratorMessage(data, profileId)
+        } catch (error) {
+          console.error('Ошибка парсинга сообщения от администратора:', error)
+        }
+      }
+
+      websocket.onclose = (event) => {
+        // Переподключаемся если соединение разорвано не намеренно
+        if (event.code !== 1000 && !this.isClosingIntentionally) {
+          setTimeout(() => {
+            this.connectToAdministratorChat(profileId)
+          }, 5000)
+        }
+      }
+
+      websocket.onerror = (error) => {
+        console.error(`Ошибка WebSocket для администратора ${profileId}:`, error)
+      }
+
+      // Сохраняем WebSocket для этого администратора
+      this.privateWebsockets[profileId] = websocket
+
+    } catch (error) {
+      console.error(`Ошибка подключения к приватному чату администратора ${profileId}:`, error)
+    }
+  }
+
+  handleAdministratorMessage(data, profileId) {
+    if (data.message) {
+      // Проверяем, является ли это новым сообщением от администратора
+      if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {
+        // Это новое сообщение от администратора
+        this.markChatAsUnread(profileId)
+        this.moveAdministratorToTop(profileId)
+        this.updateAdministratorsList()
+      }
+      
+      // Если мы сейчас в этом чате, обрабатываем сообщение как обычно
+      if (this.currentAdmin && this.currentAdmin.profile === profileId) {
+        this.handlePrivateMessage(data, profileId)
+      }
+    }
+  }
+
+  isOurPrivateMessageByProfileId(message, profileId) {
+    // Проверяем по Profile ID пользователя
+    try {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        const user = JSON.parse(userData)
+        return message.sender_id === user.profile.id
+      }
+    } catch (error) {
+      console.error('Ошибка при получении данных пользователя:', error)
+    }
+    return false
+  }
+
+  markChatAsUnread(profileId) {
+    this.unreadChats.add(profileId)
+    this.readChats.delete(profileId) // Убираем из прочитанных если был там
+    this.lastMessageTimes.set(profileId, Date.now())
+  }
+
+  markChatAsRead(profileId) {
+    this.unreadChats.delete(profileId)
+    this.readChats.add(profileId)
+  }
+
+  moveAdministratorToTop(profileId) {
+    // Находим администратора в списке
+    const adminIndex = this.administrators.findIndex(admin => admin.profile === profileId)
+    if (adminIndex > 0) {
+      // Перемещаем его в начало списка
+      const administrator = this.administrators.splice(adminIndex, 1)[0]
+      this.administrators.unshift(administrator)
+    }
+  }
+
+  updateAdministratorsList() {
+    // Перерендериваем список администраторов с учетом новых статусов
+    this.renderAdministratorsList()
+  }
+
+  markPublicChatAsUnread(tabName) {
+    this.publicChatStatuses[tabName] = 'unread'
+  }
+
+  markPublicChatAsRead(tabName) {
+    this.publicChatStatuses[tabName] = 'read'
+  }
+
+  updatePublicChatStatus(tabName) {
+    const statusElement = document.getElementById(`${tabName}-status-icon`)
+    if (!statusElement) return
+
+    const status = this.publicChatStatuses[tabName]
+    
+    if (status === 'unread') {
+      // Новое сообщение - оранжевая точка
+      statusElement.innerHTML = `
+        <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="3" fill="#F4891E"/>
+        </svg>
+      `
+      // Перемещаем чат наверх при новом сообщении
+      this.movePublicChatToTop(tabName)
+    } else {
+      // Прочитано - зеленая галочка
+      statusElement.innerHTML = `
+        <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.0001 5.16656L11.0601 4.22656L6.83344 8.45323L7.77344 9.39323L12.0001 5.16656ZM14.8268 4.22656L7.77344 11.2799L4.98677 8.4999L4.04677 9.4399L7.77344 13.1666L15.7734 5.16656L14.8268 4.22656ZM0.273438 9.4399L4.0001 13.1666L4.9401 12.2266L1.2201 8.4999L0.273438 9.4399Z" fill="#0DB459"/>
+        </svg>
+      `
+    }
+  }
+
   async loadAdministrators() {
     if (this.administratorsLoaded) return
     
@@ -991,6 +1240,27 @@ class RepresentativeChat {
         this.selectAdministrator(admin)
       }
       
+      const hasUnread = this.unreadChats.has(admin.profile)
+      const hasRead = this.readChats.has(admin.profile)
+      
+      // Определяем статус чата и соответствующую иконку
+      let statusIcon = ''
+      if (hasUnread) {
+        // Новое сообщение - оранжевая точка
+        statusIcon = `
+          <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="3" fill="#F4891E"/>
+          </svg>
+        `
+      } else {
+        // Прочитано или без статуса - зеленая галочка
+        statusIcon = `
+          <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.0001 5.16656L11.0601 4.22656L6.83344 8.45323L7.77344 9.39323L12.0001 5.16656ZM14.8268 4.22656L7.77344 11.2799L4.98677 8.4999L4.04677 9.4399L7.77344 13.1666L15.7734 5.16656L14.8268 4.22656ZM0.273438 9.4399L4.0001 13.1666L4.9401 12.2266L1.2201 8.4999L0.273438 9.4399Z" fill="#0DB459"/>
+          </svg>
+        `
+      }
+      
       // Создаем аватарку или SVG по умолчанию (делаем такого же размера как иконки в чатах)
       const avatarContent = admin.image 
         ? `<img src="${admin.image}" alt="${admin.full_name_ru}" class="w-12 h-12 rounded-full object-cover">`
@@ -1001,13 +1271,18 @@ class RepresentativeChat {
            </div>`
 
       adminElement.innerHTML = `
-        <div class="flex items-center gap-3">
-          <div class="flex-shrink-0">
-            ${avatarContent}
+        <div class="flex items-center justify-between w-full">
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0">
+              ${avatarContent}
+            </div>
+            <div>
+              <p class="text-sm font-bold">${admin.full_name_ru}</p>
+              <p class="mt-1 text-xs text-gray-500">Администратор</p>
+            </div>
           </div>
-          <div>
-            <p class="text-sm font-bold">${admin.full_name_ru}</p>
-            <p class="mt-1 text-xs text-gray-500">Администратор</p>
+          <div class="flex items-center justify-center w-6 h-6 flex-shrink-0">
+            ${statusIcon}
           </div>
         </div>
       `
@@ -1040,7 +1315,11 @@ class RepresentativeChat {
     // Останавливаем все соединения
     this.disconnect()
     
-    // Убираем активные стили у всех вкладок
+    // Отмечаем чат как прочитанный при его открытии
+    this.markChatAsRead(admin.profile)
+    this.updateAdministratorsList()
+    
+    // Убираем активные стили у ВСЕХ вкладок чата (включая публичные и администраторов)
     document.querySelectorAll('.chat-tab, .admin-chat-tab').forEach(tab => {
       tab.classList.remove('active', 'bg-gray-50')
     })
@@ -1051,8 +1330,15 @@ class RepresentativeChat {
       selectedTab.classList.add('active', 'bg-gray-50')
     }
     
-    // Скрываем все чаты
+    // Скрываем все чаты (включая приватные)
     document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    // Также скрываем все приватные чаты с администраторами  
+    document.querySelectorAll('[id^="admin-chat-"]').forEach(chat => {
       chat.classList.remove('active', 'flex')
       chat.classList.add('hidden')
       chat.style.display = 'none'

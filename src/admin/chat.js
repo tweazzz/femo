@@ -3,7 +3,7 @@
 class AdminChat {
   constructor() {
     this.websocket = null
-    this.privateWebsocket = null // Добавляем отдельный WebSocket для приватных чатов
+    this.privateWebsockets = new Map() // Карта приватных WebSocket'ов по profile_id
     this.currentRoom = 'announcements' // По умолчанию объявления
     this.currentRepresentative = null // Текущий выбранный представитель
     this.currentPrivateRoomId = null // ID текущей приватной комнаты из WebSocket
@@ -19,8 +19,15 @@ class AdminChat {
     this.shouldReconnectPublic = true // Флаг для контроля переподключения публичного чата
     this.isClosingIntentionally = false // Флаг для отслеживания намеренного закрытия
     
+    // Новые свойства для системы уведомлений
+    this.representatives = [] // Список всех представителей
+    this.unreadChats = new Set() // Множество ID представителей с непрочитанными сообщениями
+    this.readChats = new Set() // Множество ID представителей с прочитанными сообщениями
+    this.lastMessageTimes = new Map() // Карта времени последних сообщений по представителям
+    
     this.initializeElements()
     this.setupEventListeners()
+    this.initializeAllChats() // Инициализируем все чаты сразу
   }
 
   initializeElements() {
@@ -89,13 +96,9 @@ class AdminChat {
       this.unifiedSearch.addEventListener('input', (e) => {
         const query = e.target.value.trim()
         
-        if (query) {
-          // Если есть поиск, переключаемся на режим представителей
-          this.showRepresentativesMode()
+        // Поиск работает только если мы уже в режиме представителей
+        if (this.representativesContent && !this.representativesContent.classList.contains('hidden')) {
           this.searchRepresentatives(query)
-        } else {
-          // Если поиск очищен, возвращаемся к режиму чатов
-          this.showChatMode()
         }
       })
     }
@@ -174,7 +177,7 @@ class AdminChat {
     try {
       // Определяем, какой WebSocket использовать
       const isPrivateChat = this.currentRoom === 'representatives' && this.currentRepresentative
-      const websocketToUse = isPrivateChat ? this.privateWebsocket : this.websocket
+      const websocketToUse = isPrivateChat ? this.privateWebsockets.get(this.currentRepresentative.profile) : this.websocket
 
       if (!websocketToUse || websocketToUse.readyState !== WebSocket.OPEN) {
         this.showConnectionError(isPrivateChat ? 'Приватный чат не подключен' : 'Чат не подключен')
@@ -214,8 +217,6 @@ class AdminChat {
           content: messageText
         }
 
-
-
         websocketToUse.send(JSON.stringify(messageData))
 
         // Очищаем поле ввода
@@ -245,7 +246,11 @@ class AdminChat {
       
       // Проверяем, нужно ли отправить файл после текстового сообщения
       if (this.pendingFile && this.isOurMessage(data.message)) {
-        this.uploadFile(this.pendingFile)
+        if (this.currentRoom === 'announcements') {
+          this.uploadFile(this.pendingFile)
+        } else if (this.currentRoom === 'representatives' && this.currentPrivateRoomId) {
+          this.uploadPrivateFile(this.currentPrivateRoomId, this.pendingFile)
+        }
         this.clearAllFiles()
       }
     } else if (data.messages) {
@@ -559,9 +564,6 @@ class AdminChat {
   }
 
   switchRoom(roomName) {
-    // Полностью останавливаем все соединения
-    this.stopAllConnections()
-    
     this.currentRoom = roomName
     
     // Очищаем прикрепленные файлы и поле ввода
@@ -592,9 +594,12 @@ class AdminChat {
       if (roomName === 'announcements') {
         this.shouldReconnectPublic = true
         this.currentRepresentative = null
-        this.connectWebSocket()
+        if (!this.websocket || this.websocket.readyState !== WebSocket.OPEN) {
+          this.connectWebSocket()
+        }
       } else if (roomName === 'representatives') {
-        // Приватный WebSocket подключится при выборе представителя
+        // Приватные WebSocket'ы уже подключены ко всем представителям
+        // Конкретный чат подключится при выборе представителя
       }
     }, 100) // Небольшая задержка для корректного закрытия соединений
   }
@@ -783,17 +788,16 @@ class AdminChat {
     // Показываем заглушку выбора представителя в правой части
     this.showRepresentativesPlaceholder()
     
-    // Загружаем список представителей, если еще не загружен
-    if (!this.representativesLoaded) {
-      this.loadRepresentativesInitial()
-      this.representativesLoaded = true
+    // Загружаем список представителей если еще не загружен или если нужно обновить
+    if (!this.representativesLoaded || this.representatives.length === 0) {
+      this.loadRepresentatives('')
+    } else {
+      // Если представители уже загружены, просто обновляем отображение
+      this.renderRepresentativesList({ results: this.representatives })
     }
   }
 
   showChatMode() {
-    // Полностью останавливаем все соединения
-    this.stopAllConnections()
-    
     // Очищаем прикрепленные файлы и поле ввода
     this.clearAllFiles()
     if (this.messageInput) {
@@ -825,18 +829,9 @@ class AdminChat {
       })
     }
     
-    // СРАЗУ очищаем чат объявлений чтобы избежать мерцания ошибки
-    const announcementsChat = document.getElementById('announcements-chat')
-    if (announcementsChat) {
-      announcementsChat.innerHTML = `
-        <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
-          <div class="text-center">
-            <p class="text-base">Пока нет сообщений</p>
-          </div>
-        </div>
-      `
-    }
-
+    // Очищаем старые элементы представителей из основного списка
+    this.clearRepresentativesFromMainList()
+    
     // Возвращаемся к чату объявлений
     this.switchToAnnouncementsChat()
     
@@ -845,12 +840,23 @@ class AdminChat {
       this.unifiedSearch.value = ''
     }
     
-    // Подключаемся к объявлениям после небольшой задержки
+    // Подключаемся к объявлениям если не подключены
     setTimeout(() => {
       this.shouldReconnectPublic = true
       this.currentRoom = 'announcements'
-      this.connectWebSocket()
+      if (!this.websocket || this.websocket.readyState !== WebSocket.OPEN) {
+        this.connectWebSocket()
+      }
     }, 100)
+  }
+
+  // НОВЫЙ МЕТОД: Очистить всех представителей из основного списка
+  clearRepresentativesFromMainList() {
+    const chatModeContent = document.getElementById('chat-mode-content')
+    if (!chatModeContent) return
+    
+    const representativeChats = chatModeContent.querySelectorAll('[data-representative-id]')
+    representativeChats.forEach(chat => chat.remove())
   }
 
   switchToAnnouncementsChat() {
@@ -904,12 +910,165 @@ class AdminChat {
       
       const data = await response.json()
       
-      this.renderRepresentativesList(data)
+      // Если это поиск, не обновляем основной список представителей
+      if (search) {
+        this.renderRepresentativesList(data)
+      } else {
+        this.representatives = data.results || []
+        this.renderRepresentativesList(data)
+      }
       
     } catch (error) {
       console.error('Ошибка загрузки представителей:', error)
       this.showErrorMessage('Не удалось загрузить список представителей')
     }
+  }
+
+  async initializeAllChats() {
+    // Подключаемся к объявлениям
+    this.connectWebSocket()
+    
+    // Загружаем всех представителей и подключаемся к их чатам
+    await this.loadAllRepresentatives()
+  }
+
+  async loadAllRepresentatives() {
+    try {
+      const response = await authorizedFetch('https://portal.gradients.academy/chats/representatives/')
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка загрузки: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      this.representatives = data.results || []
+      
+      // Подключаемся ко всем приватным чатам
+      for (const representative of this.representatives) {
+        this.connectToRepresentativeChat(representative.profile)
+      }
+      
+      this.representativesLoaded = true
+      
+    } catch (error) {
+      console.error('Ошибка загрузки всех представителей:', error)
+    }
+  }
+
+  async connectToRepresentativeChat(profileId) {
+    // Проверяем, нет ли уже активного соединения для этого представителя
+    if (this.privateWebsockets.has(profileId)) {
+      const existingWs = this.privateWebsockets.get(profileId)
+      if (existingWs.readyState === WebSocket.OPEN) {
+        return
+      }
+    }
+
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      console.error('Токен доступа не найден для подключения к чату представителя:', profileId)
+      return
+    }
+
+    try {
+      const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+      const websocket = new WebSocket(wsUrl)
+
+      websocket.onopen = () => {
+        console.log(`Подключено к приватному чату с представителем ${profileId}`)
+      }
+
+      websocket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          this.handleRepresentativeMessage(data, profileId)
+        } catch (error) {
+          console.error('Ошибка парсинга сообщения от представителя:', error)
+        }
+      }
+
+      websocket.onclose = (event) => {
+        // Переподключаемся если соединение разорвано не намеренно
+        if (event.code !== 1000 && !this.isClosingIntentionally) {
+          setTimeout(() => {
+            this.connectToRepresentativeChat(profileId)
+          }, 5000)
+        }
+      }
+
+      websocket.onerror = (error) => {
+        console.error(`Ошибка WebSocket для представителя ${profileId}:`, error)
+      }
+
+      // Сохраняем WebSocket для этого представителя
+      this.privateWebsockets.set(profileId, websocket)
+
+    } catch (error) {
+      console.error(`Ошибка подключения к приватному чату представителя ${profileId}:`, error)
+    }
+  }
+
+  handleRepresentativeMessage(data, profileId) {
+    if (data.message) {
+      // Проверяем, является ли это новым сообщением от представителя
+      if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {
+        // Это новое сообщение от представителя
+        this.markChatAsUnread(profileId)
+        this.moveRepresentativeToTop(profileId)
+        this.updateRepresentativesList()
+        
+        // НОВОЕ: Показываем чат в основном списке, если мы не в режиме представителей
+        this.showRepresentativeInMainList(profileId)
+      }
+      
+      // Если мы сейчас в этом чате, обрабатываем сообщение как обычно
+      if (this.currentRepresentative && this.currentRepresentative.profile === profileId) {
+        this.handlePrivateMessage(data)
+      }
+    }
+  }
+
+  isOurPrivateMessageByProfileId(message, profileId) {
+    // Проверяем по Profile ID пользователя
+    try {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        const user = JSON.parse(userData)
+        return message.sender_id === user.profile.id
+      }
+    } catch (error) {
+      console.error('Ошибка при получении данных пользователя:', error)
+    }
+    return false
+  }
+
+  markChatAsUnread(profileId) {
+    // ИСПРАВЛЕНО: Правильно меняем статус с прочитанного на непрочитанный
+    this.unreadChats.add(profileId)
+    this.readChats.delete(profileId) // Убираем из прочитанных если был там
+    this.lastMessageTimes.set(profileId, Date.now())
+  }
+
+  markChatAsRead(profileId) {
+    this.unreadChats.delete(profileId)
+    this.readChats.add(profileId)
+  }
+
+  moveRepresentativeToTop(profileId) {
+    // Находим представителя в списке
+    const repIndex = this.representatives.findIndex(rep => rep.profile === profileId)
+    if (repIndex > 0) {
+      // Перемещаем его в начало списка
+      const representative = this.representatives.splice(repIndex, 1)[0]
+      this.representatives.unshift(representative)
+    }
+  }
+
+  updateRepresentativesList() {
+    if (!this.representativesList) return
+    
+    // Перерендериваем список представителей с учетом новых статусов
+    this.renderRepresentativesList({ results: this.representatives })
   }
 
   renderRepresentativesList(data) {
@@ -933,6 +1092,27 @@ class AdminChat {
     // Рендерим каждого представителя
     representatives.forEach(rep => {
       const representativeElement = document.createElement('div')
+      const hasUnread = this.unreadChats.has(rep.profile)
+      const hasRead = this.readChats.has(rep.profile)
+      
+      // Определяем статус чата и соответствующую иконку
+      let statusIcon = ''
+      if (hasUnread) {
+        // Новое сообщение - оранжевая точка
+        statusIcon = `
+          <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="8" r="3" fill="#F4891E"/>
+          </svg>
+        `
+      } else {
+        // Прочитано или без статуса - зеленая галочка
+        statusIcon = `
+          <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.0001 5.16656L11.0601 4.22656L6.83344 8.45323L7.77344 9.39323L12.0001 5.16656ZM14.8268 4.22656L7.77344 11.2799L4.98677 8.4999L4.04677 9.4399L7.77344 13.1666L15.7734 5.16656L14.8268 4.22656ZM0.273438 9.4399L4.0001 13.1666L4.9401 12.2266L1.2201 8.4999L0.273438 9.4399Z" fill="#0DB459"/>
+          </svg>
+        `
+      }
+      
       representativeElement.className = 'representative-item mx-4 mb-4 p-4 rounded-lg cursor-pointer hover:bg-[#FBFBFB] transition-colors'
       representativeElement.onclick = () => this.selectRepresentative(rep)
       representativeElement.dataset.profile = rep.profile // Добавляем ID для идентификации
@@ -950,16 +1130,19 @@ class AdminChat {
         <div class="flex items-center gap-3">
           ${avatarContent}
           <div class="flex-1 min-w-0">
-            <div class="font-bold text-sm text-[#222222] truncate flex items-center gap-2">
-              <p>${rep.full_name_ru}</p>
-              <div class="flex items-center gap-1 text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <p class="font-bold text-sm text-[#222222] truncate" style="max-width: 160px;">${rep.full_name_ru}</p>
+              <div class="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
                 <img src="https://flagcdn.com/w20/${rep.country.toLowerCase()}.png"
                     srcset="https://flagcdn.com/w40/${rep.country.toLowerCase()}.png 2x"
                     alt="${rep.country}" 
-                    class="w-5 h-3">
+                    class="w-5 h-3 flex-shrink-0">
               </div>
             </div>
             <p class="text-xs text-[#222222]">Прикрепите файл, пожалуйста</p>
+          </div>
+          <div class="flex items-center justify-center w-6 h-6 flex-shrink-0">
+            ${statusIcon}
           </div>
         </div>
       `
@@ -971,6 +1154,14 @@ class AdminChat {
   selectRepresentative(representative) {
     // Останавливаем все соединения перед подключением к приватному чату
     this.stopAllConnections()
+    
+    // ИСПРАВЛЕНО: Отмечаем чат как прочитанный при его открытии
+    // Все чаты при открытии становятся прочитанными
+    this.markChatAsRead(representative.profile)
+    this.updateRepresentativesList()
+    
+    // Убираем чат представителя из основного списка если он там есть
+    this.removeRepresentativeFromMainList(representative.profile)
     
     // Сбрасываем room_id при смене представителя
     this.currentPrivateRoomId = null
@@ -1037,24 +1228,15 @@ class AdminChat {
     }, 200)
   }
 
-  highlightSelectedRepresentative(representative) {
-    // Убираем активное состояние у всех представителей
-    document.querySelectorAll('#representatives-list > div').forEach(item => {
-      item.classList.remove('active-representative')
-      item.style.backgroundColor = ''
-    })
+  // НОВЫЙ МЕТОД: Убрать представителя из основного списка
+  removeRepresentativeFromMainList(profileId) {
+    const chatModeContent = document.getElementById('chat-mode-content')
+    if (!chatModeContent) return
     
-    // Находим и выделяем выбранного представителя по ID профиля
-    const selectedElement = document.querySelector(`#representatives-list > div[data-profile="${representative.profile}"]`)
-    if (selectedElement) {
-      selectedElement.classList.add('active-representative')
-      selectedElement.style.backgroundColor = '#FBFBFB'
+    const representativeChat = chatModeContent.querySelector(`[data-representative-id="${profileId}"]`)
+    if (representativeChat) {
+      representativeChat.remove()
     }
-  }
-
-  showRepresentativeChat(representative) {
-    // Переключаемся на вкладку представителей в правой части
-    this.switchToRepresentativesChat(representative)
   }
 
   showRepresentativesPlaceholder() {
@@ -1166,9 +1348,41 @@ class AdminChat {
     }, 300)
   }
 
-  // Метод для загрузки представителей без поиска (при первом переходе)
-  loadRepresentativesInitial() {
-    this.loadRepresentatives('')
+  stopAllConnections() {
+    // Устанавливаем флаг намеренного закрытия
+    this.isClosingIntentionally = true
+    
+    // Останавливаем все переподключения
+    this.shouldReconnectPublic = false
+    this.shouldReconnectPrivate = false
+    
+    // Сбрасываем room_id при остановке соединений
+    this.currentPrivateRoomId = null
+    
+    // Закрываем публичный WebSocket
+    if (this.websocket) {
+      this.websocket.close()
+      this.websocket = null
+    }
+    
+    // Закрываем все приватные WebSocket'ы
+    this.privateWebsockets.forEach((websocket, profileId) => {
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        websocket.close()
+      }
+    })
+    this.privateWebsockets.clear()
+    
+    // Очищаем ошибки подключения
+    this.hideErrorMessage()
+    
+    // Включаем input обратно
+    this.setInputDisabled(false)
+    
+    // Сбрасываем флаг через небольшую задержку
+    setTimeout(() => {
+      this.isClosingIntentionally = false
+    }, 500)
   }
 
   disconnect() {
@@ -1185,23 +1399,31 @@ class AdminChat {
       this.websocket = null
     }
     
-    if (this.privateWebsocket) {
-      this.privateWebsocket.close()
-      this.privateWebsocket = null
-    }
+    // Закрываем все приватные WebSocket'ы
+    this.privateWebsockets.forEach((websocket, profileId) => {
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        websocket.close()
+      }
+    })
+    this.privateWebsockets.clear()
   }
 
   async connectPrivateWebSocket(profileId) {
     try {
       // Проверяем, нет ли уже активного приватного соединения
-      if (this.privateWebsocket && this.privateWebsocket.readyState === WebSocket.OPEN) {
-        return
+      if (this.privateWebsockets.has(profileId)) {
+        const existingWs = this.privateWebsockets.get(profileId)
+        if (existingWs.readyState === WebSocket.OPEN) {
+          return
+        }
       }
 
       // Закрываем предыдущее приватное соединение
-      if (this.privateWebsocket) {
-        this.privateWebsocket.close()
-        this.privateWebsocket = null
+      if (this.privateWebsockets.has(profileId)) {
+        const existingWs = this.privateWebsockets.get(profileId)
+        if (existingWs) {
+          existingWs.close()
+        }
       }
 
       // Устанавливаем флаг переподключения для приватного чата
@@ -1215,14 +1437,14 @@ class AdminChat {
 
       const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
 
-      this.privateWebsocket = new WebSocket(wsUrl)
+      const websocket = new WebSocket(wsUrl)
 
-      this.privateWebsocket.onopen = () => {
+      websocket.onopen = () => {
         // Убираем красную рамку при успешном подключении
         this.clearErrorState()
       }
 
-      this.privateWebsocket.onmessage = (event) => {
+      websocket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data)
           this.handlePrivateMessage(data)
@@ -1231,18 +1453,18 @@ class AdminChat {
         }
       }
 
-      this.privateWebsocket.onclose = (event) => {
-        // Переподключаемся только если нужно и не закрыто намеренно
-        if (event.code !== 1000 && this.shouldReconnectPrivate && this.currentRepresentative) {
-          setTimeout(() => {
-            if (this.shouldReconnectPrivate && this.currentRepresentative) {
-              this.connectPrivateWebSocket(this.currentRepresentative.profile)
-            }
-          }, 5000)
-        }
-      }
+             websocket.onclose = (event) => {
+         // Переподключаемся только если нужно и не закрыто намеренно
+         if (event.code !== 1000 && this.shouldReconnectPrivate && this.currentRepresentative && this.currentRepresentative.profile === profileId) {
+           setTimeout(() => {
+             if (this.shouldReconnectPrivate && this.currentRepresentative && this.currentRepresentative.profile === profileId) {
+               this.connectPrivateWebSocket(profileId)
+             }
+           }, 5000)
+         }
+       }
 
-      this.privateWebsocket.onerror = (error) => {
+      websocket.onerror = (error) => {
         console.error('Ошибка приватного WebSocket:', error)
         
         // Не показываем ошибку если закрываем намеренно
@@ -1250,6 +1472,9 @@ class AdminChat {
           this.showConnectionError('Ошибка подключения к приватному чату')
         }
       }
+
+      // Сохраняем WebSocket для этого представителя
+      this.privateWebsockets.set(profileId, websocket)
 
     } catch (error) {
       console.error('Ошибка подключения к приватному WebSocket:', error)
@@ -1575,39 +1800,103 @@ class AdminChat {
     }
   }
 
-  stopAllConnections() {
-    // Устанавливаем флаг намеренного закрытия
-    this.isClosingIntentionally = true
+  // НОВЫЙ МЕТОД: Показать представителя в основном списке чатов
+  showRepresentativeInMainList(profileId) {
+    // Находим представителя
+    const representative = this.representatives.find(rep => rep.profile === profileId)
+    if (!representative) return
     
-    // Останавливаем все переподключения
-    this.shouldReconnectPublic = false
-    this.shouldReconnectPrivate = false
+    // Если мы в режиме чатов (не в режиме представителей), обновляем основной список
+    if (this.chatModeContent && !this.chatModeContent.classList.contains('hidden')) {
+      this.updateMainChatList(representative)
+    }
+  }
+
+  // НОВЫЙ МЕТОД: Обновить основной список чатов
+  updateMainChatList(representative) {
+    const chatModeContent = document.getElementById('chat-mode-content')
+    if (!chatModeContent) return
     
-    // Сбрасываем room_id при остановке соединений
-    this.currentPrivateRoomId = null
+    const chatList = chatModeContent.querySelector('.space-y-1')
+    if (!chatList) return
     
-    // Закрываем публичный WebSocket
-    if (this.websocket) {
-      this.websocket.close()
-      this.websocket = null
+    // Проверяем, есть ли уже элемент для этого представителя
+    let representativeChat = chatList.querySelector(`[data-representative-id="${representative.profile}"]`)
+    const isNewElement = !representativeChat
+    
+    if (!representativeChat) {
+      // Создаем новый элемент чата для представителя
+      representativeChat = document.createElement('a')
+      representativeChat.href = '#'
+      representativeChat.className = 'chat-tab flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50'
+      representativeChat.dataset.representativeId = representative.profile
+      representativeChat.onclick = (e) => {
+        e.preventDefault()
+        this.selectRepresentativeFromMainList(representative)
+      }
     }
     
-    // Закрываем приватный WebSocket
-    if (this.privateWebsocket) {
-      this.privateWebsocket.close()
-      this.privateWebsocket = null
+    // Определяем статус и иконку
+    const hasUnread = this.unreadChats.has(representative.profile)
+    let statusIcon = ''
+    if (hasUnread) {
+      statusIcon = `
+        <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="3" fill="#F4891E"/>
+        </svg>
+      `
     }
     
-    // Очищаем ошибки подключения
-    this.hideErrorMessage()
+    // Обновляем содержимое
+    representativeChat.innerHTML = `
+      <div class="flex-1">
+        <div class="flex items-center gap-2">
+          <p class="text-sm font-bold truncate" style="max-width: 180px;">${representative.full_name_ru}</p>
+          <img src="https://flagcdn.com/w20/${representative.country.toLowerCase()}.png"
+               srcset="https://flagcdn.com/w40/${representative.country.toLowerCase()}.png 2x"
+               alt="${representative.country}" 
+               class="w-5 h-3 flex-shrink-0">
+          ${statusIcon}
+        </div>
+        <p class="mt-1 text-xs text-gray-600">Новое сообщение от представителя</p>
+      </div>
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M9 5l7 7-7 7"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    `
     
-    // Включаем input обратно
-    this.setInputDisabled(false)
+    // Добавляем в начало списка только если это новый элемент
+    if (isNewElement) {
+      const firstChild = chatList.firstElementChild
+      if (firstChild) {
+        chatList.insertBefore(representativeChat, firstChild)
+      } else {
+        chatList.appendChild(representativeChat)
+      }
+    } else {
+      // Если элемент уже существует, перемещаем его в начало
+      const firstChild = chatList.firstElementChild
+      if (firstChild && firstChild !== representativeChat) {
+        chatList.insertBefore(representativeChat, firstChild)
+      }
+    }
+  }
+
+  // НОВЫЙ МЕТОД: Выбор представителя из основного списка
+  selectRepresentativeFromMainList(representative) {
+    // Переходим в режим представителей
+    this.showRepresentativesMode()
     
-    // Сбрасываем флаг через небольшую задержку
+    // Выбираем представителя
     setTimeout(() => {
-      this.isClosingIntentionally = false
-    }, 500)
+      this.selectRepresentative(representative)
+    }, 100)
   }
 }
 
@@ -1618,18 +1907,14 @@ document.addEventListener('DOMContentLoaded', () => {
   adminChat = new AdminChat()
   window.adminChat = adminChat // Делаем доступным глобально
   
-  // Подключаемся к WebSocket для объявлений по умолчанию
-  adminChat.connectWebSocket()
+  // Автоматическая инициализация происходит в конструкторе
 })
 
 // Интеграция с переключением вкладок
 const originalSwitchChatTab = window.switchChatTab
 window.switchChatTab = function(tabName) {
-  // Останавливаем все соединения перед переключением табов
+  // Очищаем файлы и input при переключении табов
   if (adminChat) {
-    adminChat.stopAllConnections()
-    
-    // Очищаем файлы и input при переключении табов
     adminChat.clearAllFiles()
     if (adminChat.messageInput) {
       adminChat.messageInput.value = ''
