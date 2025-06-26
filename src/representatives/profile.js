@@ -66,7 +66,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfile() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const data = await res.json();
@@ -117,7 +117,7 @@ let countriesList = [];
 
 async function loadCountries() {
   try {
-    const res = await fetch('https://portal.gradients.academy/common/countries');
+    const res = await fetch('https://portal.gradients.academy/api/common/countries');
     if (!res.ok) throw new Error(`Ошибка загрузки стран: ${res.status}`);
 
     const data = await res.json();
@@ -144,7 +144,7 @@ document.getElementById('participant-form').addEventListener('submit', async fun
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/users/representative/profile/',
+      'https://portal.gradients.academy/api/users/representative/profile/',
       {
         method: 'PATCH',
         headers: {

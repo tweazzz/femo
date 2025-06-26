@@ -541,7 +541,7 @@ class AdminChat {
       formData.append('file', file)
 
       // Для объявлений всегда используем ID комнаты = 1
-      const url = `https://portal.gradients.academy/chats/rooms/1/attachments/`
+      const url = `https://portal.gradients.academy/api/chats/rooms/1/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',
@@ -899,8 +899,8 @@ class AdminChat {
   async loadRepresentatives(search = '') {
     try {
       const url = search 
-        ? `https://portal.gradients.academy/chats/representatives/?search=${encodeURIComponent(search)}`
-        : 'https://portal.gradients.academy/chats/representatives/'
+        ? `https://portal.gradients.academy/api/chats/representatives/?search=${encodeURIComponent(search)}`
+        : 'https://portal.gradients.academy/api/chats/representatives/'
       
       const response = await authorizedFetch(url)
       
@@ -934,7 +934,7 @@ class AdminChat {
 
   async loadAllRepresentatives() {
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/chats/representatives/')
+      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/representatives/')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1706,7 +1706,7 @@ class AdminChat {
       const formData = new FormData()
       formData.append('file', file)
 
-      const url = `https://portal.gradients.academy/chats/private/${roomId}/attachments/`
+      const url = `https://portal.gradients.academy/api/chats/private/${roomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',

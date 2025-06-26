@@ -119,7 +119,7 @@ async function loadSummary()
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/summary/`
+      `https://portal.gradients.academy/api/users/participant/dashboard/summary/`
     )
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
@@ -138,7 +138,7 @@ async function loadSummary()
 async function loadParticipantsTrend(period = 'week') {
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/activity/?period=${period}`
+      `https://portal.gradients.academy/api/users/participant/dashboard/activity/?period=${period}`
     )
     if (!res.ok) throw new Error('Ошибка при получении данных тренда участников')
 
@@ -225,7 +225,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/users/participant/dashboard/global/`,
+      `https://portal.gradients.academy/api/users/participant/dashboard/global/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -345,7 +345,7 @@ async function loadMyTasks() {
   container.innerHTML = '' // Очистка перед загрузкой
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/users/participant/dashboard/my-tasks'
+      'https://portal.gradients.academy/api/users/participant/dashboard/my-tasks'
     )
     if (!response.ok) throw new Error('Ошибка загрузки задач')
 

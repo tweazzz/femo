@@ -66,7 +66,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -77,7 +77,7 @@ async function loadRepresentativeProfileForHeader() {
 }
 async function loadUserSettings() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/settings/');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/settings/');
     if (!res.ok) throw new Error(`Ошибка загрузки настроек: ${res.status}`);
     const data = await res.json();
 
@@ -111,7 +111,7 @@ async function autoSaveUserSettings() {
   };
 
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/settings/', {
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/settings/', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -162,7 +162,7 @@ document.getElementById('reset-password').addEventListener('click', async () => 
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/users/settings/password/',
+      'https://portal.gradients.academy/api/users/settings/password/',
       {
         method: 'POST',
         headers: {
@@ -194,7 +194,7 @@ document.getElementById('delete-account').addEventListener('click', async () => 
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/users/representative/profile/',
+      'https://portal.gradients.academy/api/users/representative/profile/',
       {
         method: 'DELETE'
       }

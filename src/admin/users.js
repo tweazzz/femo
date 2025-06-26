@@ -72,7 +72,7 @@ async function loadAllUsers() {
     console.log('Загрузка пользователей...')
 
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/users/dashboard/'
+      'https://portal.gradients.academy/api/users/dashboard/'
     )
     if (!res.ok) {
       throw new Error(`Ошибка HTTP: ${res.status} ${res.statusText}`)
@@ -317,7 +317,7 @@ async function downloadAllUsersExcel() {
     }
 
     const response = await fetch(
-      'https://portal.gradients.academy/users/dashboard/export/',
+      'https://portal.gradients.academy/api/users/dashboard/export/',
       {
         method: 'GET',
         headers: {
@@ -363,7 +363,7 @@ async function fetchUsersWithFilters(page = 1, size = pageSize) {
   params.append('page', page)
   params.append('page_size', size)
 
-  const url = `https://portal.gradients.academy/users/dashboard/?${params.toString()}`
+  const url = `https://portal.gradients.academy/api/users/dashboard/?${params.toString()}`
   const res = await authorizedFetch(url)
 
   if (!res.ok) throw new Error(`Ошибка HTTP: ${res.status}`)
@@ -384,7 +384,7 @@ async function updateTotalCountAndPagination() {
   params.append('page', 1)
   params.append('page_size', 50)
 
-  const url = `https://portal.gradients.academy/users/dashboard/?${params.toString()}`
+  const url = `https://portal.gradients.academy/api/users/dashboard/?${params.toString()}`
   const res = await authorizedFetch(url)
 
   if (!res.ok)
@@ -475,7 +475,7 @@ async function addUser(formId, role = 'participant') {
     }
 
     const response = await fetch(
-      'https://portal.gradients.academy/users/dashboard/',
+      'https://portal.gradients.academy/api/users/dashboard/',
       {
         method: 'POST',
         headers: {
@@ -546,7 +546,7 @@ async function deleteUser(userId) {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/users/dashboard/${userId}/`,
+      `https://portal.gradients.academy/api/users/dashboard/${userId}/`,
       {
         method: 'DELETE',
         headers: {
@@ -658,7 +658,7 @@ async function updateUserFromEditForm() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/users/dashboard/${userId}/`,
+      `https://portal.gradients.academy/api/users/dashboard/${userId}/`,
       {
         method: 'PUT',
         headers: {
@@ -755,7 +755,7 @@ async function populateCountryAndClassOptions() {
   try {
     // Загрузка стран
     const res = await fetch(
-      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
     )
     const data = await res.json()
     const countries = data.results

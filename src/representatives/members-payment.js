@@ -11,7 +11,7 @@ async function loadParticipantPayments() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/payments`
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/payments`
     );
     if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
     allPayments = await res.json();
@@ -125,7 +125,7 @@ function updatePaymentsView() {
 async function downloadPaymentReceipt(participantId, transactionId) {
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/` +
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/` +
       `${participantId}/payments/${transactionId}/download`
     );
     if (!res.ok) throw new Error(res.status);

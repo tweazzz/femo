@@ -64,7 +64,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -77,7 +77,7 @@ async function loadRepresentativeProfileForHeader() {
 async function loadRepresentativeStats() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/representatives/dashboard/stats/'
+      'https://portal.gradients.academy/api/results/representatives/dashboard/stats/'
     )
 
     if (!res.ok) {
@@ -99,7 +99,7 @@ async function loadCurrentOlympiad() {
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/representatives/dashboard/current-olympiad/'
+      'https://portal.gradients.academy/api/results/representatives/dashboard/current-olympiad/'
     )
 
     if (!res.ok) {
@@ -237,7 +237,7 @@ async function loadCurrentOlympiad() {
   async function loadRepresentativeRanking() {
     try {
       const res = await authorizedFetch(
-        'https://portal.gradients.academy/results/representatives/dashboard/ranking/'
+        'https://portal.gradients.academy/api/results/representatives/dashboard/ranking/'
       )
 
       if (!res.ok) {

@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await authorizedFetch('https://portal.gradients.academy/users/administrator/profile/', {
+        const response = await authorizedFetch('https://portal.gradients.academy/api/users/administrator/profile/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -187,7 +187,7 @@ document.querySelector('#participant-form').addEventListener('submit', async (e)
     try {
       const token = localStorage.getItem('access_token');
       const response = await fetch(
-        'https://portal.gradients.academy/users/administrator/profile/',
+        'https://portal.gradients.academy/api/users/administrator/profile/',
         {
           method: 'PATCH',
           headers: { Authorization: `Bearer ${token}` },
@@ -218,7 +218,7 @@ document.querySelector('#participant-form').addEventListener('submit', async (e)
     }
     try {
       const response = await fetch(
-        'https://portal.gradients.academy/users/administrator/profile/',
+        'https://portal.gradients.academy/api/users/administrator/profile/',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!response.ok) throw new Error('Ошибка при получении профиля');

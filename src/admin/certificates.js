@@ -135,7 +135,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/certificates/dashboard/?${params.toString()}`,
+      `https://portal.gradients.academy/api/certificates/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -380,7 +380,7 @@ async function handlePublishClick() {
   try {
     const token = localStorage.getItem('access_token')
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/certificates/dashboard/publish/',
+      'https://portal.gradients.academy/api/certificates/dashboard/publish/',
       {
         method: 'POST',
         headers: {
@@ -419,7 +419,7 @@ function getCertificateWordForm(count) {
 
 
 function downloadCertificate(id) {
-  const url = `https://portal.gradients.academy/certificates/dashboard/${id}/download`
+  const url = `https://portal.gradients.academy/api/certificates/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   fetch(url, {

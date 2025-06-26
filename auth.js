@@ -15,7 +15,7 @@ async function refreshAccessToken() {
 
   try {
     const response = await fetch(
-      'https://portal.gradients.academy/users/token/refresh/',
+      'https://portal.gradients.academy/api/users/token/refresh/',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

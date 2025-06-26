@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/users/participant/profile/', {
+    const response = await authorizedFetch('https://portal.gradients.academy/api/users/participant/profile/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

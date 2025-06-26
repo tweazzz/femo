@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         const response = await fetch(
-          'https://portal.gradients.academy/results/dashboard/results/import/',
+          'https://portal.gradients.academy/api/results/dashboard/results/import/',
           {
             method: 'POST',
             headers: {
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         const response = await authorizedFetch(
-          'https://portal.gradients.academy/results/dashboard/results/publish/',
+          'https://portal.gradients.academy/api/results/dashboard/results/publish/',
           {
             method: 'POST',
             headers: {
@@ -266,7 +266,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/dashboard/results/?${params.toString()}`,
+      `https://portal.gradients.academy/api/results/dashboard/results/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -417,7 +417,7 @@ function setupAssignmentFilters() {
 async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
     )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 
@@ -438,7 +438,7 @@ async function populateCountryFilter() {
 async function populateOlympiadFilter() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/olympiads/dashboard/'
+      'https://portal.gradients.academy/api/olympiads/dashboard/'
     )
     if (!response.ok) throw new Error('Ошибка загрузки олимпиад')
 
@@ -468,7 +468,7 @@ async function loadOlympiadSummary(olympiadId) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/dashboard/results/summary/?olympiad=${olympiadId}`
+      `https://portal.gradients.academy/api/results/dashboard/results/summary/?olympiad=${olympiadId}`
     )
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
@@ -509,7 +509,7 @@ async function exportTableToExcel() {
   try {
     do {
       const response = await authorizedFetch(
-        `https://portal.gradients.academy/results/dashboard/results/?page=${page}&${params.toString()}`,
+        `https://portal.gradients.academy/api/results/dashboard/results/?page=${page}&${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -580,7 +580,7 @@ async function handleSinglePublish(id) {
 
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/results/dashboard/results/publish/',
+      'https://portal.gradients.academy/api/results/dashboard/results/publish/',
       {
         method: 'POST',
         headers: {
@@ -648,7 +648,7 @@ document
     console.log('BODY', body)
     try {
       const response = await fetch(
-        `https://portal.gradients.academy/results/dashboard/results/${resultBeingEditedId}/`,
+        `https://portal.gradients.academy/api/results/dashboard/results/${resultBeingEditedId}/`,
         {
           method: 'PUT',
           headers: {
@@ -676,7 +676,7 @@ document
 async function populateOlympiadSelectInModal() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/olympiads/dashboard/'
+      'https://portal.gradients.academy/api/olympiads/dashboard/'
     )
     if (!response.ok) throw new Error('Ошибка загрузки олимпиад')
 
@@ -714,7 +714,7 @@ function populateClassSelectInModal() {
 async function populateCountrySelectInModal() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
     )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 
@@ -743,7 +743,7 @@ function openDeleteModal(title, id) {
 
 
 function downloadCertificate(id) {
-  const url = `https://portal.gradients.academy/certificates/dashboard/${id}/download`
+  const url = `https://portal.gradients.academy/api/certificates/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   fetch(url, {
@@ -794,7 +794,7 @@ async function deleteResult() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/results/dashboard/results/${resultIdToDelete}/`,
+      `https://portal.gradients.academy/api/results/dashboard/results/${resultIdToDelete}/`,
       {
         method: 'DELETE',
         headers: {

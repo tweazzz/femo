@@ -135,7 +135,7 @@ function initTopUpHandler() {
 
     try {
       const response = await authorizedFetch(
-        'https://portal.gradients.academy/payments/participant/dashboard/topup/',
+        'https://portal.gradients.academy/api/payments/participant/dashboard/topup/',
         {
           method: 'POST',
           headers: {
@@ -187,7 +187,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/payments/participant/dashboard/history/`,
+      `https://portal.gradients.academy/api/payments/participant/dashboard/history/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -326,7 +326,7 @@ async function loadBalance() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/payments/participant/dashboard/balance/', {
+    const response = await authorizedFetch('https://portal.gradients.academy/api/payments/participant/dashboard/balance/', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -355,7 +355,7 @@ async function loadActiveOlympiads() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/payments/participant/dashboard/active-olympiads', {
+    const response = await authorizedFetch('https://portal.gradients.academy/api/payments/participant/dashboard/active-olympiads', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -417,7 +417,7 @@ function renderActiveOlympiads(olympiads) {
 
 
 function downloadPayment(id) {
-  const url = `https://portal.gradients.academy/payments/participant/dashboard/${id}/download`
+  const url = `https://portal.gradients.academy/api/payments/participant/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   authorizedFetch(url, {

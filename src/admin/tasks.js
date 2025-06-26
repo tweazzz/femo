@@ -105,7 +105,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/assignments/dashboard/?${params.toString()}`,
+      `https://portal.gradients.academy/api/assignments/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -302,7 +302,7 @@ async function deleteTask() {
   }
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/assignments/dashboard/${taskIdToDelete}/`,
+      `https://portal.gradients.academy/api/assignments/dashboard/${taskIdToDelete}/`,
       {
         method: 'DELETE',
         headers: {
@@ -367,7 +367,7 @@ async function submitNewTask() {
   console.log('taskData:', taskData);
 
   try {
-    const response = await fetch('https://portal.gradients.academy/assignments/dashboard/', {
+    const response = await fetch('https://portal.gradients.academy/api/assignments/dashboard/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -476,7 +476,7 @@ async function submitEditTask() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/assignments/dashboard/${taskBeingEditedId}/`,
+      `https://portal.gradients.academy/api/assignments/dashboard/${taskBeingEditedId}/`,
       {
         method: 'PUT',
         headers: {
