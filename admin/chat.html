@@ -61,7 +61,7 @@
         </nav>
 
         <div class="p-4">
-          <a href="#" class="sidebar-link">
+          <a href="/admin/profile.html" class="sidebar-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -126,13 +126,14 @@
               </button>
               <div class="flex items-center space-x-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop"
+                  id="user-avatar"
+                  src=""
                   alt="Profile"
                   class="h-10 w-10 rounded-full"
                 />
                 <div>
-                  <p class="font-bold">Аликхан Ахметов</p>
-                  <p class="text-primary text-sm">Представитель</p>
+                  <p id="user-name" class="font-bold"></p>
+                  <p id="user-role" class="text-primary text-sm"></p>
                 </div>
               </div>
             </div>
@@ -142,12 +143,14 @@
         <!-- Dashboard Content -->
         <main class="flex flex-1 overflow-hidden p-6">
           <!-- Left Chat -->
-          <div class="border-default flex overflow-y-auto rounded-2xl">
-            <div class="flex w-72 flex-col border-r border-gray-200 bg-white">
-              <!-- Search -->
-              <div class="p-4">
+          <div class="border-default flex w-full overflow-y-auto rounded-2xl">
+            <!-- Unified Left Panel -->
+            <div class="flex w-96 flex-col border-r border-gray-200 bg-white flex-shrink-0 transition-all duration-300">
+              <!-- Common Search -->
+              <div class="pt-4 px-4">
                 <div class="relative">
                   <input
+                    id="unified-search"
                     type="text"
                     placeholder="Поиск по имени"
                     class="input-base border-default !pl-9"
@@ -167,18 +170,27 @@
                     />
                   </svg>
                 </div>
+                
+                <!-- Back Button (only visible in representatives mode) -->
+                <button id="back-to-chat" class="hidden items-center gap-2 pt-4 pb-5 text-sm font-bold text-[#459FE3] rounded-lg transition-colors w-full cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                  </svg>
+                  Назад
+                </button>
               </div>
 
-              <!-- Menu Items -->
-              <div class="flex-1">
-                <div class="space-y-1 px-2">
+              <!-- Chat Mode Content -->
+              <div id="chat-mode-content" class="flex-1">
+                <div class="space-y-1 px-2 pt-4">
                   <a
                     href="#"
-                    class="flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
+                    data-tab="representatives"
+                    class="chat-tab flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
                   >
                     <div>
                       <p class="text-sm font-bold">Представители стран</p>
-                      <p class="mt-1 text-xs">Прикрепите файл, пожалуйста</p>
+                      <p class="mt-1 text-xs">Чат</p>
                     </div>
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
                       <path
@@ -192,7 +204,8 @@
                   </a>
                   <a
                     href="#"
-                    class="flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
+                    data-tab="announcements"
+                    class="chat-tab active bg-gray-50 flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
                   >
                     <div>
                       <p class="text-sm font-bold">Объявления</p>
@@ -210,140 +223,72 @@
                   </a>
                 </div>
               </div>
+
+              <!-- Representatives Mode Content -->
+              <div id="representatives-content" class="hidden flex-1 overflow-y-auto">
+                <div id="representatives-list" class="">
+                  <!-- Список представителей будет загружен динамически -->
+                  <div class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Chat Area -->
             <div class="flex flex-1 flex-col bg-white">
               <!-- Chat Header -->
-              <div class="p-4">
+              <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2 text-lg font-bold">
-                    <span>Айжан Ахметова</span>
-                    <span>(🇰🇿 Казахстан)</span>
+                  <div id="chat-header" class="flex items-center gap-2 text-lg font-bold">
+                    <span>Объявления</span>
                   </div>
                 </div>
               </div>
 
               <!-- Messages -->
-              <div class="chat flex flex-col space-y-6 overflow-y-scroll p-4">
-                <span class="time-msg">18.01.2025</span>
-
-                <!-- Message 1 -->
-                <div class="me flex max-w-7/12 gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar"
-                    class="h-8 w-8 rounded-full"
-                  />
-                  <div>
-                    <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                      <span>Аликхан Ахметов</span>
-                      <span>(Представитель 🇰🇿)</span>
+              <div id="chat-content" class="chat flex-1 overflow-y-auto p-4">
+                <!-- Announcements Chat (Default) -->
+                <div id="announcements-chat" class="chat-content active flex flex-col gap-6 min-h-0 flex-1">
+                  <!-- Заглушка для пустого состояния -->
+                  <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
+                    <div class="text-center">
+                      <p class="text-base">Пока нет сообщений</p>
                     </div>
-                    <div
-                      class="bg-orange-secondary text-orange-primary rounded-lg p-3"
-                    >
-                      <p>
-                        Здравствуйте! У меня возник вопрос по участникам из
-                        Узбекистана. Двое не отображаются в общем списке, хотя
-                        были зарегистрированы.
-                      </p>
-                    </div>
-                    <div class="mt-1 text-xs">21:17</div>
                   </div>
                 </div>
 
-                <!-- Message 2 -->
-                <div class="flex max-w-7/12 gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar"
-                    class="h-8 w-8 rounded-full"
-                  />
-                  <div>
-                    <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                      <span>Иван Иванович</span>
-                      <span>- Организатор</span>
+                <!-- Representatives Chat -->
+                <div id="representatives-chat" class="chat-content hidden flex flex-col gap-6 min-h-0 flex-1">
+                  <!-- Заглушка для выбора представителя -->
+                  <div class="flex items-center justify-center flex-1 text-gray-500">
+                    <div class="text-center">
+                      <div class="mb-4">
+                        <svg class="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                      </div>
+                      <h3 class="text-lg font-medium text-gray-900 mb-2">Выберите представителя</h3>
+                      <p class="text-sm text-gray-500">Выберите представителя из списка слева, чтобы начать чат</p>
                     </div>
-                    <div class="rounded-lg bg-gray-100 p-3">
-                      <p>
-                        Добрый день! Уточните, пожалуйста, ID участников или их
-                        ФИО — проверим вручную.
-                      </p>
-                    </div>
-                    <div class="mt-1 text-xs">21:18</div>
-                  </div>
-                </div>
-
-                <div class="flex max-w-7/12 gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar"
-                    class="h-8 w-8 rounded-full"
-                  />
-                  <div>
-                    <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                      <span>Иван Иванович</span>
-                      <span>- Организатор</span>
-                    </div>
-                    <div class="rounded-lg bg-gray-100 p-3">
-                      <p>
-                        Добрый день! Уточните, пожалуйста, ID участников или их
-                        ФИО — проверим вручную.
-                      </p>
-                    </div>
-                    <div class="mt-1 text-xs">21:18</div>
-                  </div>
-                </div>
-
-                <div class="flex max-w-7/12 gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar"
-                    class="h-8 w-8 rounded-full"
-                  />
-                  <div>
-                    <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                      <span>Иван Иванович</span>
-                      <span>- Организатор</span>
-                    </div>
-                    <div class="rounded-lg bg-gray-100 p-3">
-                      <p>
-                        Добрый день! Уточните, пожалуйста, ID участников или их
-                        ФИО — проверим вручную.
-                      </p>
-                    </div>
-                    <div class="mt-1 text-xs">21:18</div>
-                  </div>
-                </div>
-
-                <div class="flex max-w-7/12 gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&auto=format&fit=crop&q=60"
-                    alt="Avatar"
-                    class="h-8 w-8 rounded-full"
-                  />
-                  <div>
-                    <div class="mb-1 flex items-center gap-2 text-sm font-bold">
-                      <span>Иван Иванович</span>
-                      <span>- Организатор</span>
-                    </div>
-                    <div class="rounded-lg bg-gray-100 p-3">
-                      <p>
-                        Добрый день! Уточните, пожалуйста, ID участников или их
-                        ФИО — проверим вручную.
-                      </p>
-                    </div>
-                    <div class="mt-1 text-xs">21:18</div>
                   </div>
                 </div>
               </div>
 
               <!-- Message Input -->
-              <div class="mx-3 mb-3 rounded-xl border border-gray-200 px-4">
-                <div class="flex items-center gap-2 rounded-lg bg-white">
+              <div class="p-4">
+                <!-- Attached Files Area -->
+                <div id="attached-files" class="hidden mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div class="text-sm text-gray-600 mb-2">Прикрепленный файл:</div>
+                  <div id="attached-file-item" class="flex items-center justify-between p-2 bg-white rounded border">
+                    <!-- Файл будет добавлен динамически -->
+                  </div>
+                </div>
+                
+                <div id="message-input-container" class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 transition-all duration-200">
                   <button
                     class="cursor-pointer p-2 text-gray-400 hover:text-gray-600"
+                    title="Прикрепить файл"
                   >
                     <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none">
                       <path
@@ -362,6 +307,7 @@
                   ></textarea>
                   <button
                     class="cursor-pointer p-2 text-orange-500 hover:text-orange-600"
+                    title="Отправить сообщение"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -378,6 +324,16 @@
                       />
                     </svg>
                   </button>
+                </div>
+                
+                <!-- Error Message Container -->
+                <div id="error-message" class="hidden mt-2 p-3 bg-red-50 border border-red-200 rounded-lg transition-all duration-300 opacity-0">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span id="error-message-text" class="text-red-700 text-sm font-medium"></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -918,6 +874,8 @@
       </div>
     </div>
 
+
+
     <script>
       lucide.createIcons()
 
@@ -966,12 +924,68 @@
         element.style.height = element.scrollHeight + 'px'
       }
 
+      // Chat tabs functionality
+      function switchChatTab(tabName) {
+        // Если кликнули на "Представители стран", показываем список представителей
+        if (tabName === 'representatives') {
+          // Ждем пока adminChat инициализируется
+          setTimeout(() => {
+            if (window.adminChat) {
+              window.adminChat.showRepresentativesMode()
+            }
+          }, 100)
+          return
+        }
+        
+        // Убираем активные стили у всех вкладок
+        document.querySelectorAll('.chat-tab').forEach(tab => {
+          tab.classList.remove('active', 'bg-gray-50')
+        })
+        
+        // Добавляем активные стили к выбранной вкладке
+        const selectedTab = document.querySelector(`.chat-tab[data-tab="${tabName}"]`)
+        if (selectedTab) {
+          selectedTab.classList.add('active', 'bg-gray-50')
+        }
+        
+        // Скрываем все чаты
+        document.querySelectorAll('.chat-content').forEach(chat => {
+          chat.classList.remove('active', 'flex')
+          chat.classList.add('hidden')
+          chat.style.display = 'none'
+        })
+        
+        // Показываем выбранный чат
+        const selectedChat = document.querySelector(`#${tabName}-chat`)
+        if (selectedChat) {
+          selectedChat.classList.remove('hidden')
+          selectedChat.classList.add('active', 'flex')
+          selectedChat.style.display = 'flex'
+        }
+        
+        // Обновляем заголовок чата
+        const chatHeader = document.getElementById('chat-header')
+        const headerText = {
+          'representatives': 'Представители стран',
+          'announcements': 'Объявления'
+        }
+        chatHeader.innerHTML = `<span>${headerText[tabName] || 'Чат'}</span>`
+        
+        // Убеждаемся что показываем режим чата
+        setTimeout(() => {
+          if (window.adminChat) {
+            window.adminChat.showChatMode()
+          }
+        }, 100)
+      }
+
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
+        // Notification tabs
         const tabs = document.querySelectorAll('.tabs-link')
         const notifications = document.querySelectorAll('.tabs-notification')
 
-        // Add click event listeners to tabs
+        // Add click event listeners to notification tabs
         tabs.forEach((tab) => {
           tab.addEventListener('click', function () {
             const tabType = this.dataset.tab
@@ -992,9 +1006,101 @@
             })
           })
         })
+
+        // Chat tabs
+        const chatTabs = document.querySelectorAll('.chat-tab')
+        
+        chatTabs.forEach((tab) => {
+          tab.addEventListener('click', function (e) {
+            e.preventDefault()
+            const tabName = this.dataset.tab
+            switchChatTab(tabName)
+          })
+        })
+        
+        // Инициализируем активную вкладку (Объявления по умолчанию)
+        switchChatTab('announcements')
       })
     </script>
     <script src="/auth.js" defer></script>
+    <script src="/src/admin/chat.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script>
+      async function ensureUserAuthenticated() {
+    let userData = localStorage.getItem('user')
+  
+    if (!userData) {
+      console.warn(
+        'user не найден в localStorage. Пробуем обновить access_token...'
+      )
+      const newAccessToken = await refreshAccessToken()
+      console.log('Результат refreshAccessToken:', newAccessToken)
+  
+      if (!newAccessToken) {
+        console.warn(
+          'refreshAccessToken вернул null. Перенаправление на /login.html'
+        )
+        window.location.href = '/index.html'
+        return null
+      }
+  
+      userData = localStorage.getItem('user')
+      if (!userData) {
+        console.warn('user всё ещё не найден после обновления токена. Редирект.')
+        window.location.href = '/index.html'
+        return null
+      }
+    }
+  
+    const user = JSON.parse(userData)
+  
+    // Проверяем роль
+    const role = user.profile?.role
+    if (role !== 'administrator') {
+      console.warn(`Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`)
+      window.location.href = '/index.html'
+      return null
+    }
+  
+    return user
+  }
+  
+  function renderUserInfo(user) {
+    const avatarEl = document.getElementById('user-avatar')
+    const nameEl = document.getElementById('user-name')
+    const roleEl = document.getElementById('user-role')
+    const welcomeEl = document.querySelector('h1.text-xl')
+  
+    const imgPath = user.profile.image
+    avatarEl.src = imgPath.startsWith('http')
+      ? imgPath
+      : `https://portal.gradients.academy${imgPath}`
+  
+    nameEl.textContent = user.profile.full_name_ru
+    const firstName = user.profile.full_name_ru.split(' ')[0]
+    welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  
+    const roleMap = {
+      administrator: 'Администратор',
+    }
+    roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  }
+
+  // Инициализация
+document.addEventListener('DOMContentLoaded', async () => {
+    const user = await ensureUserAuthenticated()
+    if (!user) return
+  
+    renderUserInfo(user)
+
+  
+    try {
+      
+    } catch (err) {
+      console.error('Ошибка инициализации:', err)
+    }
+  })
+  
+    </script>
   </body>
 </html>
