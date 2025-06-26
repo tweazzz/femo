@@ -65,7 +65,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -86,7 +86,7 @@ async function loadParticipantProfile() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/profile`
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/profile`
     );
     if (!res.ok) throw new Error(`Не удалось получить профиль: ${res.status}`);
 
@@ -185,7 +185,7 @@ async function loadParticipantProgress() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/progress`
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/progress`
     );
     if (!res.ok) throw new Error(`Не удалось получить прогресс: ${res.status}`);
 
@@ -246,7 +246,7 @@ async function loadParticipantAchievements() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/achievements`
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/achievements`
     );
     if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
     const achievements = await res.json();
@@ -263,7 +263,7 @@ async function loadParticipantResults() {
   const participantId = new URLSearchParams(location.search).get('id')
   if (!participantId) return
   const res = await authorizedFetch(
-    `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/results`
+    `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/results`
   )
   if (!res.ok) throw new Error(res.status)
   const results = await res.json()
@@ -310,7 +310,7 @@ function renderParticipantResults(results) {
 async function downloadCertificate(participantId, olympiadId) {
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/` +
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/` +
       `${participantId}/certificates/${olympiadId}/download`
     );
     if (!res.ok) throw new Error(res.status)
@@ -337,7 +337,7 @@ async function deleteCurrentParticipant() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/results/representatives/dashboard/participants/${participantId}/`,
+      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/`,
       { method: 'DELETE' }
     );
     if (!res.ok) throw new Error(`Status ${res.status}`);

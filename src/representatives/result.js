@@ -66,7 +66,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -80,7 +80,7 @@ let dynamicsChartInstance = null;
 
 async function loadParticipantsDynamics() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/results/representatives/dashboard/participants/dynamics');
+    const res = await authorizedFetch('https://portal.gradients.academy/api/results/representatives/dashboard/participants/dynamics');
     if (!res.ok) throw new Error(`Ошибка загрузки динамики: ${res.status}`);
 
     const data = await res.json();
@@ -152,7 +152,7 @@ function renderDynamicsChart(labels, values) {
 async function loadParticipantsSummary() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/representatives/dashboard/participants/summary'
+      'https://portal.gradients.academy/api/results/representatives/dashboard/participants/summary'
     );
     if (!res.ok) throw new Error(`Ошибка при загрузке summary: ${res.status}`);
 
@@ -182,7 +182,7 @@ let chartInstance = null;
 async function loadDistributionOptions() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/representatives/dashboard/participants/distribution/'
+      'https://portal.gradients.academy/api/results/representatives/dashboard/participants/distribution/'
     );
     if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
     const data = await res.json();
@@ -237,7 +237,7 @@ async function loadDistributionData() {
   if (!olympiadId || !grade) return;
 
   try {
-    const url = `https://portal.gradients.academy/results/representatives/dashboard/participants/distribution/?grade=${grade}&olympiad_id=${olympiadId}`;
+    const url = `https://portal.gradients.academy/api/results/representatives/dashboard/participants/distribution/?grade=${grade}&olympiad_id=${olympiadId}`;
     const res = await authorizedFetch(url);
     if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
 
@@ -370,7 +370,7 @@ async function loadParticipantRanking(page = 1) {
     if (currentSearch) params.set('search', currentSearch)
     if (currentGrade) params.set('grade', currentGrade)
 
-    const url = `https://portal.gradients.academy/results/representatives/dashboard/participants/ranking/?${params.toString()}`
+    const url = `https://portal.gradients.academy/api/results/representatives/dashboard/participants/ranking/?${params.toString()}`
     const res = await authorizedFetch(url)
     if (!res || !res.ok) {
       console.error(`Ошибка ${res?.status} при загрузке рейтинга`)
@@ -483,7 +483,7 @@ document.getElementById('download-btn')?.addEventListener('click', async () => {
   try {
     // отправляем авторизованный запрос за файлом
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/representatives/dashboard/participants/ranking/download'
+      'https://portal.gradients.academy/api/results/representatives/dashboard/participants/ranking/download'
     );
     if (!res || !res.ok) {
       throw new Error(`Download error: ${res?.status}`);

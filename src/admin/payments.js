@@ -116,7 +116,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/payments/dashboard/?${params.toString()}`,
+      `https://portal.gradients.academy/api/payments/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -295,7 +295,7 @@ async function populateOlympiadFilter() {
   if (!token) return
 
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/olympiads/dashboard/', {
+    const res = await authorizedFetch('https://portal.gradients.academy/api/olympiads/dashboard/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -331,7 +331,7 @@ async function loadSummary(search, status, olympiad, created_at__gte, created_at
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/payments/dashboard/?search=${search}&status=${status}&created_at__gte=${created_at__gte}&created_at__lte=${created_at__lte}&olympiad=${olympiad}`
+      `https://portal.gradients.academy/api/payments/dashboard/?search=${search}&status=${status}&created_at__gte=${created_at__gte}&created_at__lte=${created_at__lte}&olympiad=${olympiad}`
     )
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
@@ -348,7 +348,7 @@ async function loadSummary(search, status, olympiad, created_at__gte, created_at
 
 
 function downloadPayment(id) {
-  const url = `https://portal.gradients.academy/payments/dashboard/${id}/download`
+  const url = `https://portal.gradients.academy/api/payments/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   fetch(url, {

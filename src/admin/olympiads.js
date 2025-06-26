@@ -135,7 +135,7 @@ async function loadOlympiads() {
 
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/olympiads/dashboard/',
+      'https://portal.gradients.academy/api/olympiads/dashboard/',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -244,7 +244,7 @@ async function updateTotalCountAndPagination() {
   params.append('page', 1)
   params.append('page_size', 50)
 
-  const url = `https://portal.gradients.academy/users/dashboard/?${params.toString()}`
+  const url = `https://portal.gradients.academy/api/users/dashboard/?${params.toString()}`
   const res = await authorizedFetch(url)
 
   if (!res.ok)
@@ -369,7 +369,7 @@ async function deleteOlympiad() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/olympiads/dashboard/${olympiadIdToDelete}`,
+      `https://portal.gradients.academy/api/olympiads/dashboard/${olympiadIdToDelete}`,
       {
         method: 'DELETE',
         headers: {
@@ -408,7 +408,7 @@ async function openEditModal(title, id) {
 
   try {
     const token = localStorage.getItem('access_token')
-    const response = await fetch(`https://portal.gradients.academy/olympiads/dashboard/${id}`, {
+    const response = await fetch(`https://portal.gradients.academy/api/olympiads/dashboard/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -587,7 +587,7 @@ async function submitOlympiadForm() {
 
   try {
     const res = await fetch(
-      'https://portal.gradients.academy/olympiads/dashboard/',
+      'https://portal.gradients.academy/api/olympiads/dashboard/',
       {
         method: 'POST',
         headers: {
@@ -765,7 +765,7 @@ async function updateOlympiadForm() {
   }
 
   try {
-    const res = await fetch(`https://portal.gradients.academy/olympiads/dashboard/${olympiadIdToDelete}`, {
+    const res = await fetch(`https://portal.gradients.academy/api/olympiads/dashboard/${olympiadIdToDelete}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,

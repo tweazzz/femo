@@ -112,7 +112,7 @@ async function loadUserSettings() {
   if (!token) return;
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/users/settings/', {
+    const response = await authorizedFetch('https://portal.gradients.academy/api/users/settings/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -179,7 +179,7 @@ async function updateUserSettings(updatedFields) {
       if (text.includes('О статусе оплаты')) settings.notify_payments = checkbox.checked;
     });
 
-    const response = await fetch('https://portal.gradients.academy/users/settings/', {
+    const response = await fetch('https://portal.gradients.academy/api/users/settings/', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ function setupPasswordChangeForm() {
     }
 
     try {
-      const response = await fetch('https://portal.gradients.academy/users/settings/password/', {
+      const response = await fetch('https://portal.gradients.academy/api/users/settings/password/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const response = await fetch('https://portal.gradients.academy/users/administrator/profile/', {
+    const response = await fetch('https://portal.gradients.academy/api/users/administrator/profile/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

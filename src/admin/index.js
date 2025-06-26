@@ -60,7 +60,7 @@ function renderUserInfo(user) {
 
 async function loadDashboardSummary() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/results/dashboard/summary/'
+    'https://portal.gradients.academy/api/results/dashboard/summary/'
   )
   if (!res.ok) throw new Error('Ошибка при получении данных')
 
@@ -82,7 +82,7 @@ async function loadCurrentOlympiad() {
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/dashboard/current/'
+      'https://portal.gradients.academy/api/results/dashboard/current/'
     )
 
     if (!res.ok) {
@@ -139,7 +139,7 @@ async function loadCurrentOlympiad() {
 async function loadCurrentOlympiadStats() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/dashboard/current_stats/'
+      'https://portal.gradients.academy/api/results/dashboard/current_stats/'
     )
 
     if (!res.ok) {
@@ -170,7 +170,7 @@ async function loadCurrentOlympiadStats() {
 async function loadParticipantsTrend() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/results/dashboard/trend/'
+      'https://portal.gradients.academy/api/results/dashboard/trend/'
     )
     if (!res.ok)
       throw new Error('Ошибка при получении данных тренда участников')

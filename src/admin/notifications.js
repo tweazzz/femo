@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function handleRequestAction(id, approve) {
     const action = approve ? 'accept' : 'decline';
-    const url = `https://portal.gradients.academy/notifications/${id}/${action}/`;
+    const url = `https://portal.gradients.academy/api/notifications/${id}/${action}/`;
     try {
       const resp = await fetch(url, {
         method: 'POST',

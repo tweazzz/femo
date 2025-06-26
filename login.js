@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const response = await fetch(
-        'https://portal.gradients.academy/users/token/',
+        'https://portal.gradients.academy/api/users/token/',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

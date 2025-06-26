@@ -101,7 +101,7 @@ async function loadTaskDetails() {
     return
   }
 
-  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/41/${source}`
+  const endpoint = `https://portal.gradients.academy/api/assignments/participant/dashboard/41/${source}`
 
   try {
     const token = JSON.parse(localStorage.getItem('user'))?.tokens?.access
@@ -178,7 +178,7 @@ async function loadTaskMock() {
   const taskId = urlParams.get('id');
   const source = urlParams.get('source'); // 'daily' или 'general'
 
-  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/${taskId}/${source}`;
+  const endpoint = `https://portal.gradients.academy/api/assignments/participant/dashboard/${taskId}/${source}`;
 
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -308,7 +308,7 @@ submitBtn1.addEventListener('click', async () => {
   const taskId = urlParams.get('id');
   const source = urlParams.get('source'); // 'daily' или 'general'
 
-  const endpoint = `https://portal.gradients.academy/assignments/participant/dashboard/${taskId}/${source}/submit/`;
+  const endpoint = `https://portal.gradients.academy/api/assignments/participant/dashboard/${taskId}/${source}/submit/`;
 
   const token = localStorage.getItem('access_token');
   if (!token) {

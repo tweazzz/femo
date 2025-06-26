@@ -101,7 +101,7 @@ async function loadSummary() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/participant/dashboard/ranking/summary/`,
+      `https://portal.gradients.academy/api/results/participant/dashboard/ranking/summary/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -168,7 +168,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/participant/dashboard/ranking/global/?${params.toString()}`,
+      `https://portal.gradients.academy/api/results/participant/dashboard/ranking/global/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -307,7 +307,7 @@ function setupAssignmentFilters() {
 async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/common/countries/?page=1&page_size=500'
+      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
     );
 
     if (!response.ok) throw new Error(`Ошибка загрузки стран: ${response.status}`);

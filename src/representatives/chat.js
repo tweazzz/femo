@@ -714,7 +714,7 @@ class RepresentativeChat {
 
       // Используем сохраненный room_id группового чата или значение по умолчанию
       const groupRoomId = this.groupRoomId || 2
-      const url = `https://portal.gradients.academy/chats/rooms/${groupRoomId}/attachments/`
+      const url = `https://portal.gradients.academy/api/chats/rooms/${groupRoomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',
@@ -1035,7 +1035,7 @@ class RepresentativeChat {
 
   async loadAllAdministrators() {
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/chats/administrators')
+      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/administrators')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1205,7 +1205,7 @@ class RepresentativeChat {
     if (this.administratorsLoaded) return
     
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/chats/administrators')
+      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/administrators')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1699,7 +1699,7 @@ class RepresentativeChat {
       const formData = new FormData()
       formData.append('file', file)
 
-      const url = `https://portal.gradients.academy/chats/private/${roomId}/attachments/`
+      const url = `https://portal.gradients.academy/api/chats/private/${roomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',

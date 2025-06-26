@@ -119,7 +119,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/certificates/participant/dashboard/?${params.toString()}`,
+      `https://portal.gradients.academy/api/certificates/participant/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -257,7 +257,7 @@ function renderPaginatedAssignments() {
 
 
 function downloadCertificate(id) {
-  const url = `https://portal.gradients.academy/certificates/participant/dashboard/${id}/download`
+  const url = `https://portal.gradients.academy/api/certificates/participant/dashboard/${id}/download`
   const token = localStorage.getItem('access_token')
 
   fetch(url, {

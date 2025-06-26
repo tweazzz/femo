@@ -85,7 +85,7 @@ async function loadSummary() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/participant/dashboard/path/progress`,
+      `https://portal.gradients.academy/api/results/participant/dashboard/path/progress`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -134,7 +134,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/participant/dashboard/path/results/?${params.toString()}`,
+      `https://portal.gradients.academy/api/results/participant/dashboard/path/results/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -252,7 +252,7 @@ async function loadAchievements() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/results/participant/dashboard/path/achievements`,
+      `https://portal.gradients.academy/api/results/participant/dashboard/path/achievements`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

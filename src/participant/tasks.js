@@ -111,7 +111,7 @@ async function loadDailyTasks() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/assignments/participant/dashboard/daily`,
+      `https://portal.gradients.academy/api/assignments/participant/dashboard/daily`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -200,7 +200,7 @@ async function loadAllTasks() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/assignments/participant/dashboard/general`,
+      `https://portal.gradients.academy/api/assignments/participant/dashboard/general`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -396,7 +396,7 @@ async function loadAllTasksWithFilters() {
 
   params.append('solved_only', solvedOnly)
 
-  const url = `https://portal.gradients.academy/assignments/participant/dashboard/general/?${params.toString()}`
+  const url = `https://portal.gradients.academy/api/assignments/participant/dashboard/general/?${params.toString()}`
 
   try {
     const response = await authorizedFetch(url, {

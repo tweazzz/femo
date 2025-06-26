@@ -95,7 +95,7 @@ async function loadOlympiadCards() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/olympiads/participant/dashboard', {
+    const response = await authorizedFetch('https://portal.gradients.academy/api/olympiads/participant/dashboard', {
       headers: {
         Authorization: `Bearer ${token}`
       }
