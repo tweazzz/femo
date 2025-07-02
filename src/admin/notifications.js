@@ -283,32 +283,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Фиксированные вкладки: all, users, requests, payments
     const tabsConfig = [
       { key: 'all', label: 'Все', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.0175 2.92505C7.25914 2.92505 5.01747 5.16672 5.01747 7.92505V10.3334C5.01747 10.8417 4.80081 11.6167 4.54247 12.05L3.58414 13.6417C2.99247 14.625 3.40081 15.7167 4.48414 16.0834C8.07581 17.2834 11.9508 17.2834 15.5425 16.0834C16.5508 15.7501 16.9925 14.5584 16.4425 13.6417L15.4841 12.05C15.2341 11.6167 15.0175 10.8417 15.0175 10.3334V7.92505C15.0175 5.17505 12.7675 2.92505 10.0175 2.92505Z" stroke="#F4891E" stroke-miterlimit="10" stroke-linecap="round"/>
-<path d="M11.5599 3.1667C11.3016 3.0917 11.0349 3.03337 10.7599 3.00003C9.9599 2.90003 9.19323 2.95837 8.47656 3.1667C8.71823 2.55003 9.31823 2.1167 10.0182 2.1167C10.7182 2.1167 11.3182 2.55003 11.5599 3.1667Z" stroke="#F4891E" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12.5156 16.3833C12.5156 17.7583 11.3906 18.8833 10.0156 18.8833C9.33229 18.8833 8.69896 18.6 8.24896 18.15C7.79896 17.7 7.51562 17.0666 7.51562 16.3833" stroke="#F4891E" stroke-miterlimit="10"/>
-</svg>
-` }, // подставьте нужный SVG
+      <path d="M10.0175 2.92505C7.25914 2.92505 5.01747 5.16672 5.01747 7.92505V10.3334C5.01747 10.8417 4.80081 11.6167 4.54247 12.05L3.58414 13.6417C2.99247 14.625 3.40081 15.7167 4.48414 16.0834C8.07581 17.2834 11.9508 17.2834 15.5425 16.0834C16.5508 15.7501 16.9925 14.5584 16.4425 13.6417L15.4841 12.05C15.2341 11.6167 15.0175 10.8417 15.0175 10.3334V7.92505C15.0175 5.17505 12.7675 2.92505 10.0175 2.92505Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M11.5599 3.1667C11.3016 3.0917 11.0349 3.03337 10.7599 3.00003C9.9599 2.90003 9.19323 2.95837 8.47656 3.1667C8.71823 2.55003 9.31823 2.1167 10.0182 2.1167C10.7182 2.1167 11.3182 2.55003 11.5599 3.1667Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12.5156 16.3833C12.5156 17.7583 11.3906 18.8833 10.0156 18.8833C9.33229 18.8833 8.69896 18.6 8.24896 18.15C7.79896 17.7 7.51562 17.0666 7.51562 16.3833" stroke="currentColor" stroke-miterlimit="10"/>
+      </svg>      ` }, // подставьте нужный SVG
       { key: 'users', label: 'Пользователи', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.63411 9.55841C7.55078 9.55008 7.45078 9.55008 7.35911 9.55841C5.37578 9.49175 3.80078 7.86675 3.80078 5.86675C3.80078 3.82508 5.45078 2.16675 7.50078 2.16675C9.54245 2.16675 11.2008 3.82508 11.2008 5.86675C11.1924 7.86675 9.61745 9.49175 7.63411 9.55841Z" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M13.6747 3.83325C15.2914 3.83325 16.5914 5.14159 16.5914 6.74992C16.5914 8.32492 15.3414 9.60825 13.7831 9.66659C13.7164 9.65825 13.6414 9.65825 13.5664 9.66659" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M3.46563 12.6333C1.44896 13.9833 1.44896 16.1833 3.46563 17.5249C5.75729 19.0583 9.51563 19.0583 11.8073 17.5249C13.824 16.1749 13.824 13.9749 11.8073 12.6333C9.52396 11.1083 5.76562 11.1083 3.46563 12.6333Z" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M15.2852 17.1667C15.8852 17.0417 16.4518 16.8001 16.9185 16.4417C18.2185 15.4667 18.2185 13.8584 16.9185 12.8834C16.4602 12.5334 15.9018 12.3001 15.3102 12.1667" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.63411 9.55841C7.55078 9.55008 7.45078 9.55008 7.35911 9.55841C5.37578 9.49175 3.80078 7.86675 3.80078 5.86675C3.80078 3.82508 5.45078 2.16675 7.50078 2.16675C9.54245 2.16675 11.2008 3.82508 11.2008 5.86675C11.1924 7.86675 9.61745 9.49175 7.63411 9.55841Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.6747 3.83325C15.2914 3.83325 16.5914 5.14159 16.5914 6.74992C16.5914 8.32492 15.3414 9.60825 13.7831 9.66659C13.7164 9.65825 13.6414 9.65825 13.5664 9.66659" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3.46563 12.6333C1.44896 13.9833 1.44896 16.1833 3.46563 17.5249C5.75729 19.0583 9.51563 19.0583 11.8073 17.5249C13.824 16.1749 13.824 13.9749 11.8073 12.6333C9.52396 11.1083 5.76562 11.1083 3.46563 12.6333Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15.2852 17.1667C15.8852 17.0417 16.4518 16.8001 16.9185 16.4417C18.2185 15.4667 18.2185 13.8584 16.9185 12.8834C16.4602 12.5334 15.9018 12.3001 15.3102 12.1667" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>` },
-      { key: 'requests', label: 'Запросы', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.3086 7.8999H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M10.3086 13.7334H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M7.5013 18.8334H12.5013C16.668 18.8334 18.3346 17.1667 18.3346 13.0001V8.00008C18.3346 3.83341 16.668 2.16675 12.5013 2.16675H7.5013C3.33464 2.16675 1.66797 3.83341 1.66797 8.00008V13.0001C1.66797 17.1667 3.33464 18.8334 7.5013 18.8334Z" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>` },
-      { key: 'payments', label: 'Платежи', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.3086 7.8999H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M10.3086 13.7334H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M7.5013 18.8334H12.5013C16.668 18.8334 18.3346 17.1667 18.3346 13.0001V8.00008C18.3346 3.83341 16.668 2.16675 12.5013 2.16675H7.5013C3.33464 2.16675 1.66797 3.83341 1.66797 8.00008V13.0001C1.66797 17.1667 3.33464 18.8334 7.5013 18.8334Z" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-` },
+      { key: 'requests', label: 'Олимпиады', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6.66797 2.16675V4.66675" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13.332 2.16675V4.66675" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2.91797 8.07495H17.0846" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17.5 7.58341V14.6667C17.5 17.1667 16.25 18.8334 13.3333 18.8334H6.66667C3.75 18.8334 2.5 17.1667 2.5 14.6667V7.58341C2.5 5.08341 3.75 3.41675 6.66667 3.41675H13.3333C16.25 3.41675 17.5 5.08341 17.5 7.58341Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13.0801 11.9167H13.0875" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13.0801 14.4167H13.0875" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M9.99803 11.9167H10.0055" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M9.99803 14.4167H10.0055" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6.91209 11.9167H6.91957" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M6.91209 14.4167H6.91957" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      ` },
+      { key: 'payments', label: 'Результаты', icon: `<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.37526 2.60824L3.35859 5.88324C1.75026 6.93324 1.75026 9.28324 3.35859 10.3332L8.37526 13.6082C9.27526 14.1999 10.7586 14.1999 11.6586 13.6082L16.6503 10.3332C18.2503 9.28324 18.2503 6.94157 16.6503 5.89157L11.6586 2.61657C10.7586 2.01657 9.27526 2.01657 8.37526 2.60824Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4.69193 11.3999L4.68359 15.3082C4.68359 16.3666 5.50026 17.4999 6.50026 17.8332L9.15859 18.7166C9.61693 18.8666 10.3753 18.8666 10.8419 18.7166L13.5003 17.8332C14.5003 17.4999 15.3169 16.3666 15.3169 15.3082V11.4416" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17.832 13V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>` },
     ];
 
     // Создаём табы

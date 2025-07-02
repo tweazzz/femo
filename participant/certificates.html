@@ -229,121 +229,121 @@
       ></div>
 
       <div
-        id="modalNotification"
-        class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full"
-      >
-        <div class="relative">
-          <div
-            class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base"
-          >
-            <p class="text-xl font-bold">Уведомление</p>
+      id="modalNotification"
+      class="modal fixed top-18 z-30 hidden max-w-lg max-sm:inset-x-4 sm:right-10 sm:w-full"
+    >
+      <div class="relative">
+        <div
+          class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base"
+        >
+          <p class="text-xl font-bold">Уведомление</p>
 
-            <div class="tabs !mb-4 justify-between overflow-x-auto">
-              <div
-                class="tabs-link active flex cursor-pointer items-center gap-1"
-                data-tab="all"
-              >
-                <span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                    />
-                  </svg>
-                </span>
-                Все
-                <span class="count-msg">4</span>
-              </div>
-              <div
-                class="tabs-link flex cursor-pointer items-center gap-1"
-                data-tab="olympiads"
-              >
-                <span>
-                <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6.66602 2.16675V4.66675" stroke="#616161" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13.334 2.16675V4.66675" stroke="#616161" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M2.91602 8.07495H17.0827" stroke="#616161" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M17.5 7.58341V14.6667C17.5 17.1667 16.25 18.8334 13.3333 18.8334H6.66667C3.75 18.8334 2.5 17.1667 2.5 14.6667V7.58341C2.5 5.08341 3.75 3.41675 6.66667 3.41675H13.3333C16.25 3.41675 17.5 5.08341 17.5 7.58341Z" stroke="#616161" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13.0781 11.9167H13.0856" stroke="#616161" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13.0781 14.4167H13.0856" stroke="#616161" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9.99607 11.9167H10.0036" stroke="#616161" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9.99607 14.4167H10.0036" stroke="#616161" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6.91209 11.9167H6.91957" stroke="#616161" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6.91209 14.4167H6.91957" stroke="#616161" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-
-                </span>
-                Олимпиады
-                <span class="count-msg">0</span>
-              </div>
-              <div
-                class="tabs-link flex cursor-pointer items-center gap-1"
-                data-tab="tasks"
-              >
-                <span>
-                <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10.3086 7.8999H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10.3086 13.7334H14.6836" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M7.49935 18.8334H12.4993C16.666 18.8334 18.3327 17.1667 18.3327 13.0001V8.00008C18.3327 3.83341 16.666 2.16675 12.4993 2.16675H7.49935C3.33268 2.16675 1.66602 3.83341 1.66602 8.00008V13.0001C1.66602 17.1667 3.33268 18.8334 7.49935 18.8334Z" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-
-                </span>
-                Задачи
-                <span class="count-msg">1</span>
-              </div>
-              <div
-                class="tabs-link flex cursor-pointer items-center gap-1"
-                data-tab="profile"
-              >
-                <span>
-                <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10.1341 9.55841C10.0508 9.55008 9.95078 9.55008 9.85911 9.55841C7.87578 9.49175 6.30078 7.86675 6.30078 5.86675C6.30078 3.82508 7.95078 2.16675 10.0008 2.16675C12.0424 2.16675 13.7008 3.82508 13.7008 5.86675C13.6924 7.86675 12.1174 9.49175 10.1341 9.55841Z" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M5.96758 12.6333C3.95091 13.9833 3.95091 16.1833 5.96758 17.5249C8.25924 19.0583 12.0176 19.0583 14.3092 17.5249C16.3259 16.1749 16.3259 13.9749 14.3092 12.6333C12.0259 11.1083 8.26758 11.1083 5.96758 12.6333Z" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-
-
-                </span>
-                Профиль
-                <span class="count-msg">2</span>
-              </div>
-            </div>
-
+          <div class="tabs !mb-4 justify-between overflow-x-auto">
             <div
-              class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2"
+              class="tabs-link active flex cursor-pointer items-center gap-1"
+              data-tab="all"
             >
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                  />
+                </svg>
+              </span>
+              Все
+              <span class="count-msg">4</span>
+            </div>
+            <div
+              class="tabs-link flex cursor-pointer items-center gap-1"
+              data-tab="olympiads"
+            >
+              <span>
+              <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.66602 2.16675V4.66675" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.334 2.16675V4.66675" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2.91602 8.07495H17.0827" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M17.5 7.58341V14.6667C17.5 17.1667 16.25 18.8334 13.3333 18.8334H6.66667C3.75 18.8334 2.5 17.1667 2.5 14.6667V7.58341C2.5 5.08341 3.75 3.41675 6.66667 3.41675H13.3333C16.25 3.41675 17.5 5.08341 17.5 7.58341Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.0781 11.9167H13.0856" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.0781 14.4167H13.0856" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9.99607 11.9167H10.0036" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9.99607 14.4167H10.0036" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6.91209 11.9167H6.91957" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6.91209 14.4167H6.91957" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
 
+              </span>
+              Олимпиады
+              <span class="count-msg">0</span>
+            </div>
+            <div
+              class="tabs-link flex cursor-pointer items-center gap-1"
+              data-tab="tasks"
+            >
+              <span>
+              <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.3086 7.8999H14.6836" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.31641 7.8999L5.94141 8.5249L7.81641 6.6499" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10.3086 13.7334H14.6836" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.31641 13.7334L5.94141 14.3584L7.81641 12.4834" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7.49935 18.8334H12.4993C16.666 18.8334 18.3327 17.1667 18.3327 13.0001V8.00008C18.3327 3.83341 16.666 2.16675 12.4993 2.16675H7.49935C3.33268 2.16675 1.66602 3.83341 1.66602 8.00008V13.0001C1.66602 17.1667 3.33268 18.8334 7.49935 18.8334Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+
+              </span>
+              Задачи
+              <span class="count-msg">1</span>
+            </div>
+            <div
+              class="tabs-link flex cursor-pointer items-center gap-1"
+              data-tab="profile"
+            >
+              <span>
+              <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.1341 9.55841C10.0508 9.55008 9.95078 9.55008 9.85911 9.55841C7.87578 9.49175 6.30078 7.86675 6.30078 5.86675C6.30078 3.82508 7.95078 2.16675 10.0008 2.16675C12.0424 2.16675 13.7008 3.82508 13.7008 5.86675C13.6924 7.86675 12.1174 9.49175 10.1341 9.55841Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.96758 12.6333C3.95091 13.9833 3.95091 16.1833 5.96758 17.5249C8.25924 19.0583 12.0176 19.0583 14.3092 17.5249C16.3259 16.1749 16.3259 13.9749 14.3092 12.6333C12.0259 11.1083 8.26758 11.1083 5.96758 12.6333Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+
+
+              </span>
+              Профиль
+              <span class="count-msg">2</span>
             </div>
           </div>
 
-          <button
-            class="absolute top-6 right-5 cursor-pointer"
-            onclick="toggleModal('modalNotification')"
+          <div
+            class="tabs-content scrollbar max-h-[70vh] overflow-y-scroll pe-2"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-5"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </button>
+
+          </div>
         </div>
+
+        <button
+          class="absolute top-6 right-5 cursor-pointer"
+          onclick="toggleModal('modalNotification')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="size-5"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
       </div>
+    </div>
     </div>
 
     <script>
