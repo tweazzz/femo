@@ -2,6 +2,7 @@
 
 class RepresentativeChat {
   constructor() {
+    this.currentChatState = this.loadChatState()
     this.websockets = {
       announcements: null,
       group: null
@@ -32,6 +33,13 @@ class RepresentativeChat {
     this.readChats = new Set() // Множество ID администраторов с прочитанными сообщениями
     this.lastMessageTimes = new Map() // Карта времени последних сообщений по администраторам
     
+    // Новые свойства для хранения последних сообщений
+    this.lastMessages = new Map() // Карта последних сообщений по администраторам (profileId -> текст сообщения)
+    this.publicLastMessages = { // Последние сообщения для публичных чатов
+      announcements: '',
+      group: ''
+    }
+    
     // Статусы для публичных чатов
     this.publicChatStatuses = {
       announcements: 'read', // 'unread', 'read'
@@ -44,6 +52,50 @@ class RepresentativeChat {
     
     // Инициализируем все чаты сразу
     this.initializeAllChats()
+  }
+
+  loadChatState() {
+    try {
+      const savedState = localStorage.getItem('representative_chat_state');
+      return savedState ? JSON.parse(savedState) : {
+        currentTab: 'announcements',
+        currentAdmin: null
+      };
+    } catch (error) {
+      console.error('Ошибка загрузки состояния чата:', error);
+      return {
+        currentTab: 'announcements',
+        currentAdmin: null
+      };
+    }
+  }
+
+  saveChatState() {
+    try {
+      const state = {
+        currentTab: this.currentTab,
+        currentAdmin: this.currentAdmin,
+      };
+      localStorage.setItem('representative_chat_state', JSON.stringify(state));
+    } catch (error) {
+      console.error('Ошибка сохранения состояния чата:', error);
+    }
+  }
+
+  restoreChatView() {
+    const { currentTab, currentAdmin } = this.currentChatState;
+
+    if (currentTab && currentTab.startsWith('admin-') && currentAdmin) {
+      // Find the full admin object from our loaded list
+      const adminToSelect = this.administrators.find(a => a.profile === currentAdmin.profile);
+      if (adminToSelect) {
+        this.selectAdministrator(adminToSelect);
+      } else {
+        this.switchChatTab('announcements');
+      }
+    } else {
+      this.switchChatTab(currentTab || 'announcements');
+    }
   }
 
   initializeElements() {
@@ -108,7 +160,7 @@ class RepresentativeChat {
     })
     
     // Инициализируем активную вкладку (Объявления по умолчанию)
-    this.switchChatTab('announcements')
+    // this.switchChatTab('announcements')
   }
 
   switchChatTab(tabName) {
@@ -207,6 +259,7 @@ class RepresentativeChat {
       this.shouldReconnect[tabName] = true
       this.connectWebSocket(tabName)
     }, 200)
+    this.saveChatState()
   }
 
   async connectWebSocket(tabName) {
@@ -385,6 +438,12 @@ class RepresentativeChat {
         this.groupRoomId = data.message.room_id
       }
       
+      // Сохраняем последнее сообщение для публичного чата
+      if (data.message.content) {
+        this.publicLastMessages[tabName] = data.message.content
+        this.updatePublicChatPreview(tabName)
+      }
+      
       // Проверяем, является ли это новым сообщением не от нас
       if (!this.isOurMessage(data.message)) {
         // Если мы не в этом чате, отмечаем как непрочитанное
@@ -445,6 +504,15 @@ class RepresentativeChat {
     const sortedMessages = messages.sort((a, b) => 
       new Date(a.created_at) - new Date(b.created_at)
     )
+
+    // Сохраняем последнее сообщение для публичного чата
+    if (sortedMessages.length > 0) {
+      const lastMessage = sortedMessages[sortedMessages.length - 1]
+      if (lastMessage.content) {
+        this.publicLastMessages[tabName] = lastMessage.content
+        this.updatePublicChatPreview(tabName)
+      }
+    }
 
     // Добавляем все сообщения
     sortedMessages.forEach(messageData => {
@@ -997,21 +1065,111 @@ class RepresentativeChat {
   }
 
   async initializeAllChats() {
-    // Загружаем всех администраторов и подключаемся к их чатам
-    await this.loadAllAdministrators()
-    
-    // Инициализируем статусы публичных чатов
-    this.initializePublicChatStatuses()
-    
-    // Подключаемся к объявлениям после небольшой задержки
-    setTimeout(() => {
-      this.connectWebSocket('announcements')
-    }, 100)
-    
-    // Подключаемся к групповому чату
-    setTimeout(() => {
-      this.connectWebSocket('group')
-    }, 200)
+    try {
+      console.log('Начало инициализации чатов')
+      // Загружаем всех администраторов
+      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/administrators')
+      
+      if (!response.ok) {
+        throw new Error(`Ошибка загрузки: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      this.administrators = data.results || []
+      this.administratorsLoaded = true
+      
+      console.log('Загружены администраторы:', this.administrators)
+      
+      // Загружаем сообщения для всех администраторов параллельно
+      const messagePromises = this.administrators.map(async (admin) => {
+        try {
+          const messagesResponse = await authorizedFetch(`https://portal.gradients.academy/api/chats/private/${admin.profile}/messages/`)
+          if (messagesResponse.ok) {
+            const messagesData = await messagesResponse.json()
+            console.log(`Получены сообщения для админа ${admin.profile}:`, messagesData)
+            if (messagesData.messages && messagesData.messages.length > 0) {
+              // Сортируем сообщения, чтобы найти самое последнее
+              const sortedMessages = messagesData.messages.sort((a, b) =>
+                new Date(a.created_at) - new Date(b.created_at)
+              );
+
+              // Ищем последнее сообщение с текстовым контентом
+              let lastMessageWithContent = null;
+              for (let i = sortedMessages.length - 1; i >= 0; i--) {
+                const message = sortedMessages[i];
+                if (message.content && message.content.trim() !== '') {
+                  lastMessageWithContent = message;
+                  break;
+                }
+              }
+
+              if (lastMessageWithContent) {
+                console.log(`Сохраняем последнее сообщение для админа ${admin.profile}:`, lastMessageWithContent.content);
+                this.lastMessages.set(admin.profile, lastMessageWithContent.content);
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`Ошибка загрузки сообщений для администратора ${admin.profile}:`, error)
+        }
+      })
+      
+      // Ждем загрузки всех сообщений
+      await Promise.all(messagePromises)
+      
+      console.log('Все последние сообщения загружены:', Array.from(this.lastMessages.entries()))
+      
+      // Рендерим список администраторов с последними сообщениями
+      this.renderAdministratorsList()
+      
+      // Подключаемся ко всем приватным чатам
+      for (const admin of this.administrators) {
+        this.connectToAdministratorChat(admin.profile)
+      }
+      
+      // Загружаем историю сообщений для объявлений
+      const announcementsResponse = await authorizedFetch('https://portal.gradients.academy/api/chats/announcements/messages/')
+      if (announcementsResponse.ok) {
+        const data = await announcementsResponse.json()
+        if (data.messages && data.messages.length > 0) {
+          const lastMessage = data.messages[data.messages.length - 1]
+          if (lastMessage.content) {
+            this.publicLastMessages.announcements = lastMessage.content
+            this.updatePublicChatPreview('announcements')
+          }
+        }
+      }
+      
+      // Загружаем историю сообщений для группового чата
+      const groupResponse = await authorizedFetch('https://portal.gradients.academy/api/chats/group/messages/')
+      if (groupResponse.ok) {
+        const data = await groupResponse.json()
+        if (data.messages && data.messages.length > 0) {
+          const lastMessage = data.messages[data.messages.length - 1]
+          if (lastMessage.content) {
+            this.publicLastMessages.group = lastMessage.content
+            this.updatePublicChatPreview('group')
+          }
+        }
+      }
+      
+      // Инициализируем статусы публичных чатов
+      this.initializePublicChatStatuses()
+      
+      // Подключаемся к объявлениям после небольшой задержки
+      setTimeout(() => {
+        this.connectWebSocket('announcements')
+      }, 100)
+      
+      // Подключаемся к групповому чату
+      setTimeout(() => {
+        this.connectWebSocket('group')
+      }, 200)
+
+      this.restoreChatView()
+    } catch (error) {
+      console.error('Ошибка при инициализации чатов:', error)
+    }
   }
 
   initializePublicChatStatuses() {
@@ -1074,6 +1232,7 @@ class RepresentativeChat {
     }
 
     try {
+
       const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
       const websocket = new WebSocket(wsUrl)
 
@@ -1113,17 +1272,34 @@ class RepresentativeChat {
 
   handleAdministratorMessage(data, profileId) {
     if (data.message) {
+      // Сохраняем последнее сообщение для этого администратора
+      if (data.message.content) {
+        this.lastMessages.set(profileId, data.message.content)
+        // Обновляем список администраторов для отображения последнего сообщения
+        this.updateAdministratorsList()
+      }
+      
       // Проверяем, является ли это новым сообщением от администратора
       if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {
         // Это новое сообщение от администратора
         this.markChatAsUnread(profileId)
         this.moveAdministratorToTop(profileId)
-        this.updateAdministratorsList()
       }
       
       // Если мы сейчас в этом чате, обрабатываем сообщение как обычно
       if (this.currentAdmin && this.currentAdmin.profile === profileId) {
         this.handlePrivateMessage(data, profileId)
+      }
+    } else if (data.messages) {
+      // Получили историю сообщений
+      if (data.messages.length > 0) {
+        // Берем последнее сообщение из массива
+        const lastMessage = data.messages[data.messages.length - 1]
+        if (lastMessage.content) {
+          this.lastMessages.set(profileId, lastMessage.content)
+          // Обновляем список администраторов для отображения последнего сообщения
+          this.updateAdministratorsList()
+        }
       }
     }
   }
@@ -1164,6 +1340,15 @@ class RepresentativeChat {
   }
 
   updateAdministratorsList() {
+    console.log('Обновление списка администраторов')
+    console.log('Текущие последние сообщения:', Array.from(this.lastMessages.entries()))
+    
+    // Проверяем наличие элементов перед обновлением
+    if (!this.administratorsList || !this.administrators.length) {
+      console.log('Нет списка администраторов или администраторов для обновления')
+      return
+    }
+    
     // Перерендериваем список администраторов с учетом новых статусов
     this.renderAdministratorsList()
   }
@@ -1201,6 +1386,66 @@ class RepresentativeChat {
     }
   }
 
+  getLastMessagePreview(profileId) {
+    // Получаем все сообщения для этого чата
+    const chatContainer = document.getElementById(`admin-chat-${profileId}`)
+    if (!chatContainer) return 'Нет сообщений'
+
+    // Находим все сообщения с контентом
+    const messages = Array.from(chatContainer.querySelectorAll('.message'))
+      .map(messageEl => {
+        const contentEl = messageEl.querySelector('p')
+        if (!contentEl) return null
+        const content = contentEl.textContent.trim()
+        if (!content) return null
+        return {
+          content,
+          time: messageEl.querySelector('.mt-1')?.textContent || ''
+        }
+      })
+      .filter(msg => msg !== null)
+
+    // Если есть сообщения, берем последнее
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1].content
+      // Обрезаем сообщение если оно слишком длинное
+      const preview = lastMessage.length > 40 ? lastMessage.substring(0, 40) + '...' : lastMessage
+      console.log(`Превью для профиля ${profileId}:`, preview)
+      return preview
+    }
+
+    // Если в DOM нет сообщений, пробуем взять из Map
+    const mapMessage = this.lastMessages.get(profileId)
+    if (mapMessage) {
+      const preview = mapMessage.length > 40 ? mapMessage.substring(0, 40) + '...' : mapMessage
+      console.log(`Превью из Map для профиля ${profileId}:`, preview)
+      return preview
+    }
+
+    return 'Нет сообщений'
+  }
+
+  getPublicChatLastMessagePreview(chatType) {
+    const lastMessage = this.publicLastMessages[chatType]
+    if (lastMessage) {
+      // Обрезаем сообщение если оно слишком длинное
+      return lastMessage.length > 40 ? lastMessage.substring(0, 40) + '...' : lastMessage
+    }
+    return 'Нет сообщений'
+  }
+
+  updatePublicChatPreview(chatType) {
+    // Обновляем превью в статичном HTML элементе
+    const chatTab = document.querySelector(`[data-tab="${chatType}"]`)
+    if (chatTab) {
+      const previewElement = chatTab.querySelector('p.text-xs')
+      if (previewElement) {
+        previewElement.textContent = this.getPublicChatLastMessagePreview(chatType)
+        previewElement.classList.add('truncate')
+      }
+    }
+  }
+
   async loadAdministrators() {
     if (this.administratorsLoaded) return
     
@@ -1224,16 +1469,26 @@ class RepresentativeChat {
   }
 
   renderAdministratorsList() {
-    if (!this.administratorsList || !this.administrators.length) return
+    console.log('Начало рендеринга списка администраторов')
+    if (!this.administratorsList || !this.administrators.length) {
+      console.log('Нет списка администраторов или администраторов')
+      return
+    }
     
     // Очищаем список
     this.administratorsList.innerHTML = ''
     
     // Рендерим каждого администратора
     this.administrators.forEach(admin => {
+      console.log(`Рендеринг администратора ${admin.profile}`)
       const adminElement = document.createElement('a')
       adminElement.href = '#'
       adminElement.className = 'admin-chat-tab flex w-full items-center rounded-lg p-3 text-left hover:bg-gray-50 mb-1'
+      
+      if (this.currentAdmin && this.currentAdmin.profile === admin.profile) {
+        adminElement.classList.add('active', 'bg-gray-50');
+      }
+
       adminElement.dataset.adminId = admin.profile
       adminElement.onclick = (e) => {
         e.preventDefault()
@@ -1242,6 +1497,10 @@ class RepresentativeChat {
       
       const hasUnread = this.unreadChats.has(admin.profile)
       const hasRead = this.readChats.has(admin.profile)
+      
+      // Получаем последнее сообщение до создания HTML
+      const lastMessagePreview = this.getLastMessagePreview(admin.profile)
+      console.log(`Превью для администратора ${admin.profile}:`, lastMessagePreview)
       
       // Определяем статус чата и соответствующую иконку
       let statusIcon = ''
@@ -1270,6 +1529,7 @@ class RepresentativeChat {
              </svg>
            </div>`
 
+      // Создаем HTML с сохраненным превью
       adminElement.innerHTML = `
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center gap-3">
@@ -1278,7 +1538,7 @@ class RepresentativeChat {
             </div>
             <div>
               <p class="text-sm font-bold">${admin.full_name_ru}</p>
-              <p class="mt-1 text-xs text-gray-500">Администратор</p>
+              <p class="mt-1 text-xs text-gray-500 truncate">${lastMessagePreview}</p>
             </div>
           </div>
           <div class="flex items-center justify-center w-6 h-6 flex-shrink-0">
@@ -1402,6 +1662,7 @@ class RepresentativeChat {
       this.shouldReconnectPrivate[admin.profile] = true
       this.connectPrivateWebSocket(admin.profile)
     }, 200)
+    this.saveChatState()
   }
 
   async connectPrivateWebSocket(profileId) {
@@ -1464,37 +1725,78 @@ class RepresentativeChat {
   }
 
   handlePrivateMessage(data, profileId) {
+    console.log('Получено новое сообщение в приватном чате:', {
+      profileId,
+      data
+    })
+    
     if (data.message) {
       // Сохраняем room_id для этого приватного чата
       if (data.message.room_id) {
         this.privateRoomIds[profileId] = data.message.room_id
+        console.log('Сохранен room_id для профиля:', {
+          profileId,
+          roomId: data.message.room_id
+        })
+      }
+      
+      // Сохраняем последнее сообщение для этого администратора только если оно не пустое
+      if (data.message.content && data.message.content.trim() !== '') {
+        this.lastMessages.set(profileId, data.message.content)
+        console.log('Обновлено последнее сообщение для профиля:', {
+          profileId,
+          content: data.message.content
+        })
+        // Обновляем список администраторов для отображения последнего сообщения
+        this.updateAdministratorsList()
       }
       
       // Добавляем сообщение в приватный чат
       this.addPrivateMessageToChat(data.message, profileId, true)
       
-      // Проверяем, нужно ли отправить файл после текстового сообщения
-      if (this.pendingFile && this.isOurPrivateMessage(data.message)) {
-        const roomId = this.privateRoomIds[profileId]
-        if (roomId) {
-          this.uploadPrivateFile(roomId, this.pendingFile)
-        } else {
-          console.error('room_id не найден для приватного чата с profileId:', profileId)
-        }
-        this.clearAllFiles()
-      }
     } else if (data.messages) {
-      // История сообщений - сохраняем room_id из первого сообщения
-      if (data.messages.length > 0 && data.messages[0].room_id) {
-        this.privateRoomIds[profileId] = data.messages[0].room_id
+      console.log('Получена история сообщений для профиля:', {
+        profileId,
+        messagesCount: data.messages.length,
+        messages: data.messages
+      })
+      
+      // Сортируем сообщения по дате (старые сверху)
+      const sortedMessages = data.messages.sort((a, b) => 
+        new Date(a.created_at) - new Date(b.created_at)
+      )
+
+      // Находим последнее сообщение с контентом, просматривая с конца массива
+      let lastMessageWithContent = null
+      for (let i = sortedMessages.length - 1; i >= 0; i--) {
+        const message = sortedMessages[i]
+        if (message.content && message.content.trim() !== '') {
+          lastMessageWithContent = message
+          break
+        }
+      }
+      
+      if (lastMessageWithContent) {
+        this.lastMessages.set(profileId, lastMessageWithContent.content)
+        console.log('Сохранено последнее сообщение из истории:', {
+          profileId,
+          content: lastMessageWithContent.content
+        })
+        // Обновляем список администраторов для отображения последнего сообщения
+        this.updateAdministratorsList()
       }
       
       // История сообщений
-      this.loadPrivateMessageHistory(data.messages, profileId)
+      this.loadPrivateMessageHistory(sortedMessages, profileId)
     }
   }
 
   loadPrivateMessageHistory(messages, profileId) {
+    console.log('Загрузка истории сообщений:', {
+      profileId,
+      originalMessages: messages
+    })
+    
     const chatContainer = document.getElementById(`admin-chat-${profileId}`)
     if (!chatContainer) return
 
@@ -1516,6 +1818,32 @@ class RepresentativeChat {
     const sortedMessages = messages.sort((a, b) => 
       new Date(a.created_at) - new Date(b.created_at)
     )
+
+    // Находим последнее сообщение с контентом, просматривая с конца массива
+    let lastMessageWithContent = null
+    for (let i = sortedMessages.length - 1; i >= 0; i--) {
+      const message = sortedMessages[i]
+      if (message.content && message.content.trim() !== '') {
+        lastMessageWithContent = message
+        break
+      }
+    }
+
+    // Если нашли последнее сообщение с контентом, сохраняем его
+    if (lastMessageWithContent) {
+      console.log('Найдено последнее сообщение с контентом:', {
+        profileId,
+        lastMessage: lastMessageWithContent
+      })
+      
+      this.lastMessages.set(profileId, lastMessageWithContent.content)
+      console.log('Сохранено последнее сообщение в Map:', {
+        profileId,
+        content: lastMessageWithContent.content
+      })
+      // Обновляем список администраторов для отображения последнего сообщения
+      this.updateAdministratorsList()
+    }
 
     // Добавляем все сообщения
     sortedMessages.forEach(messageData => {
@@ -1782,6 +2110,7 @@ function openChatMobile() {
 // Очистка при закрытии страницы
 window.addEventListener('beforeunload', () => {
   if (representativeChat) {
+    representativeChat.saveChatState()
     representativeChat.disconnect()
   }
 }) 

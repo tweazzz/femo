@@ -25,9 +25,168 @@ class AdminChat {
     this.readChats = new Set() // Множество ID представителей с прочитанными сообщениями
     this.lastMessageTimes = new Map() // Карта времени последних сообщений по представителям
     
+    // Новые свойства для хранения сообщений и состояния
+    this.lastMessages = new Map() // Карта последних сообщений по представителям
+    this.privateMessageHistories = new Map() // Карта историй сообщений по представителям
+    this.currentChatState = this.loadChatState() // Загружаем сохраненное состояние чата
+    
     this.initializeElements()
     this.setupEventListeners()
+    this.restoreChatState() // Восстанавливаем состояние чата
+    
+    // Восстанавливаем визуальное состояние после загрузки DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        this.restoreVisualState()
+      })
+    } else {
+      // DOM уже загружен
+      setTimeout(() => {
+        this.restoreVisualState()
+      }, 100)
+    }
+    
     this.initializeAllChats() // Инициализируем все чаты сразу
+  }
+
+  // Методы для работы с состоянием чата
+  loadChatState() {
+    try {
+      const savedState = localStorage.getItem('admin_chat_state')
+      return savedState ? JSON.parse(savedState) : { 
+        currentRoom: 'announcements', 
+        currentRepresentative: null,
+        isInRepresentativesMode: false
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки состояния чата:', error)
+      return { 
+        currentRoom: 'announcements', 
+        currentRepresentative: null,
+        isInRepresentativesMode: false
+      }
+    }
+  }
+
+  saveChatState() {
+    try {
+      const state = {
+        currentRoom: this.currentRoom,
+        currentRepresentative: this.currentRepresentative,
+        isInRepresentativesMode: this.representativesContent && !this.representativesContent.classList.contains('hidden')
+      }
+      localStorage.setItem('admin_chat_state', JSON.stringify(state))
+    } catch (error) {
+      console.error('Ошибка сохранения состояния чата:', error)
+    }
+  }
+
+  restoreChatState() {
+    if (!this.currentChatState) return
+    
+    // Восстанавливаем текущую комнату
+    this.currentRoom = this.currentChatState.currentRoom || 'announcements'
+    
+    // Восстанавливаем представителя если он был выбран
+    if (this.currentChatState.currentRepresentative) {
+      this.currentRepresentative = this.currentChatState.currentRepresentative
+    }
+  }
+
+  restoreVisualState() {
+    // Если нет сохраненного состояния, устанавливаем по умолчанию
+    if (!this.currentChatState) {
+      this.currentRoom = 'announcements'
+    }
+    
+    // Восстанавливаем активную вкладку
+    document.querySelectorAll('.chat-tab').forEach(tab => {
+      tab.classList.remove('active', 'bg-gray-50')
+    })
+    
+    const activeTab = document.querySelector(`.chat-tab[data-tab="${this.currentRoom}"]`)
+    if (activeTab) {
+      activeTab.classList.add('active', 'bg-gray-50')
+    }
+    
+    // Восстанавливаем видимый чат
+    document.querySelectorAll('.chat-content').forEach(chat => {
+      chat.classList.remove('active', 'flex')
+      chat.classList.add('hidden')
+      chat.style.display = 'none'
+    })
+    
+    const activeChat = document.querySelector(`#${this.currentRoom}-chat`)
+    if (activeChat) {
+      activeChat.classList.remove('hidden')
+      activeChat.classList.add('active', 'flex')
+      activeChat.style.display = 'flex'
+    }
+    
+    // Восстанавливаем режим представителей если нужно
+    if (this.currentChatState && this.currentChatState.isInRepresentativesMode) {
+      setTimeout(() => {
+        this.showRepresentativesMode()
+        
+        // Восстанавливаем выбранного представителя после загрузки списка
+        if (this.currentRepresentative) {
+          this.waitForRepresentativesAndRestore()
+        }
+      }, 100)
+    }
+    
+    // Обновляем заголовок чата
+    this.updateChatHeader()
+  }
+
+  waitForRepresentativesAndRestore() {
+    const checkRepresentatives = () => {
+      if (this.representatives.length > 0) {
+        const rep = this.representatives.find(r => r.profile === this.currentRepresentative.profile)
+        if (rep) {
+          this.selectRepresentative(rep)
+        }
+      } else {
+        setTimeout(checkRepresentatives, 200)
+      }
+    }
+    checkRepresentatives()
+  }
+
+  updateChatHeader() {
+    const chatHeader = document.getElementById('chat-header')
+    if (!chatHeader) return
+    
+    if (this.currentRoom === 'announcements') {
+      chatHeader.innerHTML = `<span>Объявления</span>`
+    } else if (this.currentRoom === 'representatives') {
+      if (this.currentRepresentative) {
+        const headerAvatarContent = this.currentRepresentative.image 
+          ? `<img src="${this.currentRepresentative.image}" alt="${this.currentRepresentative.full_name_ru}" class="w-8 h-8 rounded-full object-cover">`
+          : `<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+               <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+               </svg>
+             </div>`
+        
+        chatHeader.innerHTML = `
+          <div class="flex items-center gap-3">
+            ${headerAvatarContent}
+            <div>
+              <div class="font-semibold">${this.currentRepresentative.full_name_ru}</div>
+              <div class="text-sm text-gray-500">
+                <img src="https://flagcdn.com/20x15/${this.currentRepresentative.country.toLowerCase()}.png" 
+                     alt="${this.currentRepresentative.country}" 
+                     class="inline w-5 h-3 mr-1">
+                ${this.currentRepresentative.country}
+              </div>
+            </div>
+          </div>
+        `
+      } else {
+        chatHeader.innerHTML = `<span>Представители стран</span>`
+      }
+    }
   }
 
   initializeElements() {
@@ -345,10 +504,31 @@ class AdminChat {
     const messageBgClass = isOurMessage ? 'bg-orange-secondary text-orange-primary' : 'text-gray-900'
     const messageBgStyle = isOurMessage ? '' : 'background-color: #EFEFEF;'
     const messageRounding = isOurMessage ? 'rounded-tl-lg rounded-bl-lg rounded-br-lg' : 'rounded-tr-lg rounded-bl-lg rounded-br-lg'
-    const avatarSrc = isOurMessage 
-      ? "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
-      : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&auto=format&fit=crop&q=60"
-    const senderRole = isOurMessage ? "(Администратор)" : "(Участник)"
+    
+    // Определяем аватар и роль в зависимости от отправителя
+    let avatarSrc, senderRole
+    if (isOurMessage) {
+      // Наше сообщение - берем аватарку из localStorage
+      try {
+        const userData = localStorage.getItem('user')
+        if (userData) {
+          const user = JSON.parse(userData)
+          const userImage = user.profile.image
+          avatarSrc = userImage.startsWith('http') 
+            ? userImage 
+            : `https://portal.gradients.academy${userImage}`
+        } else {
+          avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+        }
+      } catch (error) {
+        console.error('Ошибка при получении аватарки пользователя:', error)
+        avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+      }
+      senderRole = "(Администратор)"
+    } else {
+      avatarSrc = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&auto=format&fit=crop&q=60"
+      senderRole = "(Участник)"
+    }
 
     if (isOurMessage) {
       // Наше сообщение - аватар справа
@@ -566,6 +746,9 @@ class AdminChat {
   switchRoom(roomName) {
     this.currentRoom = roomName
     
+    // Сохраняем состояние при переключении комнаты
+    this.saveChatState()
+    
     // Очищаем прикрепленные файлы и поле ввода
     this.clearAllFiles()
     if (this.messageInput) {
@@ -769,6 +952,9 @@ class AdminChat {
 
   // Переключение между режимами панели
   showRepresentativesMode() {
+    // Сохраняем состояние при переходе в режим представителей
+    this.saveChatState()
+    
     // Скрываем контент чатов
     if (this.chatModeContent) {
       this.chatModeContent.classList.add('hidden')
@@ -798,6 +984,10 @@ class AdminChat {
   }
 
   showChatMode() {
+    // Сохраняем состояние при возврате в режим чатов
+    this.currentRepresentative = null
+    this.saveChatState()
+    
     // Очищаем прикрепленные файлы и поле ввода
     this.clearAllFiles()
     if (this.messageInput) {
@@ -1010,6 +1200,15 @@ class AdminChat {
 
   handleRepresentativeMessage(data, profileId) {
     if (data.message) {
+      // Сохраняем последнее сообщение для этого представителя
+      this.lastMessages.set(profileId, data.message.content)
+      
+      // Добавляем сообщение в историю если она существует
+      if (!this.privateMessageHistories.has(profileId)) {
+        this.privateMessageHistories.set(profileId, [])
+      }
+      this.privateMessageHistories.get(profileId).push(data.message)
+      
       // Проверяем, является ли это новым сообщением от представителя
       if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {
         // Это новое сообщение от представителя
@@ -1022,6 +1221,20 @@ class AdminChat {
       }
       
       // Если мы сейчас в этом чате, обрабатываем сообщение как обычно
+      if (this.currentRepresentative && this.currentRepresentative.profile === profileId) {
+        this.handlePrivateMessage(data)
+      }
+    } else if (data.messages) {
+      // Сохраняем историю сообщений для этого представителя
+      this.privateMessageHistories.set(profileId, data.messages)
+      
+      // Сохраняем последнее сообщение если есть
+      if (data.messages.length > 0) {
+        const lastMessage = data.messages[data.messages.length - 1]
+        this.lastMessages.set(profileId, lastMessage.content)
+      }
+      
+      // Если мы сейчас в этом чате, обрабатываем историю как обычно
       if (this.currentRepresentative && this.currentRepresentative.profile === profileId) {
         this.handlePrivateMessage(data)
       }
@@ -1139,7 +1352,7 @@ class AdminChat {
                     class="w-5 h-3 flex-shrink-0">
               </div>
             </div>
-            <p class="text-xs text-[#222222]">Прикрепите файл, пожалуйста</p>
+            <p class="text-xs text-[#222222] truncate">${this.getLastMessagePreview(rep.profile)}</p>
           </div>
           <div class="flex items-center justify-center w-6 h-6 flex-shrink-0">
             ${statusIcon}
@@ -1149,6 +1362,15 @@ class AdminChat {
       
       this.representativesList.appendChild(representativeElement)
     })
+  }
+
+  getLastMessagePreview(profileId) {
+    const lastMessage = this.lastMessages.get(profileId)
+    if (lastMessage) {
+      // Обрезаем сообщение если оно слишком длинное
+      return lastMessage.length > 40 ? lastMessage.substring(0, 40) + '...' : lastMessage
+    }
+    return 'Нет сообщений'
   }
 
   selectRepresentative(representative) {
@@ -1210,16 +1432,28 @@ class AdminChat {
       </div>
     `
     
-    // Показываем лоадер в чате
+    // Проверяем, есть ли предзагруженная история сообщений
     const representativesChat = document.getElementById('representatives-chat')
-    representativesChat.innerHTML = `
-      <div class="flex items-center justify-center flex-1">
-        <div class="flex items-center gap-3 text-gray-500">
-          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
-          <span>Подключение к чату...</span>
+    const preloadedHistory = this.privateMessageHistories.get(representative.profile)
+    
+    if (preloadedHistory && preloadedHistory.length > 0) {
+      // Показываем предзагруженную историю сразу
+      representativesChat.innerHTML = ''
+      this.loadPrivateMessageHistory(preloadedHistory)
+    } else {
+      // Показываем лоадер если истории нет
+      representativesChat.innerHTML = `
+        <div class="flex items-center justify-center flex-1">
+          <div class="flex items-center gap-3 text-gray-500">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+            <span>Подключение к чату...</span>
+          </div>
         </div>
-      </div>
-    `
+      `
+    }
+    
+    // Сохраняем состояние чата
+    this.saveChatState()
     
     // Подключаемся к приватному WebSocket после задержки
     setTimeout(() => {
@@ -1492,6 +1726,13 @@ class AdminChat {
       // Добавляем сообщение в чат
       this.addPrivateMessageToChat(data.message, true)
       
+      // Перемещаем чат представителя в начало списка при отправке сообщения
+      if (this.currentRepresentative && this.isOurPrivateMessage(data.message)) {
+        this.moveRepresentativeToTop(this.currentRepresentative.profile)
+        this.updateRepresentativesList()
+      }
+      
+      // Проверяем, нужно ли отправить файл после текстового сообщения
       // Проверяем, нужно ли отправить файл после текстового сообщения
       if (this.pendingFile && this.isOurPrivateMessage(data.message)) {
         this.uploadPrivateFile(this.currentPrivateRoomId, this.pendingFile)
@@ -1600,15 +1841,26 @@ class AdminChat {
     // Определяем аватар и роль в зависимости от отправителя
     let avatarSrc, senderRole
     if (isOurMessage) {
-      // Наше сообщение - администратор
-      avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+      // Наше сообщение - берем аватарку из localStorage
+      try {
+        const userData = localStorage.getItem('user')
+        if (userData) {
+          const user = JSON.parse(userData)
+          const userImage = user.profile.image
+          avatarSrc = userImage.startsWith('http') 
+            ? userImage 
+            : `https://portal.gradients.academy${userImage}`
+        } else {
+          avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+        }
+      } catch (error) {
+        console.error('Ошибка при получении аватарки пользователя:', error)
+        avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
+      }
       senderRole = "(Администратор)"
     } else {
-      // Сообщение представителя
-      avatarSrc = this.currentRepresentative && this.currentRepresentative.image 
-        ? `https://portal.gradients.academy${this.currentRepresentative.image}`
-        : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&auto=format&fit=crop&q=60"
-      senderRole = "(Представитель)"
+      avatarSrc = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&auto=format&fit=crop&q=60"
+      senderRole = "(Участник)"
     }
 
     if (isOurMessage) {
@@ -1858,7 +2110,7 @@ class AdminChat {
                class="w-5 h-3 flex-shrink-0">
           ${statusIcon}
         </div>
-        <p class="mt-1 text-xs text-gray-600">Новое сообщение от представителя</p>
+        <p class="mt-1 text-xs text-gray-600 truncate">${this.getLastMessagePreview(representative.profile)}</p>
       </div>
       <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
         <path
@@ -1937,6 +2189,7 @@ window.switchChatTab = function(tabName) {
 // Очистка при закрытии страницы
 window.addEventListener('beforeunload', () => {
   if (adminChat) {
+    adminChat.saveChatState() // Сохраняем состояние перед закрытием
     adminChat.disconnect()
   }
 }) 
