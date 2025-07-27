@@ -39,6 +39,14 @@
       </nav>
 
       <div class="p-4">
+        <a href="/" class="sidebar-link flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+              Выйти из аккаунта
+        </a>
         <a href="/representatives/profile.html" class="sidebar-link">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
             stroke="currentColor" class="mr-3 size-6">
@@ -473,55 +481,18 @@
               <p class="mb-4 text-lg font-bold">Текущая олимпиада</p>
 
               <div class="olympiad-block flex flex-col rounded-2xl bg-white p-4">
-                <p class="mb-2 font-bold">FEMO Весенний тур 2024</p>
-                <p class="mb-4 text-sm">
-                  Зимний этап международной олимпиады для 5–11 классов
-                </p>
+                <p class="mb-2 font-bold">Загрузка…</p>
+                <p class="mb-4 text-sm"></p>
 
-                <div class="mb-4 flex items-center justify-between lg:flex-col xl:flex-row">
-                  <div class="space-y-1 text-sm">
-                    <p class="flex items-center gap-1">
-                      <span class="text-green-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                          stroke="currentColor" class="size-5">
-                          <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                      </span>
-                      <span class="font-bold">Регистрация</span>
-                    </p>
-                    <p class="date">01.03 - 15.03.2024</p>
-                  </div>
-
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                    <path fill-rule="evenodd"
-                      d="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75 3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75 0 1 1-1.06-1.06l2.47-2.47H3a.75.75 0 0 1 0-1.5h16.19l-2.47-2.47a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd" />
-                  </svg>
-
-                  <div class="text-orange-primary space-y-1 text-sm">
-                    <p class="flex items-center gap-1">
-                      <span class="font-bold">Основной этап</span>
-                    </p>
-                    <p class="date">01.03 - 15.03.2024</p>
-                  </div>
-
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                    <path fill-rule="evenodd"
-                      d="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75 3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75 0 1 1-1.06-1.06l2.47-2.47H3a.75.75 0 0 1 0-1.5h16.19l-2.47-2.47a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd" />
-                  </svg>
-
-                  <div class="space-y-1 text-sm">
-                    <p class="flex items-center gap-1">
-                      <span class="font-bold">Подведение итогов</span>
-                    </p>
-                    <p class="date">01.03 - 15.03.2024</p>
-                  </div>
+                <!-- контейнер, куда будем динамически вставлять этапы и стрелки -->
+                <div class="stages-container mb-4 flex items-center justify-between lg:flex-col xl:flex-row">
+                  <!-- JS сюда подставит блоки -->
                 </div>
 
                 <a href="#" class="btn-base text-sm"> Подробнее </a>
               </div>
+
+
             </div>
           </div>
         </div>

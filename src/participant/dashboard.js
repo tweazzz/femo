@@ -282,13 +282,13 @@ function renderAssignmentTable(assignments) {
             const encodedTask = encodeURIComponent(JSON.stringify(task))
             return `
       <tr class="hover:bg-gray-50">
-        <td>${((task.rank === 1) || (task.rank === 2) || (task.rank === 3)) ? task.rank+'👑' : task.rank}</td>
-        <td>${task.full_name}</td>
-        <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
-        <td>${task.country.name}</td>
-        <td>${task.total_points}</td>
-        <td>${task.olympiad_points}</td>
-        <td>${task.assignment_points}</td>
+        <td class="text-center">${((task.rank === 1) || (task.rank === 2) || (task.rank === 3)) ? task.rank+'👑' : task.rank}</td>
+        <td class="text-center">${task.full_name}</td>
+        <td class="text-center">${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
+        <td class="text-center">${task.country.name}</td>
+        <td class="text-center">${task.total_points}</td>
+        <td class="text-center">${task.olympiad_points}</td>
+        <td class="text-center">${task.assignment_points}</td>
       </tr>
     `
           })

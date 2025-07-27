@@ -39,32 +39,47 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// Основная отрисовка профиля
+function renderUserInfo(profile) {
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-  const imgPath = user.profile.image
+  const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`
+    : `https://portal.gradients.academy${imgPath}`;
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  nameEl.textContent    = profile.full_name_ru || '';
+  const firstName       = (profile.full_name_ru || '').split(' ')[0];
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
 
-  const roleMap = {
-    administrator: 'Администратор',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  const roleMap = { administrator: 'Администратор' };
+  roleEl.textContent = roleMap[profile.role] || profile.role;
+}
+
+// Функция, которая дергает профиль администратора
+async function loadAdminProfile() {
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('Токен не найден');
+
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/administrator/profile/',
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
+  return await res.json();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+    // 2) Подтягиваем актуальный профиль по API
+    const profileData = await loadAdminProfile();
+    // 3) Рисуем шапку
+    renderUserInfo(profileData);
 
   try {
     await loadCountryList()

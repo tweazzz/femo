@@ -37,25 +37,37 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// Основная отрисовка профиля
+function renderUserInfo(profile) {
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-  const imgPath = user.profile.image
+  const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`
+    : `https://portal.gradients.academy${imgPath}`;
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  nameEl.textContent    = profile.full_name_ru || '';
+  const firstName       = (profile.full_name_ru || '').split(' ')[0];
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
 
-  const roleMap = {
-    administrator: 'Администратор',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  const roleMap = { administrator: 'Администратор' };
+  roleEl.textContent = roleMap[profile.role] || profile.role;
+}
+
+// Функция, которая дергает профиль администратора
+async function loadAdminProfile() {
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('Токен не найден');
+
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/administrator/profile/',
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
+  return await res.json();
 }
 
 let allUsers = []
@@ -87,7 +99,9 @@ async function loadAllUsers() {
 
     allUsers = data
     initFilters(allUsers)
-    applyFilters()
+    currentPage = 1;
+    updateTotalCountAndPagination();
+    applyFilters();
   } catch (err) {
     console.error('Ошибка загрузки:', err)
     const tbody = document.querySelector('tbody')
@@ -104,12 +118,14 @@ async function loadAllUsers() {
 // Инициализация фильтров
 function initFilters(users) {
   // Страны
-  const countries = [...new Set(users.map((u) => u.country))].filter(Boolean)
+  const countries = [...new Set(users.map(u => u.country))].filter(Boolean)
   const countrySelect = document.querySelector('.country-filter')
   countrySelect.innerHTML = `
-      <option value="">Все страны</option>
-      ${countryList.map((c) => `<option value="${c.code}">${c.name}</option>`).join('')}
-    `
+    <option value="">Все страны</option>
+    ${countries
+       .map(c => `<option value="${c}">${c}</option>`)
+       .join('')}
+  `
 
   // Роли (уже есть в HTML)
 
@@ -129,49 +145,32 @@ function initFilters(users) {
   })
 }
 
-// Применение фильтров
-/*function applyFilters() {
-  // Используем конкретный ID инпута
-  const searchInput = document.querySelector('#search_by_id_or_name')
-  const searchTerm = searchInput.value.toLowerCase()
+function applyFilters() {
+  // Обновляем текущие фильтры
+  currentFilters.search = document.querySelector('#search_by_id_or_name')
+    .value.trim()
+    .toLowerCase();
+  currentFilters.country = document.querySelector('.country-filter').value;
+  currentFilters.role    = document.querySelector('.role-filter').value;
+  currentFilters.grade   = document.querySelector('.grade-filter').value;
 
-  const country = document.querySelector('.country-filter').value
-  const role = document.querySelector('.role-filter').value
-  const grade = document.querySelector('.grade-filter').value
+  // Фильтруем allUsers
+  const filtered = allUsers.filter(user => {
+    const term = currentFilters.search;
+    const idStr = user.id.toString();
+    const matchSearch  = user.full_name_ru.toLowerCase().includes(term) || idStr.includes(term);
+    const matchCountry = !currentFilters.country || user.country === currentFilters.country;
+    const matchRole    = !currentFilters.role    || user.role    === currentFilters.role;
+    const matchGrade   = !currentFilters.grade   || user.grade   === currentFilters.grade;
+    return matchSearch && matchCountry && matchRole && matchGrade;
+  });
 
-  const filtered = allUsers.filter((user) => {
-    // Преобразуем ID в строку и в нижний регистр
-    const userIdString = user.id.toString().toLowerCase()
-    // Ищем совпадения в имени или ID
-    const matchesSearch =
-      user.full_name_ru.toLowerCase().includes(searchTerm) ||
-      userIdString.includes(searchTerm)
-
-    // Проверяем остальные фильтры
-    const matchesCountry = !country || user.country === country
-    const matchesRole = !role || user.role === role
-    const matchesGrade = !grade || user.grade === grade
-
-    return matchesSearch && matchesCountry && matchesRole && matchesGrade
-  })
-
-  renderUsers(filtered)
-}*/
-async function applyFilters() {
-  const searchInput = document.querySelector('#search_by_id_or_name')
-  currentFilters.search = searchInput.value.trim().toLowerCase()
-  currentFilters.country = document.querySelector('.country-filter').value
-  currentFilters.role = document.querySelector('.role-filter').value
-  currentFilters.grade = document.querySelector('.grade-filter').value
-
-  try {
-    const users = await fetchUsersWithFilters(currentPage)
-    renderUsers(users)
-    await updateTotalCountAndPagination()
-  } catch (err) {
-    console.error('Ошибка применения фильтров:', err)
-  }
+  // Рендерим нужный «кусок» по текущей странице
+  const start = (currentPage - 1) * pageSize;
+  const pageItems = filtered.slice(start, start + pageSize);
+  renderUsers(pageItems);
 }
+
 const reverseClassMap = {
   first: 1,
   second: 2,
@@ -187,6 +186,45 @@ const reverseClassMap = {
   twelfth: 12,
 }
 // Отрисовка пользователей
+function getCountryCode(countryName) {
+  const map = {
+  "Афганистан":"AF","Албания":"AL","Алжир":"DZ","Американское Самоа":"AS","Андорра":"AD","Ангола":"AO","Антигуа и Барбуда":"AG",
+  "Аргентина":"AR","Армения":"AM","Аруба":"AW","Австралия":"AU","Австрия":"AT","Азербайджан":"AZ","Багамы":"BS",
+  "Бахрейн":"BH","Бангладеш":"BD","Барбадос":"BB","Беларусь":"BY","Белиз":"BZ","Бельгия":"BE","Бенин":"BJ",
+  "Бермуды":"BM","Бутан":"BT","Боливия":"BO","Босния и Герцеговина":"BA","Ботсвана":"BW","Бразилия":"BR","Бруней":"BN",
+  "Буркина-Фасо":"BF","Бурунди":"BI","Кабо-Верде":"CV","Камбоджа":"KH","Камерун":"CM","Канада":"CA","Центральноафриканская Республика":"CF",
+  "Чад":"TD","Чили":"CL","Китай":"CN","Колумбия":"CO","Коморы":"KM","Конго":"CG","Конго (ДРК)":"CD","Коста-Рика":"CR",
+  "Кот‑д’Ивуар":"CI","Хорватия":"HR","Куба":"CU","Кипр":"CY","Чехия":"CZ","Дания":"DK","Джибути":"DJ","Доминика":"DM",
+  "Доминиканская Республика":"DO","Эквадор":"EC","Египет":"EG","Сальвадор":"SV","Экваториальная Гвинея":"GQ","Эритрея":"ER",
+  "Эстония":"EE","Эсватини":"SZ","Эфиопия":"ET","Фиджи":"FJ","Финляндия":"FI","Франция":"FR","Габон":"GA","Гамбия":"GM",
+  "Грузия":"GE","Гана":"GH","Греция":"GR","Гренада":"GD","Гватемала":"GT","Гвинея":"GN","Гвинея-Бисау":"GW","Гайана":"GY",
+  "Гаити":"HT","Гондурас":"HN","Венгрия":"HU","Исландия":"IS","Индия":"IN","Индонезия":"ID","Иран":"IR","Ирак":"IQ",
+  "Ирландия":"IE","Израиль":"IL","Италия":"IT","Ямайка":"JM","Япония":"JP","Иордания":"JO","Казахстан":"KZ","Кения":"KE",
+  "Кирибати":"KI","Киргизия":"KG","Кувейт":"KW","Лаос":"LA","Латвия":"LV","Ливан":"LB","Лесото":"LS","Либерия":"LR",
+  "Ливия":"LY","Литва":"LT","Люксембург":"LU","Мадагаскар":"MG","Малави":"MW","Малайзия":"MY","Мальдивы":"MV","Мали":"ML",
+  "Мальта":"MT","Маршалловы Острова":"MH","Мавритания":"MR","Маврикий":"MU","Мексика":"MX","Микронезия":"FM","Молдова":"MD",
+  "Монако":"MC","Монголия":"MN","Черногория":"ME","Марокко":"MA","Мозамбик":"MZ","Мьянма":"MM","Намибия":"NA","Науру":"NR",
+  "Непал":"NP","Нидерланды":"NL","Новая Зеландия":"NZ","Никарагуа":"NI","Нигер":"NE","Нигерия":"NG","Северная Корея":"KP",
+  "Северная Македония":"MK","Норвегия":"NO","Оман":"OM","Пакистан":"PK","Палау":"PW","Панама":"PA","Папуа — Новая Гвинея":"PG",
+  "Парагвай":"PY","Перу":"PE","Филиппины":"PH","Польша":"PL","Португалия":"PT","Катар":"QA","Республика Корея":"KR","Румыния":"RO",
+  "Россия":"RU","Руанда":"RW","Сан-Марино":"SM","Сан-Томе и Принсипи":"ST","Саудовская Аравия":"SA","Сенегал":"SN","Сербия":"RS",
+  "Сейшелы":"SC","Сьерра-Леоне":"SL","Сингапур":"SG","Словакия":"SK","Словения":"SI","Соломоновы Острова":"SB","Сомали":"SO",
+  "Южная Африка":"ZA","Южный Судан":"SS","Испания":"ES","Шри-Ланка":"LK","Судан":"SD","Суринам":"SR","Швеция":"SE","Швейцария":"CH",
+  "Сирия":"SY","Таджикистан":"TJ","Танзания":"TZ","Таиланд":"TH","Того":"TG","Тонга":"TO","Тринидад и Тобаго":"TT","Тунис":"TN",
+  "Турция":"TR","Туркменистан":"TM","Уганда":"UG","Украина":"UA","Объединённые Арабские Эмираты":"AE","Великобритания":"GB","США":"US",
+  "Уругвай":"UY","Узбекистан":"UZ","Вануату":"VU","Ватикан":"VA","Венесуэла":"VE","Вьетнам":"VN","Йемен":"YE","Замбия":"ZM",
+  "Зимбабве":"ZW",
+  }
+  return map[countryName] || ''
+}
+
+function getCountryFlagImg(countryName) {
+  const code = getCountryCode(countryName).toLowerCase()
+  return code
+    ? `<img src="https://flagcdn.com/16x12/${code}.png" alt="${countryName}" class="inline-block w-5 h-3 rounded-sm" />`
+    : ''
+}
+
 function renderUsers(users) {
   const tbody = document.querySelector('tbody')
   tbody.innerHTML =
@@ -211,13 +249,16 @@ function renderUsers(users) {
                     label: 'Представитель',
                   }
 
+            // 🧠 Проверка на наличие аватарки
+            const avatar = user.image
+              ? `<img src="${user.image}" alt="${user.full_name_ru}" class="h-8 w-8 rounded-full object-cover" />`
+              : `<div class="h-8 w-8 rounded-full bg-gray-300"></div>`
+
             return `
       <tr class="hover:bg-gray-50">
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex items-center">
-            <img class="h-8 w-8 rounded-full"
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=32&h=32&auto=format&fit=crop&q=60"
-              alt="" />
+            ${avatar}
             <div class="ml-4">
               <div class="text-sm font-medium text-gray-900">
                 ${user.full_name_ru}
@@ -227,8 +268,8 @@ function renderUsers(users) {
         </td>
         <td class="px-6 py-4 text-sm whitespace-nowrap">${user.id}</td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <div class="flex items-center">
-            <span class="mr-2">${getFlagEmoji(user.country)}</span>
+          <div class="flex items-center gap-1">
+            ${getCountryFlagImg(user.country)}
             <span class="text-sm text-gray-900">${user.country}</span>
           </div>
         </td>
@@ -239,8 +280,7 @@ function renderUsers(users) {
         </td>
         <td class="px-6 py-4 text-sm whitespace-nowrap">${reverseClassMap[user.grade] || '—'}</td>
         <td class="px-6 py-4 text-sm whitespace-nowrap">
-          <!-- Кнопки действий остаются без изменений -->
-            <div class="flex justify-between gap-2 *:cursor-pointer">
+          <div class="flex justify-between gap-2 *:cursor-pointer">
             <button type="button" onclick="confirmDeleteUser(${user.id})" class="text-gray-400 hover:text-red-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -252,7 +292,6 @@ function renderUsers(users) {
               </svg>
             </button>
           </div>
-        </td>
         </td>
       </tr>
     `
@@ -286,7 +325,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+    // 2) Подтягиваем актуальный профиль по API
+    const profileData = await loadAdminProfile();
+    // 3) Рисуем шапку
+    renderUserInfo(profileData);
   setupSearch()
 
   await populateCountryAndClassOptions()
@@ -351,100 +393,75 @@ const pageSize = 20
 let currentPage = 1
 let totalUserCount = 0
 
-async function fetchUsersWithFilters(page = 1, size = pageSize) {
-  const params = new URLSearchParams()
 
-  // Применяем фильтры
-  if (currentFilters.search) params.append('search', currentFilters.search)
-  if (currentFilters.country) params.append('country', currentFilters.country)
-  if (currentFilters.role) params.append('role', currentFilters.role)
-  if (currentFilters.grade) params.append('grade', currentFilters.grade)
+function updateTotalCountAndPagination() {
+  // Считаем, сколько элементов осталось после фильтрации
+  const totalCount = allUsers.filter(user => {
+    // та же логика фильтрации, что и в applyFilters, без среза
+    const term = currentFilters.search;
+    const idStr = user.id.toString();
+    return (
+      (user.full_name_ru.toLowerCase().includes(term) || idStr.includes(term)) &&
+      (!currentFilters.country || user.country === currentFilters.country) &&
+      (!currentFilters.role    || user.role    === currentFilters.role) &&
+      (!currentFilters.grade   || user.grade   === currentFilters.grade)
+    );
+  }).length;
 
-  params.append('page', page)
-  params.append('page_size', size)
-
-  const url = `https://portal.gradients.academy/api/users/dashboard/?${params.toString()}`
-  const res = await authorizedFetch(url)
-
-  if (!res.ok) throw new Error(`Ошибка HTTP: ${res.status}`)
-
-  const data = await res.json()
-  return data
-}
-
-async function updateTotalCountAndPagination() {
-  const params = new URLSearchParams()
-
-  if (currentFilters.search) params.append('search', currentFilters.search)
-  if (currentFilters.country) params.append('country', currentFilters.country)
-  if (currentFilters.role) params.append('role', currentFilters.role)
-  if (currentFilters.grade) params.append('grade', currentFilters.grade)
-
-  // Максимальный page_size, чтобы просто получить общее число
-  params.append('page', 1)
-  params.append('page_size', 50)
-
-  const url = `https://portal.gradients.academy/api/users/dashboard/?${params.toString()}`
-  const res = await authorizedFetch(url)
-
-  if (!res.ok)
-    throw new Error('Не удалось получить общее количество пользователей')
-
-  const users = await res.json()
-  totalUserCount = users.length
-
-  document.getElementById('total-users-count').textContent = totalUserCount
-
-  renderPaginationControls(totalUserCount)
+  totalUserCount = totalCount;
+  document.getElementById('total-users-count').textContent = totalCount;
+  renderPaginationControls(totalCount);
 }
 
 function renderPaginationControls(totalCount) {
-  const paginationContainer = document.getElementById('pagination')
-  paginationContainer.innerHTML = ''
+  const container = document.getElementById('pagination');
+  container.innerHTML = '';
+  const totalPages = Math.ceil(totalCount / pageSize);
 
-  const totalPages = Math.ceil(totalCount / pageSize)
-
-  // Стрелка "назад"
-  const prevBtn = document.createElement('button')
-  prevBtn.innerHTML = '&larr;'
-  prevBtn.className = 'px-3 py-1 border rounded'
-  prevBtn.disabled = currentPage === 1
-  prevBtn.addEventListener('click', () => {
+  // Кнопка «←»
+  const prev = document.createElement('button');
+  prev.innerHTML = '&larr;';
+  prev.disabled = currentPage === 1;
+  prev.className = 'px-3 py-1 border rounded';
+  prev.onclick = () => {
     if (currentPage > 1) {
-      currentPage--
-      applyFilters()
+      currentPage--;
+      applyFilters();
+      updateTotalCountAndPagination();
     }
-  })
-  paginationContainer.appendChild(prevBtn)
+  };
+  container.appendChild(prev);
 
-  // Номера страниц
+  // Номера
   for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement('button')
-    btn.textContent = i
+    const btn = document.createElement('button');
+    btn.textContent = i;
     btn.className = `px-3 py-1 border rounded ${
       i === currentPage
         ? 'border-orange-primary text-orange-primary'
         : 'text-gray-600 hover:bg-gray-50'
-    }`
-    btn.addEventListener('click', () => {
-      currentPage = i
-      applyFilters()
-    })
-    paginationContainer.appendChild(btn)
+    }`;
+    btn.onclick = () => {
+      currentPage = i;
+      applyFilters();
+      updateTotalCountAndPagination();
+    };
+    container.appendChild(btn);
   }
 
-  // Стрелка "вперёд"
-  const nextBtn = document.createElement('button')
-  nextBtn.innerHTML = '&rarr;'
-  nextBtn.className = 'px-3 py-1 border rounded'
-  nextBtn.disabled = currentPage === totalPages
-  nextBtn.addEventListener('click', () => {
+  // Кнопка «→»
+  const next = document.createElement('button');
+  next.innerHTML = '&rarr;';
+  next.disabled = currentPage === totalPages || totalPages === 0;
+  next.className = 'px-3 py-1 border rounded';
+  next.onclick = () => {
     if (currentPage < totalPages) {
-      currentPage++
-      applyFilters()
+      currentPage++;
+      applyFilters();
+      updateTotalCountAndPagination();
     }
-  })
-  paginationContainer.appendChild(nextBtn)
+  };
+  container.appendChild(next);
 }
 
 async function addUser(formId, role = 'participant') {
@@ -455,8 +472,7 @@ async function addUser(formId, role = 'participant') {
     email: formData.get('email'),
     password: form.querySelector('#password')?.value || '',
     full_name_ru: formData.get('fullname'),
-    country:
-      formData.get('country') === 'Казахстан' ? 'KZ' : formData.get('country'),
+    country: getCountryCode(formData.get('country')) || formData.get('country'),
     city: formData.get('city') || '',
     school: formData.get('school') || '',
     grade: formData.get('class') || '',
@@ -633,11 +649,12 @@ async function updateUserFromEditForm() {
   }
 
   const isParticipant = form.id === 'participant-form-edit'
-  const data = {
+  const countryName = form.querySelector('input[name="country"]').value;
+  data = {
     email: emailInput.value,
     password: form.querySelector('#password')?.value || '',
     full_name_ru: form.querySelector('input[name="fullname"]').value,
-    country: form.querySelector('input[name="country"]').value,
+    country: getCountryCode(countryName) || countryName,
   }
 
   if (isParticipant) {

@@ -37,34 +37,48 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// Основная отрисовка профиля
+function renderUserInfo(profile) {
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-  const imgPath = user.profile.image
+  const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`
+    : `https://portal.gradients.academy${imgPath}`;
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  nameEl.textContent    = profile.full_name_ru || '';
+  const firstName       = (profile.full_name_ru || '').split(' ')[0];
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
 
-  const roleMap = {
-    administrator: 'Администратор',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  const roleMap = { administrator: 'Администратор' };
+  roleEl.textContent = roleMap[profile.role] || profile.role;
+}
+// Функция, которая дергает профиль администратора
+async function loadAdminProfile() {
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('Токен не найден');
+
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/administrator/profile/',
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
+  return await res.json();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
 
   try {
+        // 2) Подтягиваем актуальный профиль по API
+    const profileData = await loadAdminProfile();
+    // 3) Рисуем шапку
+    renderUserInfo(profileData);
     await loadOlympiads()
 
     let sortAscending = true
@@ -433,6 +447,12 @@ async function openEditModal(title, id) {
     document.getElementById('link-edit').value = data.website || ''
     document.getElementById('price').value = data.cost || ''
     document.getElementById('disc-edit').value = data.description || ''
+    // Язык олимпиады
+    const langSelect = document.getElementById('language-edit');
+    if (langSelect) {
+      // data.language приходит из API как 'kazakh'|'russian'|'english'
+      langSelect.value = data.language || 'kazakh';
+    }
 
     // Классы
     const gradesSelect = document.getElementById('grades-edit')
@@ -498,93 +518,92 @@ async function submitOlympiadForm() {
     return
   }
 
-  const formData = new FormData()
+  // 1) ОБЩАЯ ИНФОРМАЦИЯ
+  const title       = document.getElementById('title-add')?.value.trim()
+  const status      = document.getElementById('status-add')?.value
+  const typeLabel   = document.getElementById('tour-add')?.value
+  const year        = document.getElementById('year-add')?.value
+  const cost        = document.getElementById('price-add')?.value
+  const link        = document.getElementById('link-add')?.value.trim()
+  const language    = document.getElementById('language-add')?.value
 
-  // 📌 Общие поля
-  const title = document.getElementById('title-add')?.value
-  const status = document.getElementById('status-add')?.value
-  const typeLabel = document.getElementById('tour-add')?.value
-  const typeMap = {
-    Весна: 'spring',
-    Осень: 'autumn',
-    Зима: 'winter',
-    Лето: 'summer',
+  if (!title) {
+    alert('Введите название олимпиады')
+    return
   }
 
+  // Тур → код
+  const typeMap = { Весна: 'spring', Осень: 'autumn', Зима: 'winter', Лето: 'summer' }
   const type = typeMap[typeLabel] || 'spring'
-  const year = document.getElementById('year-add')?.value
-  const cost = document.getElementById('price')?.value
 
-  // 📌 Классы
+  // 2) КЛАССЫ
   const gradesSelect = document.getElementById('grades-add')
-  const grades = Array.from(gradesSelect.selectedOptions).map((opt) =>
-    parseInt(opt.value)
-  )
+  const grades = Array.from(gradesSelect.selectedOptions)
+                      .map(opt => parseInt(opt.value, 10))
+                      .filter(n => !isNaN(n))
   if (grades.length === 0) {
     alert('Выберите хотя бы один класс')
     return
   }
 
-  // 📌 Этапы
-  const stepNames = document.querySelectorAll('.step-name-add')
-    const dateRanges = document.querySelectorAll('.date-range-add')
-    const stages = []
+  // 3) ЭТАПЫ: валидируем и собираем
+  const stepNames  = document.querySelectorAll('.step-name-add')
+  const dateRanges = document.querySelectorAll('.date-range-add')
+  const stages = []
 
-    for (let i = 0; i < stepNames.length; i++) {
-      const range = dateRanges[i]?.value.split(' — ')
-      if (stepNames[i].value && range && range.length === 2 && range[0] && range[1]) {
-        stages.push({
-          name: stepNames[i].value,
-          start_date: formatDate(range[0]),
-          end_date: formatDate(range[1]),
-        })
-      }
+  for (let i = 0; i < stepNames.length; i++) {
+    const name = stepNames[i].value.trim()
+    const raw  = dateRanges[i]?.value.trim()
+    if (!raw) {
+      alert(`Пожалуйста, укажите период для этапа №${i + 1} (“${name || 'Без названия'}”)`)
+      return
     }
-
+    const [d1, d2] = raw.split(' — ').map(s => s.trim())
+    stages.push({
+      name,
+      start_date: formatDate(d1), 
+      end_date:   formatDate(d2),
+    })
+  }
   console.log('✅ Сформированные stages:', stages)
 
-
-  // 📌 Сертификат
-  const headerText = document.getElementById('title_certificate-add')?.value
-  const signature1 = document.getElementById('sign-add')?.value.trim()
-  const signature2 = document.getElementById('sign-add')?.value.trim()
-  const background = document.getElementById('certificate-background')?.files[0]
+  // 4) СЕРТИФИКАТ
+  const headerText  = document.getElementById('title_certificate-add')?.value.trim()
+  const signature1  = document.getElementById('sign-add')?.value.trim()
+  const signature2  = document.getElementById('sign-add')?.value.trim()
+  const background  = document.getElementById('certificate-background')?.files[0]
 
   if (!background) {
     alert('Пожалуйста, загрузите фон сертификата.')
     return
   }
 
-  // 🧩 Собираем все поля
-  formData.append('title', title)
-  formData.append('type', type)
-  formData.append('status', status)
-  formData.append('year', year)
-  formData.append('cost', cost)
-  grades.forEach((g) => formData.append('grades', g))
-  stages.forEach((stage, index) => {
-    formData.append(`stages[${index}].name`, stage.name)
-    formData.append(`stages[${index}].start_date`, stage.start_date)
-    formData.append(`stages[${index}].end_date`, stage.end_date)
+  // 5) СОБИРАЕМ FormData
+  const formData = new FormData()
+  formData.append('title',      title)
+  formData.append('type',       type)
+  formData.append('status',     status)
+  formData.append('year',       year)
+  formData.append('cost',       cost)
+  formData.append('website',    link)
+  formData.append('language',   language)
+  grades.forEach(g => formData.append('grades', g))
+  stages.forEach((stage, i) => {
+    formData.append(`stages[${i}].name`,       stage.name)
+    formData.append(`stages[${i}].start_date`, stage.start_date)
+    formData.append(`stages[${i}].end_date`,   stage.end_date)
   })
-
-  //  formData.append('certificate_template', JSON.stringify({
-  //    header_text: headerText,
-  //    signature_1: signature1,
-  //    signature_2: signature2
-  //  }));
-  //
-  //  formData.append('certificate_template.background', background);
   formData.append('certificate_template.header_text', headerText)
   formData.append('certificate_template.signature_1', signature1)
   formData.append('certificate_template.signature_2', signature2)
   formData.append('certificate_template.background', background)
 
   console.log('------ FORM DATA ------')
-  for (let pair of formData.entries()) {
-    console.log(`${pair[0]}:`, pair[1])
+  for (let [key, val] of formData.entries()) {
+    console.log(key, val)
   }
 
+  // 6) ОТПРАВКА
   try {
     const res = await fetch(
       'https://portal.gradients.academy/api/olympiads/dashboard/',
@@ -592,30 +611,32 @@ async function submitOlympiadForm() {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          // Content-Type НЕ указывать вручную — FormData сам выставит
+          // не указываем Content-Type — браузер сам выставит multipart/form-data
         },
         body: formData,
       }
     )
-
     if (!res.ok) {
       const error = await res.json()
-      throw new Error(JSON.stringify(error))
+      console.error('Ошибка от сервера при создании:', error)
+      throw new Error(error.detail || JSON.stringify(error))
     }
-
     alert('Олимпиада успешно добавлена!')
     toggleModal('modalAdd', false)
-    await loadOlympiads() // если у тебя есть функция загрузки
+    await loadOlympiads()
   } catch (err) {
     console.error('Ошибка при создании олимпиады:', err)
     alert(`Ошибка: ${err.message}`)
   }
 }
 
+// Утилита: «дд.мм.гггг» → «гггг‑мм‑дд»
 function formatDate(dateStr) {
   const [d, m, y] = dateStr.split('.')
   return `${y}-${m}-${d}`
 }
+
+
 
 
 function addStageBlock() {
@@ -702,85 +723,101 @@ async function updateOlympiadForm() {
     return
   }
 
-  const formData = new FormData()
-  const title = document.getElementById('name-edit')?.value
-  const status = document.getElementById('status-edit')?.value
-  const typeLabel = document.getElementById('tour-edit')?.value
-  const typeMap = {
-    Весна: 'spring',
-    Осень: 'autumn',
-    Зима: 'winter',
-    Лето: 'summer',
-  }
-  const type = typeMap[typeLabel] || 'spring'
-  const year = document.getElementById('year-edit')?.value
-  const cost = document.getElementById('price')?.value
-  const link = document.getElementById('link-edit')?.value
-  const description = document.getElementById('disc-edit')?.value
+  // Собираем значения из формы
+  const title       = document.getElementById('name-edit')?.value.trim()
+  const status      = document.getElementById('status-edit')?.value
+  const typeLabel   = document.getElementById('tour-edit')?.value
+  const year        = parseInt(document.getElementById('year-edit')?.value, 10)
+  const cost        = parseFloat(document.getElementById('price')?.value) || 0
+  const link        = document.getElementById('link-edit')?.value.trim()
+  const description = document.getElementById('disc-edit')?.value.trim()
+  const language = document.getElementById('language-edit')?.value || 'kazakh';
 
+  // Валидируем обязательные поля
+  if (!title) { alert('Введите название'); return }
+  if (isNaN(year)) { alert('Введите год'); return }
+
+  // 🗂️ Карта для типа тура
+  const typeMap = { Весна: 'spring', Осень: 'autumn', Зима: 'winter', Лето: 'summer' }
+  const type = typeMap[typeLabel] || 'spring'
+
+  // 📚 Классы
   const gradesSelect = document.getElementById('grades-edit')
-  const grades = Array.from(gradesSelect.selectedOptions).map(opt => parseInt(opt.value))
+  const grades = Array.from(gradesSelect.selectedOptions)
+                     .map(opt => parseInt(opt.value, 10))
+                     .filter(n => !isNaN(n))
   if (grades.length === 0) {
     alert('Выберите хотя бы один класс')
     return
   }
 
-  const stepNames = document.querySelectorAll('#modalEdit .step-name-add')
+  // 🚩 Этапы
+  const stepNames  = document.querySelectorAll('#modalEdit .step-name-add')
   const dateRanges = document.querySelectorAll('#modalEdit .date-range-add')
   const stages = []
   for (let i = 0; i < stepNames.length; i++) {
-    const range = dateRanges[i]?.value.split(' — ')
-    if (stepNames[i].value && range && range.length === 2 && range[0] && range[1]) {
+    const name = stepNames[i].value.trim()
+    const [d1, d2] = dateRanges[i]?.value.split(' — ').map(s => s.trim()) || []
+    if (name && d1 && d2) {
+      // конвертируем d.m.Y → Y-m-d
+      const [day, mon, yr] = d1.split('.')
+      const [day2, mon2, yr2] = d2.split('.')
       stages.push({
-        name: stepNames[i].value,
-        start_date: formatDate(range[0]),
-        end_date: formatDate(range[1]),
+        name,
+        start_date: `${yr}-${mon}-${day}`,
+        end_date:   `${yr2}-${mon2}-${day2}`,
       })
     }
   }
 
-  const headerText = document.getElementById('title_certificate-add')?.value
+  // 📜 Сертификат (без файла)
+  const headerText = document.getElementById('title_certificate-add')?.value.trim()
   const signature1 = document.getElementById('sign-edit1')?.value.trim()
   const signature2 = document.getElementById('sign-edit2')?.value.trim()
-  const background = document.getElementById('certificate-background-edit')?.files[0]
 
-  formData.append('title', title)
-  formData.append('type', type)
-  formData.append('status', status)
-  formData.append('year', year)
-  formData.append('cost', cost)
-  formData.append('website', link)
-  formData.append('description', description)
-  grades.forEach(g => formData.append('grades', g))
-  stages.forEach((stage, index) => {
-    formData.append(`stages[${index}].name`, stage.name)
-    formData.append(`stages[${index}].start_date`, stage.start_date)
-    formData.append(`stages[${index}].end_date`, stage.end_date)
-  })
-  formData.append('certificate_template.header_text', headerText)
-  formData.append('certificate_template.signature_1', signature1)
-  formData.append('certificate_template.signature_2', signature2)
-  if (background) {
-    formData.append('certificate_template.background', background)
+  // Составляем единый JSON-пейлоад
+  const payload = {
+    title,
+    type,
+    status,
+    year,
+    cost,
+    website:    link,
+    description,
+    grades,
+    stages,
+    certificate_template: {
+      header_text:  headerText,
+      signature_1:  signature1,
+      signature_2:  signature2,
+    },
+    language
   }
 
   try {
-    const res = await fetch(`https://portal.gradients.academy/api/olympiads/dashboard/${olympiadIdToDelete}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    })
+    const res = await authorizedFetch(
+      `https://portal.gradients.academy/api/olympiads/dashboard/${olympiadIdToDelete}/`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type':  'application/json',
+          Authorization:   `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    )
+
+    const data = await res.json()
     if (!res.ok) {
-      const error = await res.json()
-      throw new Error(JSON.stringify(error))
+      console.error('Ошибка от сервера при обновлении олимпиады:', data)
+      throw new Error(data.detail || JSON.stringify(data))
     }
+
     alert('Олимпиада успешно обновлена!')
     toggleModal('modalEdit', false)
     await loadOlympiads()
   } catch (err) {
     console.error('Ошибка при обновлении олимпиады:', err)
-    alert(`Ошибка: ${err.message}`)
+    alert(`Не удалось обновить: ${err.message}`)
   }
 }

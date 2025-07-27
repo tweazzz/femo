@@ -43,33 +43,39 @@ async function ensureUserAuthenticated() {
   return user;
 }
 
-// 2. Рендер информации о пользователе (аватар, имя, роль, приветствие)
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar');
-  const nameEl = document.getElementById('user-name');
-  const roleEl = document.getElementById('user-role');
+// Основная отрисовка профиля
+function renderUserInfo(profile) {
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
   const welcomeEl = document.querySelector('h1.text-xl');
 
-  if (avatarEl) {
-    const imgPath = user.profile.image || '';
-    avatarEl.src = imgPath.startsWith('http')
-      ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
-  }
-  if (nameEl) {
-    nameEl.textContent = user.profile.full_name_ru || '';
-  }
-  if (welcomeEl && user.profile.full_name_ru) {
-    const firstName = user.profile.full_name_ru.split(' ')[0];
-    welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
-  }
-  if (roleEl) {
-    const roleMap = {
-      administrator: 'Администратор',
-    };
-    roleEl.textContent = roleMap[user.profile.role] || user.profile.role || '';
-  }
+  const imgPath = profile.image || '';
+  avatarEl.src = imgPath.startsWith('http')
+    ? imgPath
+    : `https://portal.gradients.academy${imgPath}`;
+
+  nameEl.textContent    = profile.full_name_ru || '';
+  const firstName       = (profile.full_name_ru || '').split(' ')[0];
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+
+  const roleMap = { administrator: 'Администратор' };
+  roleEl.textContent = roleMap[profile.role] || profile.role;
 }
+
+// Функция, которая дергает профиль администратора
+async function loadAdminProfile() {
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('Токен не найден');
+
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/administrator/profile/',
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
+  return await res.json();
+}
+
 
 // 3. Глобальные переменные для заданий
 let allAssignments = [];
@@ -321,6 +327,11 @@ async function deleteTask() {
   }
 }
 
+// Глобальный объект для хранения файлов по формам
+const attachments = {
+  'add-participant': [],
+  'edit-participant': []
+};
 // 9. Добавление новой задачи
 async function submitNewTask() {
   const token = localStorage.getItem('access_token');
@@ -329,17 +340,19 @@ async function submitNewTask() {
     return;
   }
 
-  const activeForm = document.querySelector('.role-form:not(.hidden)');
+  const activeForm = document.getElementById('participant-form');
   if (!activeForm) {
     alert('Форма не выбрана.');
     return;
   }
-  // Определяем тип задачи по выбранной роли
+
+  // Тип задачи по роли
   const type = document.querySelector('input[name="role"]:checked')?.value === 'representative'
     ? 'daily'
     : 'preparatory';
 
-  const title = activeForm.querySelector('input[type="text"]')?.value.trim();
+  // Сбор полей
+  const title = activeForm.querySelector('#title-add-participant').value.trim();
   const grade = activeForm.querySelector('select[id^="grade"]')?.value;
   const level = activeForm.querySelector('select[id^="level"]')?.value;
   const points = activeForm.querySelector('select[id^="points"]')?.value;
@@ -348,36 +361,44 @@ async function submitNewTask() {
   const answerType = activeForm.querySelector('input[name="answer-type"]:checked')?.value || 'number';
   const correctAnswer = activeForm.querySelector('input[name="answer"]')?.value.trim();
 
+  // Валидация
   if (!title || !grade || !level || !points || !status || !description || !correctAnswer) {
     alert('Пожалуйста, заполните все обязательные поля.');
     return;
   }
 
-  const taskData = {
-    type,
-    title,
-    grade,
-    level,
-    points,
-    description,
-    answer_type: answerType,
-    correct_answer: correctAnswer,
-    status
-  };
-  console.log('taskData:', taskData);
+  // Формируем FormData
+  const fd = new FormData();
+  fd.append('type', type);
+  fd.append('title', title);
+  fd.append('grade', grade);
+  fd.append('level', level);
+  fd.append('points', points);
+  fd.append('status', status);
+  fd.append('description', description);
+  fd.append('answer_type', answerType);
+  fd.append('correct_answer', correctAnswer);
+
+  // Добавляем файлы, если есть
+  attachments['add-participant'].forEach(file => {
+    fd.append('attachments', file);
+  });
 
   try {
-    const response = await fetch('https://portal.gradients.academy/api/assignments/dashboard/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(taskData),
-    });
+    const response = await fetch(
+      'https://portal.gradients.academy/api/assignments/dashboard/',
+      {
+        method: 'POST',
+        headers: {
+          // Не указываем Content-Type — браузер сам выставит multipart/form-data
+          Authorization: `Bearer ${token}`,
+        },
+        body: fd,
+      }
+    );
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.detail || `Ошибка при добавлении задачи: ${response.status}`);
+      throw new Error(errorData.detail || `Ошибка ${response.status}`);
     }
     toggleModal('modalAdd');
     await loadAssignments(1);
@@ -389,47 +410,59 @@ async function submitNewTask() {
 
 // 10. Редактирование задачи
 function openEditModal(task) {
-  if (!task) return;
-  const isRepresentative = task.type === 'daily';
-  const type = isRepresentative ? 'representative' : 'participant';
-
+  // сохраняем ID задачи
   taskBeingEditedId = task.id;
 
-  // Прячем все формы, показываем нужную
-  document.querySelectorAll('#modalEdit .role-form').forEach(form => form.classList.add('hidden'));
-  const formToShow = document.getElementById(`${type}-form2`);
-  if (formToShow) formToShow.classList.remove('hidden');
-
-  // Устанавливаем radio
-  document.querySelectorAll('#modalEdit input[name="role"]').forEach(input => {
-    input.checked = input.value === type;
-  });
-
-  // Заполняем поля
-  document.getElementById(`title-edit-${type}`).value = task.title || '';
-  document.getElementById(`grade-edit-${type}`).value = task.grade || '';
-  document.getElementById(`level-edit-${type}`).value = task.level || '';
-  document.getElementById(`points-edit-${type}`).value = task.points || '';
-  document.getElementById(`status-edit-${type}`).value = task.status || '';
-  document.getElementById(`desc-edit-${type}`).value = task.description || '';
-  document.getElementById(`answer-edit-${type}`).value = task.correct_answer || '';
-
-  const isText = task.answer_type === 'text';
-  document.getElementById(`answer1-type-edit-${type}`).checked = !isText;
-  document.getElementById(`answer2-type-edit-${type}`).checked = isText;
-
+  // показываем модалку редактирования
   toggleModal('modalEdit');
+
+  // заполняем поля формы participant-form2 по жёстко прописанным id
+  document.getElementById('title-edit-participant').value       = task.title || '';
+  document.getElementById('grade-edit-participant').value       = task.grade  || '';
+  document.getElementById('level-edit-participant').value       = task.level  || '';
+  document.getElementById('points-edit-participant').value      = task.points || '';
+  document.getElementById('status-edit-participant').value      = task.status || '';
+  document.getElementById('desc-edit-participant').value        = task.description || '';
+  document.getElementById('answer-edit-participant').value      = task.correct_answer || '';
+
+  // radios: number/text
+  const isText = task.answer_type === 'text';
+  document.getElementById('answer1-type-edit-participant').checked = !isText;
+  document.getElementById('answer2-type-edit-participant').checked = isText;
 }
+
 
 function handleEditClick(button) {
-  try {
-    const task = JSON.parse(decodeURIComponent(button.dataset.task));
-    openEditModal(task);
-  } catch (err) {
-    console.error('Ошибка при разборе данных задачи:', err);
-    alert('Не удалось открыть задачу для редактирования.');
+  const raw = button.getAttribute('data-task');
+  if (!raw) {
+    console.error('handleEditClick: data-task не найден на', button);
+    return;
   }
+
+  let jsonStr;
+  try {
+    // Заменим + на %20 (если вдруг встретятся) и прогоняем через decodeURIComponent
+    jsonStr = decodeURIComponent(raw.replace(/\+/g, '%20'));
+  } catch (decodeErr) {
+    console.error('Не удалось декодировать raw data-task:', decodeErr, 'raw:', raw);
+    alert('Ошибка при чтении данных задачи.');
+    return;
+  }
+
+  let task;
+  try {
+    task = JSON.parse(jsonStr);
+  } catch (parseErr) {
+    console.error('Ошибка при разборе JSON задачи:', parseErr, 'jsonStr:', jsonStr);
+    alert('Не удалось открыть задачу для редактирования.');
+    return;
+  }
+
+  openEditModal(task);
 }
+
+
+
 
 async function submitEditTask() {
   const token = localStorage.getItem('access_token');
@@ -438,62 +471,77 @@ async function submitEditTask() {
     return;
   }
   if (!taskBeingEditedId) {
-    alert('ID задачи для редактирования не найден.');
+    alert('ID редактируемой задачи не определён.');
     return;
   }
-  const activeForm = document.querySelector('#modalEdit .role-form:not(.hidden)');
-  if (!activeForm) {
-    alert('Форма не выбрана.');
-    return;
-  }
-  const typeRadio = document.querySelector('#modalEdit input[name="role"]:checked')?.value;
-  const title = activeForm.querySelector('input[type="text"]')?.value.trim();
-  const grade = activeForm.querySelector('select[id^="grade"]')?.value;
-  const level = activeForm.querySelector('select[id^="level"]')?.value;
-  const points = activeForm.querySelector('select[id^="points"]')?.value;
-  const status = activeForm.querySelector('select[id^="status"]')?.value;
-  const description = activeForm.querySelector('textarea')?.value.trim();
-  const answerType = activeForm.querySelector('input[name="answer-type"]:checked')?.value || 'number';
-  const correctAnswer = activeForm.querySelector('input[name="answer"]')?.value.trim();
 
+  const form = document.getElementById('participant-form2'); // или ваш селектор
+
+    // 1) Считываем role
+  const roleValue = document.querySelector(
+    '#modalEdit input[name="role"]:checked'
+  ).value; // "participant" или "representative"
+
+  // 2) Мапим в то, что ждёт бэк
+  const typeMap = {
+    participant:   'preparatory',
+    representative: 'daily'
+  };
+  const type = typeMap[roleValue];
+  // Сбор полей из формы редактирования
+  const title = form.querySelector('#title-edit-participant').value.trim();
+  const grade = form.querySelector('select[id^="grade"]')?.value;
+  const level = form.querySelector('select[id^="level"]')?.value;
+  const points = form.querySelector('select[id^="points"]')?.value;
+  const status = form.querySelector('select[id^="status"]')?.value;
+  const description = form.querySelector('textarea')?.value.trim();
+  const answerType = form.querySelector('input[name="answer-type"]:checked')?.value || 'number';
+  const correctAnswer = form.querySelector('input[name="answer"]')?.value.trim();
+
+  // Валидация
   if (!title || !grade || !level || !points || !status || !description || !correctAnswer) {
     alert('Пожалуйста, заполните все обязательные поля.');
     return;
   }
 
-  const updatedTask = {
-    type: typeRadio === 'representative' ? 'daily' : 'preparatory',
-    title,
-    grade,
-    level,
-    points,
-    description,
-    answer_type: answerType,
-    correct_answer: correctAnswer,
-    status
-  };
-  console.log("updatedTask", updatedTask);
+  // Формируем FormData
+  const fd = new FormData();
+  fd.append('type', type);
+  fd.append('title', title);
+  fd.append('grade', grade);
+  fd.append('level', level);
+  fd.append('points', points);
+  fd.append('status', status);
+  fd.append('description', description);
+  fd.append('answer_type', answerType);
+  fd.append('correct_answer', correctAnswer);
+
+  // И — самое главное — прикрепляем все файлы из attachments['edit-participant']
+  attachments['edit-participant'].forEach(file => {
+    fd.append('attachments', file);
+  });
 
   try {
-    const response = await fetch(
+    console.log('Кидаем на сервер файлы:', attachments['edit-participant']);
+    const res = await fetch(
       `https://portal.gradients.academy/api/assignments/dashboard/${taskBeingEditedId}/`,
       {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          // НЕ указываем Content-Type — браузер автоматически поставит multipart/form-data
         },
-        body: JSON.stringify(updatedTask)
+        body: fd,
       }
     );
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || `Ошибка сохранения: ${response.status}`);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || JSON.stringify(err));
     }
     toggleModal('modalEdit');
     await loadAssignments(currentAssignmentPage);
   } catch (err) {
-    console.error('Ошибка при обновлении задачи:', err);
+    console.error('Ошибка при редактировании задачи:', err);
     alert(`Не удалось обновить задачу: ${err.message}`);
   }
 }
@@ -521,7 +569,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+    // 2) Подтягиваем актуальный профиль по API
+    const profileData = await loadAdminProfile();
+    // 3) Рисуем шапку
+    renderUserInfo(profileData);
 
   try {
     await loadAssignments()

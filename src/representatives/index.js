@@ -94,64 +94,114 @@ async function loadRepresentativeStats() {
   }
 }
 async function loadCurrentOlympiad() {
-  const block = document.querySelector('.olympiad-block')
-  if (!block) return
+  const block = document.querySelector('.olympiad-block');
+  if (!block) return;
+
+  const titleEl = block.querySelector('p.font-bold');
+  const descEl = block.querySelector('p.text-sm');
+  const stagesContainer = block.querySelector('.stages-container');
 
   try {
     const res = await authorizedFetch(
       'https://portal.gradients.academy/api/results/representatives/dashboard/current-olympiad/'
-    )
-
+    );
     if (!res.ok) {
-      const errorData = await res.json()
-      if (errorData.detail === 'No active Olympiad.') {
-        console.warn('Нет активной олимпиады — отображаем заглушку.')
-
-        block.querySelector('p.font-bold').textContent = 'Нет активной олимпиады'
-        block.querySelector('p.text-sm').textContent = 'Ожидается запуск'
-
-        const stageBlocks = block.querySelectorAll('.date')
-        stageBlocks.forEach((el) => (el.textContent = '—'))
-
-        // Имена этапов тоже подставим явно
-        const stageTitleSpans = block.querySelectorAll('.date')
-        stageTitleSpans.forEach((dateEl) => {
-          const titleSpan = dateEl.previousElementSibling?.querySelector('span.font-bold')
-          if (titleSpan) titleSpan.textContent = 'Этап'
-        })
-
-        return
+      const { detail } = await res.json();
+      if (detail === 'No active Olympiad.') {
+        throw new Error('NO_OLYMP');
+      } else {
+        throw new Error('FETCH_ERROR');
       }
-
-      throw new Error('Ошибка при получении текущей олимпиады')
     }
 
-    const olympiad = await res.json()
-    console.log('Текущая олимпиада:', olympiad)
+    const olympiad = await res.json();
+    titleEl.textContent = olympiad.title;
+    descEl.textContent = olympiad.description || 'Без описания';
 
-    block.querySelector('p.font-bold').textContent = olympiad.title
-    block.querySelector('p.text-sm').textContent = olympiad.description
+    // очищаем контейнер
+    stagesContainer.innerHTML = '';
 
-    const stageBlocks = block.querySelectorAll('.date')
-    olympiad.stages.forEach((stage, index) => {
-      if (stageBlocks[index]) {
-        stageBlocks[index].textContent = `${stage.start} - ${stage.end}`
-        const stageTitleEl = stageBlocks[index].previousElementSibling
-        if (stageTitleEl && stageTitleEl.classList.contains('flex')) {
-          stageTitleEl.querySelector('span.font-bold').textContent = stage.name
-        }
+    // вспомогательная функция для форматирования даты
+    const fmt = d => {
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      return `${dd}.${mm}.${d.getFullYear()}`;
+    };
+
+    olympiad.stages.forEach((stage, idx) => {
+      // 1) Блок этапа
+      const stageBlock = document.createElement('div');
+      stageBlock.className = 'space-y-1 text-sm';
+
+      const titleP = document.createElement('p');
+      titleP.className = 'flex items-center gap-1';
+
+      if (idx === 0) {
+        // только у первого этапа — чек-иконка
+        titleP.innerHTML = `
+          <span class="text-green-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15L15 9.75M21 12a9 9 0 1 1-18 0
+                       9 9 0 0 1 18 0Z"/>
+            </svg>
+          </span>
+          <span class="font-bold">${stage.name}</span>
+        `;
+      } else {
+        // у остальных — только название
+        titleP.innerHTML = `<span class="font-bold">${stage.name}</span>`;
       }
-    })
-  } catch (err) {
-    console.error('Ошибка при загрузке текущей олимпиады:', err)
 
-    // Безопасный fallback
-    block.querySelector('p.font-bold').textContent = 'Нет активной олимпиады'
-    block.querySelector('p.text-sm').textContent = 'Ошибка загрузки данных'
-    const stageBlocks = block.querySelectorAll('.date')
-    stageBlocks.forEach((el) => (el.textContent = '—'))
+      const dateP = document.createElement('p');
+      dateP.className = 'date';
+      const start = new Date(stage.start_date);
+      const end   = new Date(stage.end_date);
+      dateP.textContent = `${fmt(start)} – ${fmt(end)}`;
+
+      stageBlock.append(titleP, dateP);
+      stagesContainer.append(stageBlock);
+
+      // 2) Если не последний этап – вставляем стрелку
+      if (idx < olympiad.stages.length - 1) {
+        const arrowWrapper = document.createElement('div');
+        arrowWrapper.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="currentColor" class="size-6">
+            <path fill-rule="evenodd"
+                  d="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75
+                     3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75
+                     0 1 1-1.06-1.06l2.47-2.47H3a.75.75 0 0 1
+                     0-1.5h16.19l-2.47-2.47a.75.75 0 0 1
+                     0-1.06Z"/>
+          </svg>
+        `;
+        stagesContainer.append(arrowWrapper);
+      }
+    });
+
+  } catch (err) {
+    titleEl.textContent = 'Нет активной олимпиады';
+    descEl.textContent  = err.message === 'NO_OLYMP'
+      ? 'Ожидается запуск'
+      : 'Ошибка загрузки данных';
+    stagesContainer.innerHTML = '';  // убираем всё
   }
 }
+
+
+
+// Удобная функция форматирования дат из YYYY-MM-DD в DD.MM.YYYY
+function formatDate(isoDate) {
+  const [y, m, d] = isoDate.split('-');
+  return `${d}.${m}.${y}`;
+}
+
+
+
+
   let allRankingData = []
   let isExpanded = false
 

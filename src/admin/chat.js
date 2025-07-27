@@ -29,6 +29,7 @@ class AdminChat {
     this.lastMessages = new Map() // Карта последних сообщений по представителям
     this.privateMessageHistories = new Map() // Карта историй сообщений по представителям
     this.currentChatState = this.loadChatState() // Загружаем сохраненное состояние чата
+    this.savedRepresentativesOrder = null // Сохраненный порядок представителей
     
     this.initializeElements()
     this.setupEventListeners()
@@ -47,6 +48,24 @@ class AdminChat {
     }
     
     this.initializeAllChats() // Инициализируем все чаты сразу
+    
+    // Дополнительно: обеспечиваем обновление интерфейса после загрузки данных
+    setTimeout(() => {
+      if (this.representativesContent && !this.representativesContent.classList.contains('hidden')) {
+        console.log('Конструктор: Пользователь в режиме представителей, обновляем интерфейс')
+        if (this.representatives.length > 0) {
+          this.renderRepresentativesList({ results: this.representatives })
+        }
+      } else if (this.chatModeContent && !this.chatModeContent.classList.contains('hidden')) {
+        console.log('Конструктор: Пользователь в основном режиме, заполняем список чатов')
+        // Показываем представителей с сообщениями в основном списке
+        const representativesWithMessages = this.representatives.filter(rep => this.lastMessages.has(rep.profile))
+        representativesWithMessages.forEach(rep => {
+          console.log(`Конструктор: Добавляем чат ${rep.full_name_ru}`)
+          this.updateMainChatList(rep)
+        })
+      }
+    }, 1500) // Увеличиваем время для полной загрузки данных и предзагрузки сообщений
   }
 
   // Методы для работы с состоянием чата
@@ -73,7 +92,9 @@ class AdminChat {
       const state = {
         currentRoom: this.currentRoom,
         currentRepresentative: this.currentRepresentative,
-        isInRepresentativesMode: this.representativesContent && !this.representativesContent.classList.contains('hidden')
+        isInRepresentativesMode: this.representativesContent && !this.representativesContent.classList.contains('hidden'),
+        // Сохраняем порядок представителей (ID первых 10 для оптимизации)
+        representativesOrder: this.representatives.slice(0, 10).map(rep => rep.profile)
       }
       localStorage.setItem('admin_chat_state', JSON.stringify(state))
     } catch (error) {
@@ -90,6 +111,11 @@ class AdminChat {
     // Восстанавливаем представителя если он был выбран
     if (this.currentChatState.currentRepresentative) {
       this.currentRepresentative = this.currentChatState.currentRepresentative
+    }
+    
+    // Восстанавливаем порядок представителей если есть сохраненный
+    if (this.currentChatState.representativesOrder && Array.isArray(this.currentChatState.representativesOrder)) {
+      this.savedRepresentativesOrder = this.currentChatState.representativesOrder
     }
   }
 
@@ -133,6 +159,13 @@ class AdminChat {
           this.waitForRepresentativesAndRestore()
         }
       }, 100)
+    } else {
+      // Если мы в режиме чатов и есть активный представитель, обновляем основной список
+      if (this.currentRepresentative) {
+        setTimeout(() => {
+          this.waitForRepresentativesToRestoreMainList()
+        }, 100)
+      }
     }
     
     // Обновляем заголовок чата
@@ -142,9 +175,61 @@ class AdminChat {
   waitForRepresentativesAndRestore() {
     const checkRepresentatives = () => {
       if (this.representatives.length > 0) {
+        // Применяем сохраненный порядок представителей если есть
+        this.applySavedRepresentativesOrder()
+        
         const rep = this.representatives.find(r => r.profile === this.currentRepresentative.profile)
         if (rep) {
+          // Перемещаем активного представителя в начало списка
+          this.moveRepresentativeToTop(rep.profile)
+          this.updateRepresentativesList()
           this.selectRepresentative(rep)
+        }
+      } else {
+        setTimeout(checkRepresentatives, 200)
+      }
+    }
+    checkRepresentatives()
+  }
+
+  applySavedRepresentativesOrder() {
+    if (!this.savedRepresentativesOrder || !Array.isArray(this.savedRepresentativesOrder)) {
+      return
+    }
+
+    // Сортируем представителей согласно сохраненному порядку
+    const orderedReps = []
+    const remainingReps = [...this.representatives]
+
+    // Сначала добавляем представителей в сохраненном порядке
+    this.savedRepresentativesOrder.forEach(profileId => {
+      const repIndex = remainingReps.findIndex(rep => rep.profile === profileId)
+      if (repIndex !== -1) {
+        orderedReps.push(remainingReps.splice(repIndex, 1)[0])
+      }
+    })
+
+    // Затем добавляем оставшихся представителей
+    orderedReps.push(...remainingReps)
+
+    this.representatives = orderedReps
+    
+    // Очищаем сохраненный порядок после применения
+    this.savedRepresentativesOrder = null
+  }
+
+  waitForRepresentativesToRestoreMainList() {
+    const checkRepresentatives = () => {
+      if (this.representatives.length > 0) {
+        // Применяем сохраненный порядок представителей если есть
+        this.applySavedRepresentativesOrder()
+        
+        const rep = this.representatives.find(r => r.profile === this.currentRepresentative.profile)
+        if (rep) {
+          // Перемещаем активного представителя в начало списка
+          this.moveRepresentativeToTop(rep.profile)
+          // Показываем представителя в основном списке чатов
+          this.showRepresentativeInMainList(rep.profile)
         }
       } else {
         setTimeout(checkRepresentatives, 200)
@@ -174,12 +259,12 @@ class AdminChat {
             ${headerAvatarContent}
             <div>
               <div class="font-semibold">${this.currentRepresentative.full_name_ru}</div>
-              <div class="text-sm text-gray-500">
+              ${this.currentRepresentative.country ? `<div class="text-sm text-gray-500">
                 <img src="https://flagcdn.com/20x15/${this.currentRepresentative.country.toLowerCase()}.png" 
                      alt="${this.currentRepresentative.country}" 
                      class="inline w-5 h-3 mr-1">
                 ${this.currentRepresentative.country}
-              </div>
+              </div>` : ''}
             </div>
           </div>
         `
@@ -400,6 +485,9 @@ class AdminChat {
 
   handleMessage(data) {
     if (data.message) {
+      // Сохраняем последнее сообщение для объявлений
+      this.lastMessages.set('announcements', data.message.content)
+      
       // Добавляем сообщение в чат
       this.addMessageToChat(data.message, true)
       
@@ -432,6 +520,12 @@ class AdminChat {
     const sortedMessages = messages.sort((a, b) => 
       new Date(a.created_at) - new Date(b.created_at)
     )
+
+    // Обновляем превью последнего сообщения для объявлений
+    if (sortedMessages.length > 0) {
+      const lastMessage = sortedMessages[sortedMessages.length - 1]
+      this.lastMessages.set('announcements', lastMessage.content)
+    }
 
     // Добавляем все сообщения
     sortedMessages.forEach(messageData => {
@@ -979,6 +1073,7 @@ class AdminChat {
       this.loadRepresentatives('')
     } else {
       // Если представители уже загружены, просто обновляем отображение
+      console.log('showRepresentativesMode: Рендерим список представителей с предзагруженными сообщениями')
       this.renderRepresentativesList({ results: this.representatives })
     }
   }
@@ -1120,6 +1215,78 @@ class AdminChat {
     
     // Загружаем всех представителей и подключаемся к их чатам
     await this.loadAllRepresentatives()
+    
+    // Предварительно загружаем последние сообщения для всех представителей
+    await this.preloadLastMessages()
+  }
+
+  async preloadLastMessages() {
+    if (!this.representatives || this.representatives.length === 0) {
+      console.log('preloadLastMessages: Нет представителей для предзагрузки')
+      return
+    }
+
+    console.log(`preloadLastMessages: Начинаем предзагрузку для ${this.representatives.length} представителей`)
+
+    // Предзагружаем последние сообщения для каждого представителя
+    const preloadPromises = this.representatives.map(async (representative) => {
+      try {
+        const url = `https://portal.gradients.academy/api/chats/private/${representative.profile}/messages/?limit=1&ordering=-created_at`
+        console.log(`Запрос последнего сообщения для ${representative.full_name_ru} (${representative.profile}):`, url)
+        
+        const response = await authorizedFetch(url)
+        
+        if (response.ok) {
+          const data = await response.json()
+          console.log(`Ответ для ${representative.full_name_ru}:`, data)
+          
+          if (data.results && data.results.length > 0) {
+            const lastMessage = data.results[0]
+            this.lastMessages.set(representative.profile, lastMessage.content)
+            console.log(`Сохранено последнее сообщение для ${representative.full_name_ru}: "${lastMessage.content}"`)
+          } else {
+            console.log(`Нет сообщений для ${representative.full_name_ru}`)
+          }
+        } else {
+          console.warn(`Ошибка HTTP ${response.status} для ${representative.full_name_ru}`)
+        }
+      } catch (error) {
+        console.error(`Ошибка предзагрузки сообщений для ${representative.full_name_ru} (${representative.profile}):`, error)
+      }
+    })
+
+    // Ждем завершения всех запросов
+    const results = await Promise.allSettled(preloadPromises)
+    const successful = results.filter(r => r.status === 'fulfilled').length
+    console.log(`preloadLastMessages: Завершено ${successful}/${results.length} запросов`)
+    
+    // Обновляем отображение списков после предзагрузки
+    this.updateRepresentativesList()
+    
+    // Принудительно обновляем интерфейс представителей если он уже отображается
+    if (this.representativesContent && !this.representativesContent.classList.contains('hidden')) {
+      console.log('preloadLastMessages: Обновляем интерфейс представителей после предзагрузки')
+      this.renderRepresentativesList({ results: this.representatives })
+    }
+    
+    // Если мы в режиме чатов, показываем представителей с последними сообщениями
+    if (this.chatModeContent && !this.chatModeContent.classList.contains('hidden')) {
+      console.log('preloadLastMessages: Заполняем основной список чатов представителями с сообщениями')
+      
+      // Сначала сортируем представителей по наличию сообщений (с сообщениями в начале)
+      const representativesWithMessages = this.representatives.filter(rep => this.lastMessages.has(rep.profile))
+      const representativesWithoutMessages = this.representatives.filter(rep => !this.lastMessages.has(rep.profile))
+      
+      // Показываем всех представителей с сообщениями в основном списке
+      representativesWithMessages.forEach(rep => {
+        console.log(`Добавляем в основной список: ${rep.full_name_ru} с сообщением: "${this.lastMessages.get(rep.profile)}"`)
+        this.updateMainChatList(rep)
+      })
+      
+      console.log(`Показано ${representativesWithMessages.length} чатов с сообщениями из ${this.representatives.length} представителей`)
+    }
+    
+    console.log(`preloadLastMessages: Всего загружено сообщений: ${this.lastMessages.size}`)
   }
 
   async loadAllRepresentatives() {
@@ -1139,6 +1306,12 @@ class AdminChat {
       }
       
       this.representativesLoaded = true
+      
+      // Если интерфейс представителей уже отображается, обновляем его
+      if (this.representativesContent && !this.representativesContent.classList.contains('hidden')) {
+        console.log('loadAllRepresentatives: Обновляем интерфейс представителей после загрузки данных')
+        this.renderRepresentativesList({ results: this.representatives })
+      }
       
     } catch (error) {
       console.error('Ошибка загрузки всех представителей:', error)
@@ -1345,12 +1518,12 @@ class AdminChat {
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
               <p class="font-bold text-sm text-[#222222] truncate" style="max-width: 160px;">${rep.full_name_ru}</p>
-              <div class="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
+              ${rep.country ? `<div class="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
                 <img src="https://flagcdn.com/w20/${rep.country.toLowerCase()}.png"
                     srcset="https://flagcdn.com/w40/${rep.country.toLowerCase()}.png 2x"
                     alt="${rep.country}" 
                     class="w-5 h-3 flex-shrink-0">
-              </div>
+              </div>` : ''}
             </div>
             <p class="text-xs text-[#222222] truncate">${this.getLastMessagePreview(rep.profile)}</p>
           </div>
@@ -1422,12 +1595,12 @@ class AdminChat {
         ${headerAvatarContent}
         <div>
           <div class="font-semibold">${representative.full_name_ru}</div>
-          <div class="text-sm text-gray-500">
+          ${representative.country ? `<div class="text-sm text-gray-500">
             <img src="https://flagcdn.com/20x15/${representative.country.toLowerCase()}.png" 
                  alt="${representative.country}" 
                  class="inline w-5 h-3 mr-1">
             ${representative.country}
-          </div>
+          </div>` : ''}
         </div>
       </div>
     `
@@ -1772,6 +1945,12 @@ class AdminChat {
       new Date(a.created_at) - new Date(b.created_at)
     )
 
+    // Обновляем превью последнего сообщения для текущего представителя
+    if (sortedMessages.length > 0 && this.currentRepresentative) {
+      const lastMessage = sortedMessages[sortedMessages.length - 1]
+      this.lastMessages.set(this.currentRepresentative.profile, lastMessage.content)
+    }
+
     // Добавляем все сообщения
     sortedMessages.forEach(messageData => {
       this.addPrivateMessageToChat(messageData, false) // false = не прокручивать после каждого
@@ -2104,10 +2283,10 @@ class AdminChat {
       <div class="flex-1">
         <div class="flex items-center gap-2">
           <p class="text-sm font-bold truncate" style="max-width: 180px;">${representative.full_name_ru}</p>
-          <img src="https://flagcdn.com/w20/${representative.country.toLowerCase()}.png"
+          ${representative.country ? `<img src="https://flagcdn.com/w20/${representative.country.toLowerCase()}.png"
                srcset="https://flagcdn.com/w40/${representative.country.toLowerCase()}.png 2x"
                alt="${representative.country}" 
-               class="w-5 h-3 flex-shrink-0">
+               class="w-5 h-3 flex-shrink-0">` : ''}
           ${statusIcon}
         </div>
         <p class="mt-1 text-xs text-gray-600 truncate">${this.getLastMessagePreview(representative.profile)}</p>
@@ -2193,3 +2372,92 @@ window.addEventListener('beforeunload', () => {
     adminChat.disconnect()
   }
 }) 
+
+
+async function ensureUserAuthenticated() {
+  let userData = localStorage.getItem('user')
+
+  if (!userData) {
+    console.warn(
+      'user не найден в localStorage. Пробуем обновить access_token...'
+    )
+    const newAccessToken = await refreshAccessToken()
+    console.log('Результат refreshAccessToken:', newAccessToken)
+
+    if (!newAccessToken) {
+      console.warn(
+        'refreshAccessToken вернул null. Перенаправление на /login.html'
+      )
+      window.location.href = '/index.html'
+      return null
+    }
+
+    userData = localStorage.getItem('user')
+    if (!userData) {
+      console.warn('user всё ещё не найден после обновления токена. Редирект.')
+      window.location.href = '/index.html'
+      return null
+    }
+  }
+
+  const user = JSON.parse(userData)
+
+  // Проверяем роль
+  const role = user.profile?.role
+  if (role !== 'administrator') {
+    console.warn(
+      `Пользователь с ролью "${role}" не имеет доступа к админке. Редирект.`
+    )
+    window.location.href = '/index.html'
+    return null
+  }
+
+  return user
+}
+
+// Основная отрисовка профиля
+function renderUserInfo(profile) {
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
+
+  const imgPath = profile.image || '';
+  avatarEl.src = imgPath.startsWith('http')
+    ? imgPath
+    : `https://portal.gradients.academy${imgPath}`;
+
+  nameEl.textContent    = profile.full_name_ru || '';
+  const firstName       = (profile.full_name_ru || '').split(' ')[0];
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+
+  const roleMap = { administrator: 'Администратор' };
+  roleEl.textContent = roleMap[profile.role] || profile.role;
+}
+
+// Функция, которая дергает профиль администратора
+async function loadAdminProfile() {
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('Токен не найден');
+
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/administrator/profile/',
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
+  return await res.json();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await ensureUserAuthenticated()
+  if (!user) return
+
+  try {
+    // 2) Подтягиваем актуальный профиль по API
+    const profileData = await loadAdminProfile();
+    // 3) Рисуем шапку
+    renderUserInfo(profileData);
+  } catch (err) {
+    console.error('Ошибка при загрузке данных:', err)
+  }
+})

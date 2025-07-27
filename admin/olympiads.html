@@ -61,6 +61,14 @@
         </nav>
 
         <div class="p-4">
+          <a href="/" class="sidebar-link flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+              Выйти из аккаунта
+          </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -152,20 +160,11 @@
                 onclick="toggleModal('modalAdd')"
                 class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                  />
-                </svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 10H15" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 15V5" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+
                 Создать олимпиаду
               </button>
 
@@ -407,6 +406,34 @@
                                       <option value="RUB">₽</option>
                                     </select>
                                   </div>
+                              </div>
+                            </div>
+                            <div>
+                              <label
+                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                for="language-add"
+                                >Язык олимпиады
+                                <span class="text-red-primary">*</span>
+                              </label>
+                              <div class="relative">
+                                <select
+                                  id="language-add"
+                                  class="input-base border-default appearance-none"
+                                  required
+                                >
+                                  <option value="kazakh" selected>Казахский</option>
+                                  <option value="russian">Русский</option>
+                                  <option value="english">Английский</option>
+                                </select>
+                                <div
+                                  class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                      stroke-width="1.5" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                  </svg>
+                                </div>
                               </div>
                             </div>
                             <br />
@@ -1072,6 +1099,37 @@
                                       />
                                     </svg>
                                   </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <label
+                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                for="language-edit"
+                              >
+                                Язык олимпиады
+                                <span class="text-red-primary">*</span>
+                              </label>
+                              <div class="relative">
+                                <select
+                                  id="language-edit"
+                                  class="input-base border-default appearance-none"
+                                  required
+                                >
+                                  <option value="kazakh">Казахский</option>
+                                  <option value="russian">Русский</option>
+                                  <option value="english">Английский</option>
+                                </select>
+                                <div
+                                  class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                      viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                      class="size-4"
+                                  >
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                  </svg>
                                 </div>
                               </div>
                             </div>
