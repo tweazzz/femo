@@ -225,11 +225,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('modalNotification');
   modal?.addEventListener('click', function(e) {
     const item = e.target.closest('.notification-item');
-    if (item) {
-      const type = item.dataset.type;
-      // Пример: если type==='Olympiads', открыть страницу олимпиады и т.д.
+    if (item && !e.target.closest('a')) {
+      const type = item.dataset.type?.toLowerCase();
+      let href = '#';
+
+      if (type === 'olympiads') {
+        href = '/participant/olympiads.html';
+      } else if (type === 'users' || type === 'payments') {
+        href = '/participant/my-way.html';
+      } else if (type === 'tasks') {
+        href = '/participant/tasks.html';
+      }
+
+      window.location.href = href;
     }
   });
+
 });
 
 // 7) toggleModal
