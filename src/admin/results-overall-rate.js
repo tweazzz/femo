@@ -82,10 +82,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderUserInfo(profileData);
 
   try {
+    populateCountryFilter()
     await loadGlobalStats() // 👈 добавили вызов функции загрузки статистики
      await loadAssignments()
      setupAssignmentFilters()
-     populateCountryFilter()
+     
 
      let sortAscending = true
 
@@ -199,7 +200,7 @@ const classMap = {
   5: 'fifth',
   6: 'sixth',
   7: 'seventh',
-  8: 'eights',
+  8: 'eighth',
   9: 'ninth',
   10: 'tenth',
   11: 'eleventh',
@@ -270,11 +271,12 @@ function renderAssignmentTable(assignments) {
       : assignments
           .map((task) => {
             const encodedTask = encodeURIComponent(JSON.stringify(task))
+            const countryName = countryMap[task.country] || task.country
             return `
       <tr class="hover:bg-gray-50">
         <td>${((task.rank === 1) || (task.rank === 2) || (task.rank === 3)) ? task.rank+'👑' : task.rank}</td>
         <td>${task.full_name_ru}</td>
-        <td>${task.country}</td>
+        <td>${countryName}</td>
         <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
         <td>${task.olympiad_score}</td>
         <td>${task.olympiad_score}</td>
@@ -349,36 +351,28 @@ function setupAssignmentFilters() {
     ?.addEventListener('change', applyAssignmentFilters)
 }
 
-
+let countryMap = {}
 async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
       'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
-    );
+    )
+    if (!response.ok) throw new Error('Ошибка загрузки стран')
 
-    if (!response.ok) throw new Error(`Ошибка загрузки стран: ${response.status}`);
+    const data = await response.json()
+    const select = document.getElementById('filter-country')
 
-    const data = await response.json();
-
-    const select = document.getElementById('filter-country');
-
-    if (!select) {
-      console.error('Не найден элемент #filter-country');
-      return;
-    }
-
-    // Очистка списка перед заполнением
-    select.innerHTML = '<option value="">Все страны</option>';
-
-    // Заполняем список стран
     data.results.forEach((country) => {
-      const option = document.createElement('option');
-      option.value = country.code;
-      option.textContent = country.name;
-      select.appendChild(option);
-    });
+      // option в фильтре
+      const option = document.createElement('option')
+      option.value = country.code    // code, например "KZ"
+      option.textContent = country.name // "Казахстан"
+      select.appendChild(option)
 
+      // заполняем мапу
+      countryMap[country.code] = country.name
+    })
   } catch (err) {
-    console.error('Не удалось загрузить список стран:', err);
+    console.error('Не удалось загрузить список стран:', err)
   }
 }

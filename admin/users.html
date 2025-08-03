@@ -270,7 +270,7 @@
                                   <span class="text-red-primary">*</span></label
                                 >
                                 <input
-                                  placeholder="Айжан Ахметова"
+                                  placeholder="Aizhan Akhmetova"
                                   type="text"
                                   name="fullname"
                                   class="input-base border-default"
@@ -455,7 +455,7 @@
 
                         <div class="mt-6 flex items-center justify-end">
                           <div class="flex items-center gap-2">
-                            <button type="submit" class="btn-orange">
+                            <button type="button" class="btn-orange" onclick="addUser('participant-form', 'participant')">
                               <span>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -589,7 +589,7 @@
 
                         <div class="mt-6 flex items-center justify-end">
                           <div class="flex items-center gap-2">
-                            <button type="submit" class="btn-orange">
+                            <button type="button" class="btn-orange" onclick="addUser('representative-form', 'representative')">
                               <span>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -942,6 +942,7 @@
                               Отменить
                             </button>
                             <button
+                              type="button"
                               class="btn-orange"
                               onclick="updateUserFromEditForm()"
                             >
@@ -1115,6 +1116,7 @@
                               Отменить
                             </button>
                             <button
+                              type="button"
                               class="btn-orange"
                               onclick="updateUserFromEditForm()"
                             >

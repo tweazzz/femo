@@ -253,6 +253,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     content.appendChild(footer);
 
     wrap.appendChild(content);
+    // === Добавляем кликабельность всей карточке ===
+    // Определяем URL по типу уведомления
+    let targetUrl = null;
+    if (n.type_display === 'Users' || n.type_display === 'Payments') {
+      targetUrl = '/admin/users.html';
+    } else if (n.type_display === 'Chats') {
+      targetUrl = '/admin/chat.html';
+    }
+    // Если ссылка задана — включаем навигацию
+    if (targetUrl) {
+      wrap.style.cursor = 'pointer';
+      wrap.addEventListener('click', () => {
+        window.location.href = targetUrl;
+      });
+      // Чтобы клики по кнопкам внутри не «прокатывались» на wrap:
+      const buttons = wrap.querySelectorAll('button');
+      buttons.forEach(btn => {
+      btn.addEventListener('click', e => e.stopPropagation());
+      });
+    }
     return wrap;
   }
 

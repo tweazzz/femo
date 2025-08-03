@@ -349,6 +349,10 @@ class AdminChat {
   }
 
   async connectWebSocket() {
+    if (this.isConnectingPublic || (this.websocket && this.websocket.readyState === WebSocket.OPEN)) {
+      return;
+    }
+    this.isConnectingPublic = true;
     // Проверяем, нет ли уже активного соединения
     if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
       return
@@ -406,6 +410,9 @@ class AdminChat {
         console.error('Ошибка подключения к WebSocket:', error)
         this.hideLoader()
       }
+      finally {
+        this.isConnectingPublic = false;
+      }
     }
   }
 
@@ -417,6 +424,9 @@ class AdminChat {
       this.showErrorMessage('Введите сообщение или прикрепите файл', 'validation')
       return
     }
+    // Сохраняем лог в консоль
+    console.log('[SEND] ▶️ Отправляем текст на сервер:', messageText, 
+                'pendingMessageTime=', this.pendingMessageTime);
 
     try {
       // Определяем, какой WebSocket использовать
@@ -481,6 +491,7 @@ class AdminChat {
       this.pendingMessageTime = null
       this.pendingMessageContent = null
     }
+    
   }
 
   handleMessage(data) {
@@ -539,7 +550,11 @@ class AdminChat {
   addMessageToChat(messageData, shouldScroll = true) {
     const announcementsChat = document.getElementById('announcements-chat')
     if (!announcementsChat) return
-
+    // 1) DEDUPE: если уже есть сообщение с таким id — выходим
+    if (announcementsChat.querySelector(`[data-message-id="${messageData.id}"]`)) {
+      console.warn('[DEDUP] сообщение с id=', messageData.id, 'уже в DOM');
+      return;
+    }
     // Удаляем заглушку если она есть
     const placeholder = announcementsChat.querySelector('.chat-placeholder')
     if (placeholder) {
@@ -554,8 +569,12 @@ class AdminChat {
     const isOurMessage = this.isOurMessage(messageData)
 
     // Создаем HTML для нового сообщения
-    const messageElement = document.createElement('div')
-    messageElement.className = `message flex gap-3 mb-4 ${isOurMessage ? 'justify-end' : 'justify-start'}`
+    const messageElement = document.createElement('div');
+    messageElement.dataset.messageId = messageData.id;
+    messageElement.className = `message flex gap-3 mb-4 ${
+      this.isOurMessage(messageData) ? 'justify-end' : 'justify-start'
+    }`;
+
     
     // Форматируем время из created_at
     const messageTime = messageData.created_at 
@@ -1371,48 +1390,49 @@ class AdminChat {
     }
   }
 
-  handleRepresentativeMessage(data, profileId) {
-    if (data.message) {
-      // Сохраняем последнее сообщение для этого представителя
-      this.lastMessages.set(profileId, data.message.content)
-      
-      // Добавляем сообщение в историю если она существует
-      if (!this.privateMessageHistories.has(profileId)) {
-        this.privateMessageHistories.set(profileId, [])
-      }
-      this.privateMessageHistories.get(profileId).push(data.message)
-      
-      // Проверяем, является ли это новым сообщением от представителя
-      if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {
-        // Это новое сообщение от представителя
-        this.markChatAsUnread(profileId)
-        this.moveRepresentativeToTop(profileId)
-        this.updateRepresentativesList()
-        
-        // НОВОЕ: Показываем чат в основном списке, если мы не в режиме представителей
-        this.showRepresentativeInMainList(profileId)
-      }
-      
-      // Если мы сейчас в этом чате, обрабатываем сообщение как обычно
-      if (this.currentRepresentative && this.currentRepresentative.profile === profileId) {
-        this.handlePrivateMessage(data)
-      }
-    } else if (data.messages) {
-      // Сохраняем историю сообщений для этого представителя
-      this.privateMessageHistories.set(profileId, data.messages)
-      
-      // Сохраняем последнее сообщение если есть
-      if (data.messages.length > 0) {
-        const lastMessage = data.messages[data.messages.length - 1]
-        this.lastMessages.set(profileId, lastMessage.content)
-      }
-      
-      // Если мы сейчас в этом чате, обрабатываем историю как обычно
-      if (this.currentRepresentative && this.currentRepresentative.profile === profileId) {
-        this.handlePrivateMessage(data)
-      }
+handleRepresentativeMessage(data, profileId) {
+  if (data.message) {
+    // 1) Сохраняем последнее сообщение и сразу же обновляем контакт-лист
+    this.lastMessages.set(profileId, data.message.content)
+    this.updateRepresentativesList()
+    this.showRepresentativeInMainList(profileId)
+
+    // 2) Добавляем в историю
+    if (!this.privateMessageHistories.has(profileId)) {
+      this.privateMessageHistories.set(profileId, [])
+    }
+    this.privateMessageHistories.get(profileId).push(data.message)
+
+    // 3) Если это чужое сообщение — метим как непрочитанное и перемещаем наверх
+    if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {
+      this.markChatAsUnread(profileId)
+      this.moveRepresentativeToTop(profileId)
+    }
+
+    // 4) Рендерим в окне чата только чужие сообщения
+    if (
+      this.currentRepresentative &&
+      this.currentRepresentative.profile === profileId &&
+      !this.isOurPrivateMessageByProfileId(data.message, profileId)
+    ) {
+      this.handlePrivateMessage(data)
+    }
+
+  } else if (data.messages) {
+    // История
+    this.privateMessageHistories.set(profileId, data.messages)
+    if (data.messages.length > 0) {
+      const lastMessage = data.messages[data.messages.length - 1]
+      this.lastMessages.set(profileId, lastMessage.content)
+      this.updateRepresentativesList()
+      this.showRepresentativeInMainList(profileId)
+    }
+    if (this.currentRepresentative && this.currentRepresentative.profile === profileId) {
+      this.handlePrivateMessage(data)
     }
   }
+}
+
 
   isOurPrivateMessageByProfileId(message, profileId) {
     // Проверяем по Profile ID пользователя

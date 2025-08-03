@@ -71,7 +71,7 @@ async function loadAdminProfile() {
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
   return await res.json();
 }
-
+let selectedAllCertificateIds = null;
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
@@ -83,6 +83,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderUserInfo(profileData);
     await loadAssignments()
     setupAssignmentFilters()
+
+const selectAllEl = document.getElementById('select-all');
+if (selectAllEl) {
+  selectAllEl.addEventListener('click', async () => {
+    // если ещё не выбрано "Все" — загружаем все id и отмечаем их
+    if (selectedAllCertificateIds === null) {
+      try {
+        const token = localStorage.getItem('access_token');
+        const params = new URLSearchParams();
+        if (assignmentFilters.search)    params.append('search',    assignmentFilters.search);
+        if (assignmentFilters.category)  params.append('category',  assignmentFilters.category);
+        if (assignmentFilters.status)    params.append('status',    assignmentFilters.status);
+        if (assignmentFilters.olympiad)  params.append('olympiad',  assignmentFilters.olympiad);
+        params.append('page_size', 10000);
+
+        const response = await authorizedFetch(
+          `https://portal.gradients.academy/api/certificates/dashboard/?${params.toString()}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!response.ok) throw new Error(response.status);
+
+        const data = await response.json();
+        selectedAllCertificateIds = data.results.map(c => c.id);
+
+        // Отмечаем все чекбоксы на текущей странице
+        document
+          .querySelectorAll('#certificates-tbody input[type="checkbox"]')
+          .forEach(cb => cb.checked = true);
+
+      } catch (err) {
+        console.error(err);
+        alert('Ошибка при выборе всех сертификатов');
+      }
+    }
+    // иначе — уже были выбраны все, снимаем все галочки
+    else {
+      selectedAllCertificateIds = null;
+      document
+        .querySelectorAll('#certificates-tbody input[type="checkbox"]')
+        .forEach(cb => cb.checked = false);
+    }
+  });
+}
+
 
     let sortAscending = true
 
@@ -307,7 +351,7 @@ function renderPaginatedAssignments() {
   const end = start + assignmentPageSize
   const pageData = allAssignments.slice(start, end)
     console.log(allAssignments.length)
-  document.getElementById('total-сertificates-count').textContent =
+  document.getElementById('total-certificates-count').textContent =
     allAssignments.length
   renderAssignmentTable(pageData)
   renderAssignmentPagination()
@@ -340,45 +384,55 @@ function setupAssignmentFilters() {
 
 
 function populateOlympiadFilter(assignments) {
-  const olympiadSelect = document.getElementById('filter-olympiad')
-  if (!olympiadSelect) return
+  const olympiadSelect = document.getElementById('filter-olympiad');
+  if (!olympiadSelect) return;
 
-  // Сохраняем выбранное значение, чтобы не сбрасывалось при обновлении
-  const currentValue = olympiadSelect.value
+  // Сохраняем выбранное значение, чтобы восстановить после перерисовки
+  const currentValue = olympiadSelect.value;
 
-  // Получаем уникальные названия олимпиад
-  const uniqueOlympiads = [
-    ...new Set(assignments.map((a) => a.olympiad_title).filter(Boolean)),
-  ]
+  // Собираем уникальные ID и их названия
+  const map = {};
+  assignments.forEach(a => {
+    // здесь предполагаем, что в объекте `a` есть поле `olympiad_id`
+    // и поле `olympiad_title` для показа
+    if (a.olympiad_id && !map[a.olympiad_id]) {
+      map[a.olympiad_id] = a.olympiad_title;
+    }
+  });
 
-  // Очищаем список
-  olympiadSelect.innerHTML = `<option value="">Выбрать олимпиаду</option>`
+  // Сбрасываем список
+  olympiadSelect.innerHTML = `<option value="">Выбрать олимпиаду</option>`;
 
-  // Добавляем новые опции
-  uniqueOlympiads.forEach((title) => {
-    const option = document.createElement('option')
-    option.value = title
-    option.textContent = title
-    olympiadSelect.appendChild(option)
-  })
+  // Добавляем опции с value = ID
+  Object.entries(map).forEach(([id, title]) => {
+    const option = document.createElement('option');
+    option.value = id;
+    option.textContent = title;
+    olympiadSelect.appendChild(option);
+  });
 
-  // Восстанавливаем значение, если оно всё ещё валидно
-  if (uniqueOlympiads.includes(currentValue)) {
-    olympiadSelect.value = currentValue
+  // Восстанавливаем предыдущее значение, если оно валидно
+  if (map[currentValue]) {
+    olympiadSelect.value = currentValue;
   }
 }
 
 
 async function handlePublishClick() {
-  // Собираем выбранные ID
-  const checkedBoxes = document.querySelectorAll(
-    '#certificates-tbody input[type="checkbox"]:checked'
-  )
-  const ids = Array.from(checkedBoxes).map((el) => Number(el.value))
+  let ids;
+
+  if (selectedAllCertificateIds !== null) {
+    ids = selectedAllCertificateIds;
+  } else {
+    const checkedBoxes = document.querySelectorAll(
+      '#certificates-tbody input[type="checkbox"]:checked'
+    );
+    ids = Array.from(checkedBoxes).map((el) => Number(el.value));
+  }
 
   if (ids.length === 0) {
-    alert('Выберите хотя бы один сертификат для публикации.')
-    return
+    alert('Выберите хотя бы один сертификат для публикации.');
+    return;
   }
 
     // Показываем количество в модалке

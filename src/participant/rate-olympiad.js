@@ -39,32 +39,49 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// 1) Функция для загрузки полного профиля участника
+async function loadUserProfile() {
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/participant/profile/'
+  );
+  if (!res.ok) throw new Error('Не удалось загрузить профиль');
+  return await res.json();
+}
 
-  const imgPath = user.profile.image
+function renderUserInfo(profile) {
+  const avatarEl   = document.getElementById('user-avatar')
+  const nameEl     = document.getElementById('user-name')
+  const roleEl     = document.getElementById('user-role')
+  const welcomeEl  = document.querySelector('h1.text-xl')
+
+  // 1) Картинка
+  const imgPath = profile.image
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
     : `https://portal.gradients.academy${imgPath}`
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
+  // 2) Имя и приветствие
+  nameEl.textContent = profile.full_name_ru
+  const firstName = profile.full_name_ru.split(' ')[0]
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
 
-  const roleMap = {
-    participant: 'Участник',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  // 3) Роль (она всегда участник)
+  roleEl.textContent = 'Участник'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+  // сначала загрузим детали профиля
+  let profile
+  try {
+    profile = await loadUserProfile()
+  } catch (e) {
+    console.error(e)
+    return
+  }
+  renderUserInfo(profile)
 
   try {
     await loadAssignments()

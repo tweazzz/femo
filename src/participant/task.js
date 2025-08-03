@@ -39,32 +39,49 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// 1) Функция для загрузки полного профиля участника
+async function loadUserProfile() {
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/participant/profile/'
+  );
+  if (!res.ok) throw new Error('Не удалось загрузить профиль');
+  return await res.json();
+}
 
-  const imgPath = user.profile.image
+function renderUserInfo(profile) {
+  const avatarEl   = document.getElementById('user-avatar')
+  const nameEl     = document.getElementById('user-name')
+  const roleEl     = document.getElementById('user-role')
+  const welcomeEl  = document.querySelector('h1.text-xl')
+
+  // 1) Картинка
+  const imgPath = profile.image
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
     : `https://portal.gradients.academy${imgPath}`
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
+  // 2) Имя и приветствие
+  nameEl.textContent = profile.full_name_ru
+  const firstName = profile.full_name_ru.split(' ')[0]
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
 
-  const roleMap = {
-    participant: 'Участник',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  // 3) Роль (она всегда участник)
+  roleEl.textContent = 'Участник'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+  // сначала загрузим детали профиля
+  let profile
+  try {
+    profile = await loadUserProfile()
+  } catch (e) {
+    console.error(e)
+    return
+  }
+  renderUserInfo(profile)
 
   try {
       await loadTaskMock()
@@ -204,16 +221,7 @@ async function loadTaskMock() {
     document.getElementById('task-grade').textContent = `${task.grade} класс`;
     document.getElementById('task-description').textContent = task.description;
 
-    const attachmentsContainer = document.getElementById('task-attachments');
-    attachmentsContainer.innerHTML = '';
-    task.attachments.forEach(file => {
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.textContent = file.name;
-      link.target = '_blank';
-      attachmentsContainer.appendChild(link);
-      attachmentsContainer.appendChild(document.createElement('br'));
-    });
+    renderAttachments(task);
 
     const levelMap = {
       easy: 'Лёгкий',
@@ -256,8 +264,8 @@ async function loadTaskMock() {
     if (task.status === 'Не отправлено') {
       winInfo.style.display = 'none';
       loseInfo.style.display = 'none';
-    } else if (task.status === 'Завершена') {
-      winInfo.style.display = 'block';
+    } else if (task.status === 'Отправлено') {
+      winInfo.style.display = 'flex';
       loseInfo.style.display = 'none';
 
       // Скрыть кнопки
@@ -268,9 +276,73 @@ async function loadTaskMock() {
 
     window.taskPoints = task.points;
 
+        // Селекторы элементов
+    const answerLabel   = document.querySelector('#answer-input').closest('label');
+    const submit2Button = document.getElementById('submit-button2');
+    const nextTaskLink  = document.getElementById('next-task-button2');
+    
+    if (task.solved) {
+      // если уже решено — прячем форму и вторую кнопку и показываем ссылку «Перейти к следующей задаче»
+      loseInfo.style.display      = 'none';
+      answerLabel.style.display   = 'none';
+      submit2Button.style.display = 'none';
+      nextTaskLink.style.display  = 'flex';
+    } else {
+      // иначе — показываем форму и кнопку, прячем ссылку
+      answerLabel.style.display   = '';
+      submit2Button.style.display = 'flex';
+      nextTaskLink.style.display  = 'none';
+    }
+
   } catch (err) {
     console.error('Ошибка загрузки задачи:', err);
   }
+}
+
+function renderAttachments(task) {
+  const attachmentsContainer = document.getElementById('task-attachments');
+  attachmentsContainer.innerHTML = '';
+
+  // SVG как строка
+  const fileSvg = `
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="M6.33301 18.3334H13.6663C15.3232 18.3334 16.6663 16.9903
+               16.6663 15.3334V8.04655C16.6663 7.17078 16.2837 6.33873
+               15.6187 5.76878L11.6756 2.38898C11.1319 1.92292 10.4394
+               1.66675 9.72324 1.66675H6.33301C4.67615 1.66675 3.33301
+               3.00989 3.33301 4.66675V15.3334C3.33301 16.9903 4.67615
+               18.3334 6.33301 18.3334Z"
+            stroke="#F4891E" stroke-linejoin="round"/>
+      <path d="M10.833 2.0835V4.66683C10.833 5.7714 11.7284 6.66683
+               12.833 6.66683H16.2497"
+            stroke="#F4891E" stroke-linejoin="round"/>
+      <path d="M6.66602 15.8335H13.3327"
+            stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10 8.3335V13.3335"
+            stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7.5 10.8335L10 13.3335L12.5 10.8335"
+            stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+  task.attachments.forEach(file => {
+    // берём URL
+    const url = file.file_url;
+    // выдираем из него имя (после последнего '/'), decodeURIComponent на всякий случай
+    const fileName = decodeURIComponent(url.split('/').pop());
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.className = 'flex items-center gap-2 text-[#F4891E] hover:underline';
+
+    link.innerHTML = `
+      ${fileSvg}
+      <span>${fileName}</span>
+    `;
+
+    attachmentsContainer.appendChild(link);
+  });
 }
 
 
@@ -303,6 +375,9 @@ clearButton.addEventListener('click', () => {
 submitBtn1.addEventListener('click', async () => {
   const answer = answerInput.value.trim();
   if (!answer) return;
+    // Скрываем старую ошибку
+  const errorEl = document.getElementById('answer-error');
+  errorEl.style.display = 'none';
 
   const urlParams = new URLSearchParams(window.location.search);
   const taskId = urlParams.get('id');
@@ -326,13 +401,23 @@ submitBtn1.addEventListener('click', async () => {
       body: JSON.stringify({ 'answer': answer }),
     });
 
-    if (!response.ok) throw new Error('Ошибка при отправке ответа');
+    // if (!response.ok) throw new Error('Ошибка при отправке ответа');
 
     const result = await response.json();
 
+    if (!response.ok) {
+      // Если ответ 400 и detail говорит про некорректный формат
+      if (result.detail === 'Invalid numeric answer.') {
+        errorEl.textContent = 'Ответ должен быть цифрой';
+        errorEl.style.display = 'block';
+        return;
+      }
+      // Другая ошибка — кидаем исключение
+      throw new Error(result.detail || `Ошибка ${response.status}`);
+    }
     if (result.correct) {
       // Успешный ответ
-      winInfo.style.display = 'block';
+      winInfo.style.display = 'flex';
       loseInfo.style.display = 'none';
 
       // Скрыть кнопки
@@ -342,7 +427,13 @@ submitBtn1.addEventListener('click', async () => {
 
       const modalXP = document.getElementById('modal-xp');
       if (modalXP) {
-        modalXP.textContent = `Ответ верный и вовремя — ты получаешь +${window.taskPoints * 2} XP`;
+        modalXP.textContent = 
+          `Ответ верный и вовремя — ты получаешь +${result.points} XP`;
+      }
+      const winTextSpan = winInfo.querySelector('span');
+      if (winTextSpan) {
+        winTextSpan.textContent = 
+          `Ты победил(а)! Ответ верный и вовремя — ты получаешь +${result.points} XP`;
       }
 
       const nextTaskBtn = document.getElementById('next-task-button');
@@ -357,7 +448,7 @@ submitBtn1.addEventListener('click', async () => {
     } else {
       // Неверный ответ
       winInfo.style.display = 'none';
-      loseInfo.style.display = 'block';
+      loseInfo.style.display= 'flex';
     }
 
   } catch (err) {

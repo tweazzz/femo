@@ -40,27 +40,48 @@ async function ensureUserAuthenticated() {
 let participantProfile = null; 
 
 function renderUserInfo(profile) {
-  const avatarEl = document.getElementById('user-avatar');
-  const nameEl = document.getElementById('user-name');
-  const roleEl = document.getElementById('user-role');
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
   const welcomeEl = document.querySelector('h1.text-xl');
 
+  // --- аватар, имя, приветствие (как было) ---
   const defaultAvatar = '/src/assets/images/user_logo.jpg';
-  const imgPath = profile?.image;
-
+  const imgPath       = profile?.image;
   let finalAvatar = defaultAvatar;
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
       : `https://portal.gradients.academy${imgPath}`;
   }
-
-  avatarEl.src = finalAvatar;
-  nameEl.textContent = profile.full_name_ru || '';
-  const firstName = profile.full_name_ru?.split(' ')[0] || '';
+  avatarEl.src        = finalAvatar;
+  nameEl.textContent  = profile.full_name_ru || '';
+  const firstName     = profile.full_name_ru?.split(' ')[0] || '';
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
-  const countryCode = profile.country?.code || '';
-  roleEl.textContent = `Представитель${countryCode ? ' ' + countryCode : ''}`;
+
+  // --- роль + флаг ---
+  // Очищаем контейнер
+  roleEl.innerHTML = '';
+
+  // Спан для текста
+  const span = document.createElement('span');
+  span.textContent = 'Представитель';
+  // inline-block и выравнивание по средней линии
+  span.className = 'inline-block align-middle';
+  roleEl.appendChild(span);
+
+  // Флаг, если есть
+  const country = profile.country;
+  if (country?.code) {
+    const code    = country.code.toLowerCase();
+    const flagUrl = `https://flagcdn.com/16x12/${code}.png`;
+    const img = document.createElement('img');
+    img.src       = flagUrl;
+    img.alt       = `Флаг ${country.name}`;
+    // inline-block, выравнивание по средней линии, отступ слева
+    img.className = 'inline-block align-middle ml-1';
+    roleEl.appendChild(img);
+  }
 }
 
 async function loadRepresentativeProfileForHeader() {

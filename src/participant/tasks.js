@@ -39,36 +39,52 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// 1) Функция для загрузки полного профиля участника
+async function loadUserProfile() {
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/participant/profile/'
+  );
+  if (!res.ok) throw new Error('Не удалось загрузить профиль');
+  return await res.json();
+}
 
-  const imgPath = user.profile.image
+function renderUserInfo(profile) {
+  const avatarEl   = document.getElementById('user-avatar')
+  const nameEl     = document.getElementById('user-name')
+  const roleEl     = document.getElementById('user-role')
+  const welcomeEl  = document.querySelector('h1.text-xl')
+
+  // 1) Картинка
+  const imgPath = profile.image
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
     : `https://portal.gradients.academy${imgPath}`
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
+  // 2) Имя и приветствие
+  nameEl.textContent = profile.full_name_ru
+  const firstName = profile.full_name_ru.split(' ')[0]
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
 
-  const roleMap = {
-    participant: 'Участник',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  // 3) Роль (она всегда участник)
+  roleEl.textContent = 'Участник'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+  // сначала загрузим детали профиля
+  let profile
+  try {
+    profile = await loadUserProfile()
+  } catch (e) {
+    console.error(e)
+    return
+  }
+  renderUserInfo(profile)
 
   try {
     await loadDailyTasks();
-    renderUserInfo(user)
     await loadDailyTasks()
     await loadAllTasks()
     loadAllTasksWithFilters
@@ -102,38 +118,52 @@ const levelMap = {
 
 
 async function loadDailyTasks() {
-  const token = localStorage.getItem('access_token')
-
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    console.warn('Токен не найден')
-    return
+    console.warn('Токен не найден');
+    return;
   }
 
+  const allResults = [];
+  let url = 'https://portal.gradients.academy/api/assignments/participant/dashboard/daily/';
+
   try {
-    const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/assignments/participant/dashboard/daily`,
-      {
+    while (url) {
+      const response = await authorizedFetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    )
+      });
 
-    if (!response.ok) {
-      throw new Error(`Ошибка загрузки: ${response.status}`)
+      if (!response.ok) {
+        throw new Error(`Ошибка загрузки: ${response.status}`);
+      }
+
+      const data = await response.json();
+      allResults.push(...data.results);
+      url = data.next; // если next = null, цикл завершится
     }
 
-    const data = await response.json()
-    renderDailyTasks(data.results)
+    // Теперь allResults содержит все «daily» задания со всех страниц
+    renderDailyTasks(allResults);
   } catch (error) {
-    console.error('Ошибка загрузки задач дня:', error)
+    console.error('Ошибка загрузки задач дня:', error);
   }
 }
+
 
 function renderDailyTasks(tasks) {
   const container = document.querySelector('.pt-6 .grid')
   container.innerHTML = '' // Очистим старые задачи
-
+  if (tasks.length === 0) {
+    // никакой сетки — просто сообщаем пользователю
+    container.innerHTML = `
+      <div class="col-span-full text-center text-gray-500 py-10">
+        Сегодня нет доступных задач
+      </div>
+    `;
+    return;
+  }
   tasks.forEach((task) => {
     const levelMap = {
       easy: 'Легкий',
@@ -192,32 +222,42 @@ function renderDailyTasks(tasks) {
 
 
 async function loadAllTasks() {
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    console.warn('Токен не найден')
-    return
+    console.warn('Токен не найден');
+    return;
   }
 
+  const allResults = [];
+  let url = 'https://portal.gradients.academy/api/assignments/participant/dashboard/general/';
+
   try {
-    const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/assignments/participant/dashboard/general`,
-      {
+    // Пока есть URL для запроса — качаем страницу за страницей
+    while (url) {
+      const response = await authorizedFetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    )
+      });
 
-    if (!response.ok) {
-      throw new Error(`Ошибка загрузки: ${response.status}`)
+      if (!response.ok) {
+        throw new Error(`Ошибка загрузки: ${response.status}`);
+      }
+
+      const data = await response.json();
+      allResults.push(...data.results);
+
+      // Следующая страница, если есть, иначе loop завершится
+      url = data.next;
     }
 
-    const data = await response.json()
-    renderAllTasks(data.results)
+    // Теперь в allResults — задания со всех страниц
+    renderAllTasks(allResults);
   } catch (error) {
-    console.error('Ошибка загрузки всех задач:', error)
+    console.error('Ошибка загрузки всех задач:', error);
   }
 }
+
 
 
 function renderAllTasks(tasks) {

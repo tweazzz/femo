@@ -467,6 +467,9 @@ function renderPaginationControls(totalCount) {
 async function addUser(formId, role = 'participant') {
   const form = document.getElementById(formId)
   const formData = new FormData(form)
+  // найдём инпут класса и возьмём из него code
+  const classInput = form.querySelector('input[name="class"]');
+  const gradeCode = classInput?.dataset.code || classInput?.value;
 
   const data = {
     email: formData.get('email'),
@@ -475,7 +478,7 @@ async function addUser(formId, role = 'participant') {
     country: getCountryCode(formData.get('country')) || formData.get('country'),
     city: formData.get('city') || '',
     school: formData.get('school') || '',
-    grade: formData.get('class') || '',
+    grade: gradeCode,
     parent_name_ru: formData.get('parent_name') || '',
     parent_phone_number: formData.get('parent_phone') || '',
     teacher_name_ru: formData.get('teacher_name') || '',
@@ -517,6 +520,7 @@ async function addUser(formId, role = 'participant') {
       modal.classList.add('hidden')
       modal.style.pointerEvents = 'auto'
     }
+    location.reload()
 
     // Скрываем оверлей, если он есть
     const overlay =
@@ -537,21 +541,21 @@ async function addUser(formId, role = 'participant') {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document
-    .getElementById('participant-form')
-    .addEventListener('submit', (e) => {
-      e.preventDefault()
-      addUser('participant-form', 'participant')
-    })
+// document.addEventListener('DOMContentLoaded', () => {
+//   document
+//     .getElementById('participant-form')
+//     .addEventListener('submit', (e) => {
+//       e.preventDefault()
+//       addUser('participant-form', 'participant')
+//     })
 
-  document
-    .getElementById('representative-form')
-    .addEventListener('submit', (e) => {
-      e.preventDefault()
-      addUser('representative-form', 'representative')
-    })
-})
+//   document
+//     .getElementById('representative-form')
+//     .addEventListener('submit', (e) => {
+//       e.preventDefault()
+//       addUser('representative-form', 'representative')
+//     })
+// })
 
 async function deleteUser(userId) {
   const token = localStorage.getItem('access_token')
@@ -660,7 +664,10 @@ async function updateUserFromEditForm() {
   if (isParticipant) {
     data.city = form.querySelector('input[name="city"]').value
     data.school = form.querySelector('input[name="school"]').value
-    data.grade = form.querySelector('input[name="class"]').value
+    const classInput = form.querySelector('input[name="class"]');
+    data.grade = classInput.dataset.code
+               || classMap[classInput.value]
+               || classInput.value;
     data.parent_name_ru = form.querySelector('input[name="parent_name"]').value
     data.parent_phone_number = form.querySelector(
       'input[name="parent_phone"]'
@@ -735,21 +742,41 @@ function openEditModal(userId) {
   if (country) country.value = user.country
 
   if (role === 'participant') {
-    activeForm.querySelector('input[name="city"]').value = user.city || ''
-    activeForm.querySelector('input[name="school"]').value = user.school || ''
-    activeForm.querySelector('input[name="class"]').value = user.grade || ''
-    activeForm.querySelector('input[name="parent_name"]').value =
-      user.parent_name_ru || ''
-    activeForm.querySelector('input[name="parent_phone"]').value =
-      user.parent_phone_number || ''
-    activeForm.querySelector('input[name="teacher_name"]').value =
-      user.teacher_name_ru || ''
-    activeForm.querySelector('input[name="teacher_phone"]').value =
-      user.teacher_phone_number || ''
+    // Делаем GET-запрос, чтобы получить полные данные
+    const token = localStorage.getItem('access_token')
+    fetch(`https://portal.gradients.academy/api/users/dashboard/${userId}/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Ошибка загрузки пользователя')
+        return res.json()
+      })
+      .then(user => {
+        activeForm.querySelector('input[name="city"]').value = user.city || ''
+        activeForm.querySelector('input[name="school"]').value = user.school || ''
+        const classInput = activeForm.querySelector('input[name="class"]');
+        classInput.value = reverseClassMap[user.grade] || '';
+        // и сразу же сохраняем в data-code оригинальное слово,
+        // чтобы при отправке на сервер ушло именно 'first', 'second' и т.д.
+        classInput.dataset.code = user.grade || '';
+        activeForm.querySelector('input[name="parent_name"]').value = user.parent_name_ru || ''
+        activeForm.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
+        activeForm.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
+        activeForm.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
+      })
+      .catch(err => {
+        console.error(err)
+        alert('Не удалось загрузить полные данные участника.')
+      })
   }
 
   toggleModal('modalEdit', true)
 }
+
 
 let countryList = []
 
@@ -768,68 +795,87 @@ const classMap = {
   12: 'twelfth',
 }
 
-async function populateCountryAndClassOptions() {
-  try {
-    // Загрузка стран
-    const res = await fetch(
-      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
-    )
-    const data = await res.json()
-    const countries = data.results
-    countryList = data.results
+function populateCountryAndClassOptions() {
+  const countryMap = {
+    "Афганистан":"AF","Албания":"AL","Алжир":"DZ","Американское Самоа":"AS","Андорра":"AD","Ангола":"AO","Антигуа и Барбуда":"AG",
+    "Аргентина":"AR","Армения":"AM","Аруба":"AW","Австралия":"AU","Австрия":"AT","Азербайджан":"AZ","Багамы":"BS",
+    "Бахрейн":"BH","Бангладеш":"BD","Барбадос":"BB","Беларусь":"BY","Белиз":"BZ","Бельгия":"BE","Бенин":"BJ",
+    "Бермуды":"BM","Бутан":"BT","Боливия":"BO","Босния и Герцеговина":"BA","Ботсвана":"BW","Бразилия":"BR","Бруней":"BN",
+    "Буркина-Фасо":"BF","Бурунди":"BI","Кабо-Верде":"CV","Камбоджа":"KH","Камерун":"CM","Канада":"CA","Центральноафриканская Республика":"CF",
+    "Чад":"TD","Чили":"CL","Китай":"CN","Колумбия":"CO","Коморы":"KM","Конго":"CG","Конго (ДРК)":"CD","Коста-Рика":"CR",
+    "Кот‑д’Ивуар":"CI","Хорватия":"HR","Куба":"CU","Кипр":"CY","Чехия":"CZ","Дания":"DK","Джибути":"DJ","Доминика":"DM",
+    "Доминиканская Республика":"DO","Эквадор":"EC","Египет":"EG","Сальвадор":"SV","Экваториальная Гвинея":"GQ","Эритрея":"ER",
+    "Эстония":"EE","Эсватини":"SZ","Эфиопия":"ET","Фиджи":"FJ","Финляндия":"FI","Франция":"FR","Габон":"GA","Гамбия":"GM",
+    "Грузия":"GE","Гана":"GH","Греция":"GR","Гренада":"GD","Гватемала":"GT","Гвинея":"GN","Гвинея-Бисау":"GW","Гайана":"GY",
+    "Гаити":"HT","Гондурас":"HN","Венгрия":"HU","Исландия":"IS","Индия":"IN","Индонезия":"ID","Иран":"IR","Ирак":"IQ",
+    "Ирландия":"IE","Израиль":"IL","Италия":"IT","Ямайка":"JM","Япония":"JP","Иордания":"JO","Казахстан":"KZ","Кения":"KE",
+    "Кирибати":"KI","Киргизия":"KG","Кувейт":"KW","Лаос":"LA","Латвия":"LV","Ливан":"LB","Лесото":"LS","Либерия":"LR",
+    "Ливия":"LY","Литва":"LT","Люксембург":"LU","Мадагаскар":"MG","Малави":"MW","Малайзия":"MY","Мальдивы":"MV","Мали":"ML",
+    "Мальта":"MT","Маршалловы Острова":"MH","Мавритания":"MR","Маврикий":"MU","Мексика":"MX","Микронезия":"FM","Молдова":"MD",
+    "Монако":"MC","Монголия":"MN","Черногория":"ME","Марокко":"MA","Мозамбик":"MZ","Мьянма":"MM","Намибия":"NA","Науру":"NR",
+    "Непал":"NP","Нидерланды":"NL","Новая Зеландия":"NZ","Никарагуа":"NI","Нигер":"NE","Нигерия":"NG","Северная Корея":"KP",
+    "Северная Македония":"MK","Норвегия":"NO","Оман":"OM","Пакистан":"PK","Палау":"PW","Панама":"PA","Папуа — Новая Гвинея":"PG",
+    "Парагвай":"PY","Перу":"PE","Филиппины":"PH","Польша":"PL","Португалия":"PT","Катар":"QA","Республика Корея":"KR","Румыния":"RO",
+    "Россия":"RU","Руанда":"RW","Сан-Марино":"SM","Сан-Томе и Принсипи":"ST","Саудовская Аравия":"SA","Сенегал":"SN","Сербия":"RS",
+    "Сейшелы":"SC","Сьерра-Леоне":"SL","Сингапур":"SG","Словакия":"SK","Словения":"SI","Соломоновы Острова":"SB","Сомали":"SO",
+    "Южная Африка":"ZA","Южный Судан":"SS","Испания":"ES","Шри-Ланка":"LK","Судан":"SD","Суринам":"SR","Швеция":"SE","Швейцария":"CH",
+    "Сирия":"SY","Таджикистан":"TJ","Танзания":"TZ","Таиланд":"TH","Того":"TG","Тонга":"TO","Тринидад и Тобаго":"TT","Тунис":"TN",
+    "Турция":"TR","Туркменистан":"TM","Уганда":"UG","Украина":"UA","Объединённые Арабские Эмираты":"AE","Великобритания":"GB","США":"US",
+    "Уругвай":"UY","Узбекистан":"UZ","Вануату":"VU","Ватикан":"VA","Венесуэла":"VE","Вьетнам":"VN","Йемен":"YE","Замбия":"ZM",
+    "Зимбабве":"ZW",
+  };
 
-    const countryInputs = document.querySelectorAll('input[name="country"]')
-    countryInputs.forEach((input) => {
-      const datalistId = input.id + '-list'
-      input.setAttribute('list', datalistId)
+  // Страны
+  document.querySelectorAll('input[name="country"]').forEach(input => {
+    const datalistId = input.id + '-list';
+    input.setAttribute('list', datalistId);
 
-      let datalist = document.getElementById(datalistId)
-      if (!datalist) {
-        datalist = document.createElement('datalist')
-        datalist.id = datalistId
-        document.body.appendChild(datalist)
+    let datalist = document.getElementById(datalistId);
+    if (!datalist) {
+      datalist = document.createElement('datalist');
+      datalist.id = datalistId;
+      document.body.appendChild(datalist);
+    }
+
+    datalist.innerHTML = Object.entries(countryMap)
+      .map(([name, code]) => `<option value="${name}" data-code="${code}"></option>`)
+      .join('');
+
+    input.addEventListener('change', () => {
+      const code = countryMap[input.value];
+      if (code) {
+        input.dataset.code = code;
+      } else {
+        delete input.dataset.code;
       }
+    });
+  });
 
-      datalist.innerHTML = countries
-        .map((c) => `<option value="${c.name}" data-code="${c.code}"></option>`)
-        .join('')
+  // Классы
+  document.querySelectorAll('input[name="class"]').forEach(input => {
+    const datalistId = input.id + '-list';
+    input.setAttribute('list', datalistId);
 
-      // Обработчик выбора страны
-      input.addEventListener('change', () => {
-        const selected = countries.find((c) => c.name === input.value)
-        if (selected) {
-          input.value = selected.code
-        }
-      })
-    })
+    let datalist = document.getElementById(datalistId);
+    if (!datalist) {
+      datalist = document.createElement('datalist');
+      datalist.id = datalistId;
+      document.body.appendChild(datalist);
+    }
 
-    // Классы
+    datalist.innerHTML = Object.entries(classMap)
+      .map(([num, name]) => `<option value="${num}" data-code="${name}"></option>`)
+      .join('');
 
-    const classInputs = document.querySelectorAll('input[name="class"]')
-    classInputs.forEach((input) => {
-      const datalistId = input.id + '-list'
-      input.setAttribute('list', datalistId)
-
-      let datalist = document.getElementById(datalistId)
-      if (!datalist) {
-        datalist = document.createElement('datalist')
-        datalist.id = datalistId
-        document.body.appendChild(datalist)
+    input.addEventListener('change', () => {
+      const opt = Array.from(datalist.options)
+        .find(o => o.value === input.value);
+      if (opt) {
+        input.dataset.code = opt.dataset.code;
+      } else {
+        delete input.dataset.code;
       }
-
-      datalist.innerHTML = Object.keys(classMap)
-        .map((num) => `<option value="${num}"></option>`)
-        .join('')
-
-      // Обработчик выбора класса
-      input.addEventListener('change', () => {
-        const selected = classMap[input.value]
-        if (selected) {
-          input.value = selected
-        }
-      })
-    })
-  } catch (err) {
-    console.error('Ошибка загрузки стран или классов:', err)
-  }
+    });
+  });
 }
+

@@ -156,7 +156,7 @@
           >
             <h1 class="text-2xl font-semibold">Управление задачами</h1>
             <div class="flex items-center gap-4">
-              <button
+              <!-- <button
                 
                 class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2"
               >
@@ -176,7 +176,7 @@
                 </svg>
 
                 Импорт
-              </button>
+              </button> -->
               <button
                 onclick="toggleModal('modalAdd')"
                 class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2"
@@ -270,6 +270,7 @@
                                 <div class="relative">
                                   <select
                                     id="grade-add-participant"
+                                    name="add-grades"
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
@@ -391,9 +392,6 @@
                                     <option value="archived">Архив</option>
                                     <option value="active">Активно</option>
                                     <option value="draft">Черновик</option>
-                                    <option value="waiting">
-                                      Ожидает публикации
-                                    </option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -784,9 +782,6 @@
                                     <option value="archived">Архив</option>
                                     <option value="active">Активно</option>
                                     <option value="draft">Черновик</option>
-                                    <option value="waiting">
-                                      Ожидает публикации
-                                    </option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -1817,21 +1812,45 @@ function auto_grow(el) {
 //   'edit-participant': []
 // };
 
-function handleFilesChange(input, key) {
-  // Сохраняем массив File
-  attachments[key] = Array.from(input.files);
+function handleFilesChange(inputEl, formKey) {
+  // 1) Собираем новые файлы
+  const newFiles = Array.from(inputEl.files);
 
-  // Рендерим в соответствующий контейнер
-  const listContainer = document.getElementById(`files-list-${key}`);
-  if (!listContainer) return;
-  listContainer.innerHTML = '';  // очистим прошлое
+  // 2) Добавляем их к уже существующим, фильтруя повторные
+  const existing = attachments[formKey] || [];
+  newFiles.forEach(f => {
+    const duplicate = existing.some(e => e.name === f.name && e.size === f.size);
+    if (!duplicate) existing.push(f);
+  });
+  attachments[formKey] = existing;
 
-  attachments[key].forEach(file => {
-    const a = document.createElement('a');
-    a.textContent = file.name;
-    a.href = '#';  // при желании можно сделать download URL
-    a.className = 'text-orange-primary block';
-    listContainer.appendChild(a);
+  // 3) Сбрасываем input, чтобы onchange срабатывал всегда
+  inputEl.value = '';
+
+  // 4) Рендерим список
+  const listEl = document.getElementById(`files-list-${formKey}`);
+  listEl.innerHTML = '';
+  existing.forEach((file, idx) => {
+    const row = document.createElement('div');
+    row.className = 'flex items-center justify-between';
+
+    // имя файла как <a> оранжевого цвета
+    const link = document.createElement('a');
+    link.textContent = file.name;
+    link.href = '#';
+    link.className = 'text-orange-primary hover:underline';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = '×';
+    btn.className = 'ml-2 text-red-500 hover:text-red-700';
+    btn.onclick = () => {
+      attachments[formKey].splice(idx, 1);
+      handleFilesChange(inputEl, formKey);
+    };
+
+    row.append(link, btn);
+    listEl.appendChild(row);
   });
 }
 
@@ -1848,18 +1867,42 @@ function renderFiles(formKey) {
   });
 }
 
-// При открытии модального окна редактирования — подгружаем уже прикреплённые файлы
-// function openEditModal(task) {
-//   // ...существующий код...
-//   // допустим, task.attachments — массив { name, url, size } 
-//   attachments['edit-participant'] = (task.attachments || []).map(att => {
-//     // Создадим "фейковый" File-like объект
-//     return new File([], att.name, { type: '', lastModified: Date.now() });
-//   });
-//   renderFiles('edit-participant');
-//   toggleModal('modalEdit');
-// }
+   </script>
+<!-- ваш Tom Select
+<link
+  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css"
+  rel="stylesheet"
+/>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
-    </script>
+<script>
+  // для модалки «Создать»
+  const tsAdd = new TomSelect('#grade-add-participant', {
+    plugins: ['remove_button'],
+    hideSelected: true,
+  });
+
+  // для модалки «Редактировать»
+  const tsEdit = new TomSelect('#grade-edit-participant', {
+    plugins: ['remove_button'],
+    hideSelected: true,
+  });
+
+  // Если хочется программно открывать/закрывать дропдаун в Edit:
+  document.getElementById('openEditDropdownBtn')?.addEventListener('click', () => tsEdit.open());
+  document.getElementById('closeEditDropdownBtn')?.addEventListener('click', () => tsEdit.close());
+
+  // Можно также автоматически открывать TomSelect при показе самого модального окна:
+  function toggleModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.toggle('hidden');
+    if (id === 'modalEdit') {
+      // если теперь показали
+      if (!modal.classList.contains('hidden')) tsEdit.open();
+      else tsEdit.close();
+    }
+  }
+</script> -->
+
   </body>
 </html>

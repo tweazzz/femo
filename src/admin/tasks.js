@@ -380,8 +380,8 @@ async function submitNewTask() {
   fd.append('correct_answer', correctAnswer);
 
   // Добавляем файлы, если есть
-  attachments['add-participant'].forEach(file => {
-    fd.append('attachments', file);
+  attachments['add-participant'].forEach((file, idx) => {
+    fd.append(`attachments[${idx}]`, file);
   });
 
   try {
@@ -429,37 +429,61 @@ function openEditModal(task) {
   const isText = task.answer_type === 'text';
   document.getElementById('answer1-type-edit-participant').checked = !isText;
   document.getElementById('answer2-type-edit-participant').checked = isText;
+
+  // Очистим текущие вложения
+  const formKey = 'edit-participant';
+  attachments[formKey] = [];
+  const listEl = document.getElementById(`files-list-${formKey}`);
+  listEl.innerHTML = '';
+
+  // Отрисуем уже загруженные с сервера файлы
+  if (task.attachments?.length) {
+    task.attachments.forEach(att => {
+      const row = document.createElement('div');
+      row.className = 'flex items-center justify-between';
+
+      const link = document.createElement('a');
+      link.href = `https://portal.gradients.academy${att.file}`;
+      link.textContent = att.file.split('/').pop();
+      link.target = '_blank';
+      link.className = 'text-orange-primary hover:underline';
+
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+  }
 }
 
 
-function handleEditClick(button) {
+async function handleEditClick(button) {
   const raw = button.getAttribute('data-task');
-  if (!raw) {
-    console.error('handleEditClick: data-task не найден на', button);
-    return;
-  }
-
-  let jsonStr;
-  try {
-    // Заменим + на %20 (если вдруг встретятся) и прогоняем через decodeURIComponent
-    jsonStr = decodeURIComponent(raw.replace(/\+/g, '%20'));
-  } catch (decodeErr) {
-    console.error('Не удалось декодировать raw data-task:', decodeErr, 'raw:', raw);
-    alert('Ошибка при чтении данных задачи.');
-    return;
-  }
+  if (!raw) return;
 
   let task;
   try {
-    task = JSON.parse(jsonStr);
-  } catch (parseErr) {
-    console.error('Ошибка при разборе JSON задачи:', parseErr, 'jsonStr:', jsonStr);
-    alert('Не удалось открыть задачу для редактирования.');
+    const jsonStr = decodeURIComponent(raw.replace(/\+/g, '%20'));
+    const parsed = JSON.parse(jsonStr);
+    const taskId = parsed.id;
+
+    // получаем полные данные задачи с сервера
+    const token = localStorage.getItem('access_token');
+    const res = await fetch(`https://portal.gradients.academy/api/assignments/dashboard/${taskId}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
+    task = await res.json();
+  } catch (err) {
+    console.error('Ошибка при получении задачи:', err);
+    alert('Не удалось загрузить задачу для редактирования.');
     return;
   }
 
   openEditModal(task);
 }
+
 
 
 
@@ -517,13 +541,13 @@ async function submitEditTask() {
   fd.append('correct_answer', correctAnswer);
 
   // И — самое главное — прикрепляем все файлы из attachments['edit-participant']
-  attachments['edit-participant'].forEach(file => {
-    fd.append('attachments', file);
+  attachments['edit-participant'].forEach((file, idx) => {
+    fd.append(`attachments[${idx}]`, file);
   });
 
   try {
     console.log('Кидаем на сервер файлы:', attachments['edit-participant']);
-    const res = await fetch(
+    const res = await authorizedFetch(
       `https://portal.gradients.academy/api/assignments/dashboard/${taskBeingEditedId}/`,
       {
         method: 'PUT',

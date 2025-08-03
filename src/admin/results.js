@@ -71,7 +71,7 @@ async function loadAdminProfile() {
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
   return await res.json();
 }
-
+let countryMap = {}
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
@@ -82,9 +82,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderUserInfo(profileData);
 
   try {
+    await populateCountryFilter()
     await loadAssignments()
     setupAssignmentFilters()
-    await populateCountryFilter()
     await populateOlympiadFilter()
 
     let sortAscending = true
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       try {
-        const response = await fetch(
+        const response = await authorizedFetch(
           'https://portal.gradients.academy/api/results/dashboard/results/import/',
           {
             method: 'POST',
@@ -241,8 +241,8 @@ const classMap = {
   5: 'fifth',
   6: 'sixth',
   7: 'seventh',
-  8: 'eights',
-  9: 'nines',
+  8: 'eighth',
+  9: 'ninth',
   10: 'tenth',
   11: 'eleventh',
   12: 'twelfth',
@@ -320,12 +320,13 @@ function renderAssignmentTable(assignments) {
       : assignments
           .map((task) => {
             const encodedTask = encodeURIComponent(JSON.stringify(task))
+            const countryName = countryMap[task.country] || task.country
             return `
       <tr class="hover:bg-gray-50">
         <td>${task.id}</td>
         <td>${task.rank}</td>
         <td>${task.participant_name}</td>
-        <td>${task.country}</td>
+        <td>${countryName}</td>
         <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
         <td>${task.score}</td>
         <td>${task.result}</td>
@@ -429,6 +430,7 @@ function setupAssignmentFilters() {
     ?.addEventListener('change', applyAssignmentFilters)
 }
 
+// 2) В populateCountryFilter после добавления <option> в селект — заполняем countryMap:
 async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
@@ -440,10 +442,14 @@ async function populateCountryFilter() {
     const select = document.getElementById('filter-country')
 
     data.results.forEach((country) => {
+      // option в фильтре
       const option = document.createElement('option')
-      option.value = country.code // фильтрация по коду
-      option.textContent = country.name // отображается название
+      option.value = country.code    // code, например "KZ"
+      option.textContent = country.name // "Казахстан"
       select.appendChild(option)
+
+      // заполняем мапу
+      countryMap[country.code] = country.name
     })
   } catch (err) {
     console.error('Не удалось загрузить список стран:', err)

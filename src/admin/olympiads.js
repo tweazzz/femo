@@ -36,7 +36,7 @@ async function ensureUserAuthenticated() {
 
   return user
 }
-
+let currentEditId = null;
 // Основная отрисовка профиля
 function renderUserInfo(profile) {
   const avatarEl  = document.getElementById('user-avatar');
@@ -68,6 +68,35 @@ async function loadAdminProfile() {
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
   return await res.json();
 }
+// Отображение имени выбранного файла в Add-модалке
+document
+  .getElementById('certificate-background')
+  .addEventListener('change', function () {
+    const file    = this.files[0];
+    const display = document.getElementById('file-name-add');
+
+    if (file) {
+      const name   = file.name;
+      const sizeKB = (file.size / 1024).toFixed(0) + ' KB';
+
+      display.innerHTML = `
+        <span class="text-orange-primary flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24"
+               stroke-width="1.5" stroke="currentColor"
+               class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1
+                     13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75
+                     12 3 3m0 0 3-3m-3 3v-6" />
+          </svg>
+          ${name} (${sizeKB})
+        </span>
+      `;
+    } else {
+      display.textContent = '';
+    }
+  });
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
@@ -186,7 +215,7 @@ function renderOlympiadTable(olympiads) {
       : olympiads
           .map(
             (ol) => `
-      <tr class="hover:bg-gray-50">
+      <tr class="hover:bg-red-50 cursor-pointer">
         <td>${ol.id}</td>
         <td>${ol.title}</td>
         <td>${getSeasonLabel(ol.type)}</td>
@@ -221,9 +250,10 @@ function renderOlympiadTable(olympiads) {
 function getSeasonLabel(type) {
   const map = {
     spring: '🌸 Весна',
-    summer: '🌍 Лето',
+    summer: '☀️ Лето',
     autumn: '🍂 Осень',
     winter: '❄️ Зима',
+    international: '🌍 Международный'
   }
   return map[type] || type
 }
@@ -416,13 +446,14 @@ function closeModal(id) {
 }
 
 async function openEditModal(title, id) {
-  olympiadIdToDelete = id
+  olympiadIdToDelete = id;
+  currentEditId = id;
   const modal = document.getElementById('modalEdit')
   const overlay = document.getElementById('overlayModal')
 
   try {
     const token = localStorage.getItem('access_token')
-    const response = await fetch(`https://portal.gradients.academy/api/olympiads/dashboard/${id}`, {
+    const response = await authorizedFetch(`https://portal.gradients.academy/api/olympiads/dashboard/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -435,13 +466,8 @@ async function openEditModal(title, id) {
     const data = await response.json()
 
     // Заполнение основных полей
-    document.getElementById('name-edit').value = data.title
-    document.getElementById('tour-edit').value = {
-      spring: 'Весна',
-      summer: 'Лето',
-      autumn: 'Осень',
-      winter: 'Зима',
-    }[data.type] || 'Весна'
+    document.getElementById('title-edit').value = data.title
+    document.getElementById('tour-edit').value = data.type || 'spring';
     document.getElementById('year-edit').value = data.year
     document.getElementById('status-edit').value = data.status
     document.getElementById('link-edit').value = data.website || ''
@@ -488,12 +514,19 @@ async function openEditModal(title, id) {
     }
 
 
-    // Сертификат
-    if (data.certificate_template) {
-      document.getElementById('title_certificate-add').value = data.certificate_template.header_text || ''
-      document.getElementById('sign-add').value = data.certificate_template.signature_1 || ''
-      // Если есть вторая подпись — можно добавить отдельное поле
+  // Сертификат
+  if (data.certificate_template) {
+    // заголовок уже есть:
+    document.getElementById('title_certificate-add').value =
+      data.certificate_template.header_text || '';
+
+    // вот теперь описание:
+    const certDescEl = document.getElementById('certificate-description-edit');
+    if (certDescEl) {
+      certDescEl.value = data.certificate_template.description || '';
     }
+  }
+
 
     modal.classList.remove('hidden')
     overlay.classList.remove('hidden')
@@ -512,121 +545,107 @@ function formatDateReverse(dateStr) {
 
 
 async function submitOlympiadForm() {
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
   }
 
   // 1) ОБЩАЯ ИНФОРМАЦИЯ
-  const title       = document.getElementById('title-add')?.value.trim()
-  const status      = document.getElementById('status-add')?.value
-  const typeLabel   = document.getElementById('tour-add')?.value
-  const year        = document.getElementById('year-add')?.value
-  const cost        = document.getElementById('price-add')?.value
-  const link        = document.getElementById('link-add')?.value.trim()
-  const language    = document.getElementById('language-add')?.value
+  const titleEl       = document.getElementById('title-add');
+  const typeEl        = document.getElementById('tour-add');
+  const gradesSelect  = document.getElementById('grades-add');
+  const yearEl        = document.getElementById('year-add');
+  const statusEl      = document.getElementById('status-add');
+  const websiteEl     = document.getElementById('link-add');
+  const costEl        = document.getElementById('price-add');
+  const descriptionEl = document.getElementById('disc-add');
+  const languageEl    = document.getElementById('language-add');
 
-  if (!title) {
-    alert('Введите название олимпиады')
-    return
+  // Валидация
+  if (!titleEl.value.trim()) {
+    alert('Введите название олимпиады');
+    return;
+  }
+  const gradesArr = Array.from(gradesSelect.selectedOptions).map(o => o.value);
+  if (gradesArr.length === 0) {
+    alert('Выберите хотя бы один класс');
+    return;
   }
 
-  // Тур → код
-  const typeMap = { Весна: 'spring', Осень: 'autumn', Зима: 'winter', Лето: 'summer' }
-  const type = typeMap[typeLabel] || 'spring'
-
-  // 2) КЛАССЫ
-  const gradesSelect = document.getElementById('grades-add')
-  const grades = Array.from(gradesSelect.selectedOptions)
-                      .map(opt => parseInt(opt.value, 10))
-                      .filter(n => !isNaN(n))
-  if (grades.length === 0) {
-    alert('Выберите хотя бы один класс')
-    return
-  }
-
-  // 3) ЭТАПЫ: валидируем и собираем
-  const stepNames  = document.querySelectorAll('.step-name-add')
-  const dateRanges = document.querySelectorAll('.date-range-add')
-  const stages = []
-
-  for (let i = 0; i < stepNames.length; i++) {
-    const name = stepNames[i].value.trim()
-    const raw  = dateRanges[i]?.value.trim()
+  // 2) ЭТАПЫ
+const stages = [];
+document
+  .querySelectorAll('#modalAdd .stage-block')  // или ваш общий селектор для блоков
+  .forEach(block => {
+    const nameEl = block.querySelector('.step-name-add');
+    const dateEl = block.querySelector('.date-range-add');
+    const name   = nameEl.value.trim();
+    const raw    = dateEl.value.trim();
     if (!raw) {
-      alert(`Пожалуйста, укажите период для этапа №${i + 1} (“${name || 'Без названия'}”)`)
-      return
+      alert(`Укажите период для этапа "${name || 'без названия'}"`);
+      throw new Error('stage validation failed');
     }
-    const [d1, d2] = raw.split(' — ').map(s => s.trim())
+    const [d1, d2] = raw.split(' — ').map(s => s.trim());
     stages.push({
       name,
-      start_date: formatDate(d1), 
+      start_date: formatDate(d1),
       end_date:   formatDate(d2),
-    })
-  }
-  console.log('✅ Сформированные stages:', stages)
+    });
+  });
+  if (stages.length === 0) return;
 
-  // 4) СЕРТИФИКАТ
-  const headerText  = document.getElementById('title_certificate-add')?.value.trim()
-  const signature1  = document.getElementById('sign-add')?.value.trim()
-  const signature2  = document.getElementById('sign-add')?.value.trim()
-  const background  = document.getElementById('certificate-background')?.files[0]
-
-  if (!background) {
-    alert('Пожалуйста, загрузите фон сертификата.')
-    return
+  // 3) СЕРТИФИКАТ
+  const headerEl       = document.getElementById('title_certificate-add');
+  const certDescEl     = document.getElementById('certificate-description-add');
+  const backgroundEl   = document.getElementById('certificate-background');
+  if (!backgroundEl.files[0]) {
+    alert('Пожалуйста, загрузите фон сертификата.');
+    return;
   }
 
-  // 5) СОБИРАЕМ FormData
-  const formData = new FormData()
-  formData.append('title',      title)
-  formData.append('type',       type)
-  formData.append('status',     status)
-  formData.append('year',       year)
-  formData.append('cost',       cost)
-  formData.append('website',    link)
-  formData.append('language',   language)
-  grades.forEach(g => formData.append('grades', g))
-  stages.forEach((stage, i) => {
-    formData.append(`stages[${i}].name`,       stage.name)
-    formData.append(`stages[${i}].start_date`, stage.start_date)
-    formData.append(`stages[${i}].end_date`,   stage.end_date)
-  })
-  formData.append('certificate_template.header_text', headerText)
-  formData.append('certificate_template.signature_1', signature1)
-  formData.append('certificate_template.signature_2', signature2)
-  formData.append('certificate_template.background', background)
+  // 4) СОБИРАЕМ FormData
+  const formData = new FormData();
+  formData.append('title',                      titleEl.value.trim());
+  formData.append('type',                       typeEl.value);
+  formData.append('grades',                     gradesArr.join(','));
+  formData.append('year',                       yearEl.value);
+  formData.append('status',                     statusEl.value);
+  formData.append('website',                    websiteEl.value.trim());
+  formData.append('cost',                       costEl.value);
+  formData.append('description',                descriptionEl.value.trim());
+  formData.append('language',                   languageEl.value);
 
-  console.log('------ FORM DATA ------')
-  for (let [key, val] of formData.entries()) {
-    console.log(key, val)
-  }
+  stages.forEach((st, i) => {
+    formData.append(`stages[${i}].name`,       st.name);
+    formData.append(`stages[${i}].start_date`, st.start_date);
+    formData.append(`stages[${i}].end_date`,   st.end_date);
+  });
 
-  // 6) ОТПРАВКА
+  formData.append('certificate_template.header_text',  headerEl.value.trim());
+  formData.append('certificate_template.description',  certDescEl.value.trim());
+  formData.append('certificate_template.background',   backgroundEl.files[0]);
+
+  // 5) ОТПРАВКА POST
   try {
     const res = await fetch(
       'https://portal.gradients.academy/api/olympiads/dashboard/',
       {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // не указываем Content-Type — браузер сам выставит multipart/form-data
-        },
-        body: formData,
+        method:  'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body:    formData,
       }
-    )
+    );
+    const data = await res.json();
     if (!res.ok) {
-      const error = await res.json()
-      console.error('Ошибка от сервера при создании:', error)
-      throw new Error(error.detail || JSON.stringify(error))
+      console.error('Ошибка сервера при создании:', data);
+      throw new Error(data.detail || JSON.stringify(data));
     }
-    alert('Олимпиада успешно добавлена!')
-    toggleModal('modalAdd', false)
-    await loadOlympiads()
+    alert('Олимпиада успешно создана! Страница будет перезагружена.');
+    window.location.reload();
   } catch (err) {
-    console.error('Ошибка при создании олимпиады:', err)
-    alert(`Ошибка: ${err.message}`)
+    console.error('Ошибка при создании олимпиады:', err);
+    alert(`Не удалось создать олимпиаду: ${err.message}`);
   }
 }
 
@@ -640,53 +659,51 @@ function formatDate(dateStr) {
 
 
 function addStageBlock() {
-  const template = document.getElementById('stage-template')
-  if (!template) {
-    console.error('Шаблон этапа не найден!')
-    return
-  }
+  const container = document.getElementById('stages-container');
+  const template  = document.getElementById('stage-template');
+  if (!container || !template) return;
 
+  const clone = template.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.classList.remove('hidden');
+  clone.classList.add('stage-block');
+  clone.querySelectorAll('select, input').forEach(el => el.value = '');
 
-  const clone = template.cloneNode(true)
-  clone.removeAttribute('id') // чтобы не было дубликатов ID
-  // Очистка значений
-  clone.querySelectorAll('select, input').forEach(el => el.value = '')
+  // Вставляем новый блок прямо перед обёрткой кнопки
+  const btnWrapper = container.querySelector('.mt-4');
+  container.insertBefore(clone, btnWrapper);
 
-  // Добавление в контейнер
-  template.parentElement.insertBefore(clone, template.nextSibling)
-
-  // Инициализация flatpickr
   flatpickr(clone.querySelector('.date-range-add'), {
     mode: 'range',
     dateFormat: 'd.m.Y',
     locale: flatpickr.l10ns.ru,
-  })
+  });
 }
 
 
+
+// Замените вашу функцию addStageBlockEdit на эту:
 function addStageBlockEdit() {
-  const template = document.getElementById('stage-template-edit')
-  if (!template) {
-    console.error('Шаблон этапа не найден!')
-    return
-  }
+  const container = document.getElementById('stages-container-edit');
+  const template  = document.getElementById('stage-template-edit');
+  if (!container || !template) return;
 
+  const clone = template.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.classList.remove('hidden');
+  clone.classList.add('stage-block');
+  clone.querySelectorAll('select, input').forEach(el => el.value = '');
 
-  const clone = template.cloneNode(true)
-  clone.removeAttribute('id') // чтобы не было дубликатов ID
-  // Очистка значений
-  clone.querySelectorAll('select, input').forEach(el => el.value = '')
+  const btnWrapper = container.querySelector('.mt-4');
+  container.insertBefore(clone, btnWrapper);
 
-  // Добавление в контейнер
-  template.parentElement.insertBefore(clone, template.nextSibling)
-
-  // Инициализация flatpickr
   flatpickr(clone.querySelector('.date-range-add'), {
     mode: 'range',
     dateFormat: 'd.m.Y',
     locale: flatpickr.l10ns.ru,
-  })
+  });
 }
+
 
 document.querySelector('#modalAdd .btn-white').addEventListener('click', addStageBlock)
 document.querySelector('#modalEdit .btn-white').addEventListener('click', addStageBlockEdit)
@@ -716,108 +733,183 @@ document
   })
 
 
-async function updateOlympiadForm() {
-  const token = localStorage.getItem('access_token')
+async function updateOlympiadForm(olympiadId) {
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
+    alert('Пожалуйста, войдите заново.');
+    return;
   }
 
-  // Собираем значения из формы
-  const title       = document.getElementById('name-edit')?.value.trim()
-  const status      = document.getElementById('status-edit')?.value
-  const typeLabel   = document.getElementById('tour-edit')?.value
-  const year        = parseInt(document.getElementById('year-edit')?.value, 10)
-  const cost        = parseFloat(document.getElementById('price')?.value) || 0
-  const link        = document.getElementById('link-edit')?.value.trim()
-  const description = document.getElementById('disc-edit')?.value.trim()
-  const language = document.getElementById('language-edit')?.value || 'kazakh';
+  const title       = document.getElementById('title-edit').value.trim();
+  const type        = document.getElementById('tour-edit').value;
+  const gradesArr   = Array.from(
+                         document.getElementById('grades-edit').selectedOptions
+                       ).map(o => o.value);
+  const year        = document.getElementById('year-edit').value;
+  const status      = document.getElementById('status-edit').value;
+  const website     = document.getElementById('link-edit').value.trim();
+  const cost        = document.getElementById('price').value;
+  const description = document.getElementById('disc-edit').value.trim();
+  const language    = document.getElementById('language-edit').value;
 
-  // Валидируем обязательные поля
-  if (!title) { alert('Введите название'); return }
-  if (isNaN(year)) { alert('Введите год'); return }
+  // Сбор этапов
+  const stages = [];
+  document.querySelectorAll('#stage-template-edit ~ .grid').forEach((block, i) => {
+    const name  = block.querySelector('.step-name-add').value;
+    const raw   = block.querySelector('.date-range-add').value;
+    const [d1, d2] = raw.split(' — ');
+    stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
+  });
 
-  // 🗂️ Карта для типа тура
-  const typeMap = { Весна: 'spring', Осень: 'autumn', Зима: 'winter', Лето: 'summer' }
-  const type = typeMap[typeLabel] || 'spring'
+  // Сертификат
+  const headerText      = document.querySelector('input[name="title_certificate"]').value.trim();
+  const certDescriptionEl = document.getElementById('certificate-description-edit');
+  const certDescription = certDescriptionEl ? certDescriptionEl.value.trim() : '';
+  const backgroundFile  = document.getElementById('certificate-background-edit').files[0];
 
-  // 📚 Классы
-  const gradesSelect = document.getElementById('grades-edit')
-  const grades = Array.from(gradesSelect.selectedOptions)
-                     .map(opt => parseInt(opt.value, 10))
-                     .filter(n => !isNaN(n))
-  if (grades.length === 0) {
-    alert('Выберите хотя бы один класс')
-    return
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('type', type);
+  formData.append('grades', gradesArr.join(','));
+  formData.append('year', year);
+  formData.append('status', status);
+  formData.append('website', website);
+  formData.append('cost', cost);
+  formData.append('description', description);
+  formData.append('language', language);
+
+  stages.forEach((st, i) => {
+    formData.append(`stages[${i}].name`,       st.name);
+    formData.append(`stages[${i}].start_date`, st.start_date);
+    formData.append(`stages[${i}].end_date`,   st.end_date);
+  });
+
+  formData.append('certificate_template.header_text', headerText);
+  formData.append('certificate_template.description', certDescription);
+  if (backgroundFile) {
+    formData.append('certificate_template.background', backgroundFile);
   }
 
-  // 🚩 Этапы
-  const stepNames  = document.querySelectorAll('#modalEdit .step-name-add')
-  const dateRanges = document.querySelectorAll('#modalEdit .date-range-add')
-  const stages = []
-  for (let i = 0; i < stepNames.length; i++) {
-    const name = stepNames[i].value.trim()
-    const [d1, d2] = dateRanges[i]?.value.split(' — ').map(s => s.trim()) || []
-    if (name && d1 && d2) {
-      // конвертируем d.m.Y → Y-m-d
-      const [day, mon, yr] = d1.split('.')
-      const [day2, mon2, yr2] = d2.split('.')
-      stages.push({
-        name,
-        start_date: `${yr}-${mon}-${day}`,
-        end_date:   `${yr2}-${mon2}-${day2}`,
-      })
+  // PUT‑запрос
+  const res = await authorizedFetch(
+    `https://portal.gradients.academy/api/olympiads/dashboard/${olympiadId}/`,
+    {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
     }
-  }
+  );
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
+  alert('Олимпиада успешно обновлена!');
+  toggleModal('modalEdit', false);
+  await loadOlympiads();
+  window.location.reload();
+}
 
-  // 📜 Сертификат (без файла)
-  const headerText = document.getElementById('title_certificate-add')?.value.trim()
-  const signature1 = document.getElementById('sign-edit1')?.value.trim()
-  const signature2 = document.getElementById('sign-edit2')?.value.trim()
 
-  // Составляем единый JSON-пейлоад
-  const payload = {
-    title,
-    type,
-    status,
-    year,
-    cost,
-    website:    link,
-    description,
-    grades,
-    stages,
-    certificate_template: {
-      header_text:  headerText,
-      signature_1:  signature1,
-      signature_2:  signature2,
-    },
-    language
-  }
+// Делегируем клик по документу
+document.addEventListener('click', function (e) {
+  const tr = e.target.closest('tr');
+  // Если клик не по <tr> или кликнули на кнопку внутри — выходим
+  if (!tr || e.target.closest('button')) return;
 
+  const idCell = tr.querySelector('td');
+  if (!idCell) return;
+
+  const olympiadId = parseInt(idCell.textContent.trim(), 10);
+  openViewModal(olympiadId);
+});
+async function openViewModal(id) {
   try {
+    const token = localStorage.getItem('access_token');
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/olympiads/dashboard/${olympiadIdToDelete}/`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type':  'application/json',
-          Authorization:   `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      }
-    )
+      `https://portal.gradients.academy/api/olympiads/dashboard/${id}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
 
-    const data = await res.json()
-    if (!res.ok) {
-      console.error('Ошибка от сервера при обновлении олимпиады:', data)
-      throw new Error(data.detail || JSON.stringify(data))
-    }
+    // 1) Заголовок модалки: кликабельная ссылка
+    const titleLinkHtml = `<a href="${data.website}" target="_blank" class="text-blue-600 underline">${data.title}</a>`;
+    document.getElementById('view-title').innerHTML       = titleLinkHtml;
+    document.getElementById('view-field-title').innerHTML = titleLinkHtml;
 
-    alert('Олимпиада успешно обновлена!')
-    toggleModal('modalEdit', false)
-    await loadOlympiads()
+    // 2) Общая информация
+    const TOUR_MAP = {
+      spring:        '🌸 Весна',
+      autumn:        '🍂 Осень',
+      winter:        '❄️ Зима',
+      summer:        '☀️ Лето',
+      international: '🌍 Международный',
+    };
+    const LANG_MAP = {
+      kazakh:  'Казахский',
+      russian: 'Русский',
+      english: 'Английский',
+    };
+
+    document.getElementById('view-field-type').textContent        = TOUR_MAP[data.type] || data.type;
+    document.getElementById('view-field-grades').textContent      = data.grades.join(', ');
+    document.getElementById('view-field-year').textContent        = data.year;
+    document.getElementById('view-field-status').textContent      = getStatusLabel(data.status);
+    document.getElementById('view-link-website').href             = data.website;
+    document.getElementById('view-link-website').textContent      = data.website;
+    document.getElementById('view-field-cost').textContent        = data.cost;
+    document.getElementById('view-field-language').textContent    = LANG_MAP[data.language] || data.language;
+    document.getElementById('view-field-description').textContent = data.description || '—';
+
+    // 3) Этапы
+    const stageLabelMap = {
+      registration: 'Регистрация',
+      stage1:       'Этап 1',
+      stage2:       'Этап 2',
+      final:        'Финал',
+    };
+    document.getElementById('view-stages').innerHTML = data.stages
+      .map(s => {
+        const label = stageLabelMap[s.name] || s.name;
+        const from  = formatDateReverse(s.start_date);
+        const to    = formatDateReverse(s.end_date);
+        return `<li>${label}: ${from} — ${to}</li>`;
+      })
+      .join('');
+
+      const cert = data.certificate_template || {};
+      document.getElementById('view-cert-header').textContent      = cert.header_text || '—';
+      document.getElementById('view-cert-description').textContent = cert.description || '—';
+
+      // вытаскиваем имя файла и URL из ответа
+      const bgUrl    = cert.background || '';
+      const fileName = bgUrl.split('/').pop() || '—';
+
+      // находим контейнер <dd> вокруг <img id="view-cert-background">
+      const bgDd = document.getElementById('view-cert-background-dd');
+
+      // заменяем содержимое на ссылку
+      bgDd.innerHTML = `
+        <a href="${bgUrl}" target="_blank" class="text-orange-primary flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor" class="size-5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5
+                    A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 
+                    0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6" />
+          </svg>
+          ${fileName}
+        </a>
+      `;
+    // Показываем
+    document.getElementById('modalView').classList.remove('hidden');
+    document.getElementById('overlayModal').classList.remove('hidden');
+
   } catch (err) {
-    console.error('Ошибка при обновлении олимпиады:', err)
-    alert(`Не удалось обновить: ${err.message}`)
+    alert('Не удалось загрузить данные: ' + err.message);
   }
+}
+
+
+function closeViewModal() {
+  document.getElementById('modalView').classList.add('hidden');
+  document.getElementById('overlayModal').classList.add('hidden');
 }

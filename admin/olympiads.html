@@ -224,12 +224,13 @@
                                   class="input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="Весна" selected>
+                                  <option value="spring" selected>
                                     🌸 Весна
                                   </option>
-                                  <option value="Осень">🍂 Осень</option>
-                                  <option value="Зима">❄️ Зима</option>
-                                  <option value="Лето">🌍 Международный</option>
+                                  <option value="autumn">🍂 Осень</option>
+                                  <option value="winter">❄️ Зима</option>
+                                  <option value="summer">☀️ Лето</option>
+                                  <option value="international">🌍 Международный</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -261,6 +262,7 @@
                                 <select
                                   id="grades-add"
                                   class="multi-select input-base border-default appearance-none"
+                                  multiple
                                   required
                                 >
                                   <option value="1">1 класс</option>
@@ -310,6 +312,13 @@
                                   <option value="2023">2023</option>
                                   <option value="2024">2024</option>
                                   <option value="2025">2025</option>
+                                  <option value="2026">2026</option>
+                                  <option value="2027">2027</option>
+                                  <option value="2028">2028</option>
+                                  <option value="2029">2029</option>
+                                  <option value="2030">2030</option>
+                                  <option value="2031">2031</option>
+                                  <option value="2032">2032</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -460,7 +469,7 @@
                           <p class="mb-4 text-lg font-semibold text-gray-900">
                             Этапы олимпиады
                           </p>
-                          <div class="border-default rounded-2xl p-4">
+                          <div id="stages-container" class="border-default rounded-2xl p-4">
                             <div id="stage-template" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                               <div>
                                 <label
@@ -643,6 +652,7 @@
                               >
                               <div class="relative">
                                 <textarea
+                                  id="certificate-description-add"
                                   oninput="auto_grow(this)"
                                   rows="2"
                                   placeholder="Введите ваше сообщение..."
@@ -650,20 +660,6 @@
                                   id="disc_certificate-add"
                                 ></textarea>
                               </div>
-                            </div>
-
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Подпись 1 (ФИО + должность)</label
-                              >
-                              <input
-                                type="text"
-                                id="sign-add"
-                                class="input-base border-default"
-                                placeholder="Асел Есангалиева, Директор олимпиады"
-                                value="Асел Есангалиева, Директор олимпиады"
-                              />
                             </div>
 
                             <div>
@@ -679,7 +675,7 @@
                                 class="hidden"
                               />
 
-<label for="certificate-background" class="cursor-pointer text-orange-primary flex items-center gap-1">
+                              <label for="certificate-background" class="cursor-pointer text-orange-primary flex items-center gap-1">
 
                               <p
                                 id="file-name-add"
@@ -890,7 +886,7 @@
                                 <span class="text-red-primary">*</span></label
                               >
                               <input
-                                id="name-edit"
+                                id="title-edit"
                                 type="text"
                                 class="input-base border-default"
                                 required
@@ -908,12 +904,13 @@
                                   class="input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="Весна">
+                                  <option value="spring" selected>
                                     🌸 Весна
                                   </option>
-                                  <option value="Осень">🍂 Осень</option>
-                                  <option value="Зима">❄️ Зима</option>
-                                  <option value="Лето">🌍 Международный</option>
+                                  <option value="autumn">🍂 Осень</option>
+                                  <option value="winter">❄️ Зима</option>
+                                  <option value="summer">☀️ Лето</option>
+                                  <option value="international">🌍 Международный</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -945,6 +942,7 @@
                                 <select
                                   id="grades-edit"
                                   class="multi-select input-base border-default appearance-none"
+                                  multiple
                                   required
                                 >
                                   <option value="1">1 класс</option>
@@ -994,6 +992,13 @@
                                   <option value="2023">2023</option>
                                   <option value="2024">2024</option>
                                   <option value="2025">2025</option>
+                                  <option value="2026">2026</option>
+                                  <option value="2027">2027</option>
+                                  <option value="2028">2028</option>
+                                  <option value="2029">2029</option>
+                                  <option value="2030">2030</option>
+                                  <option value="2031">2031</option>
+                                  <option value="2032">2032</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -1156,7 +1161,7 @@
                           <p class="mb-4 text-lg font-semibold text-gray-900">
                             Этапы олимпиады
                           </p>
-                          <div class="border-default rounded-2xl p-4">
+                          <div id="stages-container-edit" class="border-default rounded-2xl p-4">
                             <div id="stage-template-edit" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                               <div>
                                 <label
@@ -1222,71 +1227,6 @@
                                   </svg>
                                 </div>
                               </div>
-
-<!--                              <div>-->
-<!--                                <label-->
-<!--                                  class="text-gray-primary mb-1 block text-sm font-medium"-->
-<!--                                  >Название этапа</label-->
-<!--                                >-->
-<!--                                <div class="relative">-->
-<!--                                  <select-->
-<!--                                    class="step-name-add multi-select input-base border-default appearance-none"-->
-<!--                                    required-->
-<!--                                  >-->
-<!--                                    <option value="registration">-->
-<!--                                      Регистрация-->
-<!--                                    </option>-->
-<!--                                    <option value="1 step">1 этап</option>-->
-<!--                                  </select>-->
-<!--                                  <div-->
-<!--                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"-->
-<!--                                  >-->
-<!--                                    <svg-->
-<!--                                      xmlns="http://www.w3.org/2000/svg"-->
-<!--                                      fill="none"-->
-<!--                                      viewBox="0 0 24 24"-->
-<!--                                      stroke-width="1.5"-->
-<!--                                      stroke="currentColor"-->
-<!--                                      class="size-4"-->
-<!--                                    >-->
-<!--                                      <path-->
-<!--                                        stroke-linecap="round"-->
-<!--                                        stroke-linejoin="round"-->
-<!--                                        d="m19.5 8.25-7.5 7.5-7.5-7.5"-->
-<!--                                      />-->
-<!--                                    </svg>-->
-<!--                                  </div>-->
-<!--                                </div>-->
-<!--                              </div>-->
-
-<!--                              <div>-->
-<!--                                <label-->
-<!--                                  class="text-gray-primary mb-1 block text-sm font-medium"-->
-<!--                                  >Период этапа</label-->
-<!--                                >-->
-
-<!--                                <div class="relative">-->
-<!--                                  <input-->
-<!--                                    class="date-range-add input-base border-default"-->
-<!--                                    placeholder="Выберите дату"-->
-<!--                                    readonly-->
-<!--                                  />-->
-<!--                                  <svg-->
-<!--                                    xmlns="http://www.w3.org/2000/svg"-->
-<!--                                    fill="none"-->
-<!--                                    viewBox="0 0 24 24"-->
-<!--                                    stroke-width="1.5"-->
-<!--                                    stroke="currentColor"-->
-<!--                                    class="absolute top-1/2 right-2 size-5 -translate-y-1/2"-->
-<!--                                  >-->
-<!--                                    <path-->
-<!--                                      stroke-linecap="round"-->
-<!--                                      stroke-linejoin="round"-->
-<!--                                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"-->
-<!--                                    />-->
-<!--                                  </svg>-->
-<!--                                </div>-->
-<!--                              </div>-->
                             </div>
                             <div class="mt-4 flex justify-end">
                               <button type="button" class="btn-white">
@@ -1339,40 +1279,13 @@
                               >
                               <div class="relative">
                                 <textarea
+                                  id="certificate-description-edit" 
                                   oninput="auto_grow(this)"
                                   rows="2"
                                   placeholder="Введите ваше сообщение..."
                                   class="textarea input-base border-default px-4"
                                 ></textarea>
                               </div>
-                            </div>
-
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Подпись 1 (ФИО + должность)</label
-                              >
-                              <input
-                                type="text"
-                                id="sign-edit1"
-                                class="input-base border-default"
-                                placeholder="Асел Есангалиева, Директор олимпиады"
-                                value="Асел Есангалиева, Директор олимпиады"
-                              />
-                            </div>
-
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Подпись 2 (ФИО + должность)</label
-                              >
-                              <input
-                                type="text"
-                                id="sign-edit2"
-                                class="input-base border-default"
-                                placeholder="Асел Есангалиева, Директор олимпиады"
-                                value="Асел Есангалиева, Директор олимпиады"
-                              />
                             </div>
 
                             <div>
@@ -1447,7 +1360,7 @@
                             </span>
                             Отменить
                           </button>
-                          <button onclick="updateOlympiadForm()" class="btn-orange">
+                          <button type="button" onclick="updateOlympiadForm(currentEditId)" class="btn-orange">
                             <span>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1487,6 +1400,110 @@
                         d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
                         clip-rule="evenodd"
                       />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- View Olympiad -->
+              <div
+                id="modalView"
+                class="modal fixed top-18 z-30 hidden max-w-xl inset-x-4 sm:top-10 sm:left-1/2 sm:w-full sm:-translate-x-1/2"
+              >
+                <div class="relative rounded-3xl bg-white">
+                  <!-- Заголовок -->
+                  <p class="border-gray-border border-b px-4 pt-6 pb-5 text-xl font-bold" id="view-title">
+                    <!-- сюда вставим title -->
+                  </p>
+
+                  <!-- Контент -->
+                  <div class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 space-y-6">
+                    <!-- Общая информация -->
+                    <section>
+                      <h2 class="mb-4 text-lg font-semibold text-gray-900">Общая информация</h2>
+                      <dl class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4 sm:grid-cols-2">
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Название</dt>
+                          <dd id="view-field-title" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Тур</dt>
+                          <dd id="view-field-type" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Классы</dt>
+                          <dd id="view-field-grades" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Год</dt>
+                          <dd id="view-field-year" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Статус</dt>
+                          <dd id="view-field-status" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Сайт</dt>
+                          <dd id="view-field-website" class="mt-1 text-base">
+                            <a href="#" target="_blank" id="view-link-website" class="text-blue-600 underline"></a>
+                          </dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Стоимость</dt>
+                          <dd id="view-field-cost" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Язык</dt>
+                          <dd id="view-field-language" class="mt-1 text-base"></dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                          <dt class="text-gray-primary text-sm font-medium">Описание</dt>
+                          <dd id="view-field-description" class="mt-1 text-base whitespace-pre-line"></dd>
+                        </div>
+                      </dl>
+                    </section>
+
+                    <!-- Этапы -->
+                    <section>
+                      <h2 class="mb-4 text-lg font-semibold text-gray-900">Этапы</h2>
+                      <ul id="view-stages" class="border-default rounded-2xl p-4 space-y-3">
+                        <!-- li этапов через JS -->
+                      </ul>
+                    </section>
+
+                    <!-- Сертификат -->
+                    <section>
+                      <h2 class="mb-4 text-lg font-semibold text-gray-900">Шаблон сертификата</h2>
+                      <dl class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Заголовок</dt>
+                          <dd id="view-cert-header" class="mt-1 text-base"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Описание</dt>
+                          <dd id="view-cert-description" class="mt-1 text-base whitespace-pre-line"></dd>
+                        </div>
+                        <div>
+                          <dt class="text-gray-primary text-sm font-medium">Фон сертификата</dt>
+                          <dd class="mt-1" id="view-cert-background-dd"><img id="view-cert-background" src="" alt="Фон сертификата" class="w-full rounded-lg" /></dd>
+                        </div>
+                      </dl>
+                    </section>
+                  </div>
+
+                  <!-- Закрыть -->
+                  <button
+                    type="button"
+                    class="absolute top-6 right-5 text-gray-500 hover:text-gray-800"
+                    onclick="toggleModal('modalView')"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                      <path fill-rule="evenodd"
+                            d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06
+                              1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06
+                              1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12
+                              5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
                     </svg>
                   </button>
                 </div>
@@ -1653,59 +1670,6 @@
           <div class="text-gray-primary text-sm">
             Всего олимпиад: <span id="total-olympiad-count">0</span>
           </div>
-          <!--<div class="flex items-center justify-between">
-            <div class="text-gray-primary text-sm">Всего 85 участников</div>
-            <div class="text-gray-primary text-sm">Всего олимпиад: <span id="total-olympiad-count">0</span></div>
-            <div class="flex items-center gap-0.5 *:cursor-pointer">
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-              <div class="flex gap-1 *:cursor-pointer">
-                <button
-                  class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1"
-                >
-                  1
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  2
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  3
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  4
-                </button>
-                <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                  5
-                </button>
-              </div>
-              <button class="cursor-pointer px-3 py-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>-->
         </main>
       </div>
       <div

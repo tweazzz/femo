@@ -178,6 +178,21 @@ function updatePopupNotifications(nots) {
         </div>
       `);
     });
+
+          // ——— делаем каждую карточку кликабельной ———
+      panel.querySelectorAll('.notification-item').forEach(item => {
+        const type = item.dataset.type;
+        let href = null;
+        if (type === 'Chats')   href = '/representatives/chat.html';
+        if (type === 'Results') href = '/representatives/results.html';
+        if (type === 'Users')   href = '/representatives/members.html';
+        if (href) {
+          item.style.cursor = 'pointer';
+          item.addEventListener('click', () => {
+            window.location.href = href;
+          });
+        }
+      });
   });
 }
 
@@ -226,6 +241,19 @@ function updatePopupNotifications(nots) {
           </div>
         `);
       });
+      block.querySelectorAll('.notification-item').forEach(item => {
+  const type = item.dataset.type;
+  let href = null;
+  if (type === 'Chats')   href = '/representatives/chat.html';
+  if (type === 'Results') href = '/representatives/results.html';
+  if (type === 'Users')   href = '/representatives/members.html';
+  if (href) {
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', () => {
+      window.location.href = href;
+    });
+  }
+});
     }
 
     // Обновляем содержимое попапа

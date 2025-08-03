@@ -47,6 +47,19 @@ class RepresentativeChat {
     }
     
     this.initializeElements()
+    // ↓↓↓ Вставить сразу после this.initializeElements() в конструкторе ↓↓↓
+    this.searchInput = document.querySelector('input[placeholder="Поиск по имени"]');
+    if (this.searchInput) {
+      this.searchInput.addEventListener('input', () => {
+        const q = this.searchInput.value.trim().toLowerCase();
+        Array.from(this.administratorsList.children).forEach(el => {
+          const name = el.querySelector('p.font-bold').textContent.toLowerCase();
+          el.style.display = name.includes(q) ? '' : 'none';
+        });
+      });
+    }
+    // ↑↑↑ Конец вставки ↑↑↑
+
     this.setupEventListeners()
     this.setupChatTabs()
     
@@ -477,10 +490,16 @@ class RepresentativeChat {
     }
   }
 
-  loadMessageHistory(messages, tabName) {
+  loadMessageHistory(messages, tabName, profileId = null) {
     const chatContainer = document.getElementById(`${tabName}-chat`)
     if (!chatContainer) return
-
+    if (profileId && messages.length) {
+      const last = messages[messages.length - 1].content;
+      if (last) {
+        this.lastMessages.set(profileId, last);
+        this.updateAdministratorsList();
+      }
+    }
     // Удаляем заглушку если она есть
     const placeholder = chatContainer.querySelector('.chat-placeholder')
     if (placeholder) {
@@ -518,6 +537,14 @@ class RepresentativeChat {
     sortedMessages.forEach(messageData => {
       this.addMessageToChat(messageData, tabName, false)
     })
+    // В конце loadPrivateMessageHistory(messages, profileId):
+    if (messages.length) {
+      const last = messages[messages.length - 1].content;
+      if (last) {
+        this.lastMessages.set(profileId, last);
+        this.updateAdministratorsList();
+      }
+    }
 
     // Прокручиваем к концу после загрузки всех сообщений
     this.scrollToBottom()
@@ -1157,9 +1184,9 @@ class RepresentativeChat {
       this.initializePublicChatStatuses()
       
       // Подключаемся к объявлениям после небольшой задержки
-      setTimeout(() => {
-        this.connectWebSocket('announcements')
-      }, 100)
+      // setTimeout(() => {
+      //   this.connectWebSocket('announcements')
+      // }, 100)
       
       // Подключаемся к групповому чату
       setTimeout(() => {
@@ -1278,6 +1305,13 @@ class RepresentativeChat {
         // Обновляем список администраторов для отображения последнего сообщения
         this.updateAdministratorsList()
       }
+      // ↓↓↓ Запоминаем превью при получении нового сообщения ↓↓↓
+      if (data.message.content && !this.isOurPrivateMessageByProfileId(data.message, profileId)) {
+        this.lastMessages.set(profileId, data.message.content);
+        this.updateAdministratorsList();
+      }
+      // ↑↑↑ Конец вставки ↑↑↑
+
       
       // Проверяем, является ли это новым сообщением от администратора
       if (!this.isOurPrivateMessageByProfileId(data.message, profileId)) {

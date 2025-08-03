@@ -76,120 +76,188 @@ async function loadDashboardSummary() {
 }
 
 async function loadCurrentOlympiad() {
-  const block = document.querySelector('.olympiad-block')
-  if (!block) return
+  const block = document.querySelector('.olympiad-block');
+  if (!block) return;
+
+  // подхватываем заголовок, описание и кнопку
+  const titleEl = block.querySelector('p.font-bold');
+  const descEl  = block.querySelector('p.text-sm');
+  const moreBtn = block.querySelector('a.btn-base.text-sm');
+
+  // ищем контейнер этапов: либо явно .stages-container, либо первый .mb-4.flex
+  let stagesContainer = block.querySelector('.stages-container');
+  if (!stagesContainer) {
+    stagesContainer = block.querySelector('.mb-4.flex');
+  }
+  if (!stagesContainer) {
+    console.error('Не найден контейнер для этапов');
+    return;
+  }
 
   try {
     const res = await authorizedFetch(
       'https://portal.gradients.academy/api/results/dashboard/current/'
-    )
-    const detailsBtn = block.querySelector('a.btn-base')
-
+    );
     if (!res.ok) {
-      const errorData = await res.json()
-      if (errorData.detail === 'No active Olympiad.') {
-        console.warn('Нет активной олимпиады — отображаем заглушку.')
-
-        block.querySelector('p.font-bold').textContent = 'Нет активной олимпиады'
-        block.querySelector('p.text-sm').textContent = 'Ожидается запуск'
-        block.querySelectorAll('.date').forEach(el => el.textContent = '—')
-        block.querySelectorAll('.date').forEach(dateEl => {
-          const titleSpan = dateEl.previousElementSibling?.querySelector('span.font-bold')
-          if (titleSpan) titleSpan.textContent = 'Этап'
-        })
-
-        // Опционально: отключить кнопку
-        if (detailsBtn) {
-          detailsBtn.removeAttribute('href')
-          detailsBtn.classList.add('opacity-50', 'pointer-events-none')
-        }
-        return
+      const { detail } = await res.json();
+      if (detail === 'No active Olympiad.') {
+        throw new Error('NO_OLYMP');
       }
-      throw new Error('Ошибка при получении текущей олимпиады')
+      throw new Error('FETCH_ERROR');
     }
 
-    // --- УСПЕШНЫЙ ответ ---
-    const olympiad = await res.json()
-    console.log('Текущая олимпиада:', olympiad)
+    const olympiad = await res.json();
+    titleEl.textContent = olympiad.title;
+    descEl.textContent  = olympiad.description || 'Без описания';
 
-    block.querySelector('p.font-bold').textContent = olympiad.title
-    block.querySelector('p.text-sm').textContent = olympiad.description
-    block.querySelectorAll('.date').forEach((el, i) => {
-      const stage = olympiad.stages[i]
-      if (stage) {
-        el.textContent = `${stage.start} - ${stage.end}`
-        const titleEl = el.previousElementSibling
-        if (titleEl?.classList.contains('flex')) {
-          titleEl.querySelector('span.font-bold').textContent = stage.name
-        }
+    // очищаем этапы
+    stagesContainer.innerHTML = '';
+
+    const fmt = d => {
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      return `${dd}.${mm}.${d.getFullYear()}`;
+    };
+
+    olympiad.stages.forEach((stage, idx) => {
+      // блок этапа
+      const stageBlock = document.createElement('div');
+      stageBlock.className = 'space-y-1 text-sm';
+
+      // заголовок этапа
+      const titleP = document.createElement('p');
+      titleP.className = 'flex items-center gap-1';
+      if (idx === 0) {
+        titleP.innerHTML = `
+          <span class="text-green-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="size-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15L15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+          </span>
+          <span class="font-bold">${stage.name}</span>
+        `;
+      } else {
+        titleP.innerHTML = `<span class="font-bold">${stage.name}</span>`;
       }
-    })
 
-    // Ставим ссылку на сайт олимпиады
-    if (detailsBtn && olympiad.website) {
-      console.log('Сайт олимпиады:', olympiad.website)
-      detailsBtn.href = olympiad.website
-      detailsBtn.target = '_blank'
-    } else {
-      console.warn('Кнопка не найдена или нет поля website в ответе')
+      // дата
+      const dateP = document.createElement('p');
+      dateP.className = 'date';
+      dateP.textContent = `${fmt(new Date(stage.start))} – ${fmt(new Date(stage.end))}`;
+
+      stageBlock.append(titleP, dateP);
+      stagesContainer.append(stageBlock);
+
+      // стрелка между этапами
+      if (idx < olympiad.stages.length - 1) {
+        const arrow = document.createElement('div');
+        arrow.className = 'flex items-center px-2';
+        arrow.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               fill="currentColor" class="size-6 max-sm:rotate-90">
+            <path fill-rule="evenodd"
+                  d="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75
+                     3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75
+                     0 1 1-1.06-1.06l2.47-2.47H3a.75.75 0 0 1
+                     0-1.5h16.19l-2.47-2.47a.75.75 0 0 1
+                     0-1.06Z"/>
+          </svg>
+        `;
+        stagesContainer.append(arrow);
+      }
+    });
+
+    // кнопка «Подробнее»
+    if (moreBtn) {
+      if (olympiad.website) {
+        moreBtn.href   = olympiad.website;
+        moreBtn.target = '_blank';
+        moreBtn.rel    = 'noopener noreferrer';
+      } else {
+        moreBtn.removeAttribute('href');
+        moreBtn.classList.add('opacity-50', 'pointer-events-none');
+      }
     }
 
   } catch (err) {
-    console.error('Ошибка при загрузке текущей олимпиады:', err)
-    // общий фоллбэк
-    block.querySelector('p.font-bold').textContent = 'Нет активной олимпиады'
-    block.querySelector('p.text-sm').textContent = 'Ошибка загрузки данных'
-    block.querySelectorAll('.date').forEach(el => el.textContent = '—')
+    // фоллбэк
+    titleEl.textContent = err.message === 'NO_OLYMP'
+      ? 'Нет активной олимпиады'
+      : 'Ошибка загрузки данных';
+    descEl.textContent  = err.message === 'NO_OLYMP'
+      ? 'Ожидается запуск'
+      : 'Пожалуйста, попробуйте позже';
+    stagesContainer.innerHTML = '';
+    if (moreBtn) {
+      moreBtn.removeAttribute('href');
+      moreBtn.classList.add('opacity-50', 'pointer-events-none');
+    }
   }
 }
+
 
 async function loadCurrentOlympiadStats() {
   try {
     const res = await authorizedFetch(
       'https://portal.gradients.academy/api/results/dashboard/current_stats/'
-    )
+    );
     if (!res.ok) {
-      const { detail } = await res.json()
+      const { detail } = await res.json();
       if (detail === 'No active Olympiad.') {
-        console.warn('Нет активной олимпиады — статистика не будет загружена.')
-        return
+        console.warn('Нет активной олимпиады — статистика не будет загружена.');
+        return;
       }
-      throw new Error('Ошибка при получении статистики текущей олимпиады')
+      throw new Error('Ошибка при получении статистики текущей олимпиады');
     }
 
-    const stats = await res.json()
-    console.log('Статистика текущей олимпиады:', stats)
+    const stats = await res.json();
+    console.log('Статистика текущей олимпиады:', stats);
 
-    document.getElementById('participants-count').textContent = stats.participants_count ?? 0
-    document.getElementById('paid-count').      textContent = stats.paid_count        ?? 0
-    document.getElementById('new-today').        textContent = `+ ${stats.new_today ?? 0}`
+    document.getElementById('participants-count').textContent =
+      stats.participants_count ?? 0;
+    document.getElementById('paid-count').textContent =
+      stats.paid_count ?? 0;
+    document.getElementById('new-today').textContent = `+ ${stats.new_today ?? 0}`;
 
-    // маленькие флажки
-    const FLAG_WIDTH  = 16
-    const FLAG_HEIGHT = 12
+    // маленькие флажки с запятыми
+    const FLAG_WIDTH = 16;
+    const FLAG_HEIGHT = 12;
+
     function countryFlagImgTag(cc) {
-      const code = cc.toLowerCase()
+      const code = cc.toLowerCase();
       return `<img
         src="https://flagcdn.com/${FLAG_WIDTH}x${FLAG_HEIGHT}/${code}.png"
         alt="${cc} flag"
         width="${FLAG_WIDTH}"
         height="${FLAG_HEIGHT}"
         class="inline-block"
-      />`
+      />`;
     }
 
-    const countriesListEl = document.getElementById('countries-list')
+    const countriesListEl = document.getElementById('countries-list');
     if (Array.isArray(stats.countries) && stats.countries.length) {
-      countriesListEl.innerHTML = stats.countries.map(countryFlagImgTag).join('')
+      // собираем массив флажков
+      const imgs = stats.countries.map(countryFlagImgTag);
+      // вставляем между ними запятую со стилем
+      countriesListEl.innerHTML = imgs
+        .map((imgHtml, idx) => {
+          if (idx > 0) {
+            // запятая перед каждым, кроме первого
+            return `<span style="color:#8324E3; margin:0 0.25rem;">,</span>${imgHtml}`;
+          }
+          return imgHtml;
+        })
+        .join('');
     } else {
-      countriesListEl.textContent = '—'
+      countriesListEl.textContent = '—';
     }
-
   } catch (err) {
-    console.error('Ошибка при загрузке статистики олимпиады:', err)
+    console.error('Ошибка при загрузке статистики олимпиады:', err);
   }
 }
-
 
 
 async function loadParticipantsTrend() {

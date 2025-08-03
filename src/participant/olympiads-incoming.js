@@ -39,32 +39,47 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+async function loadUserProfile() {
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/participant/profile/'
+  );
+  if (!res.ok) throw new Error('Не удалось загрузить профиль');
+  return await res.json();
+}
 
-  const imgPath = user.profile.image
+function renderUserInfo(profile) {
+  const avatarEl   = document.getElementById('user-avatar')
+  const nameEl     = document.getElementById('user-name')
+  const roleEl     = document.getElementById('user-role')
+  const welcomeEl  = document.querySelector('h1.text-xl')
+
+  // 1) Картинка
+  const imgPath = profile.image
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
     : `https://portal.gradients.academy${imgPath}`
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
+  // 2) Имя и приветствие
+  nameEl.textContent = profile.full_name_ru
+  const firstName = profile.full_name_ru.split(' ')[0]
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
 
-  const roleMap = {
-    participant: 'Участник',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  // 3) Роль (она всегда участник)
+  roleEl.textContent = 'Участник'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+  let profile
+  try {
+    profile = await loadUserProfile()
+  } catch (e) {
+    console.error(e)
+    return
+  }
+  renderUserInfo(profile)
 
   try {
     await loadOlympiadCards()
@@ -96,53 +111,88 @@ async function loadOlympiadCards() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/olympiads/participant/dashboard/?tab=upcoming', {
-      headers: {
-        Authorization: `Bearer ${token}`
+    // 1) Собираем все страницы из API
+    let url = 'https://portal.gradients.academy/api/olympiads/participant/dashboard/?tab=upcoming';
+    const allOlympiads = [];
+    while (url) {
+      const resp = await authorizedFetch(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!resp.ok) {
+        throw new Error(`Ошибка загрузки олимпиад: ${resp.status}`);
       }
-    });
+      const page = await resp.json();
+      allOlympiads.push(...page.results);
+      url = page.next;  // URL следующей страницы или null
+    }
 
-    if (!response.ok) throw new Error(`Ошибка загрузки олимпиад: ${response.status}`);
-
-    const data = await response.json();
-
+    // 2) Очищаем контейнер и рисуем карточки
     const container = document.querySelector('.grid');
-    container.innerHTML = ''; // Очистить перед добавлением
+    container.innerHTML = '';
 
-    data.results.forEach(olympiad => {
+    allOlympiads.forEach(olympiad => {
+      // Вспомогательные переменные
+      let dateInfoText = '';
+      let dateInfo     = '';
+      let statusClass  = '';
+
+      // статус → CSS-класс
+      switch (olympiad.status) {
+        case 'Завершена':
+        case 'Вы участвуете':
+          statusClass = 'bg-green-100 text-green-primary';
+          break;
+        case 'Регистрация открыта':
+          statusClass = 'bg-orange-100 text-orange-primary';
+          break;
+        case 'Идет сейчас':
+          statusClass = 'bg-red-100 text-red-primary';
+          break;
+        case 'Регистрация скоро откроется':
+          statusClass = 'bg-grey-100 text-grey-primary';
+          break;
+      }
+
+      // статус → текст даты
+      if (olympiad.status === 'Завершена') {
+        dateInfoText = 'Даты олимпиады';
+        dateInfo     = `${formatDate(olympiad.first_start_date)} — ${formatDate(olympiad.last_end_date)}`;
+      } else if (olympiad.status === 'Регистрация открыта' ||
+                 olympiad.status === 'Идет сейчас') {
+        dateInfoText = 'Осталось';
+        const daysLeft = Math.round(
+          (new Date(olympiad.last_end_date) - new Date()) / (1000 * 60 * 60 * 24)
+        );
+        dateInfo = `${daysLeft} дней`;
+      } else if (olympiad.status === 'Регистрация скоро откроется') {
+        dateInfoText = 'Откроется';
+        dateInfo     = formatDate(olympiad.first_start_date);
+      } else if (olympiad.status === 'Вы участвуете') {
+        dateInfoText = 'Олимпиада начнётся';
+        dateInfo     = formatDate(olympiad.first_start_date);
+      }
+
+      // текст кнопки
+      const buttonText = olympiad.status === 'Завершена'
+        ? 'Посмотреть результаты'
+        : 'Подробнее';
+
+      // иконка
+      const useVuesaxIcon = ['Завершена','Вы участвуете','Регистрация скоро откроется']
+        .includes(olympiad.status);
+      const iconHTML = useVuesaxIcon
+        ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block h-5 w-5" />`
+        : `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                viewBox="0 0 20 20" class="mb-1 inline-block h-5 w-5">
+             <path fill-rule="evenodd"
+                   d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5
+                      c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
+                   clip-rule="evenodd"/>
+           </svg>`;
+
+      // создаём карточку
       const card = document.createElement('div');
       card.className = 'border-default flex flex-col rounded-xl bg-white p-4';
-
-      // Определяем цвет статуса
-      let statusClass = '';
-      if (olympiad.status == 'Завершена') statusClass = 'bg-green-100 text-green-primary';
-      if (olympiad.status == 'Регистрация открыта') statusClass = 'bg-orange-100 text-orange-primary';
-      if (olympiad.status == 'Идет сейчас') statusClass = 'bg-red-100 text-red-primary';
-      if (olympiad.status == 'Регистрация скоро откроется') statusClass = 'bg-grey-100 text-grey-primary';
-      if (olympiad.status == 'Вы участвуете') statusClass = 'bg-green-100 text-green-primary';
-
-        // Определяем текст для даты олимпиады
-      if (olympiad.status == 'Завершена') dateInfoText =`Даты олимпиады`
-      if (olympiad.status == 'Завершена') dateInfo =`${formatDate(olympiad.first_start_date)} - ${formatDate(olympiad.last_end_date)}`;
-      if (olympiad.status == 'Регистрация открыта') dateInfoText =`Осталось`
-      if (olympiad.status == 'Регистрация открыта') dateInfo =`${Math.round(Date(olympiad.last_end_date)-Date(olympiad.first_start_date))/ (1000 * 60 * 60 * 24)} дней`
-      if (olympiad.status == 'Идет сейчас') dateInfoText =`Осталось`
-      if (olympiad.status == 'Идет сейчас') dateInfo =`${Math.round(Date(olympiad.last_end_date)-Date(olympiad.first_start_date))/ (1000 * 60 * 60 * 24)} дней`
-      if (olympiad.status == 'Регистрация скоро откроется') dateInfoText =`Откроется`
-      if (olympiad.status == 'Регистрация скоро откроется') dateInfo =`${oformatDate(olympiad.first_start_date)}`
-      if (olympiad.status == 'Вы участвуете') dateInfoText =`Олимпиада начнется`
-      if (olympiad.status == 'Вы участвуете') dateInfo =`${formatDate(olympiad.first_start_date)}`
-
-      // Определяем текст кнопки
-      const buttonText = olympiad.status === 'Завершена' ? 'Посмотреть результаты' : 'Подробнее';
-
-
-    const useVuesaxIcon = ['Завершена', 'Вы участвуете', 'Регистрация скоро откроется'].includes(olympiad.status);
-    const iconHTML = useVuesaxIcon
-    ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block size-5" />`
-    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mb-1 inline-block size-5">
-    <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/>
-    </svg>`;
 
       card.innerHTML = `
         <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">
@@ -153,14 +203,15 @@ async function loadOlympiadCards() {
         <div class="mt-auto mb-4 flex">
           <div>
             <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
-
-<p class="text-black-primary text-sm">${iconHTML}
-
+            <p class="text-black-primary text-sm flex items-center gap-1">
+              ${iconHTML}
               ${dateInfo}
             </p>
           </div>
         </div>
-        <a href="${olympiad.url}" class="btn-base">${buttonText}</a>
+        <a href="${olympiad.url}" class="btn-base">
+          ${buttonText}
+        </a>
       `;
 
       container.appendChild(card);

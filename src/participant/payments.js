@@ -39,32 +39,49 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-function renderUserInfo(user) {
-  const avatarEl = document.getElementById('user-avatar')
-  const nameEl = document.getElementById('user-name')
-  const roleEl = document.getElementById('user-role')
-  const welcomeEl = document.querySelector('h1.text-xl')
+// 1) Функция для загрузки полного профиля участника
+async function loadUserProfile() {
+  const res = await authorizedFetch(
+    'https://portal.gradients.academy/api/users/participant/profile/'
+  );
+  if (!res.ok) throw new Error('Не удалось загрузить профиль');
+  return await res.json();
+}
 
-  const imgPath = user.profile.image
+function renderUserInfo(profile) {
+  const avatarEl   = document.getElementById('user-avatar')
+  const nameEl     = document.getElementById('user-name')
+  const roleEl     = document.getElementById('user-role')
+  const welcomeEl  = document.querySelector('h1.text-xl')
+
+  // 1) Картинка
+  const imgPath = profile.image
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
     : `https://portal.gradients.academy${imgPath}`
 
-  nameEl.textContent = user.profile.full_name_ru
-  const firstName = user.profile.full_name_ru.split(' ')[0]
+  // 2) Имя и приветствие
+  nameEl.textContent = profile.full_name_ru
+  const firstName = profile.full_name_ru.split(' ')[0]
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
 
-  const roleMap = {
-    participant: 'Участник',
-  }
-  roleEl.textContent = roleMap[user.profile.role] || user.profile.role
+  // 3) Роль (она всегда участник)
+  roleEl.textContent = 'Участник'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
+  // сначала загрузим детали профиля
+  let profile
+  try {
+    profile = await loadUserProfile()
+  } catch (e) {
+    console.error(e)
+    return
+  }
+  renderUserInfo(profile)
 
   try {
     initTopUpHandler()
@@ -74,6 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let sortAscending = true
 
   const sortHeader = document.getElementById('sort-date-header')
+  const submitBtn = document.getElementById('submit-btn');
   if (sortHeader) {
     sortHeader.addEventListener('click', () => {
       allAssignments.sort((a, b) => {
@@ -226,7 +244,7 @@ function renderAssignmentTable(assignments) {
             const encodedTask = encodeURIComponent(JSON.stringify(task))
             return `
       <tr class="hover:bg-gray-50">
-        <td>${task.id}</td>
+        <td>${task.transaction_id}</td>
         <td>${formatDate(task.created_at)}</td>
         <td>${task.description}</td>
         <td>${formatAmount(task.amount)}</td>
@@ -377,13 +395,27 @@ function renderActiveOlympiads(olympiads) {
   const wrapper = document.querySelector('[data-olympiads-wrapper]')
   if (!wrapper) return
 
-  wrapper.innerHTML = olympiads.length === 0
-    ? '<p class="text-gray-500">Нет активных олимпиад</p>'
-    : olympiads.map(olymp => `
+  if (olympiads.length === 0) {
+    wrapper.innerHTML = '<p class="text-gray-500">Нет активных олимпиад</p>'
+    return
+  }
+
+  wrapper.innerHTML = olympiads.map(olymp => {
+    // Класс и текст статуса
+    const statusClass = olymp.is_paid ? 'paid' : 'unpaid'
+    const statusText  = olymp.is_paid ? 'Оплачено' : 'Не оплачено'
+
+    // Шаблон кнопки (показывается только если не оплачено)
+    const payButton = !olymp.is_paid
+      ? `<button
+           onclick="payOlympiad(${olymp.id})"
+           class="bg-orange-primary block w-full rounded-3xl p-1.5 text-center text-white"
+         >Оплатить участие</button>`
+      : ''
+
+    return `
       <div class="border-default w-full max-w-sm rounded-2xl p-4 mb-4">
-        <div class="card ${olymp.is_paid ? 'paid' : 'unpaid'} mb-2">
-          ${olymp.is_paid ? 'Оплачено' : 'Не оплачено'}
-        </div>
+        <div class="card ${statusClass} mb-2">${statusText}</div>
         <p class="mb-4 font-bold">${olymp.title}</p>
         <div class="mb-6 flex *:flex-1">
           <div>
@@ -407,14 +439,11 @@ function renderActiveOlympiads(olympiads) {
             </div>
           </div>
         </div>
-        ${!olymp.is_paid ? `
-          <button class="bg-orange-primary block w-full cursor-pointer rounded-3xl p-1.5 text-center text-white">
-            Оплатить участие
-          </button>` : ''}
+        ${payButton}
       </div>
-    `).join('')
+    `
+  }).join('')
 }
-
 
 function downloadPayment(id) {
   const url = `https://portal.gradients.academy/api/payments/participant/dashboard/${id}/download`
@@ -435,7 +464,7 @@ function downloadPayment(id) {
     .then((blob) => {
       const link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
-      link.download = `payment_${id}.pdf` // Можно изменить на нужный формат
+      link.download = `payment_${transactionId}.pdf`
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -443,6 +472,56 @@ function downloadPayment(id) {
     .catch((error) => {
       alert(`Ошибка: ${error.message}`)
     })
+}
+/**
+ * Инициация оплаты олимпиады.
+ * При клике на «Оплатить участие» вызывается payOlympiad(id).
+ * Отправляет POST на /pay/[id]/ и в ответе ждёт pg_redirect_url,
+ * затем открывает платёжное окно.
+ */
+async function payOlympiad(olympiadId) {
+  const token = localStorage.getItem('access_token')
+  if (!token) {
+    alert('Требуется авторизация. Пожалуйста, войдите.')
+    return
+  }
+
+  // Открываем пустое окно заранее, чтобы браузер не блокировал
+  const payWindow = window.open('', '_blank')
+  if (!payWindow) {
+    alert('Не удалось открыть окно оплаты. Проверьте блокировщик попапов.')
+    return
+  }
+  payWindow.document.write('<p>Подготовка к оплате...</p>')
+
+  try {
+    const response = await authorizedFetch(
+      `https://portal.gradients.academy/payments/participant/dashboard/pay/${olympiadId}/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({})  // если API требует дополнительные поля — добавьте их здесь
+      }
+    )
+
+    const result = await response.json()
+    if (response.ok && result.pg_redirect_url) {
+      // Перенаправляем окно на платёжную страницу
+      payWindow.location.href = result.pg_redirect_url
+    } else {
+      // Закрываем окно и показываем ошибку
+      payWindow.close()
+      const errText = result.detail || result.error || 'Не удалось инициировать платёж'
+      alert('Ошибка: ' + errText)
+    }
+  } catch (err) {
+    console.error('Ошибка при запросе оплаты:', err)
+    payWindow.close()
+    alert('Произошла ошибка при инициации оплаты.')
+  }
 }
 
 
