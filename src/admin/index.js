@@ -222,42 +222,29 @@ async function loadCurrentOlympiadStats() {
       stats.paid_count ?? 0;
     document.getElementById('new-today').textContent = `+ ${stats.new_today ?? 0}`;
 
-    // маленькие флажки с запятыми
-    const FLAG_WIDTH = 16;
-    const FLAG_HEIGHT = 12;
-
-    function countryFlagImgTag(cc) {
-      const code = cc.toLowerCase();
-      return `<img
-        src="https://flagcdn.com/${FLAG_WIDTH}x${FLAG_HEIGHT}/${code}.png"
-        alt="${cc} flag"
-        width="${FLAG_WIDTH}"
-        height="${FLAG_HEIGHT}"
-        class="inline-block"
-      />`;
-    }
-
     const countriesListEl = document.getElementById('countries-list');
-    if (Array.isArray(stats.countries) && stats.countries.length) {
-      // собираем массив флажков
-      const imgs = stats.countries.map(countryFlagImgTag);
-      // вставляем между ними запятую со стилем
-      countriesListEl.innerHTML = imgs
-        .map((imgHtml, idx) => {
-          if (idx > 0) {
-            // запятая перед каждым, кроме первого
-            return `<span style="color:#8324E3; margin:0 0.25rem;">,</span>${imgHtml}`;
-          }
-          return imgHtml;
-        })
-        .join('');
+
+    // --- минимально: выводим только количество стран ---
+    let countryCount = '—';
+    if (Array.isArray(stats.countries)) {
+      countryCount = stats.countries.length;
+    } else if (typeof stats.countries === 'number') {
+      countryCount = stats.countries;
+    } else if (typeof stats.countries_count === 'number') {
+      countryCount = stats.countries_count;
     } else {
-      countriesListEl.textContent = '—';
+      // если поле отсутствует или пусто — показываем прочерк
+      countryCount = '—';
     }
+
+    countriesListEl.textContent = countryCount;
+    // ----------------------------------------------------
+
   } catch (err) {
     console.error('Ошибка при загрузке статистики олимпиады:', err);
   }
 }
+
 
 
 async function loadParticipantsTrend() {

@@ -39,25 +39,36 @@ async function ensureUserAuthenticated() {
   return user
 }
 
-// Основная отрисовка профиля
+// Основная отрисовка профиля — теперь устойчиво обрабатывает
 function renderUserInfo(profile) {
+  // распаковываем, если передали { profile: data }
+  const p = (profile && profile.profile) ? profile.profile : (profile || {});
+
   const avatarEl  = document.getElementById('user-avatar');
   const nameEl    = document.getElementById('user-name');
   const roleEl    = document.getElementById('user-role');
   const welcomeEl = document.querySelector('h1.text-xl');
 
-  const imgPath = profile.image || '';
-  avatarEl.src = imgPath.startsWith('http')
-    ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
+    // если чего-то нет в DOM — безопасно завершаем и логируем
+    console.warn('renderUserInfo: отсутствуют элементы в DOM для отрисовки профиля');
+    return;
+  }
 
-  nameEl.textContent    = profile.full_name_ru || '';
-  const firstName       = (profile.full_name_ru || '').split(' ')[0];
+  const imgPath = p.image || '';
+  avatarEl.src = imgPath
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.gradients.academy${imgPath}`)
+    : ''; // если нет изображения — оставляем пустым (можно поставить placeholder)
+
+  const fullName = p.full_name_ru || '';
+  nameEl.textContent = fullName;
+  const firstName = fullName.split(' ')[0] || '';
   welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
 
   const roleMap = { administrator: 'Администратор' };
-  roleEl.textContent = roleMap[profile.role] || profile.role;
+  roleEl.textContent = roleMap[p.role] || p.role || '';
 }
+
 
 // Функция, которая дергает профиль администратора
 async function loadAdminProfile() {

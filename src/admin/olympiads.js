@@ -97,12 +97,29 @@ document
       display.textContent = '';
     }
   });
-
+let tomGradesAdd, tomGradesEdit;
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-
+  tomGradesAdd = new TomSelect('#grades-add', {
+    plugins: ['remove_button'],        // кнопка удаления у каждого тега
+    persist: false,
+    create: false,
+    maxItems: null,                    // неограниченное количество
+    placeholder: 'Выберите классы...',
+    dropdownDirection: 'bottom',       // dropdown вниз
+    copyClassesToDropdown: false,
+    // render можно добавить, чтобы менять вид опций/чипов
+  });
+    // Инициализируем TomSelect для Edit
+  tomGradesEdit = new TomSelect('#grades-edit', {
+    plugins: ['remove_button'],
+    persist: false,
+    create: false,
+    maxItems: null,
+    placeholder: 'Выберите классы...',
+  });
   try {
         // 2) Подтягиваем актуальный профиль по API
     const profileData = await loadAdminProfile();
@@ -464,7 +481,14 @@ async function openEditModal(title, id) {
     }
 
     const data = await response.json()
-
+    // Очистим tomSelect и добавим нужные элементы
+    tomGradesEdit.clear(); 
+    if (Array.isArray(data.grades) && data.grades.length) {
+      data.grades.forEach(g => {
+        // TomSelect требует строковое значение, поэтому приводим к строке
+        tomGradesEdit.addItem(String(g));
+      });
+    }
     // Заполнение основных полей
     document.getElementById('title-edit').value = data.title
     document.getElementById('tour-edit').value = data.type || 'spring';
@@ -542,12 +566,158 @@ function formatDateReverse(dateStr) {
 
 
 
+// минимальное количество этапов (изменяй на 3 если нужно минимум 3)
+const MIN_STAGE_COUNT = 1;
+
+// --- Validation helpers for Add form ---
+function isAddFormValid() {
+  const titleEl = document.getElementById('title-add');
+  const tourEl = document.getElementById('tour-add');
+  const yearEl = document.getElementById('year-add');
+  const statusEl = document.getElementById('status-add');
+  const languageEl = document.getElementById('language-add');
+  const priceEl = document.getElementById('price-add');
+  const certFileEl = document.getElementById('certificate-background');
+
+  // TomSelect selected grades
+  const gradesSelected = tomGradesAdd ? (tomGradesAdd.items || []) : [];
+
+  if (!titleEl || !titleEl.value.trim()) return false;
+  if (!tourEl || !tourEl.value) return false;
+  if (!gradesSelected.length) return false;
+  if (!yearEl || !yearEl.value) return false;
+  if (!statusEl || !statusEl.value) return false;
+  if (!languageEl || !languageEl.value) return false;
+  if (!priceEl || priceEl.value === '' || Number(priceEl.value) < 0) return false;
+  if (!certFileEl || !certFileEl.files[0]) return false;
+
+  // stages: берем только реальные блоки .stage-block (шаблон у тебя #stage-template и не должен иметь класс .stage-block)
+  const stageBlocks = Array.from(document.querySelectorAll('#stages-container .stage-block'));
+  if (stageBlocks.length < MIN_STAGE_COUNT) return false;
+
+  // каждый должен иметь заполненный диапазон дат вида "дд.мм.гггг — дд.мм.гггг"
+  for (const block of stageBlocks) {
+    const dateInput = block.querySelector('.date-range-add');
+    if (!dateInput) return false;
+    const raw = (dateInput.value || '').trim();
+    if (!raw) return false;
+    // разделитель — (эм-даш) используется в других местах, допускаем пробелы вокруг
+    const parts = raw.split('—').map(s => s.trim()).filter(Boolean);
+    if (parts.length < 2) return false;
+    // простая дополнительная проверка: даты содержат точку (д.м.гггг)
+    if (!parts[0].includes('.') || !parts[1].includes('.')) return false;
+  }
+
+  return true;
+}
+
+function focusFirstInvalid() {
+  const titleEl = document.getElementById('title-add');
+  if (!titleEl || !titleEl.value.trim()) { alert('Введите название олимпиады'); titleEl && titleEl.focus(); return; }
+
+  const tourEl = document.getElementById('tour-add');
+  if (!tourEl || !tourEl.value) { alert('Выберите тур'); tourEl && tourEl.focus(); return; }
+
+  const gradesSelected = tomGradesAdd ? (tomGradesAdd.items || []) : [];
+  if (!gradesSelected.length) { alert('Выберите хотя бы один класс'); 
+    const control = document.querySelector('#grades-add-ts-control') || document.querySelector('#grades-add');
+    control && control.focus();
+    return;
+  }
+
+  const yearEl = document.getElementById('year-add');
+  if (!yearEl || !yearEl.value) { alert('Выберите год'); yearEl && yearEl.focus(); return; }
+
+  const statusEl = document.getElementById('status-add');
+  if (!statusEl || !statusEl.value) { alert('Выберите статус олимпиады'); statusEl && statusEl.focus(); return; }
+
+  const languageEl = document.getElementById('language-add');
+  if (!languageEl || !languageEl.value) { alert('Выберите язык олимпиады'); languageEl && languageEl.focus(); return; }
+
+  const priceEl = document.getElementById('price-add');
+  if (!priceEl || priceEl.value === '' || Number(priceEl.value) < 0) { alert('Укажите корректную стоимость'); priceEl && priceEl.focus(); return; }
+
+  const certFileEl = document.getElementById('certificate-background');
+  if (!certFileEl || !certFileEl.files[0]) { alert('Загрузите фон сертификата'); 
+    const fileLabel = document.querySelector('label[for="certificate-background"]');
+    if (fileLabel) fileLabel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // stages
+  const stageBlocks = Array.from(document.querySelectorAll('#stages-container .stage-block'));
+  if (stageBlocks.length < MIN_STAGE_COUNT) {
+    alert(`Добавьте минимум ${MIN_STAGE_COUNT} этап(а/ов) с заполненными датами`);
+    return;
+  }
+  for (const block of stageBlocks) {
+    const dateInput = block.querySelector('.date-range-add');
+    const raw = dateInput ? dateInput.value.trim() : '';
+    if (!raw) { alert('Заполните период этапа'); dateInput && dateInput.focus(); return; }
+    const parts = raw.split('—').map(s => s.trim()).filter(Boolean);
+    if (parts.length < 2) { alert('Убедитесь, что диапазон даты указан как "дд.мм.гггг — дд.мм.гггг"'); dateInput && dateInput.focus(); return; }
+  }
+}
+
+// Подвяжем слушатели — вызовем setSubmitAddState на input/change
+function attachAddFormListeners() {
+  const watchSelectors = [
+    '#title-add', '#tour-add', '#year-add', '#status-add', '#language-add', '#price-add',
+    '#certificate-background', '#disc-add'
+  ];
+  watchSelectors.forEach(sel => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    el.addEventListener('input', setSubmitAddState);
+    el.addEventListener('change', setSubmitAddState);
+  });
+
+  const stagesContainer = document.getElementById('stages-container');
+  if (stagesContainer) {
+    // делегирование для динамически создаваемых date inputs
+    stagesContainer.addEventListener('input', setSubmitAddState);
+    stagesContainer.addEventListener('change', setSubmitAddState);
+    // если используешь flatpickr — слушаем событие onChange при создании flatpickr для новых полей
+  }
+
+  if (tomGradesAdd && typeof tomGradesAdd.on === 'function') {
+    tomGradesAdd.on('change', setSubmitAddState);
+  } else {
+    const nativeGrades = document.getElementById('grades-add');
+    if (nativeGrades) nativeGrades.addEventListener('change', setSubmitAddState);
+  }
+
+  const certFileEl = document.getElementById('certificate-background');
+  if (certFileEl) certFileEl.addEventListener('change', setSubmitAddState);
+
+  const submitBtn = document.getElementById('submit-add-btn');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', async () => {
+      if (!isAddFormValid()) {
+        focusFirstInvalid();
+        return;
+      }
+      await submitOlympiadForm();
+    });
+  }
+
+  // первоначальное состояние
+  setSubmitAddState();
+}
+
+
+// Вызови attachAddFormListeners() после инициализации tomGradesAdd
+// например, внутри DOMContentLoaded сразу после создания tomGradesAdd
 
 
 async function submitOlympiadForm() {
   const token = localStorage.getItem('access_token');
   if (!token) {
     alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+    if (!isAddFormValid()) {
+    focusFirstInvalid();
     return;
   }
 
@@ -567,12 +737,15 @@ async function submitOlympiadForm() {
     alert('Введите название олимпиады');
     return;
   }
-  const gradesArr = Array.from(gradesSelect.selectedOptions).map(o => o.value);
+  // на:
+  const rawAdd = tomGradesAdd.items || []; // массив строковых значений, например ["5","6"]
+  // если нужны числа:
+  const gradesArr = rawAdd.map(v => String(v)); // либо Number(v) если нужно цифры
   if (gradesArr.length === 0) {
     alert('Выберите хотя бы один класс');
     return;
   }
-
+  
   // 2) ЭТАПЫ
 const stages = [];
 document
@@ -608,7 +781,7 @@ document
   const formData = new FormData();
   formData.append('title',                      titleEl.value.trim());
   formData.append('type',                       typeEl.value);
-  formData.append('grades',                     gradesArr.join(','));
+  formData.append('grades', gradesArr.join(','));
   formData.append('year',                       yearEl.value);
   formData.append('status',                     statusEl.value);
   formData.append('website',                    websiteEl.value.trim());
@@ -742,9 +915,7 @@ async function updateOlympiadForm(olympiadId) {
 
   const title       = document.getElementById('title-edit').value.trim();
   const type        = document.getElementById('tour-edit').value;
-  const gradesArr   = Array.from(
-                         document.getElementById('grades-edit').selectedOptions
-                       ).map(o => o.value);
+  const gradesArr = tomGradesEdit.items || [];
   const year        = document.getElementById('year-edit').value;
   const status      = document.getElementById('status-edit').value;
   const website     = document.getElementById('link-edit').value.trim();

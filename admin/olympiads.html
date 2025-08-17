@@ -186,7 +186,7 @@
                       Добавить олимпиаду
                     </p>
 
-                    <form
+                    <form id="add-olympiad-form"
                       class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5"
                     >
                       <div class="space-y-6">
@@ -224,7 +224,7 @@
                                   class="input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="spring" selected>
+                                  <option value="spring">
                                     🌸 Весна
                                   </option>
                                   <option value="autumn">🍂 Осень</option>
@@ -262,15 +262,16 @@
                                 <select
                                   id="grades-add"
                                   class="multi-select input-base border-default appearance-none"
-                                  multiple
+                                  multiple class="hidden"
+                                  name="grades"
                                   required
                                 >
                                   <option value="1">1 класс</option>
                                   <option value="2">2 класс</option>
                                   <option value="3">3 класс</option>
                                   <option value="4">4 класс</option>
-                                  <option value="5" selected>5 класс</option>
-                                  <option value="6" selected>6 класс</option>
+                                  <option value="5">5 класс</option>
+                                  <option value="6">6 класс</option>
                                   <option value="7">7 класс</option>
                                   <option value="8">8 класс</option>
                                   <option value="9">9 класс</option>
@@ -308,9 +309,6 @@
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="2022">2022</option>
-                                  <option value="2023">2023</option>
-                                  <option value="2024">2024</option>
                                   <option value="2025">2025</option>
                                   <option value="2026">2026</option>
                                   <option value="2027">2027</option>
@@ -535,71 +533,6 @@
                                   </svg>
                                 </div>
                               </div>
-
-<!--                              <div>-->
-<!--                                <label-->
-<!--                                  class="text-gray-primary mb-1 block text-sm font-medium"-->
-<!--                                  >Название этапа</label-->
-<!--                                >-->
-<!--                                <div class="relative">-->
-<!--                                  <select-->
-<!--                                    class="step-name-add multi-select input-base border-default appearance-none"-->
-<!--                                    required-->
-<!--                                  >-->
-<!--                                    <option value="registration">-->
-<!--                                      Регистрация-->
-<!--                                    </option>-->
-<!--                                    <option value="1 step">1 этап</option>-->
-<!--                                  </select>-->
-<!--                                  <div-->
-<!--                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"-->
-<!--                                  >-->
-<!--                                    <svg-->
-<!--                                      xmlns="http://www.w3.org/2000/svg"-->
-<!--                                      fill="none"-->
-<!--                                      viewBox="0 0 24 24"-->
-<!--                                      stroke-width="1.5"-->
-<!--                                      stroke="currentColor"-->
-<!--                                      class="size-4"-->
-<!--                                    >-->
-<!--                                      <path-->
-<!--                                        stroke-linecap="round"-->
-<!--                                        stroke-linejoin="round"-->
-<!--                                        d="m19.5 8.25-7.5 7.5-7.5-7.5"-->
-<!--                                      />-->
-<!--                                    </svg>-->
-<!--                                  </div>-->
-<!--                                </div>-->
-<!--                              </div>-->
-
-<!--                              <div>-->
-<!--                                <label-->
-<!--                                  class="text-gray-primary mb-1 block text-sm font-medium"-->
-<!--                                  >Период этапа</label-->
-<!--                                >-->
-
-<!--                                <div class="relative">-->
-<!--                                  <input-->
-<!--                                    class="date-range-add input-base border-default"-->
-<!--                                    placeholder="Выберите дату"-->
-<!--                                    readonly-->
-<!--                                  />-->
-<!--                                  <svg-->
-<!--                                    xmlns="http://www.w3.org/2000/svg"-->
-<!--                                    fill="none"-->
-<!--                                    viewBox="0 0 24 24"-->
-<!--                                    stroke-width="1.5"-->
-<!--                                    stroke="currentColor"-->
-<!--                                    class="absolute top-1/2 right-2 size-5 -translate-y-1/2"-->
-<!--                                  >-->
-<!--                                    <path-->
-<!--                                      stroke-linecap="round"-->
-<!--                                      stroke-linejoin="round"-->
-<!--                                      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"-->
-<!--                                    />-->
-<!--                                  </svg>-->
-<!--                                </div>-->
-<!--                              </div>-->
                             </div>
                             <div class="mt-4 flex justify-end">
                               <button type="button" class="btn-white">
@@ -688,7 +621,7 @@
 
                       <div class="mt-6 flex items-center justify-end">
                         <div class="flex items-center gap-2">
-                          <button
+                          <button id="submit-add-btn"
                             type="button"
                             onclick="submitOlympiadForm()"
                             class="btn-orange"
@@ -988,9 +921,6 @@
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="2022">2022</option>
-                                  <option value="2023">2023</option>
-                                  <option value="2024">2024</option>
                                   <option value="2025">2025</option>
                                   <option value="2026">2026</option>
                                   <option value="2027">2027</option>
@@ -2292,5 +2222,7 @@
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/olympiads.js"></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
   </body>
 </html>

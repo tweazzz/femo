@@ -104,6 +104,7 @@ function formatDate(dateStr) {
     }
 
 
+// Вариант: /api/olympiads/participant/dashboard/?tab=past
 async function loadOlympiadCards() {
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -137,7 +138,13 @@ async function loadOlympiadCards() {
       if (olympiad.status == 'Регистрация скоро откроется') statusClass = 'bg-grey-100 text-grey-primary';
       if (olympiad.status == 'Вы участвуете') statusClass = 'bg-green-100 text-green-primary';
 
-        // Определяем текст для даты олимпиады
+      // Иконка для статуса "Завершена"
+      const completedIcon = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 11C8.75 11 11 8.75 11 6C11 3.25 8.75 1 6 1C3.25 1 1 3.25 1 6C1 8.75 3.25 11 6 11Z" stroke="#0DB459" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.875 5.99996L5.29 7.41496L8.125 4.58496" stroke="#0DB459" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const statusIcon = olympiad.status === 'Завершена' ? (completedIcon + ' ') : '';
+
+      // Определяем текст для даты олимпиады
+      let dateInfoText = '';
+      let dateInfo = '';
       if (olympiad.status == 'Завершена') dateInfoText =`Даты олимпиады`
       if (olympiad.status == 'Завершена') dateInfo =`${formatDate(olympiad.first_start_date)} - ${formatDate(olympiad.last_end_date)}`;
       if (olympiad.status == 'Регистрация открыта') dateInfoText =`Осталось`
@@ -152,17 +159,16 @@ async function loadOlympiadCards() {
       // Определяем текст кнопки
       const buttonText = olympiad.status === 'Завершена' ? 'Посмотреть результаты' : 'Подробнее';
 
-
-    const useVuesaxIcon = ['Завершена', 'Вы участвуете', 'Регистрация скоро откроется'].includes(olympiad.status);
-    const iconHTML = useVuesaxIcon
-    ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block size-5" />`
-    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mb-1 inline-block size-5">
-    <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/>
-    </svg>`;
+      const useVuesaxIcon = ['Завершена', 'Вы участвуете', 'Регистрация скоро откроется'].includes(olympiad.status);
+      const iconHTML = useVuesaxIcon
+        ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block size-5" />`
+        : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mb-1 inline-block size-5">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/>
+          </svg>`;
 
       card.innerHTML = `
-        <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">
-          ${olympiad.status}
+        <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs flex items-center gap-1">
+          ${statusIcon}${olympiad.status}
         </div>
         <h3 class="mb-1 text-lg font-semibold">${olympiad.title}</h3>
         <p class="text-gray-primary mb-3 text-sm">Тур: ${olympiad.tour_type}</p>
@@ -170,8 +176,7 @@ async function loadOlympiadCards() {
           <div>
             <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
 
-<p class="text-black-primary text-sm">${iconHTML}
-
+            <p class="text-black-primary text-sm">${iconHTML}
               ${dateInfo}
             </p>
           </div>
@@ -186,3 +191,4 @@ async function loadOlympiadCards() {
     console.error('Ошибка загрузки списка олимпиад:', error);
   }
 }
+

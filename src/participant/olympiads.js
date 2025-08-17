@@ -149,9 +149,17 @@ async function loadOlympiadCards() {
       if (olympiad.status == 'Вы участвуете') dateInfoText =`Олимпиада начнется`
       if (olympiad.status == 'Вы участвуете') dateInfo =`${formatDate(olympiad.first_start_date)}`
 
+      const completedIcon = `
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
+            xmlns="http://www.w3.org/2000/svg" class="inline-block">
+          <path d="M6 11C8.75 11 11 8.75 11 6C11 3.25 8.75 1 6 1C3.25 1 1 3.25 1 6C1 8.75 3.25 11 6 11Z" 
+                stroke="#0DB459" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3.875 5.99996L5.29 7.41496L8.125 4.58496" 
+                stroke="#0DB459" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
       // Определяем текст кнопки
       const buttonText = olympiad.status === 'Завершена' ? 'Посмотреть результаты' : 'Подробнее';
-
 
     const useVuesaxIcon = ['Завершена', 'Вы участвуете', 'Регистрация скоро откроется'].includes(olympiad.status);
     const iconHTML = useVuesaxIcon
@@ -160,24 +168,24 @@ async function loadOlympiadCards() {
     <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/>
     </svg>`;
 
-      card.innerHTML = `
-        <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">
-          ${olympiad.status}
-        </div>
-        <h3 class="mb-1 text-lg font-semibold">${olympiad.title}</h3>
-        <p class="text-gray-primary mb-3 text-sm">Тур: ${olympiad.tour_type}</p>
-        <div class="mt-auto mb-4 flex">
-          <div>
-            <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
-
-<p class="text-black-primary text-sm">${iconHTML}
-
-              ${dateInfo}
-            </p>
-          </div>
-        </div>
-        <a href="${olympiad.url}" class="btn-base">${buttonText}</a>
-      `;
+// Внутри цикла при генерации карточек:
+card.innerHTML = `
+  <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs flex items-center gap-1">
+    ${olympiad.status === 'Завершена' ? completedIcon : ''} 
+    ${olympiad.status}
+  </div>
+  <h3 class="mb-1 text-lg font-semibold">${olympiad.title}</h3>
+  <p class="text-gray-primary mb-3 text-sm">Тур: ${olympiad.tour_type}</p>
+  <div class="mt-auto mb-4 flex">
+    <div>
+      <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
+      <p class="text-black-primary text-sm flex items-center gap-1">
+        ${iconHTML} ${dateInfo}
+      </p>
+    </div>
+  </div>
+  <a href="${olympiad.url}" class="btn-base">${buttonText}</a>
+`;
 
       container.appendChild(card);
     });
