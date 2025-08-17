@@ -68,6 +68,63 @@ function renderUserInfo(profile) {
   // 3) Роль (она всегда участник)
   roleEl.textContent = 'Участник'
 }
+/**
+ * Показывает/скрывает win/lose баннеры и подставляет реальные очки.
+ * Принимает либо объект task (с полями solved, points, status, correct)
+ * либо результат отправки (с поля correct, points).
+ */
+function updateResultBanners(obj = {}) {
+  // guard: элементы должны быть в DOM
+  if (!winInfo || !loseInfo) return;
+
+  // Скрываем по умолчанию
+  winInfo.style.display = 'none';
+  loseInfo.style.display = 'none';
+
+  // Нормализуем solved: если явного поля нет, считаем решённым по correct:true либо по тому что obj.points > 0
+  const solved = Boolean(obj.solved || obj.is_solved || obj.correct || obj.status === 'Отправлено' && obj.solved) || false;
+
+  // Если пришёл объект с correct=false (и/или solved true) — будем учитывать это
+  let correct = null;
+  if (typeof obj.correct === 'boolean') correct = obj.correct;
+  else if (typeof obj.is_correct === 'boolean') correct = obj.is_correct;
+  else if (typeof obj.points === 'number') correct = obj.points > 0;
+  else if (typeof obj.base_points === 'number') correct = obj.base_points > 0;
+  // ещё запасные поля
+  else if (typeof obj.awarded_points === 'number') correct = obj.awarded_points > 0;
+
+  // Если нет признака solved — не показываем ничего
+  if (!solved) return;
+
+  // Если корректность определена — показываем соответствующий баннер
+  if (correct === true) {
+    // вычислим XP (источник правды: points -> awarded_points -> base_points)
+    const xp = (obj.points ?? obj.awarded_points ?? obj.base_points ?? 0);
+
+    // Обновим внутренний текст аккуратно (чтобы сохранить тег <strong id="win-info-xp">)
+    const winText = `Ты победил(а)! Ответ верный и вовремя — ты получаешь <strong id="win-info-xp">+${xp} XP</strong>`;
+    const winTextContainer = winInfo.querySelector('span') || winInfo;
+    winTextContainer.innerHTML = winText;
+
+    // Обновим modal текст если есть
+    const modalXP = document.getElementById('modal-xp');
+    if (modalXP) modalXP.textContent = `Ответ верный и вовремя — ты получаешь +${xp} XP`;
+
+    winInfo.style.display = 'flex';
+    loseInfo.style.display = 'none';
+    return;
+  }
+
+  if (correct === false) {
+    // Показываем "неправильно"
+    winInfo.style.display = 'none';
+    loseInfo.style.display = 'flex';
+    return;
+  }
+
+  // Если не определили correctness (редкий случай) — оставляем оба скрытыми
+  console.debug('updateResultBanners: cannot determine correctness', { solved, correct, obj });
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
@@ -261,18 +318,44 @@ async function loadTaskMock() {
     statusEl.textContent = statusText;
     statusEl.className = `${statusClass} border-default rounded-xl px-2 py-0.5 text-sm`;
 
-    if (task.status === 'Не отправлено') {
+    // Сначала скрываем оба баннера
+    winInfo.style.display = 'none';
+    loseInfo.style.display = 'none';
+
+    // Скрываем/показываем элементы формы в зависимости от solved
+    if (task.solved) {
+      // если уже решено — прячем форму и показываем результат (win/lose) по данным backend
+      const answerLabel = document.querySelector('#answer-input')?.closest('label');
+      const submit2Button = document.getElementById('submit-button2');
+      const nextTaskLink  = document.getElementById('next-task-button2');
+
+      if (answerLabel) answerLabel.style.display = 'none';
+      if (submit2Button) submit2Button.style.display = 'none';
+      if (nextTaskLink) nextTaskLink.style.display = 'flex';
+
+      // прячем кнопки ввода
+      if (submitBtn1) submitBtn1.style.display = 'none';
+      if (submitBtn2) submitBtn2.style.display = 'none';
+      if (clearButton) clearButton.style.display = 'none';
+
+      // Покажем баннер по данным task (points, correct и т.д.)
+      updateResultBanners(task);
+    } else {
+      // не решено — показываем форму, скрываем ссылку "следующая задача"
+      const answerLabel = document.querySelector('#answer-input')?.closest('label');
+      const submit2Button = document.getElementById('submit-button2');
+      const nextTaskLink  = document.getElementById('next-task-button2');
+
+      if (answerLabel) answerLabel.style.display = '';
+      if (submit2Button) submit2Button.style.display = 'flex';
+      if (nextTaskLink) nextTaskLink.style.display = 'none';
+
+      // прячем оба баннера
       winInfo.style.display = 'none';
       loseInfo.style.display = 'none';
-    } else if (task.status === 'Отправлено') {
-      winInfo.style.display = 'flex';
-      loseInfo.style.display = 'none';
-
-      // Скрыть кнопки
-      submitBtn1.style.display = 'none';
-      submitBtn2.style.display = 'none';
-      clearButton.style.display = 'none';
     }
+
+
 
     window.taskPoints = task.points;
 
@@ -416,26 +499,16 @@ submitBtn1.addEventListener('click', async () => {
       throw new Error(result.detail || `Ошибка ${response.status}`);
     }
     if (result.correct) {
-      // Успешный ответ
-      winInfo.style.display = 'flex';
-      loseInfo.style.display = 'none';
+      // Успешный ответ — выключаем кнопки/форму
+      if (submitBtn1) submitBtn1.style.display = 'none';
+      if (submitBtn2) submitBtn2.style.display = 'none';
+      if (clearButton) clearButton.style.display = 'none';
 
-      // Скрыть кнопки
-      submitBtn1.style.display = 'none';
-      submitBtn2.style.display = 'none';
-      clearButton.style.display = 'none';
+      // Обновляем баннеры и modal по результату от сервера
+      // Результат может иметь поля: correct (bool), points (number)
+      updateResultBanners(Object.assign({}, result, { solved: true }));
 
-      const modalXP = document.getElementById('modal-xp');
-      if (modalXP) {
-        modalXP.textContent = 
-          `Ответ верный и вовремя — ты получаешь +${result.points} XP`;
-      }
-      const winTextSpan = winInfo.querySelector('span');
-      if (winTextSpan) {
-        winTextSpan.textContent = 
-          `Ты победил(а)! Ответ верный и вовремя — ты получаешь +${result.points} XP`;
-      }
-
+      // Добавим навигацию на кнопку "Перейти к следующей задаче" в модалке
       const nextTaskBtn = document.getElementById('next-task-button');
       if (nextTaskBtn) {
         nextTaskBtn.addEventListener('click', () => {
@@ -443,12 +516,12 @@ submitBtn1.addEventListener('click', async () => {
         });
       }
 
-      // Открыть модалку
+      // Открыть модалку (там текст modal-xp уже обновлён в updateResultBanners if modal-xp exists)
       toggleModal('modal');
     } else {
       // Неверный ответ
       winInfo.style.display = 'none';
-      loseInfo.style.display= 'flex';
+      loseInfo.style.display = 'flex';
     }
 
   } catch (err) {
