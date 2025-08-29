@@ -515,28 +515,43 @@ async function openEditModal(title, id) {
     const addButton = stageContainer.querySelector('.btn-white')
 
     // Удаляем все клоны, кроме шаблона
-    stageContainer.querySelectorAll('.grid:not(#stage-template-edit)').forEach(el => el.remove())
+    stageContainer.querySelectorAll('.grid:not(#stage-template-edit)').forEach(el => el.remove());
 
-    if (data.stages.length > 0) {
-      stageTemplate.classList.add('hidden') // скрываем шаблон
-
+    if (data.stages && data.stages.length > 0) {
+      // скрываем шаблон-пустышку
+      stageTemplate.classList.add('hidden');
+    
       data.stages.forEach(stage => {
-        const clone = stageTemplate.cloneNode(true)
-        clone.removeAttribute('id')
-        clone.classList.remove('hidden')
-        clone.querySelector('.step-name-add').value = stage.name
-        clone.querySelector('.date-range-add').value = `${formatDateReverse(stage.start_date)} — ${formatDateReverse(stage.end_date)}`
-        stageContainer.insertBefore(clone, stageTemplate.nextSibling)
-        flatpickr(clone.querySelector('.date-range-add'), {
-          mode: 'range',
-          dateFormat: 'd.m.Y',
-          locale: flatpickr.l10ns.ru,
-        })
-      })
+        const clone = stageTemplate.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.classList.add('stage-block');
+    
+        const nameEl = clone.querySelector('.step-name-add');
+        if (nameEl) nameEl.value = stage.name || '';
+    
+        const dateEl = clone.querySelector('.date-range-add');
+        if (dateEl) {
+          dateEl.value = `${formatDateReverse(stage.start_date)} — ${formatDateReverse(stage.end_date)}`;
+        }
+    
+        // вставляем перед кнопкой
+        const btnWrapper = stageContainer.querySelector('.mt-4');
+        stageContainer.insertBefore(clone, btnWrapper);
+    
+        // инициализируем flatpickr для клона
+        if (dateEl) {
+          flatpickr(dateEl, {
+            mode: 'range',
+            dateFormat: 'd.m.Y',
+            locale: flatpickr.l10ns.ru,
+          });
+        }
+      });
     } else {
-      stageTemplate.classList.remove('hidden') // показываем пустой, если этапов нет
+      // если этапов нет — показываем пустой шаблон
+      stageTemplate.classList.remove('hidden');
     }
-
 
   // Сертификат
   if (data.certificate_template) {
@@ -592,21 +607,28 @@ function isAddFormValid() {
   if (!certFileEl || !certFileEl.files[0]) return false;
 
   // stages: берем только реальные блоки .stage-block (шаблон у тебя #stage-template и не должен иметь класс .stage-block)
-  const stageBlocks = Array.from(document.querySelectorAll('#stages-container .stage-block'));
-  if (stageBlocks.length < MIN_STAGE_COUNT) return false;
+// stages: учитываем и реальные .stage-block, и видимый шаблон #stage-template (если он видим)
+let stageBlocks = Array.from(document.querySelectorAll('#stages-container .stage-block'));
 
-  // каждый должен иметь заполненный диапазон дат вида "дд.мм.гггг — дд.мм.гггг"
-  for (const block of stageBlocks) {
-    const dateInput = block.querySelector('.date-range-add');
-    if (!dateInput) return false;
-    const raw = (dateInput.value || '').trim();
-    if (!raw) return false;
-    // разделитель — (эм-даш) используется в других местах, допускаем пробелы вокруг
-    const parts = raw.split('—').map(s => s.trim()).filter(Boolean);
-    if (parts.length < 2) return false;
-    // простая дополнительная проверка: даты содержат точку (д.м.гггг)
-    if (!parts[0].includes('.') || !parts[1].includes('.')) return false;
-  }
+// если шаблон видим и ещё не имеет stage-block — добавим его в начало списка
+const templateEl = document.getElementById('stage-template');
+if (templateEl && !templateEl.classList.contains('hidden') && !templateEl.classList.contains('stage-block')) {
+  stageBlocks.unshift(templateEl);
+}
+
+if (stageBlocks.length < MIN_STAGE_COUNT) return false;
+
+for (const block of stageBlocks) {
+  const dateInput = block.querySelector('.date-range-add');
+  if (!dateInput) return false;
+  const raw = (dateInput.value || '').trim();
+  if (!raw) return false;
+  // разделитель — принимаем разные виды тире/дефиса
+  const parts = raw.split(/\s*[-–—]\s*/).filter(Boolean);
+  if (parts.length < 2) return false;
+  if (!parts[0].includes('.') || !parts[1].includes('.')) return false;
+}
+
 
   return true;
 }
@@ -747,26 +769,45 @@ async function submitOlympiadForm() {
   }
   
   // 2) ЭТАПЫ
+// 2) ЭТАПЫ — собираем и .stage-block, и видимый шаблон, если он видим
 const stages = [];
-document
-  .querySelectorAll('#modalAdd .stage-block')  // или ваш общий селектор для блоков
-  .forEach(block => {
-    const nameEl = block.querySelector('.step-name-add');
-    const dateEl = block.querySelector('.date-range-add');
-    const name   = nameEl.value.trim();
-    const raw    = dateEl.value.trim();
-    if (!raw) {
-      alert(`Укажите период для этапа "${name || 'без названия'}"`);
-      throw new Error('stage validation failed');
-    }
-    const [d1, d2] = raw.split(' — ').map(s => s.trim());
-    stages.push({
-      name,
-      start_date: formatDate(d1),
-      end_date:   formatDate(d2),
-    });
+let stageNodes = Array.from(document.querySelectorAll('#stages-container .stage-block'));
+
+const templateAdd = document.getElementById('stage-template');
+if (templateAdd && !templateAdd.classList.contains('hidden') && !templateAdd.classList.contains('stage-block')) {
+  // если шаблон видим и это реальный первый блок — учитываем его
+  stageNodes.unshift(templateAdd);
+}
+
+stageNodes.forEach(block => {
+  const nameEl = block.querySelector('.step-name-add');
+  const dateEl = block.querySelector('.date-range-add');
+
+  const name = nameEl ? nameEl.value.trim() : '';
+  const raw  = dateEl ? dateEl.value.trim() : '';
+
+  if (!raw) {
+    alert(`Укажите период для этапа "${name || 'без названия'}"`);
+    throw new Error('stage validation failed');
+  }
+
+  // Надёжный сплит для разных тире/дефисов и пробелов
+  const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim());
+  const d1 = parts[0] || '';
+  const d2 = parts[1] || '';
+  stages.push({
+    name,
+    start_date: formatDate(d1),
+    end_date: formatDate(d2),
   });
-  if (stages.length === 0) return;
+});
+
+
+if (stages.length === 0) {
+  alert('Добавьте хотя бы один этап');
+  return;
+}
+
 
   // 3) СЕРТИФИКАТ
   const headerEl       = document.getElementById('title_certificate-add');
@@ -840,22 +881,28 @@ function addStageBlock() {
   clone.removeAttribute('id');
   clone.classList.remove('hidden');
   clone.classList.add('stage-block');
-  clone.querySelectorAll('select, input').forEach(el => el.value = '');
 
-  // Вставляем новый блок прямо перед обёрткой кнопки
+  // очистим значения (input, textarea, select)
+  clone.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+    else el.value = '';
+  });
+
+  // вставляем перед обёрткой с кнопкой
   const btnWrapper = container.querySelector('.mt-4');
   container.insertBefore(clone, btnWrapper);
 
-  flatpickr(clone.querySelector('.date-range-add'), {
-    mode: 'range',
-    dateFormat: 'd.m.Y',
-    locale: flatpickr.l10ns.ru,
-  });
+  // инициализируем flatpickr
+  const dateEl = clone.querySelector('.date-range-add');
+  if (dateEl) {
+    flatpickr(dateEl, {
+      mode: 'range',
+      dateFormat: 'd.m.Y',
+      locale: flatpickr.l10ns.ru,
+    });
+  }
 }
 
-
-
-// Замените вашу функцию addStageBlockEdit на эту:
 function addStageBlockEdit() {
   const container = document.getElementById('stages-container-edit');
   const template  = document.getElementById('stage-template-edit');
@@ -865,21 +912,32 @@ function addStageBlockEdit() {
   clone.removeAttribute('id');
   clone.classList.remove('hidden');
   clone.classList.add('stage-block');
-  clone.querySelectorAll('select, input').forEach(el => el.value = '');
+
+  clone.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+    else el.value = '';
+  });
 
   const btnWrapper = container.querySelector('.mt-4');
   container.insertBefore(clone, btnWrapper);
 
-  flatpickr(clone.querySelector('.date-range-add'), {
-    mode: 'range',
-    dateFormat: 'd.m.Y',
-    locale: flatpickr.l10ns.ru,
-  });
+  const dateEl = clone.querySelector('.date-range-add');
+  if (dateEl) {
+    flatpickr(dateEl, {
+      mode: 'range',
+      dateFormat: 'd.m.Y',
+      locale: flatpickr.l10ns.ru,
+    });
+  }
 }
 
+// привязки (если их ещё нет — оставь; если уже есть, дублирование не нужно)
+const addBtn = document.querySelector('#modalAdd .btn-white');
+if (addBtn) addBtn.addEventListener('click', addStageBlock);
 
-document.querySelector('#modalAdd .btn-white').addEventListener('click', addStageBlock)
-document.querySelector('#modalEdit .btn-white').addEventListener('click', addStageBlockEdit)
+const addBtnEdit = document.querySelector('#modalEdit .btn-white');
+if (addBtnEdit) addBtnEdit.addEventListener('click', addStageBlockEdit);
+
 
 
 document
@@ -924,13 +982,33 @@ async function updateOlympiadForm(olympiadId) {
   const language    = document.getElementById('language-edit').value;
 
   // Сбор этапов
-  const stages = [];
-  document.querySelectorAll('#stage-template-edit ~ .grid').forEach((block, i) => {
-    const name  = block.querySelector('.step-name-add').value;
-    const raw   = block.querySelector('.date-range-add').value;
-    const [d1, d2] = raw.split(' — ');
-    stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
-  });
+// Сбор этапов для редактирования — учитываем .stage-block и видимый шаблон #stage-template-edit
+const stages = [];
+let stageNodesEdit = Array.from(document.querySelectorAll('#stages-container-edit .stage-block'));
+
+const templateEdit = document.getElementById('stage-template-edit');
+if (templateEdit && !templateEdit.classList.contains('hidden') && !templateEdit.classList.contains('stage-block')) {
+  stageNodesEdit.unshift(templateEdit);
+}
+
+stageNodesEdit.forEach(block => {
+  const nameEl = block.querySelector('.step-name-add');
+  const dateEl = block.querySelector('.date-range-add');
+  const name = nameEl ? nameEl.value.trim() : '';
+  const raw = dateEl ? dateEl.value.trim() : '';
+
+  // допустим немного мягче — если пустой период — пропустим или выкинем ошибку
+  if (!raw) {
+    alert(`Укажите период для этапа "${name || 'без названия'}"`);
+    throw new Error('stage validation failed (edit)');
+  }
+
+  const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim());
+  const d1 = parts[0] || '';
+  const d2 = parts[1] || '';
+  stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
+});
+
 
   // Сертификат
   const headerText      = document.querySelector('input[name="title_certificate"]').value.trim();
