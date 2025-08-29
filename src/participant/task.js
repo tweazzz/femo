@@ -49,25 +49,34 @@ async function loadUserProfile() {
 }
 
 function renderUserInfo(profile) {
-  const avatarEl   = document.getElementById('user-avatar')
-  const nameEl     = document.getElementById('user-name')
-  const roleEl     = document.getElementById('user-role')
-  const welcomeEl  = document.querySelector('h1.text-xl')
+  const avatarEl   = document.getElementById('user-avatar');
+  const nameEl     = document.getElementById('user-name');
+  const roleEl     = document.getElementById('user-role');
+  const welcomeEl  = document.querySelector('h1.text-xl');
 
-  // 1) Картинка
-  const imgPath = profile.image
-  avatarEl.src = imgPath.startsWith('http')
-    ? imgPath
-    : `https://portal.gradients.academy${imgPath}`
+  // Безопасный путь к картинке: если нет — используем заглушку
+  const imgPath = profile && profile.image ? profile.image : null;
+  if (imgPath && typeof imgPath === 'string') {
+    avatarEl.src = imgPath.startsWith('http')
+      ? imgPath
+      : `https://portal.gradients.academy${imgPath}`;
+  } else {
+    // вставь тут свой путь к дефолтной аватарке или пустую картинку
+    avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
+  }
 
-  // 2) Имя и приветствие
-  nameEl.textContent = profile.full_name_ru
-  const firstName = profile.full_name_ru.split(' ')[0]
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`
+  // Имя (берём безопасно: русское, английское, либо fallback)
+  const fullNameRu = (profile && (profile.full_name_ru || profile.full_name_en || profile.full_name)) || '';
+  nameEl.textContent = fullNameRu || 'Пользователь';
 
-  // 3) Роль (она всегда участник)
-  roleEl.textContent = 'Участник'
+  // безопасно отделяем firstName
+  const firstName = fullNameRu ? fullNameRu.split(' ')[0] : 'Привет';
+  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+
+  // Роль
+  roleEl.textContent = 'Участник';
 }
+
 /**
  * Показывает/скрывает win/lose баннеры и подставляет реальные очки.
  * Принимает либо объект task (с полями solved, points, status, correct)
