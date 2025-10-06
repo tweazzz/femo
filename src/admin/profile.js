@@ -48,7 +48,7 @@ function renderUserInfo(user) {
   
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
     nameEl.textContent = user.profile.full_name_ru;
   
     const firstName = user.profile.full_name_ru.split(' ')[0];
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await authorizedFetch('https://portal.gradients.academy/api/users/administrator/profile/', {
+        const response = await authorizedFetch('https://portal.femo.kz/api/users/administrator/profile/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -187,7 +187,7 @@ document.querySelector('#participant-form').addEventListener('submit', async (e)
     try {
       const token = localStorage.getItem('access_token');
       const response = await fetch(
-        'https://portal.gradients.academy/api/users/administrator/profile/',
+        'https://portal.femo.kz/api/users/administrator/profile/',
         {
           method: 'PATCH',
           headers: { Authorization: `Bearer ${token}` },
@@ -218,7 +218,7 @@ document.querySelector('#participant-form').addEventListener('submit', async (e)
     }
     try {
       const response = await fetch(
-        'https://portal.gradients.academy/api/users/administrator/profile/',
+        'https://portal.femo.kz/api/users/administrator/profile/',
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!response.ok) throw new Error('Ошибка при получении профиля');

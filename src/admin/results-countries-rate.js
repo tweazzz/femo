@@ -49,7 +49,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -65,7 +65,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -118,7 +118,7 @@ async function loadCountryRanking() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/results/dashboard/countries/ranking/', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/results/dashboard/countries/ranking/', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -149,7 +149,7 @@ let countryMap = {}
 
 async function loadCountryList() {
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/common/countries/?page=1&page_size=500')
+    const response = await authorizedFetch('https://portal.femo.kz/api/common/countries/?page=1&page_size=500')
     if (!response.ok) throw new Error('Ошибка при загрузке списка стран')
     const data = await response.json()
     const select = document.getElementById('country-filter')
@@ -247,7 +247,7 @@ async function editCountry(code) {
   await fetchParticipants()
 
   try {
-    const response = await authorizedFetch(`https://portal.gradients.academy/api/results/dashboard/countries/participants/?country=${code}`, {
+    const response = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/countries/participants/?country=${code}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -316,7 +316,7 @@ document.getElementById('participant-search').addEventListener('input', debounce
 
   try {
     const token = localStorage.getItem('access_token')
-    const url = `https://portal.gradients.academy/api/results/dashboard/countries/participants/?country=${countryCode}&search=${encodeURIComponent(query)}`
+    const url = `https://portal.femo.kz/api/results/dashboard/countries/participants/?country=${countryCode}&search=${encodeURIComponent(query)}`
     const response = await authorizedFetch(url, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -380,7 +380,7 @@ async function fetchParticipants() {
   if (olympiad) params.append('results__olympiad', olympiad)
   console.log('grade is', grade)
   try {
-    const response = await authorizedFetch(`https://portal.gradients.academy/api/results/dashboard/countries/participants/?${params.toString()}`, {
+    const response = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/countries/participants/?${params.toString()}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -411,7 +411,7 @@ async function loadOlympiadList() {
   if (!token) return
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/olympiads/dashboard/', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/olympiads/dashboard/', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -463,7 +463,7 @@ async function loadChartsWithCountryNames() {
 
   try {
     // Получаем список стран
-    const countryRes = await fetch("https://portal.gradients.academy/api/common/countries/?page=1&page_size=300", {
+    const countryRes = await fetch("https://portal.femo.kz/api/common/countries/?page=1&page_size=300", {
       headers: { Authorization: `Bearer ${token}` }
     });
     const countryData = await countryRes.json();
@@ -476,7 +476,7 @@ async function loadChartsWithCountryNames() {
     const olympiadId1 = document.getElementById("chart-olympiad-filter-1")?.value;
     const olympiadId2 = document.getElementById("chart-olympiad-filter-2")?.value;
 
-    const url = new URL("https://portal.gradients.academy/api/results/dashboard/countries/charts/");
+    const url = new URL("https://portal.femo.kz/api/results/dashboard/countries/charts/");
     if (olympiadId1) url.searchParams.append("olympiad", olympiadId1);
 
     const chartRes = await fetch(url.toString(), {
@@ -527,10 +527,10 @@ async function loadAverageChart() {
   if (!token) return;
 
   const olympiadId = document.getElementById("chart-olympiad-filter-1")?.value;
-  const url = new URL("https://portal.gradients.academy/api/results/dashboard/countries/charts/");
+  const url = new URL("https://portal.femo.kz/api/results/dashboard/countries/charts/");
   if (olympiadId) url.searchParams.append("olympiad", olympiadId);
 
-  const countryRes = await fetch("https://portal.gradients.academy/api/common/countries/?page=1&page_size=300", {
+  const countryRes = await fetch("https://portal.femo.kz/api/common/countries/?page=1&page_size=300", {
     headers: { Authorization: `Bearer ${token}` }
   });
   const countryData = await countryRes.json();
@@ -556,10 +556,10 @@ async function loadSuccessRateChart() {
   if (!token) return;
 
   const olympiadId = document.getElementById("chart-olympiad-filter-2")?.value;
-  const url = new URL("https://portal.gradients.academy/api/results/dashboard/countries/charts/");
+  const url = new URL("https://portal.femo.kz/api/results/dashboard/countries/charts/");
   if (olympiadId) url.searchParams.append("olympiad", olympiadId);
 
-  const countryRes = await fetch("https://portal.gradients.academy/api/common/countries/?page=1&page_size=300", {
+  const countryRes = await fetch("https://portal.femo.kz/api/common/countries/?page=1&page_size=300", {
     headers: { Authorization: `Bearer ${token}` }
   });
   const countryData = await countryRes.json();

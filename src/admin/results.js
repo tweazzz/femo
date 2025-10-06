@@ -49,7 +49,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -65,7 +65,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         const response = await authorizedFetch(
-          'https://portal.gradients.academy/api/results/dashboard/results/import/',
+          'https://portal.femo.kz/api/results/dashboard/results/import/',
           {
             method: 'POST',
             headers: {
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         const response = await authorizedFetch(
-          'https://portal.gradients.academy/api/results/dashboard/results/publish/',
+          'https://portal.femo.kz/api/results/dashboard/results/publish/',
           {
             method: 'POST',
             headers: {
@@ -281,7 +281,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/dashboard/results/?${params.toString()}`,
+      `https://portal.femo.kz/api/results/dashboard/results/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -434,7 +434,7 @@ function setupAssignmentFilters() {
 async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
+      'https://portal.femo.kz/api/common/countries/?page=1&page_size=500'
     )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 
@@ -459,7 +459,7 @@ async function populateCountryFilter() {
 async function populateOlympiadFilter() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/olympiads/dashboard/'
+      'https://portal.femo.kz/api/olympiads/dashboard/'
     )
     if (!response.ok) throw new Error('Ошибка загрузки олимпиад')
 
@@ -489,7 +489,7 @@ async function loadOlympiadSummary(olympiadId) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/dashboard/results/summary/?olympiad=${olympiadId}`
+      `https://portal.femo.kz/api/results/dashboard/results/summary/?olympiad=${olympiadId}`
     )
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
@@ -530,7 +530,7 @@ async function exportTableToExcel() {
   try {
     do {
       const response = await authorizedFetch(
-        `https://portal.gradients.academy/api/results/dashboard/results/?page=${page}&${params.toString()}`,
+        `https://portal.femo.kz/api/results/dashboard/results/?page=${page}&${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -601,7 +601,7 @@ async function handleSinglePublish(id) {
 
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/dashboard/results/publish/',
+      'https://portal.femo.kz/api/results/dashboard/results/publish/',
       {
         method: 'POST',
         headers: {
@@ -669,7 +669,7 @@ document
     console.log('BODY', body)
     try {
       const response = await fetch(
-        `https://portal.gradients.academy/api/results/dashboard/results/${resultBeingEditedId}/`,
+        `https://portal.femo.kz/api/results/dashboard/results/${resultBeingEditedId}/`,
         {
           method: 'PUT',
           headers: {
@@ -697,7 +697,7 @@ document
 async function populateOlympiadSelectInModal() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/olympiads/dashboard/'
+      'https://portal.femo.kz/api/olympiads/dashboard/'
     )
     if (!response.ok) throw new Error('Ошибка загрузки олимпиад')
 
@@ -735,7 +735,7 @@ function populateClassSelectInModal() {
 async function populateCountrySelectInModal() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
+      'https://portal.femo.kz/api/common/countries/?page=1&page_size=500'
     )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 
@@ -764,7 +764,7 @@ function openDeleteModal(title, id) {
 
 
 function downloadCertificate(id) {
-  const url = `https://portal.gradients.academy/api/certificates/dashboard/${id}/download`
+  const url = `https://portal.femo.kz/api/certificates/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   fetch(url, {
@@ -815,7 +815,7 @@ async function deleteResult() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/api/results/dashboard/results/${resultIdToDelete}/`,
+      `https://portal.femo.kz/api/results/dashboard/results/${resultIdToDelete}/`,
       {
         method: 'DELETE',
         headers: {

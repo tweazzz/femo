@@ -50,7 +50,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   }
   avatarEl.src        = finalAvatar;
   nameEl.textContent  = profile.full_name_ru || '';
@@ -85,7 +85,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -99,7 +99,7 @@ async function loadRepresentativeProfileForHeader() {
 async function loadRepresentativeStats() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/representatives/dashboard/stats/'
+      'https://portal.femo.kz/api/results/representatives/dashboard/stats/'
     )
 
     if (!res.ok) {
@@ -125,7 +125,7 @@ async function loadCurrentOlympiad() {
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/representatives/dashboard/current-olympiad/'
+      'https://portal.femo.kz/api/results/representatives/dashboard/current-olympiad/'
     );
     if (!res.ok) {
       const { detail } = await res.json();
@@ -366,7 +366,7 @@ function formatDate(isoDate) {
 async function loadRepresentativeRanking() {
   try {
     const allResults = [];
-    let pageUrl = 'https://portal.gradients.academy/api/results/representatives/dashboard/ranking/';
+    let pageUrl = 'https://portal.femo.kz/api/results/representatives/dashboard/ranking/';
 
     while (pageUrl) {
       const res = await authorizedFetch(pageUrl);

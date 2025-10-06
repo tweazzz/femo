@@ -42,7 +42,7 @@ async function ensureUserAuthenticated() {
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/participant/profile/'
+    'https://portal.femo.kz/api/users/participant/profile/'
   );
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   } else {
     // вставь тут свой путь к дефолтной аватарке или пустую картинку
     avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
@@ -134,7 +134,7 @@ async function loadDailyTasks() {
   }
 
   const allResults = [];
-  let url = 'https://portal.gradients.academy/api/assignments/participant/dashboard/daily/';
+  let url = 'https://portal.femo.kz/api/assignments/participant/dashboard/daily/';
 
   try {
     while (url) {
@@ -238,7 +238,7 @@ async function loadAllTasks() {
   }
 
   const allResults = [];
-  let url = 'https://portal.gradients.academy/api/assignments/participant/dashboard/general/';
+  let url = 'https://portal.femo.kz/api/assignments/participant/dashboard/general/';
 
   try {
     // Пока есть URL для запроса — качаем страницу за страницей
@@ -445,7 +445,7 @@ async function loadAllTasksWithFilters() {
 
   params.append('solved_only', solvedOnly)
 
-  const url = `https://portal.gradients.academy/api/assignments/participant/dashboard/general/?${params.toString()}`
+  const url = `https://portal.femo.kz/api/assignments/participant/dashboard/general/?${params.toString()}`
 
   try {
     const response = await authorizedFetch(url, {

@@ -368,7 +368,7 @@ class AdminChat {
       // Показываем лоадер
       this.showLoader()
       
-      const wsUrl = `wss://portal.gradients.academy/ws/chat/announcements/?token=${token}`
+      const wsUrl = `wss://portal.femo.kz/ws/chat/announcements/?token=${token}`
       
       try {
         this.websocket = new WebSocket(wsUrl)
@@ -592,7 +592,7 @@ class AdminChat {
     if (messageData.file) {
       const fileUrl = messageData.file.startsWith('http') 
         ? messageData.file 
-        : `https://portal.gradients.academy${messageData.file}`
+        : `https://portal.femo.kz${messageData.file}`
       const fileName = messageData.file.split('/').pop()
       fileHtml = `
         <div class="mt-2">
@@ -629,7 +629,7 @@ class AdminChat {
           const userImage = user.profile.image
           avatarSrc = userImage.startsWith('http') 
             ? userImage 
-            : `https://portal.gradients.academy${userImage}`
+            : `https://portal.femo.kz${userImage}`
         } else {
           avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
         }
@@ -834,7 +834,7 @@ class AdminChat {
       formData.append('file', file)
 
       // Для объявлений всегда используем ID комнаты = 1
-      const url = `https://portal.gradients.academy/api/chats/rooms/1/attachments/`
+      const url = `https://portal.femo.kz/api/chats/rooms/1/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',
@@ -1203,8 +1203,8 @@ class AdminChat {
   async loadRepresentatives(search = '') {
     try {
       const url = search 
-        ? `https://portal.gradients.academy/api/chats/representatives/?search=${encodeURIComponent(search)}`
-        : 'https://portal.gradients.academy/api/chats/representatives/'
+        ? `https://portal.femo.kz/api/chats/representatives/?search=${encodeURIComponent(search)}`
+        : 'https://portal.femo.kz/api/chats/representatives/'
       
       const response = await authorizedFetch(url)
       
@@ -1250,7 +1250,7 @@ class AdminChat {
     // Предзагружаем последние сообщения для каждого представителя
     const preloadPromises = this.representatives.map(async (representative) => {
       try {
-        const url = `https://portal.gradients.academy/api/chats/private/${representative.profile}/messages/?limit=1&ordering=-created_at`
+        const url = `https://portal.femo.kz/api/chats/private/${representative.profile}/messages/?limit=1&ordering=-created_at`
         console.log(`Запрос последнего сообщения для ${representative.full_name_ru} (${representative.profile}):`, url)
         
         const response = await authorizedFetch(url)
@@ -1310,7 +1310,7 @@ class AdminChat {
 
   async loadAllRepresentatives() {
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/representatives/')
+      const response = await authorizedFetch('https://portal.femo.kz/api/chats/representatives/')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1353,7 +1353,7 @@ class AdminChat {
     }
 
     try {
-      const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+      const wsUrl = `wss://portal.femo.kz/ws/chat/private/${profileId}/?token=${token}`
       const websocket = new WebSocket(wsUrl)
 
       websocket.onopen = () => {
@@ -1862,7 +1862,7 @@ handleRepresentativeMessage(data, profileId) {
         return
       }
 
-      const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+      const wsUrl = `wss://portal.femo.kz/ws/chat/private/${profileId}/?token=${token}`
 
       const websocket = new WebSocket(wsUrl)
 
@@ -2011,7 +2011,7 @@ handleRepresentativeMessage(data, profileId) {
     if (messageData.file) {
       const fileUrl = messageData.file.startsWith('http') 
         ? messageData.file 
-        : `https://portal.gradients.academy${messageData.file}`
+        : `https://portal.femo.kz${messageData.file}`
       const fileName = messageData.file.split('/').pop()
       fileHtml = `
         <div class="mt-2">
@@ -2048,7 +2048,7 @@ handleRepresentativeMessage(data, profileId) {
           const userImage = user.profile.image
           avatarSrc = userImage.startsWith('http') 
             ? userImage 
-            : `https://portal.gradients.academy${userImage}`
+            : `https://portal.femo.kz${userImage}`
         } else {
           avatarSrc = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&auto=format&fit=crop&q=60"
         }
@@ -2157,7 +2157,7 @@ handleRepresentativeMessage(data, profileId) {
       const formData = new FormData()
       formData.append('file', file)
 
-      const url = `https://portal.gradients.academy/api/chats/private/${roomId}/attachments/`
+      const url = `https://portal.femo.kz/api/chats/private/${roomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',
@@ -2445,7 +2445,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -2461,7 +2461,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);

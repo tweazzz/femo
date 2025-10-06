@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const response = await fetch(
-        'https://portal.gradients.academy/api/users/registration/',
+        'https://portal.femo.kz/api/users/registration/',
         {
           method: 'POST',
           headers: {

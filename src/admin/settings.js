@@ -57,7 +57,7 @@ function renderUserInfo(profile) {
 
   const imgPath = p.image || '';
   avatarEl.src = imgPath
-    ? (imgPath.startsWith('http') ? imgPath : `https://portal.gradients.academy${imgPath}`)
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
     : ''; // если нет изображения — оставляем пустым (можно поставить placeholder)
 
   const fullName = p.full_name_ru || '';
@@ -76,7 +76,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -135,7 +135,7 @@ async function loadUserSettings() {
   if (!token) return;
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/users/settings/', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/users/settings/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -202,7 +202,7 @@ async function updateUserSettings(updatedFields) {
       if (text.includes('О статусе оплаты')) settings.notify_payments = checkbox.checked;
     });
 
-    const response = await fetch('https://portal.gradients.academy/api/users/settings/', {
+    const response = await fetch('https://portal.femo.kz/api/users/settings/', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ function setupPasswordChangeForm() {
     }
 
     try {
-      const response = await fetch('https://portal.gradients.academy/api/users/settings/password/', {
+      const response = await fetch('https://portal.femo.kz/api/users/settings/password/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const response = await fetch('https://portal.gradients.academy/api/users/administrator/profile/', {
+    const response = await fetch('https://portal.femo.kz/api/users/administrator/profile/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

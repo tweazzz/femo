@@ -47,7 +47,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
 
 async function loadDashboardSummary() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/results/dashboard/summary/'
+    'https://portal.femo.kz/api/results/dashboard/summary/'
   )
   if (!res.ok) throw new Error('Ошибка при получении данных')
 
@@ -96,7 +96,7 @@ async function loadCurrentOlympiad() {
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/dashboard/current/'
+      'https://portal.femo.kz/api/results/dashboard/current/'
     );
     if (!res.ok) {
       const { detail } = await res.json();
@@ -202,7 +202,7 @@ async function loadCurrentOlympiad() {
 async function loadCurrentOlympiadStats() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/dashboard/current_stats/'
+      'https://portal.femo.kz/api/results/dashboard/current_stats/'
     );
     if (!res.ok) {
       const { detail } = await res.json();
@@ -250,7 +250,7 @@ async function loadCurrentOlympiadStats() {
 async function loadParticipantsTrend() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/dashboard/trend/'
+      'https://portal.femo.kz/api/results/dashboard/trend/'
     )
     if (!res.ok)
       throw new Error('Ошибка при получении данных тренда участников')
@@ -333,7 +333,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);

@@ -42,7 +42,7 @@ async function ensureUserAuthenticated() {
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/participant/profile/'
+    'https://portal.femo.kz/api/users/participant/profile/'
   );
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   } else {
     // вставь тут свой путь к дефолтной аватарке или пустую картинку
     avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
@@ -162,7 +162,7 @@ function initTopUpHandler() {
 
     try {
       const response = await authorizedFetch(
-        'https://portal.gradients.academy/api/payments/participant/dashboard/topup/',
+        'https://portal.femo.kz/api/payments/participant/dashboard/topup/',
         {
           method: 'POST',
           headers: {
@@ -214,7 +214,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/payments/participant/dashboard/history/`,
+      `https://portal.femo.kz/api/payments/participant/dashboard/history/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -353,7 +353,7 @@ async function loadBalance() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/payments/participant/dashboard/balance/', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/payments/participant/dashboard/balance/', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -382,7 +382,7 @@ async function loadActiveOlympiads() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/payments/participant/dashboard/active-olympiads', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/payments/participant/dashboard/active-olympiads', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -455,7 +455,7 @@ function renderActiveOlympiads(olympiads) {
 }
 
 function downloadPayment(id) {
-  const url = `https://portal.gradients.academy/api/payments/participant/dashboard/${id}/download`
+  const url = `https://portal.femo.kz/api/payments/participant/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   authorizedFetch(url, {
@@ -505,7 +505,7 @@ async function payOlympiad(olympiadId) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/payments/participant/dashboard/pay/${olympiadId}/`,
+      `https://portal.femo.kz/payments/participant/dashboard/pay/${olympiadId}/`,
       {
         method: 'POST',
         headers: {
@@ -569,7 +569,7 @@ async function submitProfileUpdate() {
       }
     }
 
-    const response = await authorizedFetch('http://portal.gradients.academy/users/participant/profile/', {
+    const response = await authorizedFetch('http://portal.femo.kz/users/participant/profile/', {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`,

@@ -52,7 +52,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   }
   avatarEl.src        = finalAvatar;
   nameEl.textContent  = profile.full_name_ru || '';
@@ -86,7 +86,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -107,7 +107,7 @@ async function loadParticipantProfile() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/profile`
+      `https://portal.femo.kz/api/results/representatives/dashboard/participants/${participantId}/profile`
     );
     if (!res.ok) throw new Error(`Не удалось получить профиль: ${res.status}`);
 
@@ -176,7 +176,7 @@ function renderParticipantData(profile) {
   const imageNameEl = document.getElementById('profile-image');
   if (photoEl) {
     photoEl.src = image_url
-      ? (image_url.startsWith('http') ? image_url : `https://portal.gradients.academy${image_url}`)
+      ? (image_url.startsWith('http') ? image_url : `https://portal.femo.kz${image_url}`)
       : '/src/assets/images/user_logo.jpg';
   }
   if (imageNameEl) imageNameEl.textContent = image_url
@@ -206,7 +206,7 @@ async function loadParticipantProgress() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/progress`
+      `https://portal.femo.kz/api/results/representatives/dashboard/participants/${participantId}/progress`
     );
     if (!res.ok) throw new Error(`Не удалось получить прогресс: ${res.status}`);
 
@@ -267,7 +267,7 @@ async function loadParticipantAchievements() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/achievements`
+      `https://portal.femo.kz/api/results/representatives/dashboard/participants/${participantId}/achievements`
     );
     if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
     const achievements = await res.json();
@@ -284,7 +284,7 @@ async function loadParticipantResults() {
   const participantId = new URLSearchParams(location.search).get('id')
   if (!participantId) return
   const res = await authorizedFetch(
-    `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/results`
+    `https://portal.femo.kz/api/results/representatives/dashboard/participants/${participantId}/results`
   )
   if (!res.ok) throw new Error(res.status)
   const results = await res.json()
@@ -331,7 +331,7 @@ function renderParticipantResults(results) {
 async function downloadCertificate(participantId, olympiadId) {
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/` +
+      `https://portal.femo.kz/api/results/representatives/dashboard/participants/` +
       `${participantId}/certificates/${olympiadId}/download`
     );
     if (!res.ok) throw new Error(res.status)
@@ -358,7 +358,7 @@ async function deleteCurrentParticipant() {
 
   try {
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${participantId}/`,
+      `https://portal.femo.kz/api/results/representatives/dashboard/participants/${participantId}/`,
       { method: 'DELETE' }
     );
     if (!res.ok) throw new Error(`Status ${res.status}`);

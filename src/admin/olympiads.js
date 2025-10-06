@@ -47,7 +47,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -62,7 +62,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -195,7 +195,7 @@ async function loadOlympiads() {
 
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/olympiads/dashboard/',
+      'https://portal.femo.kz/api/olympiads/dashboard/',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -305,7 +305,7 @@ async function updateTotalCountAndPagination() {
   params.append('page', 1)
   params.append('page_size', 50)
 
-  const url = `https://portal.gradients.academy/api/users/dashboard/?${params.toString()}`
+  const url = `https://portal.femo.kz/api/users/dashboard/?${params.toString()}`
   const res = await authorizedFetch(url)
 
   if (!res.ok)
@@ -430,7 +430,7 @@ async function deleteOlympiad() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/api/olympiads/dashboard/${olympiadIdToDelete}`,
+      `https://portal.femo.kz/api/olympiads/dashboard/${olympiadIdToDelete}`,
       {
         method: 'DELETE',
         headers: {
@@ -470,7 +470,7 @@ async function openEditModal(title, id) {
 
   try {
     const token = localStorage.getItem('access_token')
-    const response = await authorizedFetch(`https://portal.gradients.academy/api/olympiads/dashboard/${id}`, {
+    const response = await authorizedFetch(`https://portal.femo.kz/api/olympiads/dashboard/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -843,7 +843,7 @@ if (stages.length === 0) {
   // 5) ОТПРАВКА POST
   try {
     const res = await fetch(
-      'https://portal.gradients.academy/api/olympiads/dashboard/',
+      'https://portal.femo.kz/api/olympiads/dashboard/',
       {
         method:  'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -1041,7 +1041,7 @@ stageNodesEdit.forEach(block => {
 
   // PUT‑запрос
   const res = await authorizedFetch(
-    `https://portal.gradients.academy/api/olympiads/dashboard/${olympiadId}/`,
+    `https://portal.femo.kz/api/olympiads/dashboard/${olympiadId}/`,
     {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
@@ -1073,7 +1073,7 @@ async function openViewModal(id) {
   try {
     const token = localStorage.getItem('access_token');
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/olympiads/dashboard/${id}`,
+      `https://portal.femo.kz/api/olympiads/dashboard/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     if (!res.ok) throw new Error(res.status);

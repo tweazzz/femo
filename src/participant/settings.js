@@ -42,7 +42,7 @@ async function ensureUserAuthenticated() {
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/participant/profile/'
+    'https://portal.femo.kz/api/users/participant/profile/'
   );
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   } else {
     // вставь тут свой путь к дефолтной аватарке или пустую картинку
     avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
@@ -135,7 +135,7 @@ async function loadUserSettings() {
   if (!token) return;
 
   try {
-    const response = await authorizedFetch('https://portal.gradients.academy/api/users/settings/', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/users/settings/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -202,7 +202,7 @@ async function updateUserSettings(updatedFields) {
       if (text.includes('О статусе оплаты')) settings.notify_payments = checkbox.checked;
     });
 
-    const response = await fetch('https://portal.gradients.academy/api/users/settings/', {
+    const response = await fetch('https://portal.femo.kz/api/users/settings/', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ function setupPasswordChangeForm() {
     }
 
     try {
-      const response = await fetch('https://portal.gradients.academy/api/users/settings/password/', {
+      const response = await fetch('https://portal.femo.kz/api/users/settings/password/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

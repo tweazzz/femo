@@ -49,7 +49,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -65,7 +65,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -131,7 +131,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/payments/dashboard/?${params.toString()}`,
+      `https://portal.femo.kz/api/payments/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -310,7 +310,7 @@ async function populateOlympiadFilter() {
   if (!token) return
 
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/olympiads/dashboard/', {
+    const res = await authorizedFetch('https://portal.femo.kz/api/olympiads/dashboard/', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -346,7 +346,7 @@ async function loadSummary(search, status, olympiad, created_at__gte, created_at
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/payments/dashboard/?search=${search}&status=${status}&created_at__gte=${created_at__gte}&created_at__lte=${created_at__lte}&olympiad=${olympiad}`
+      `https://portal.femo.kz/api/payments/dashboard/?search=${search}&status=${status}&created_at__gte=${created_at__gte}&created_at__lte=${created_at__lte}&olympiad=${olympiad}`
     )
     if (!response.ok) throw new Error('Ошибка загрузки сводки')
 
@@ -363,7 +363,7 @@ async function loadSummary(search, status, olympiad, created_at__gte, created_at
 
 
 function downloadPayment(id) {
-  const url = `https://portal.gradients.academy/api/payments/dashboard/${id}/download`
+  const url = `https://portal.femo.kz/api/payments/dashboard/${id}/download`
   const token = localStorage.getItem('access_token') // или где вы его храните
 
   fetch(url, {

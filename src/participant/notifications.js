@@ -192,7 +192,7 @@ function updatePopupNotifications(nots) {
   const token = localStorage.getItem('access_token');
   if (!token) return;
   if (window.notificationSocket?.readyState === WebSocket.OPEN) return;
-  window.notificationSocket = new WebSocket(`wss://portal.gradients.academy/ws/notifications/?token=${token}`);
+  window.notificationSocket = new WebSocket(`wss://portal.femo.kz/ws/notifications/?token=${token}`);
   const socket = window.notificationSocket;
   socket.addEventListener('open', () => console.log('WS уведомлений открыт'));
   socket.addEventListener('message', evt => {

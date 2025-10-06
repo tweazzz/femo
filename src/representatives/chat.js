@@ -292,9 +292,9 @@ class RepresentativeChat {
     // Определяем URL в зависимости от комнаты
     let wsUrl
     if (tabName === 'announcements') {
-      wsUrl = `wss://portal.gradients.academy/ws/chat/announcements/?token=${token}`
+      wsUrl = `wss://portal.femo.kz/ws/chat/announcements/?token=${token}`
     } else if (tabName === 'group') {
-      wsUrl = `wss://portal.gradients.academy/ws/chat/group/?token=${token}`
+      wsUrl = `wss://portal.femo.kz/ws/chat/group/?token=${token}`
     } else {
       this.showConnectionError('Неизвестный тип чата')
       return
@@ -595,7 +595,7 @@ class RepresentativeChat {
     if (messageData.file) {
       const fileUrl = messageData.file.startsWith('http') 
         ? messageData.file 
-        : `https://portal.gradients.academy${messageData.file}`
+        : `https://portal.femo.kz${messageData.file}`
       const fileName = messageData.file.split('/').pop()
       fileHtml = `
         <div class="mt-2">
@@ -809,7 +809,7 @@ class RepresentativeChat {
 
       // Используем сохраненный room_id группового чата или значение по умолчанию
       const groupRoomId = this.groupRoomId || 2
-      const url = `https://portal.gradients.academy/api/chats/rooms/${groupRoomId}/attachments/`
+      const url = `https://portal.femo.kz/api/chats/rooms/${groupRoomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',
@@ -1095,7 +1095,7 @@ class RepresentativeChat {
     try {
       console.log('Начало инициализации чатов')
       // Загружаем всех администраторов
-      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/administrators')
+      const response = await authorizedFetch('https://portal.femo.kz/api/chats/administrators')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1110,7 +1110,7 @@ class RepresentativeChat {
       // Загружаем сообщения для всех администраторов параллельно
       const messagePromises = this.administrators.map(async (admin) => {
         try {
-          const messagesResponse = await authorizedFetch(`https://portal.gradients.academy/api/chats/private/${admin.profile}/messages/`)
+          const messagesResponse = await authorizedFetch(`https://portal.femo.kz/api/chats/private/${admin.profile}/messages/`)
           if (messagesResponse.ok) {
             const messagesData = await messagesResponse.json()
             console.log(`Получены сообщения для админа ${admin.profile}:`, messagesData)
@@ -1155,7 +1155,7 @@ class RepresentativeChat {
       }
       
       // Загружаем историю сообщений для объявлений
-      const announcementsResponse = await authorizedFetch('https://portal.gradients.academy/api/chats/announcements/messages/')
+      const announcementsResponse = await authorizedFetch('https://portal.femo.kz/api/chats/announcements/messages/')
       if (announcementsResponse.ok) {
         const data = await announcementsResponse.json()
         if (data.messages && data.messages.length > 0) {
@@ -1168,7 +1168,7 @@ class RepresentativeChat {
       }
       
       // Загружаем историю сообщений для группового чата
-      const groupResponse = await authorizedFetch('https://portal.gradients.academy/api/chats/group/messages/')
+      const groupResponse = await authorizedFetch('https://portal.femo.kz/api/chats/group/messages/')
       if (groupResponse.ok) {
         const data = await groupResponse.json()
         if (data.messages && data.messages.length > 0) {
@@ -1220,7 +1220,7 @@ class RepresentativeChat {
 
   async loadAllAdministrators() {
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/administrators')
+      const response = await authorizedFetch('https://portal.femo.kz/api/chats/administrators')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1260,7 +1260,7 @@ class RepresentativeChat {
 
     try {
 
-      const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+      const wsUrl = `wss://portal.femo.kz/ws/chat/private/${profileId}/?token=${token}`
       const websocket = new WebSocket(wsUrl)
 
       websocket.onopen = () => {
@@ -1484,7 +1484,7 @@ class RepresentativeChat {
     if (this.administratorsLoaded) return
     
     try {
-      const response = await authorizedFetch('https://portal.gradients.academy/api/chats/administrators')
+      const response = await authorizedFetch('https://portal.femo.kz/api/chats/administrators')
       
       if (!response.ok) {
         throw new Error(`Ошибка загрузки: ${response.status}`)
@@ -1713,7 +1713,7 @@ class RepresentativeChat {
 
     // Лоадер уже показан в selectAdministrator()
     
-    const wsUrl = `wss://portal.gradients.academy/ws/chat/private/${profileId}/?token=${token}`
+    const wsUrl = `wss://portal.femo.kz/ws/chat/private/${profileId}/?token=${token}`
     
     try {
       this.privateWebsockets[profileId] = new WebSocket(wsUrl)
@@ -1934,7 +1934,7 @@ class RepresentativeChat {
     if (messageData.file) {
       const fileUrl = messageData.file.startsWith('http') 
         ? messageData.file 
-        : `https://portal.gradients.academy${messageData.file}`
+        : `https://portal.femo.kz${messageData.file}`
       const fileName = messageData.file.split('/').pop()
       fileHtml = `
         <div class="mt-2">
@@ -2061,7 +2061,7 @@ class RepresentativeChat {
       const formData = new FormData()
       formData.append('file', file)
 
-      const url = `https://portal.gradients.academy/api/chats/private/${roomId}/attachments/`
+      const url = `https://portal.femo.kz/api/chats/private/${roomId}/attachments/`
 
       const response = await authorizedFetch(url, {
         method: 'POST',

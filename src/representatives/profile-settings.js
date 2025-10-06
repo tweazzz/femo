@@ -52,7 +52,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   }
   avatarEl.src        = finalAvatar;
   nameEl.textContent  = profile.full_name_ru || '';
@@ -86,7 +86,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -97,7 +97,7 @@ async function loadRepresentativeProfileForHeader() {
 }
 async function loadUserSettings() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/settings/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/settings/');
     if (!res.ok) throw new Error(`Ошибка загрузки настроек: ${res.status}`);
     const data = await res.json();
 
@@ -131,7 +131,7 @@ async function autoSaveUserSettings() {
   };
 
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/settings/', {
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/settings/', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -182,7 +182,7 @@ document.getElementById('reset-password').addEventListener('click', async () => 
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/users/settings/password/',
+      'https://portal.femo.kz/api/users/settings/password/',
       {
         method: 'POST',
         headers: {
@@ -214,7 +214,7 @@ document.getElementById('delete-account').addEventListener('click', async () => 
 
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/users/representative/profile/',
+      'https://portal.femo.kz/api/users/representative/profile/',
       {
         method: 'DELETE'
       }

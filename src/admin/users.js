@@ -47,7 +47,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -63,7 +63,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -84,7 +84,7 @@ async function loadAllUsers() {
     console.log('Загрузка пользователей...')
 
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/users/dashboard/'
+      'https://portal.femo.kz/api/users/dashboard/'
     )
     if (!res.ok) {
       throw new Error(`Ошибка HTTP: ${res.status} ${res.statusText}`)
@@ -359,7 +359,7 @@ async function downloadAllUsersExcel() {
     }
 
     const response = await fetch(
-      'https://portal.gradients.academy/api/users/dashboard/export/',
+      'https://portal.femo.kz/api/users/dashboard/export/',
       {
         method: 'GET',
         headers: {
@@ -494,7 +494,7 @@ async function addUser(formId, role = 'participant') {
     }
 
     const response = await fetch(
-      'https://portal.gradients.academy/api/users/dashboard/',
+      'https://portal.femo.kz/api/users/dashboard/',
       {
         method: 'POST',
         headers: {
@@ -566,7 +566,7 @@ async function deleteUser(userId) {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/api/users/dashboard/${userId}/`,
+      `https://portal.femo.kz/api/users/dashboard/${userId}/`,
       {
         method: 'DELETE',
         headers: {
@@ -682,7 +682,7 @@ async function updateUserFromEditForm() {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/api/users/dashboard/${userId}/`,
+      `https://portal.femo.kz/api/users/dashboard/${userId}/`,
       {
         method: 'PUT',
         headers: {
@@ -744,7 +744,7 @@ function openEditModal(userId) {
   if (role === 'participant') {
     // Делаем GET-запрос, чтобы получить полные данные
     const token = localStorage.getItem('access_token')
-    fetch(`https://portal.gradients.academy/api/users/dashboard/${userId}/`, {
+    fetch(`https://portal.femo.kz/api/users/dashboard/${userId}/`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

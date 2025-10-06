@@ -53,7 +53,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -69,7 +69,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -111,7 +111,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/api/assignments/dashboard/?${params.toString()}`,
+      `https://portal.femo.kz/api/assignments/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -308,7 +308,7 @@ async function deleteTask() {
   }
   try {
     const response = await fetch(
-      `https://portal.gradients.academy/api/assignments/dashboard/${taskIdToDelete}/`,
+      `https://portal.femo.kz/api/assignments/dashboard/${taskIdToDelete}/`,
       {
         method: 'DELETE',
         headers: {
@@ -386,7 +386,7 @@ async function submitNewTask() {
 
   try {
     const response = await fetch(
-      'https://portal.gradients.academy/api/assignments/dashboard/',
+      'https://portal.femo.kz/api/assignments/dashboard/',
       {
         method: 'POST',
         headers: {
@@ -443,7 +443,7 @@ function openEditModal(task) {
       row.className = 'flex items-center justify-between';
 
       const link = document.createElement('a');
-      link.href = `https://portal.gradients.academy${att.file}`;
+      link.href = `https://portal.femo.kz${att.file}`;
       link.textContent = att.file.split('/').pop();
       link.target = '_blank';
       link.className = 'text-orange-primary hover:underline';
@@ -467,7 +467,7 @@ async function handleEditClick(button) {
 
     // получаем полные данные задачи с сервера
     const token = localStorage.getItem('access_token');
-    const res = await fetch(`https://portal.gradients.academy/api/assignments/dashboard/${taskId}/`, {
+    const res = await fetch(`https://portal.femo.kz/api/assignments/dashboard/${taskId}/`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -548,7 +548,7 @@ async function submitEditTask() {
   try {
     console.log('Кидаем на сервер файлы:', attachments['edit-participant']);
     const res = await authorizedFetch(
-      `https://portal.gradients.academy/api/assignments/dashboard/${taskBeingEditedId}/`,
+      `https://portal.femo.kz/api/assignments/dashboard/${taskBeingEditedId}/`,
       {
         method: 'PUT',
         headers: {

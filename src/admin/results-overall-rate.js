@@ -49,7 +49,7 @@ function renderUserInfo(profile) {
   const imgPath = profile.image || '';
   avatarEl.src = imgPath.startsWith('http')
     ? imgPath
-    : `https://portal.gradients.academy${imgPath}`;
+    : `https://portal.femo.kz${imgPath}`;
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
@@ -65,7 +65,7 @@ async function loadAdminProfile() {
   if (!token) throw new Error('Токен не найден');
 
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/administrator/profile/',
+    'https://portal.femo.kz/api/users/administrator/profile/',
     { headers: { Authorization: `Bearer ${token}` } }
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
@@ -163,7 +163,7 @@ async function loadGlobalStats() {
 
   try {
     const response = await fetch(
-      'https://portal.gradients.academy/api/results/dashboard/results/stats/',
+      'https://portal.femo.kz/api/results/dashboard/results/stats/',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -231,7 +231,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/dashboard/participants/?${params.toString()}`,
+      `https://portal.femo.kz/api/results/dashboard/participants/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -355,7 +355,7 @@ let countryMap = {}
 async function populateCountryFilter() {
   try {
     const response = await authorizedFetch(
-      'https://portal.gradients.academy/api/common/countries/?page=1&page_size=500'
+      'https://portal.femo.kz/api/common/countries/?page=1&page_size=500'
     )
     if (!response.ok) throw new Error('Ошибка загрузки стран')
 

@@ -86,7 +86,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   }
   avatarEl.src        = finalAvatar;
   nameEl.textContent  = profile.full_name_ru || '';
@@ -120,7 +120,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
     const profile = await res.json();
     renderUserInfo(profile);
@@ -136,7 +136,7 @@ async function loadRepresentativeProfileForHeader() {
 async function loadChartOlympiads() {
   try {
     let allOlympiads = [];
-    let url = 'https://portal.gradients.academy/api/common/olympiads/';
+    let url = 'https://portal.femo.kz/api/common/olympiads/';
     while (url) {
       const res = await authorizedFetch(url);
       if (!res.ok) {
@@ -171,7 +171,7 @@ function fillChartOlympiadSelect(olympiads) {
 async function loadSummaryOlympiads() {
   try {
     let allOlympiads = [];
-    let url = 'https://portal.gradients.academy/api/common/olympiads/';
+    let url = 'https://portal.femo.kz/api/common/olympiads/';
     while (url) {
       const res = await authorizedFetch(url);
       if (!res.ok) {
@@ -227,7 +227,7 @@ async function loadDistributionData() {
   if (!gradeParam) return;
 
   try {
-    const url = `https://portal.gradients.academy/api/results/representatives/dashboard/participants/distribution/?grade=${gradeParam}&olympiad_id=${olympiadId}`;
+    const url = `https://portal.femo.kz/api/results/representatives/dashboard/participants/distribution/?grade=${gradeParam}&olympiad_id=${olympiadId}`;
     const res = await authorizedFetch(url);
     if (!res.ok) throw new Error(`Ошибка loadDistributionData: ${res.status}`);
     const data = await res.json();
@@ -302,7 +302,7 @@ function renderDistributionChart(labels, data) {
 async function loadParticipantsDynamics() {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/representatives/dashboard/participants/dynamics'
+      'https://portal.femo.kz/api/results/representatives/dashboard/participants/dynamics'
     );
     if (!res.ok) throw new Error(`Ошибка loadParticipantsDynamics: ${res.status}`);
     const data = await res.json();
@@ -397,7 +397,7 @@ async function loadOlympiadSummary(olympiadId) {
     return;
   }
   try {
-    const url = `https://portal.gradients.academy/api/results/representative/dashboard/olympiads/${olympiadId}/summary`;
+    const url = `https://portal.femo.kz/api/results/representative/dashboard/olympiads/${olympiadId}/summary`;
     const res = await authorizedFetch(url);
     if (!res.ok) throw new Error(`Ошибка loadOlympiadSummary: ${res.status}`);
     const data = await res.json();
@@ -457,7 +457,7 @@ async function loadOlympiadRanking(olympiadId, page = 1) {
   if (!olympiadId) return;
 
   try {
-    const url = `https://portal.gradients.academy/api/results/representative/dashboard/olympiads/${olympiadId}/ranking?page=${page}&page_size=${rankingPageSize}`;
+    const url = `https://portal.femo.kz/api/results/representative/dashboard/olympiads/${olympiadId}/ranking?page=${page}&page_size=${rankingPageSize}`;
     const res = await authorizedFetch(url);
     if (!res.ok) throw new Error(`Ошибка loadOlympiadRanking: ${res.status}`);
     const json = await res.json();
@@ -747,7 +747,7 @@ document.getElementById('download-ranking')?.addEventListener('click', async () 
     const olyId = summarySelect.value;
     if (olyId) {
       try {
-        const url = `https://portal.gradients.academy/api/results/representative/dashboard/olympiads/${olyId}/ranking/download`;
+        const url = `https://portal.femo.kz/api/results/representative/dashboard/olympiads/${olyId}/ranking/download`;
         const response = await authorizedFetch(url);
         
         if (!response.ok) {

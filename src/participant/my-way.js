@@ -42,7 +42,7 @@ async function ensureUserAuthenticated() {
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/participant/profile/'
+    'https://portal.femo.kz/api/users/participant/profile/'
   );
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   } else {
     // вставь тут свой путь к дефолтной аватарке или пустую картинку
     avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
@@ -110,7 +110,7 @@ async function loadSummary() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/participant/dashboard/path/progress`,
+      `https://portal.femo.kz/api/results/participant/dashboard/path/progress`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -159,7 +159,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/participant/dashboard/path/results/?${params.toString()}`,
+      `https://portal.femo.kz/api/results/participant/dashboard/path/results/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -277,7 +277,7 @@ async function loadAchievements() {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/results/participant/dashboard/path/achievements`,
+      `https://portal.femo.kz/api/results/participant/dashboard/path/achievements`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -300,7 +300,7 @@ function renderAchievements(achievements) {
 
   container.innerHTML = achievements.map(achievement => `
     <div class="flex items-center gap-6 rounded-2xl p-5 ${achievement.unlocked ? '' : 'grayed'} bg-orange-secondary">
-      <img src="https://portal.gradients.academy${achievement.icon}" alt="${achievement.code}" />
+      <img src="https://portal.femo.kz${achievement.icon}" alt="${achievement.code}" />
       <div class="space-y-0.5">
         <div class="flex items-center gap-1">
           <p>${achievement.code}</p>

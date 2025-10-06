@@ -50,7 +50,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   }
   avatarEl.src        = finalAvatar;
   nameEl.textContent  = profile.full_name_ru || '';
@@ -84,7 +84,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfileForHeader() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const profile = await res.json();
@@ -163,7 +163,7 @@ function attachFilterHandlers() {
   async function loadParticipants() {
     try {
       const res = await authorizedFetch(
-        'https://portal.gradients.academy/api/results/representatives/dashboard/participants'
+        'https://portal.femo.kz/api/results/representatives/dashboard/participants'
       );
       if (!res.ok) throw new Error('Ошибка загрузки участников');
 
@@ -356,7 +356,7 @@ function openDeleteModal(id) {
 document.getElementById('export-btn').addEventListener('click', async () => {
   try {
     const res = await authorizedFetch(
-      'https://portal.gradients.academy/api/results/representatives/dashboard/participants/export/'
+      'https://portal.femo.kz/api/results/representatives/dashboard/participants/export/'
     );
     if (!res.ok) throw new Error(`Export failed: ${res.status}`);
 
@@ -381,7 +381,7 @@ document.getElementById('confirm-delete-btn').addEventListener('click', async ()
   if (!currentDeleteId) return;
   try {
     const res = await authorizedFetch(
-    `https://portal.gradients.academy/api/results/representatives/dashboard/participants/${currentDeleteId}/`,
+    `https://portal.femo.kz/api/results/representatives/dashboard/participants/${currentDeleteId}/`,
     { method: 'DELETE' }
     );
     if (!res.ok) throw new Error(`Delete failed: ${res.status}`);

@@ -42,7 +42,7 @@ async function ensureUserAuthenticated() {
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/participant/profile/'
+    'https://portal.femo.kz/api/users/participant/profile/'
   );
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   } else {
     // вставь тут свой путь к дефолтной аватарке или пустую картинку
     avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
@@ -144,7 +144,7 @@ async function loadAssignments(page = 1) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.gradients.academy/api/certificates/participant/dashboard/?${params.toString()}`,
+      `https://portal.femo.kz/api/certificates/participant/dashboard/?${params.toString()}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -282,7 +282,7 @@ function renderPaginatedAssignments() {
 
 
 function downloadCertificate(id) {
-  const url = `https://portal.gradients.academy/api/certificates/participant/dashboard/${id}/download`
+  const url = `https://portal.femo.kz/api/certificates/participant/dashboard/${id}/download`
   const token = localStorage.getItem('access_token')
 
   fetch(url, {

@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let allNotifications = [];
 
   // WebSocket
-  const ws = new WebSocket(`wss://portal.gradients.academy/ws/notifications/?token=${token}`);
+  const ws = new WebSocket(`wss://portal.femo.kz/ws/notifications/?token=${token}`);
   ws.addEventListener('open', () => console.log('WebSocket подключен'));
   ws.addEventListener('error', err => console.error('WebSocket ошибка:', err));
   ws.addEventListener('close', () => console.log('WebSocket закрыт'));
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function handleRequestAction(id, approve) {
     const action = approve ? 'accept' : 'decline';
-    const url = `https://portal.gradients.academy/api/notifications/${id}/${action}/`;
+    const url = `https://portal.femo.kz/api/notifications/${id}/${action}/`;
     try {
       const resp = await fetch(url, {
         method: 'POST',

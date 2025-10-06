@@ -80,7 +80,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     finalAvatar = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   }
   avatarEl.src        = finalAvatar;
   nameEl.textContent  = profile.full_name_ru || '';
@@ -114,7 +114,7 @@ function renderUserInfo(profile) {
 
 async function loadRepresentativeProfile() {
   try {
-    const res = await authorizedFetch('https://portal.gradients.academy/api/users/representative/profile/');
+    const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');
     if (!res.ok) throw new Error(`Ошибка загрузки профиля представителя: ${res.status}`);
 
     const data = await res.json();
@@ -135,7 +135,7 @@ async function loadRepresentativeProfile() {
     if (data.image) {
       const imageUrl = data.image.startsWith('http')
         ? data.image
-        : `https://portal.gradients.academy${data.image}`;
+        : `https://portal.femo.kz${data.image}`;
       previewEl.src = imageUrl;
       fileNameEl.textContent = data.image.split('/').pop();
     } else {
@@ -165,7 +165,7 @@ let countriesList = [];
 
 async function loadCountries() {
   try {
-    const res = await fetch('https://portal.gradients.academy/api/common/countries');
+    const res = await fetch('https://portal.femo.kz/api/common/countries');
     if (!res.ok) throw new Error(`Ошибка загрузки стран: ${res.status}`);
 
     const data = await res.json();
@@ -203,7 +203,7 @@ document
 
     try {
       const res = await authorizedFetch(
-        'https://portal.gradients.academy/api/users/representative/profile/',
+        'https://portal.femo.kz/api/users/representative/profile/',
         {
           method: 'PATCH',
           body: formData,

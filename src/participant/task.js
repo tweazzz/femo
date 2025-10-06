@@ -42,7 +42,7 @@ async function ensureUserAuthenticated() {
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
-    'https://portal.gradients.academy/api/users/participant/profile/'
+    'https://portal.femo.kz/api/users/participant/profile/'
   );
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
@@ -59,7 +59,7 @@ function renderUserInfo(profile) {
   if (imgPath && typeof imgPath === 'string') {
     avatarEl.src = imgPath.startsWith('http')
       ? imgPath
-      : `https://portal.gradients.academy${imgPath}`;
+      : `https://portal.femo.kz${imgPath}`;
   } else {
     // вставь тут свой путь к дефолтной аватарке или пустую картинку
     avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
@@ -184,7 +184,7 @@ async function loadTaskDetails() {
     return
   }
 
-  const endpoint = `https://portal.gradients.academy/api/assignments/participant/dashboard/41/${source}`
+  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/41/${source}`
 
   try {
     const token = JSON.parse(localStorage.getItem('user'))?.tokens?.access
@@ -261,7 +261,7 @@ async function loadTaskMock() {
   const taskId = urlParams.get('id');
   const source = urlParams.get('source'); // 'daily' или 'general'
 
-  const endpoint = `https://portal.gradients.academy/api/assignments/participant/dashboard/${taskId}/${source}`;
+  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/${taskId}/${source}`;
 
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -475,7 +475,7 @@ submitBtn1.addEventListener('click', async () => {
   const taskId = urlParams.get('id');
   const source = urlParams.get('source'); // 'daily' или 'general'
 
-  const endpoint = `https://portal.gradients.academy/api/assignments/participant/dashboard/${taskId}/${source}/submit/`;
+  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/${taskId}/${source}/submit/`;
 
   const token = localStorage.getItem('access_token');
   if (!token) {

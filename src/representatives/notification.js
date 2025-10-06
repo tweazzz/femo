@@ -202,7 +202,7 @@ function updatePopupNotifications(nots) {
   if (!token) return;
   if (window.notificationSocket?.readyState === WebSocket.OPEN) return;
 
-  window.notificationSocket = new WebSocket(`wss://portal.gradients.academy/ws/notifications/?token=${token}`);
+  window.notificationSocket = new WebSocket(`wss://portal.femo.kz/ws/notifications/?token=${token}`);
   const socket = window.notificationSocket;
 
   socket.addEventListener('open', () => console.log('WS открыт'));
