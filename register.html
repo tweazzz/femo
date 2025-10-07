@@ -26,13 +26,19 @@
 
       <form class="space-y-6">
         <div>
-          <label class="text-gray-primary mb-1 block text-sm">Кто вы?</label>
-          <select class="input-base border-default custom-select">
-            <option>Участник</option>
-            <option>Представитель страны</option>
+          <label for="role" class="text-gray-primary mb-1 block text-sm">Кто вы?</label>
+          <select id="role" name="role" class="input-base border-default custom-select">
+            <option value="participant">Участник</option>
+            <option value="representative">Представитель страны</option>
           </select>
         </div>
-
+        
+        <div>
+          <label for="country" class="text-gray-primary mb-1 block text-sm">Ваша Страна</label>
+          <select id="country" name="country" class="input-base border-default custom-select">
+            <!-- JS заполнит -->
+          </select>
+        </div>
         <div>
           <label class="text-gray-primary mb-1 block text-sm">Email</label>
           <input
