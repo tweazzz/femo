@@ -102,7 +102,7 @@
               >
                 <i data-lucide="menu" class="h-6 w-6"></i>
               </button>
-              <h1 class="text-xl max-md:hidden">Добро пожаловать, Айжан 👋</h1>
+              <h1 class="text-xl max-md:hidden"></h1>
             </div>
             <div class="flex items-center space-x-4">
               <button
@@ -156,7 +156,7 @@
           </div>
 
           <div>
-            <form>
+            <form id="admin-form">
               <p class="mb-4 text-lg font-bold">Личные данные</p>
 
               <div
@@ -169,7 +169,7 @@
                   >
                   <input
                     placeholder="ivan.ivanov@example.com"
-                    value="ivan.ivanov@example.com"
+                    value=""
                     type="email"
                     name="email"
                     class="input-base border-default"
@@ -183,7 +183,7 @@
                   >
                   <input
                     placeholder="Айжан Ахметова"
-                    value="Айжан Ахметова"
+                    value=""
                     type="text"
                     name="full_name_ru"
                     class="input-base border-default"
@@ -211,8 +211,8 @@
                       <!-- Image preview container -->
                       <img
                         id="imagePreview"
-                        src="/src/assets/images/man.png"
-                        alt="Click to upload image"
+                        src=""
+                        alt=""
                         class="h-16 w-16 bg-gray-50 object-cover"
                       />
                     </label>
@@ -385,7 +385,7 @@
             <div class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 sm:px-6">
   
               <!-- Participant Form (shown by default) -->
-              <form id="participant-form" class="role-form" enctype="multipart/form-data"
+              <form id="admin-form" class="role-form" enctype="multipart/form-data"
               method="post">
                 <div class="mt-6 space-y-6">
                   <div>
@@ -418,14 +418,14 @@
   
                 <div class="mt-6 flex items-center justify-between">
                   <div class="flex items-center gap-2">
-                    <button type="button" onclick="toggleModal('modalEdit')" class="btn-outline btn--orange">
+                    <button id="cancel-button" type="button" onclick="toggleModal('modalEdit')" class="btn-outline btn--orange">
                       <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
                         </svg>
                       </span>
                       Отменить
                     </button>
-                    <button class="btn-orange">
+                    <button id="submit-button" type="submit" form="admin-form" class="btn-orange">
                       <span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>

@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
       await loadTaskMock()
+      document.querySelectorAll('.preload-hidden').forEach(el => el.classList.remove('preload-hidden'));
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
@@ -207,7 +208,6 @@ async function loadTaskDetails() {
 function renderTask(task) {
   document.querySelector('h2.text-2xl').textContent = task.title
   document.querySelector('p.text-gray-600').textContent = `${task.grade} класс`
-
   const descriptionEl = document.querySelector('.text.border-gray-border')
   descriptionEl.innerHTML = `<p>${task.description}</p>`
 

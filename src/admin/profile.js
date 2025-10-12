@@ -180,7 +180,68 @@ function getFileNameFromUrl(url) {
 }
 
 
-document.querySelector('#participant-form').addEventListener('submit', async (e) => {
+// === ПРОСТОЕ ПОВЕДЕНИЕ ДЛЯ КНОПКИ "Редактировать" ===
+
+// Находим кнопку и вешаем обработчик
+const editBtn = document.getElementById('edit-button');
+if (editBtn) {
+  editBtn.addEventListener('click', async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Токен не найден');
+        return;
+      }
+
+      // Получаем данные профиля
+      const response = await fetch('https://portal.femo.kz/api/users/administrator/profile/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        alert('Ошибка загрузки профиля');
+        return;
+      }
+
+      const data = await response.json();
+
+      // Заполняем только 2 поля в модалке
+      const modal = document.getElementById('modalEdit');
+      if (!modal) {
+        alert('Модалка не найдена');
+        return;
+      }
+
+      const emailInput = modal.querySelector('input[name="email"]');
+      const fullNameInput = modal.querySelector('input[name="full_name_ru"]');
+
+      if (emailInput) emailInput.value = data.email || '';
+      if (fullNameInput) fullNameInput.value = data.full_name_ru || '';
+
+      // Показываем модалку
+      modal.classList.remove('hidden');
+
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка при загрузке данных профиля');
+    }
+  });
+}
+
+// Чтобы при закрытии модалки кнопка "Редактировать" не исчезала
+const closeBtn = document.querySelector('#modalEdit button[data-close], #modalEdit .close-btn, #modalEdit .btn-close');
+if (closeBtn) {
+  closeBtn.addEventListener('click', () => {
+    const modal = document.getElementById('modalEdit');
+    if (modal) modal.classList.add('hidden');
+    // ничего не трогаем с edit-button
+  });
+}
+
+
+document.querySelector('#admin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);

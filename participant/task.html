@@ -9,6 +9,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@lucide/web@latest"></script>
   </head>
+<style>
+  /* скрывает до тех пор, пока JS не снимет класс */
+  .preload-hidden { display: none !important; }
+</style>
 
   <body>
     <div class="flex h-screen">
@@ -90,7 +94,7 @@
               >
                 <i data-lucide="menu" class="h-6 w-6"></i>
               </button>
-              <h1 class="text-xl max-md:hidden">Добро пожаловать, Айжан 👋</h1>
+              <h1 class="text-xl max-md:hidden"></h1>
             </div>
             <div class="flex items-center space-x-4">
               <button
@@ -165,7 +169,7 @@
           <div class="grid gap-4 xl:grid-cols-3">
             <div class="xl:col-span-2">
 <!-- WIN (по умолчанию скрыт) -->
-<div id="win-info" class="card border-default text-green-primary bg-green-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3 hidden" role="status" aria-live="polite">
+<div id="win-info" class="card border-default text-green-primary bg-green-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3 preload-hidden" role="status" aria-live="polite">
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10.0003 18.3334C14.5837 18.3334 18.3337 14.5834 18.3337 10.0001C18.3337 5.41675 14.5837 1.66675 10.0003 1.66675C5.41699 1.66675 1.66699 5.41675 1.66699 10.0001C1.66699 14.5834 5.41699 18.3334 10.0003 18.3334Z" stroke="#0DB459" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
     <path d="M6.45801 9.99993L8.81634 12.3583L13.5413 7.6416" stroke="#0DB459" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -174,7 +178,7 @@
 </div>
 
 <!-- LOSE (по умолчанию скрыт) -->
-<div id="lose-info" class="card border-default text-red-primary bg-red-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3 hidden" role="status" aria-live="polite">
+<div id="lose-info" class="card border-default text-red-primary bg-red-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3 preload-hidden" role="status" aria-live="polite">
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10.0003 18.3334C14.5837 18.3334 18.3337 14.5834 18.3337 10.0001C18.3337 5.41675 14.5837 1.66675 10.0003 1.66675C5.41699 1.66675 1.66699 5.41675 1.66699 10.0001C1.66699 14.5834 5.41699 18.3334 10.0003 18.3334Z" stroke="#E81C2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
     <path d="M7.64172 12.3584L12.3584 7.64172" stroke="#E81C2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -281,7 +285,7 @@
               <div class="space-y-4">
                 <button
                   id="submit-button1"
-                  class="bg-orange-primary hover:bg-orange-primary/90 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 text-white transition-colors"
+                  class="bg-orange-primary hover:bg-orange-primary/90 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 text-white transition-colors preload-hidden"
                 >
                   <span>
                     <svg
@@ -304,14 +308,14 @@
 
                 <button
                   id="clear-button"
-                  class="text-orange-primary border-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg border-1 px-4 py-2 transition-colors"
+                  class="text-orange-primary border-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg border-1 px-4 py-2 transition-colors preload-hidden"
                 >
                   Очистить ответ
                 </button>
 
                 <button
                   id="submit-button2"
-                  class="bg-gray-background text-gray-primary hover:bg-gray-primary/5 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 transition-colors"
+                  class="bg-gray-background text-gray-primary hover:bg-gray-primary/5 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 transition-colors preload-hidden"
                 >
                   <span>
                     <svg
@@ -331,7 +335,7 @@
                   </span>
                   Отправить ответ
                 </button>
-                <a href="/participant/tasks.html" id="next-task-button2" class="bg-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-xl p-2.5 text-white">
+                <a href="/participant/tasks.html" id="next-task-button2" class="bg-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-xl p-2.5 text-white preload-hidden">
                         <span>
                         <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13.992 1.66675H7.00866C3.97533 1.66675 2.16699 3.47508 2.16699 6.50841V13.4917C2.16699 16.5251 3.97533 18.3334 7.00866 18.3334H13.992C17.0253 18.3334 18.8337 16.5251 18.8337 13.4917V6.50841C18.8337 3.47508 17.0253 1.66675 13.992 1.66675ZM8.80866 12.4167L6.93366 14.2917C6.80866 14.4167 6.65033 14.4751 6.49199 14.4751C6.33366 14.4751 6.16699 14.4167 6.05033 14.2917L5.42533 13.6667C5.17533 13.4251 5.17533 13.0251 5.42533 12.7834C5.66699 12.5417 6.05866 12.5417 6.30866 12.7834L6.49199 12.9667L7.92533 11.5334C8.16699 11.2917 8.55866 11.2917 8.80866 11.5334C9.05033 11.7751 9.05033 12.1751 8.80866 12.4167ZM8.80866 6.58341L6.93366 8.45841C6.80866 8.58341 6.65033 8.64175 6.49199 8.64175C6.33366 8.64175 6.16699 8.58341 6.05033 8.45841L5.42533 7.83341C5.17533 7.59175 5.17533 7.19175 5.42533 6.95008C5.66699 6.70841 6.05866 6.70841 6.30866 6.95008L6.49199 7.13341L7.92533 5.70008C8.16699 5.45841 8.55866 5.45841 8.80866 5.70008C9.05033 5.94175 9.05033 6.34175 8.80866 6.58341ZM15.1337 13.8501H10.7587C10.417 13.8501 10.1337 13.5667 10.1337 13.2251C10.1337 12.8834 10.417 12.6001 10.7587 12.6001H15.1337C15.4837 12.6001 15.7587 12.8834 15.7587 13.2251C15.7587 13.5667 15.4837 13.8501 15.1337 13.8501ZM15.1337 8.01675H10.7587C10.417 8.01675 10.1337 7.73341 10.1337 7.39175C10.1337 7.05008 10.417 6.76675 10.7587 6.76675H15.1337C15.4837 6.76675 15.7587 7.05008 15.7587 7.39175C15.7587 7.73341 15.4837 8.01675 15.1337 8.01675Z" fill="white"></path>

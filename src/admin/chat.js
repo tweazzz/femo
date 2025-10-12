@@ -21,6 +21,7 @@ class AdminChat {
     
     // Новые свойства для системы уведомлений
     this.representatives = [] // Список всех представителей
+    this.allowRepresentativesInMainList = false; 
     this.unreadChats = new Set() // Множество ID представителей с непрочитанными сообщениями
     this.readChats = new Set() // Множество ID представителей с прочитанными сообщениями
     this.lastMessageTimes = new Map() // Карта времени последних сообщений по представителям
@@ -2254,6 +2255,7 @@ handleRepresentativeMessage(data, profileId) {
   // НОВЫЙ МЕТОД: Показать представителя в основном списке чатов
   showRepresentativeInMainList(profileId) {
     // Находим представителя
+    if (!this.allowRepresentativesInMainList) return;
     const representative = this.representatives.find(rep => rep.profile === profileId)
     if (!representative) return
     
@@ -2265,6 +2267,7 @@ handleRepresentativeMessage(data, profileId) {
 
   // НОВЫЙ МЕТОД: Обновить основной список чатов
   updateMainChatList(representative) {
+    if (!this.allowRepresentativesInMainList) return;
     const chatModeContent = document.getElementById('chat-mode-content')
     if (!chatModeContent) return
     

@@ -2,12 +2,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('form');
   if (!form) return;
 
-  // контейнер для сообщений под формой
+  // --- success popup (small) ---
+  const successBanner = document.createElement('div');
+  successBanner.setAttribute('aria-live', 'polite');
+
+  // начальные классы: маленький светло-зелёный блок, тёмно-зелёный текст.
+  // Скрыт визуально через opacity и поднят вверх (-translate-y-6). При показе убираем эти классы.
+  successBanner.className =
+    'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-md bg-green-100 text-green-800 shadow-md flex items-center gap-3 text-sm font-semibold -translate-y-6 opacity-0 pointer-events-none transition-all duration-300';
+
+  successBanner.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+    </svg>
+    <span class="success-text"></span>
+  `;
+  document.body.insertBefore(successBanner, document.body.firstChild);
+
+  // контейнер для сообщений под формой (будет использоваться для ошибок)
   let messageContainer = document.createElement('div');
   messageContainer.className = 'mt-4 text-center text-sm font-medium';
   form.parentNode.insertBefore(messageContainer, form.nextSibling);
 
-  // Находим селекты по id/name
+  // селекты
   const roleSelect = document.getElementById('role') || document.querySelector('select[name="role"]');
   const countrySelect = document.getElementById('country') || document.querySelector('select[name="country"]');
 
@@ -18,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Маппинг ISO alpha-2 -> название страны на русском (вручную)
+  // Полный маппинг стран (вставлен полностью)
   const COUNTRIES_RU = {
     "AF":"Афганистан","AL":"Албания","DZ":"Алжир","AS":"Американское Самоа","AD":"Андорра","AO":"Ангола","AI":"Ангилья",
     "AQ":"Антарктида","AG":"Антигуа и Барбуда","AR":"Аргентина","AM":"Армения","AW":"Аруба","AU":"Австралия","AT":"Австрия","AZ":"Азербайджан",
@@ -47,59 +64,120 @@ document.addEventListener('DOMContentLoaded', () => {
     "VU":"Вануату","VE":"Венесуэла","VN":"Вьетнам","VG":"Британские Виргинские острова","VI":"Виргинские острова (США)","WF":"Уоллис и Футуна","EH":"Западная Сахара","YE":"Йемен","ZM":"Замбия","ZW":"Зимбабве"
   };
 
-  // Функция заполнения селекта странами (названия берутся из COUNTRIES_RU)
+  const submitButton = form.querySelector('button[type="submit"]');
+
   const populateCountrySelect = (mapping) => {
     countrySelect.innerHTML = '';
     const placeholder = document.createElement('option');
     placeholder.value = '';
-    placeholder.textContent = '';
+    placeholder.textContent = 'Выберите страну';
     placeholder.disabled = true;
     placeholder.selected = true;
     countrySelect.appendChild(placeholder);
 
-    // Создаём массив из объектов для сортировки по названию
     const items = Object.keys(mapping).map(code => ({ code, name: mapping[code] || code }));
-
     items.sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }));
 
     for (const it of items) {
       const opt = document.createElement('option');
-      opt.value = it.code; // KZ
-      opt.textContent = it.name; // Казахстан
+      opt.value = it.code;
+      opt.textContent = it.name;
       countrySelect.appendChild(opt);
     }
   };
 
-  // Заполняем селект только из локального маппинга (без запросов к API)
   populateCountrySelect(COUNTRIES_RU);
 
-  // Отправка формы: формируем тело как в твоём curl (country в корне)
+  const isSelectChosen = (select) => {
+    if (!select) return false;
+    const placeholder = select.querySelector('option[value=""]');
+    if (placeholder) return select.selectedIndex > 0;
+    return !!select.value;
+  };
+
+  // show/hide popup with slide-down animation
+  const showSuccessBanner = (text, visibleMs = 1500) => {
+    const textNode = successBanner.querySelector('.success-text');
+    if (textNode) textNode.textContent = text;
+
+    // показ: убираем "скрывающие" классы и даём элементу pointer events
+    successBanner.classList.remove('-translate-y-6', 'opacity-0', 'pointer-events-none');
+    successBanner.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+
+    // очистим предыдущий таймаут если есть
+    clearTimeout(successBanner._hideTimeout);
+
+    // через visibleMs делаем обратную анимацию (скрываем)
+    successBanner._hideTimeout = setTimeout(() => {
+      successBanner.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+      successBanner.classList.add('-translate-y-6', 'opacity-0', 'pointer-events-none');
+    }, visibleMs);
+  };
+
+  // helper: снимаем фокус и ждём, чтобы значения зафиксировались
+  const ensureValuesCommitted = async () => {
+    try {
+      const active = document.activeElement;
+      if (active && form.contains(active)) active.blur();
+      document.body.focus();
+      await new Promise(res => setTimeout(res, 50));
+    } catch (err) {
+      console.warn('ensureValuesCommitted error', err);
+    }
+  };
+
+  const findInputs = (form) => {
+    const emailInput = form.querySelector('input[name="email"], input#email, input[type="email"], input[placeholder*="@"]');
+    const nameInput = form.querySelector('input[name="full_name_ru"], input[name="full_name"], input[id="full_name"], input[id="name"], input[placeholder*="ФИО"], input[type="text"]');
+    const passwordInput = form.querySelector('input[name="password"], input#password, input[type="password"]');
+    return { emailInput, nameInput, passwordInput };
+  };
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const emailInput = form.querySelector('input[type="email"]');
-    const nameInput = form.querySelector('input[type="text"]');
-    const passwordInput = form.querySelector('input[type="password"]');
+    await ensureValuesCommitted();
 
-    const roleValue = roleSelect.value;
-    const email = emailInput ? emailInput.value.trim() : '';
-    const fullName = nameInput ? nameInput.value.trim() : '';
-    const password = passwordInput ? passwordInput.value : '';
-    const countryCode = countrySelect.value;
-
+    // очистим ошибки
     messageContainer.textContent = '';
     messageContainer.classList.remove('text-red-500', 'text-green-600');
 
-    if (!roleValue || !email || !fullName || !password || !countryCode) {
+    const { emailInput, nameInput, passwordInput } = findInputs(form);
+
+    if (passwordInput && !passwordInput.name) {
+      passwordInput.name = 'password_temp_for_read';
+    }
+
+    const roleValue = roleSelect ? roleSelect.value : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const fullName = nameInput ? nameInput.value.trim() : '';
+    const password = passwordInput ? passwordInput.value : '';
+    const countryCode = countrySelect ? countrySelect.value : '';
+
+    console.log('Submit attempt — values:', {
+      roleValue,
+      email,
+      fullName,
+      passwordPresent: !!password,
+      countryCode,
+      roleSelected: isSelectChosen(roleSelect),
+      countrySelected: isSelectChosen(countrySelect)
+    });
+
+    if (!isSelectChosen(roleSelect) || !email || !fullName || !password || !isSelectChosen(countrySelect)) {
       messageContainer.textContent = 'Пожалуйста, заполните все поля корректно (включая страну).';
       messageContainer.classList.add('text-red-500');
+      const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
+      if (maybePassword) maybePassword.removeAttribute('name');
       return;
     }
+
+    if (submitButton) submitButton.disabled = true;
 
     const payload = {
       email,
       password,
-      country: countryCode, // отправляем код (например "KZ")
+      country: countryCode,
       profile: {
         full_name_ru: fullName,
         role: roleValue
@@ -122,13 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      messageContainer.textContent = 'Регистрация прошла успешно!';
-      messageContainer.classList.add('text-green-600');
+      // ПОКАЗЫВАЕМ ПОПАП СВЕРХУ (маленький, зелёный фон, тёмно-зелёный текст)
+      showSuccessBanner('Регистрация прошла успешно! Перенаправляем...', 1500);
+
+      // редирект через 1.5 секунды (как и просили)
       setTimeout(() => { window.location.href = 'index.html'; }, 1500);
     } catch (error) {
       console.error('Ошибка при отправке:', error);
       messageContainer.textContent = 'Ошибка соединения с сервером.';
       messageContainer.classList.add('text-red-500');
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+      const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
+      if (maybePassword) maybePassword.removeAttribute('name');
     }
   });
-});
+
+}); // DOMContentLoaded
