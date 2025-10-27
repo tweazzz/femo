@@ -53,7 +53,9 @@ function renderUserInfo(profile) {
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+  welcomeEl.innerHTML = `<span data-i18n="welcome.message">Добро пожаловать,</span> ${firstName} 👋`;
+// затем вызвать applyTranslations(window.i18nDict);
+
 
   const roleMap = { administrator: 'Администратор' };
   roleEl.textContent = roleMap[profile.role] || profile.role;

@@ -22,35 +22,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link active">
             <img src="/src/assets/images/ranking_active.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -61,7 +62,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -79,7 +80,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -148,14 +149,15 @@
           <div class="mb-6 overflow-x-auto">
             <div class="tabs !mb-1 w-md">
               <a href="/admin/results.html" class="tabs-link"
+              data-i18n="results.results_page"
                 >Результаты олимпиады</a
               >
               <a href="/admin/results-overall-rate.html" class="tabs-link"
+              data-i18n="results.results-overall-rate"
                 >Общий рейтинг участников
               </a>
-              <a
-                href="/admin/results-countries-rate.html"
-                class="tabs-link active"
+              <a href="/admin/results-countries-rate.html" class="tabs-link active"
+              data-i18n="results.results-countries-rate"
                 >Рейтинг стран</a
               >
             </div>
@@ -164,13 +166,14 @@
           <div class="mb-10 grid gap-8 xl:grid-cols-2">
             <!-- First Chart with Dropdown -->
             <div class="bg-blue-secondary rounded-lg p-2 sm:p-6">
-              <h2 class="mb-4 text-xl font-semibold text-gray-700">
+              <h2 class="mb-4 text-xl font-semibold text-gray-700" data-i18n="result-countries-rate.chart1">
                 Средний % по странам
               </h2>
               <div class="mb-4">
                 <label
                   for="chart-olympiad-filter-1"
                   class="block text-sm font-medium text-gray-700"
+                  data-i18n="result-countries-rate.chart_choose_olymp"
                   >Выбрать олимпиаду</label
                 >
                 <select
@@ -186,20 +189,21 @@
 
             <!-- Second Chart -->
             <div class="bg-green-secondary w-full rounded-lg p-6">
-              <h2 class="mb-4 text-xl font-semibold text-gray-700">
+              <h2 class="mb-4 text-xl font-semibold text-gray-700" data-i18n="result-countries-rate.chart2">
                 % участников с успехом более чем 50%
               </h2>
               <div class="mb-2 sm:mb-6">
                 <label
                   for="chart-olympiad-filter-2"
                   class="mb-1 block text-sm font-medium text-gray-700"
+                  data-i18n="result-countries-rate.chart_choose_olymp"
                   >Выбрать олимпиаду</label
                 >
                 <select
                   id="chart-olympiad-filter-2"
                   class="input-base border-default mt-1 bg-white"
                 >
-                  <option value="math">Выбрать олимпиаду</option>
+                  <option value="math" data-i18n="result-countries-rate.chart_choose_olymp">Выбрать олимпиаду</option>
                 </select>
               </div>
 
@@ -212,7 +216,7 @@
           <div
             class="mb-6 flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">Рейтинг стран</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="result-countries-rate.rating_country">Рейтинг стран</h1>
             <div class="flex items-center gap-4">
               <button
                 onclick="toggleModal('modalAdd')"
@@ -233,7 +237,7 @@
                   />
                 </svg>
 
-                Опубликовать
+                <span data-i18n="result-countries-rate.publish_btn">Опубликовать</span>
               </button>
 
               <div
@@ -252,22 +256,22 @@
               <select id="country-filter"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="all">Все страны</option>
+                <option value="all" data-i18n="results.filter_all_countryies">Все страны</option>
               </select>
             </div>
           </div>
 
           <div id="summary-cards" class="mb-6 flex flex-col gap-4 md:flex-row md:items-center">
             <div class="bg-red-secondary w-full rounded-2xl p-5">
-              <p class="text-sm">Всего стран</p>
+              <p class="text-sm" data-i18n="result-countries-rate.vsego_stran">Всего стран</p>
               <p id="total-countries" class="text-red-primary text-2xl font-bold">0</p>
             </div>
             <div class="bg-orange-secondary w-full rounded-2xl p-5">
-              <p class="text-sm">Средний балл участников</p>
+              <p class="text-sm" data-i18n="result-countries-rate.average_points">Средний балл участников</p>
               <p id="average-score" class="text-orange-primary text-2xl font-bold">0</p>
             </div>
             <div class="bg-green-secondary w-full rounded-2xl p-5">
-              <p class="text-sm">ТОП-страна по рейтингу</p>
+              <p class="text-sm" data-i18n="result-countries-rate.top_stran">ТОП-страна по рейтингу</p>
               <p id="top-country" class="text-green-primary text-2xl font-bold">
               </p>
             </div>
@@ -277,9 +281,10 @@
             <table class="table-olympiads w-full min-w-4xl rounded-2xl pb-6">
               <thead>
                 <tr class="border-b border-gray-200">
-                  <th class="p-table">Страна</th>
+                  <th class="p-table" data-i18n="results.table_country">Страна</th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-1" 
+                    data-i18n="result-countries-rate.table_srednyi_ball">
                       Средний балл
                       <span>
                         <svg
@@ -299,7 +304,7 @@
                   </th>
                   <th class="p-table">
                     <div class="flex items-center gap-1">
-                      Участников
+                      <span data-i18n="result-countries-rate.table_participants">Участников</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +322,7 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-1" data-i18n="result-countries-rate.table_top100">
                       ТОП-100 Участников
                       <span>
                         <svg
@@ -337,7 +342,7 @@
                   </th>
                   <th class="p-table">
                     <div class="flex items-center gap-1">
-                      Олимпиады
+                      <span data-i18n="result-countries-rate.table_olympiads">Олимпиады</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -354,7 +359,7 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Дейсвия</th>
+                  <th class="p-table" data-i18n="results.table_action">Действия</th>
                 </tr>
               </thead>
               <tbody id="countries-table-body" class="divide-y divide-gray-200">
@@ -1245,5 +1250,6 @@
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/results-countries-rate.js"></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

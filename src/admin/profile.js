@@ -52,7 +52,7 @@ function renderUserInfo(user) {
     nameEl.textContent = user.profile.full_name_ru;
   
     const firstName = user.profile.full_name_ru.split(' ')[0];
-    welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+    welcomeEl.innerHTML = `<span data-i18n="welcome.message">Добро пожаловать,</span> ${firstName} 👋`;
   
     const roleMap = {
       administrator: 'Администратор',
@@ -61,7 +61,7 @@ function renderUserInfo(user) {
   
     // Устанавливаем роль по умолчанию, если не найдена
     roleEl.textContent = roleMap[user.profile.role] || 'Администратор';
-  }
+}
   
 
 document.addEventListener('DOMContentLoaded', async () => {

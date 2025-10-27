@@ -27,36 +27,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
 
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link active">
             <img src="/src/assets/images/chat_active.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -67,7 +67,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -85,7 +85,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -197,7 +197,7 @@
                     class="chat-tab flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
                   >
                     <div>
-                      <p class="text-sm font-bold">Представители стран</p>
+                      <p class="text-sm font-bold" data-i18n="chat.representative">Представители стран</p>
                       <p class="mt-1 text-xs">Чат</p>
                     </div>
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -216,8 +216,8 @@
                     class="chat-tab active bg-gray-50 flex w-full items-center justify-between rounded-lg p-3 text-left hover:bg-gray-50"
                   >
                     <div>
-                      <p class="text-sm font-bold">Объявления</p>
-                      <p class="mt-1 text-xs">Прикрепите файл, пожалуйста</p>
+                      <p class="text-sm font-bold" data-i18n="chat.obyavlenie">Объявления</p>
+                      <p class="mt-1 text-xs" data-i18n="chat.obyavlenie_txt">Прикрепите файл, пожалуйста</p>
                     </div>
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none">
                       <path
@@ -249,7 +249,7 @@
               <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center justify-between">
                   <div id="chat-header" class="flex items-center gap-2 text-lg font-bold">
-                    <span>Объявления</span>
+                    <span data-i18n="chat.obyavlenie">Объявления</span>
                   </div>
                 </div>
               </div>
@@ -1109,5 +1109,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   })
   
     </script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

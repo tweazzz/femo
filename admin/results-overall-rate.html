@@ -21,35 +21,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link active">
             <img src="/src/assets/images/ranking_active.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -60,7 +61,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -78,7 +79,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -146,14 +147,15 @@
           <div class="mb-6 overflow-x-auto">
             <div class="tabs !mb-1 w-md">
               <a href="/admin/results.html" class="tabs-link"
+              data-i18n="results.results_page"
                 >Результаты олимпиады</a
               >
-              <a
-                href="/admin/results-overall-rate.html"
-                class="tabs-link active"
+              <a href="/admin/results-overall-rate.html" class="tabs-link active"
+              data-i18n="results.results-overall-rate"
                 >Общий рейтинг участников
               </a>
               <a href="/admin/results-countries-rate.html" class="tabs-link"
+              data-i18n="results.results-countries-rate"
                 >Рейтинг стран</a
               >
             </div>
@@ -166,7 +168,7 @@
             >
               <img src="/src/assets/images/paper.png" alt="paper" />
               <div>
-                <p class="text-sm">Участники</p>
+                <p class="text-sm" data-i18n="results-overall.participants">Участники</p>
                 <p
                   id="participants"
                   class="text-red-primary text-2xl font-semibold"
@@ -180,7 +182,7 @@
             >
               <img src="/src/assets/images/stars.png" alt="stars" />
               <div>
-                <p class="text-sm">Средний общий балл по системе</p>
+                <p class="text-sm" data-i18n="results-overall.overall_points">Средний общий балл по системе</p>
                 <p
                   id="average_score"
                   class="text-orange-primary text-2xl font-semibold"
@@ -193,35 +195,39 @@
               class="banner bg-blue-secondary mb-6 flex justify-between rounded-2xl"
             >
               <div class="space-y-2 px-6 py-5 sm:w-3/5">
-                <p class="title mb-2 text-lg font-bold">
+                <p class="title mb-2 text-lg font-bold"
+                data-i18n="results-overall.bonus_points_info">
                   Как можно заработать ещё баллы?
                 </p>
                 <p>
                   <span class="text-blue-primary font-bold"
+                  data-i18n="results-overall.bonus_points"
                     >Баллы за олимпиады —</span
                   >
-                  получаешь XP за участие в турах. Чем выше место — тем больше
-                  баллов.
+                  <span data-i18n="results-overall.bonus_points_text">получаешь XP за участие в турах. Чем выше место — тем больше
+                  баллов.</span>
                 </p>
 
                 <ul class="list-inside list-disc ps-4 marker:ms-1">
-                  <li>🥇 1 место — +100 XP</li>
-                  <li>🥈 2 место — +70 XP</li>
-                  <li>🥉 3 место — +50 XP</li>
-                  <li>✅ Участие — +10 XP</li>
+                  <li>🥇 <span data-i18n="results-overall.bonus_points_1">1 место</span> — +100 XP</li>
+                  <li>🥈 <span data-i18n="results-overall.bonus_points_2">2 место</span> — +70 XP</li>
+                  <li>🥉 <span data-i18n="results-overall.bonus_points_3">3 место</span> — +50 XP</li>
+                  <li>✅ <span data-i18n="results-overall.bonus_points_4">Участие</span> — +10 XP</li>
                 </ul>
 
                 <p>
                   <span class="text-blue-primary font-bold"
+                  data-i18n="results-overall.bonus_points_text2"
                     >Баллы за решение задачи —</span
                   >
-                  выполняй подготовительные задачи и ли решишь все задачи до
-                  дедлайна, получишь +15 XP дополнительно
+                  <span data-i18n="results-overall.bonus_points_text3">выполняй подготовительные задачи и ли решишь все задачи до
+                  дедлайна, получишь +15 XP дополнительно</span>
                 </p>
 
                 <p>
-                  <span class="text-blue-primary font-bold">Награды —</span>
-                  просматриваются в профиле участника
+                  <span class="text-blue-primary font-bold" 
+                  data-i18n="results-overall.bonus_points_nagrada">Награды —</span>
+                  <span data-i18n="results-overall.bonus_points_nagrada_txt">просматриваются в профиле участника</span>
                 </p>
               </div>
               <div
@@ -230,7 +236,7 @@
             </div>
 
           <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-semibold">Общий рейтинг участников</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="results-overall.rating">Общий рейтинг участников</h1>
           </div>
 
           <!-- Control Panel -->
@@ -241,6 +247,8 @@
                 <input id="filter-search"
                   type="text"
                   placeholder="Искать участника"
+                  data-i18n="results-overall.filter_username"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                 />
                 <svg
@@ -264,24 +272,24 @@
               <select id="filter-country"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все страны</option>
+                <option value="" data-i18n="results.filter_all_countryies">Все страны</option>
               </select>
 
               <select id="filter-grade"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все классы</option>
-                <option value="first">1 класс</option>
-                <option value="second">2 класс</option>
-                <option value="third">3 класс</option>
-                <option value="fourth">4 класс</option>
-                <option value="fifth">5 класс</option>
-                <option value="sixth">6 класс</option>
-                <option value="seventh">7 класс</option>
-                <option value="eights">8 класс</option>
-                <option value="ninth">9 класс</option>
-                <option value="tenth">10 класс</option>
-                <option value="eleventh">11 класс</option>
+                <option value="" data-i18n="results.filter_all_classes">Все классы</option>
+                <option value="first">1 </option>
+                <option value="second">2 </option>
+                <option value="third">3 </option>
+                <option value="fourth">4 </option>
+                <option value="fifth">5 </option>
+                <option value="sixth">6 </option>
+                <option value="seventh">7 </option>
+                <option value="eights">8 </option>
+                <option value="ninth">9 </option>
+                <option value="tenth">10 </option>
+                <option value="eleventh">11 </option>
               </select>
 
               <!--<select
@@ -317,11 +325,12 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Имя участника</th>
-                  <th class="p-table">Страна</th>
-                  <th class="p-table">Класс</th>
+                  <th class="p-table" data-i18n="results.table_username">Имя участника</th>
+                  <th class="p-table" data-i18n="results.table_country">Страна</th>
+                  <th class="p-table" data-i18n="results.table_class">Класс</th>
                   <th class="p-table">
-                    <div id="sort-score-header" class="flex items-center gap-1 cursor-pointer">
+                    <div id="sort-score-header" class="flex items-center gap-1 cursor-pointer"
+                    data-i18n="results.table_points">
                       Баллы за олимпиаду
                       <span>
                         <svg
@@ -341,7 +350,7 @@
                   </th>
                   <th class="p-table">
                     <div id="sort-scoretask-header" class="flex items-center gap-1 cursor-pointer">
-                      Баллы за задачи
+                      <span data-i18n="results-overall.table_points_for_tasks">Баллы за задачи</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +369,7 @@
                   </th>
                   <th class="p-table">
                     <div id="sort-scorerew-header" class="flex items-center gap-1 cursor-pointer">
-                      Баллы за награды
+                      <span data-i18n="results-overall.table_points_for_nagrada">Баллы за награды</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -379,7 +388,7 @@
                   </th>
                   <th class="p-table">
                     <div id="sort-allscore-header" class="flex items-center gap-1 cursor-pointer">
-                      Общее Баллы
+                      <span data-i18n="results-overall.table_points_all">Общее Баллы</span>
                       <span>
                         <img
                           src="/src/assets/images/coin.png"
@@ -412,7 +421,7 @@
 
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
-            <div class="text-gray-primary text-sm">Всего рейтингов: <span id="total-resoverall-count">0</span></div>
+            <div class="text-gray-primary text-sm"><span data-i18n="results-overall.count">Всего рейтингов: </span><span id="total-resoverall-count">0</span></div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
@@ -1015,5 +1024,6 @@
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/results-overall-rate.js"></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

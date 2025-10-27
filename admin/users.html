@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Пользователи</title>
+    <title data-i18n="menu.users">Пользователи</title>
     <link rel="stylesheet" href="/dist/style.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@lucide/web@latest"></script>
@@ -21,35 +21,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link active">
             <img src="/src/assets/images/users_active.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -60,7 +61,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -78,7 +79,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -146,7 +147,7 @@
           <div
             class="mb-6 flex flex-col space-y-4 xl:flex-row xl:items-center xl:justify-between xl:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">Управление пользователями</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="users.control">Управление пользователями</h1>
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
               <button
                 onclick="downloadAllUsersExcel()"
@@ -166,7 +167,7 @@
                     d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
                   />
                 </svg>
-                Скачать все данные
+                <span data-i18n="users.download_btn">Скачать все данные</span>
               </button>
               <button
                 type="button"
@@ -187,7 +188,7 @@
                     d="M12 4.5v15m7.5-7.5h-15"
                   />
                 </svg>
-                Добавить пользователя
+                <span data-i18n="users.add_user">Добавить пользователя</span>
               </button>
 
               <div
@@ -203,7 +204,7 @@
                 <div class="relative">
                   <div class="flex flex-col rounded-3xl bg-white">
                     <p
-                      class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold"
+                      class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold" data-i18n="users.add_user"
                     >
                       Добавить пользователя
                     </p>
@@ -211,11 +212,11 @@
                     <div
                       class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 sm:px-6"
                     >
-                      <p class="text-gray-primary mb-2 text-sm">
+                      <p class="text-gray-primary mb-2 text-sm" data-i18n="users.choose_role_popup">
                         Кого вы хотите добавить?
                       </p>
                       <div class="flex gap-2">
-                        <label class="btn-option">
+                        <label class="btn-option" data-i18n="users.participant">
                           Участник
                           <input
                             type="radio"
@@ -227,7 +228,7 @@
                           />
                         </label>
 
-                        <label class="btn-option">
+                        <label class="btn-option" data-i18n="users.representative">
                           Представитель
                           <input
                             type="radio"
@@ -243,7 +244,7 @@
                       <form id="participant-form" class="role-form">
                         <div class="mt-6 space-y-6">
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="users.form">
                               Личные данные
                             </p>
                             <div
@@ -265,7 +266,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_fullname" data-i18n-attr="placeholder"
                                   >ФИО
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -279,7 +280,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_country"
                                   >Страна
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -298,7 +299,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_city"
                                   >Город
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -312,12 +313,14 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_school"
                                   >Школа
                                   <span class="text-red-primary">*</span></label
                                 >
                                 <input
                                   placeholder="Название школы"
+                                  data-i18n="users.form_school_placeholder"
+                                  data-i18n-attr="placeholder"
                                   type="text"
                                   name="school"
                                   class="input-base border-default"
@@ -326,7 +329,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_class"
                                   >Класс
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -346,13 +349,15 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_password"
                                   >Пароль
                                   <span class="text-red-primary">*</span></label
                                 >
                                 <div class="relative">
                                   <input
                                     id="password"
+                                    data-i18n="users.form_pass_placeholder"
+                                    data-i18n-attr="placeholder"
                                     type="password"
                                     placeholder="Введите пароль"
                                     class="input-base border-default"
@@ -384,7 +389,7 @@
 
                           <!-- Данные родителя -->
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="users.form_parents_info">
                               Данные родителя
                             </p>
                             <div
@@ -392,7 +397,7 @@
                             >
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_fullname"
                                   >ФИО родителя</label
                                 ><span class="text-red-primary">*</span>
                                 <input
@@ -404,7 +409,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_parents_number"
                                   >Номер телефона родителя</label
                                 ><span class="text-red-primary">*</span>
                                 <input
@@ -419,7 +424,7 @@
 
                           <!-- Данные учителя -->
                           <div>
-                            <p class="mb-3 text-lg font-semibold text-gray-900">
+                            <p class="mb-3 text-lg font-semibold text-gray-900" data-i18n="users.form_teacher_info">
                               Данные учителя
                             </p>
                             <div
@@ -427,7 +432,7 @@
                             >
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_fullname"
                                   >ФИО учителя</label
                                 >
                                 <input
@@ -439,7 +444,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_teacher_num"
                                   >Номер телефона учителя</label
                                 >
                                 <input
@@ -472,7 +477,7 @@
                                   />
                                 </svg>
                               </span>
-                              Добавить участника
+                              <span data-i18n="users.form_submit_btn">Добавить участника</span>
                             </button>
                           </div>
                         </div>
@@ -483,7 +488,7 @@
                         <div class="mt-6 space-y-6">
                           <!-- Representative form content -->
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="users.form">
                               Личные данные
                             </p>
                             <div
@@ -505,7 +510,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_fullname"
                                   >ФИО
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -520,7 +525,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
-                                  >Страна
+                                  ><span data-i18n="users.form_country">Страна</span>
                                   <span class="text-red-primary">*</span></label
                                 >
                                 <input
@@ -538,7 +543,7 @@
                               </div>
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="users.form_representative_num"
                                   >Номер телефона представителя</label
                                 >
                                 <input
@@ -606,7 +611,7 @@
                                   />
                                 </svg>
                               </span>
-                              Добавить участника
+                              <span data-i18n="users.form_submit_btn">Добавить участника</span>
                             </button>
                           </div>
                         </div>
@@ -1244,6 +1249,8 @@
                   type="text"
                   placeholder="Искать пользователей по имени или ID"
                   id="search_by_id_or_name"
+                  data-i18n="users.search_by_name"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                 />
                 <svg
@@ -1266,7 +1273,7 @@
               <select
                 class="country-filter cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все страны</option>
+                <option data-i18n="users.all_countries">Все страны</option>
                 <!-- <option>Казахстан</option>
               <option>Россия</option>
               <option>Узбекистан</option> -->
@@ -1275,16 +1282,16 @@
               <select
                 class="role-filter cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все роли</option>
-                <option value="participant">Участник</option>
-                <option value="representative">Представитель</option>
+                <option value="" data-i18n="users.all_roles">Все роли</option>
+                <option value="participant" data-i18n="users.participant">Участник</option>
+                <option value="representative" data-i18n="users.representative">Представитель</option>
                 <!-- <option>Администратор</option> -->
               </select>
 
               <select
                 class="grade-filter cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option>Все классы</option>
+                <option data-i18n="users.all_classes">Все классы</option>
               </select>
             </div>
           </div>
@@ -1293,7 +1300,7 @@
               <thead>
                 <tr class="table-tr border-gray-border border-b">
                   <th id="sort-name-header" class="p-table flex items-center gap-1 cursor-pointer">
-                    Имя участника
+                    <span data-i18n="users.username_filter">Имя участника</span>
                     <span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1310,10 +1317,10 @@
                     </span>
                   </th>
                   <th class="p-table">ID</th>
-                  <th class="p-table">Страна</th>
-                  <th class="p-table">Роль</th>
-                  <th class="p-table">Класс</th>
-                  <th class="p-table">Действия</th>
+                  <th class="p-table" data-i18n="users.country_filter">Страна</th>
+                  <th class="p-table" data-i18n="users.role_filter">Роль</th>
+                  <th class="p-table" data-i18n="users.class_filter">Класс</th>
+                  <th class="p-table" data-i18n="users.action">Действия</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200">
@@ -1703,7 +1710,7 @@
           <!-- Pagination -->
           <div class="flex items-center justify-between">
             <!--<div class="text-gray-primary text-sm">Всего 85 участников</div>-->
-            <div>Всего участников: <span id="total-users-count">0</span></div>
+            <div><span data-i18n="users.total_users">Всего участников: </span><span id="total-users-count">0</span></div>
             <!-- Ниже таблицы пользователей -->
             <div id="pagination" class="mt-4 flex gap-2"></div>
             <!--<div class="flex items-center gap-0.5 *:cursor-pointer">
@@ -2408,5 +2415,6 @@
     <script src="/auth.js" defer></script>
     <script src="/src/admin/users.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

@@ -38,37 +38,98 @@ async function refreshAccessToken() {
   }
 }
 
-async function authorizedFetch(url, options = {}, retry = true) {
-  let token = localStorage.getItem('access_token')
+// helper: кэшируем промис запроса settings, чтобы не делать множественные одновременные запросы
+let _userSettingsPromise = null;
 
-  if (!token) {
-    window.location.href = '../index.html'
-    return
-  }
-
-  // Не устанавливаем Content-Type для FormData (загрузка файлов)
-  const isFormData = options.body instanceof FormData
-  
-  options.headers = {
-    ...options.headers,
-    Authorization: `Bearer ${token}`,
-  }
-  
-  // Устанавливаем Content-Type только если это не FormData
-  if (!isFormData) {
-    options.headers['Content-Type'] = 'application/json'
-  }
-
-  let response = await fetch(url, options)
-
-  if (response.status === 401 && retry) {
-    const newToken = await refreshAccessToken()
-    if (!newToken) return
-
-    options.headers.Authorization = `Bearer ${newToken}`
-    response = await fetch(url, options)
-  }
-
-  return response
+async function fetchUserSettingsOnce(settingsUrl = '/api/users/settings/') {
+  if (_userSettingsPromise) return _userSettingsPromise;
+  _userSettingsPromise = (async () => {
+    try {
+      // Если у вас нужна авторизация — убедитесь, что токен установлен в localStorage
+      const token = localStorage.getItem('access_token');
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(settingsUrl, { headers, cache: 'no-cache' });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (e) {
+      console.warn('fetchUserSettingsOnce error', e);
+      return null;
+    }
+  })();
+  return _userSettingsPromise;
 }
 
+// Получить язык (из localStorage или бэка), возвращает 'ru' по умолчанию
+async function getUserLang() {
+  const cached = localStorage.getItem('lang');
+  if (cached) return cached;
+
+  const settings = await fetchUserSettingsOnce();
+  if (settings && settings.language) {
+    try { localStorage.setItem('lang', settings.language); } catch(e){}
+    return settings.language;
+  }
+
+  // fallback: можно использовать navigator.language, но у вас верстка по-умолчанию русская
+  return 'ru';
+}
+
+// Основной authorizedFetch с Accept-Language
+async function authorizedFetch(url, options = {}, retry = true) {
+  let token = localStorage.getItem('access_token');
+
+  if (!token) {
+    window.location.href = '../index.html';
+    return;
+  }
+
+  const isFormData = options.body instanceof FormData;
+
+  // Ensure headers object exists (не мутируем оригинальные headers напрямую)
+  options.headers = Object.assign({}, options.headers || {});
+
+  // Authorization
+  options.headers.Authorization = `Bearer ${token}`;
+
+  // Content-Type: не устанавливаем для FormData
+  if (!isFormData) {
+    // установка JSON только если явно не указан
+    if (!options.headers['Content-Type'] && !options.headers['content-type']) {
+      options.headers['Content-Type'] = 'application/json';
+    }
+  } else {
+    // удалить Content-Type если случайно оставлен
+    delete options.headers['Content-Type'];
+    delete options.headers['content-type'];
+  }
+
+  // Accept-Language: возьмём из localStorage или запросим settings
+  try {
+    const lang = await getUserLang();
+    if (lang) {
+      // не перезаписываем, если явно указано в options.headers
+      if (!options.headers['Accept-Language'] && !options.headers['accept-language']) {
+        options.headers['Accept-Language'] = lang;
+      }
+    }
+  } catch (e) {
+    console.warn('Не удалось получить language для заголовка', e);
+  }
+
+  // Выполняем запрос
+  let response = await fetch(url, options);
+
+  // 401 -> попробуем обновить токен и повторить один раз
+  if (response.status === 401 && retry) {
+    const newToken = await refreshAccessToken(); // предполагается существующая функция
+    if (!newToken) return response; // или null
+
+    // обновляем токен в localStorage и заголовке, затем повторяем
+    localStorage.setItem('access_token', newToken);
+    options.headers.Authorization = `Bearer ${newToken}`;
+    response = await fetch(url, options);
+  }
+
+  return response;
+}

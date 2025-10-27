@@ -27,35 +27,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link active">
             <img src="/src/assets/images/card_active.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -66,7 +67,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -84,7 +85,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -152,7 +153,7 @@
           <div
             class="mb-2 flex flex-col space-y-2 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">История платежей</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="payments.header">История платежей</h1>
             <div
               class="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4"
             >
@@ -163,316 +164,7 @@
               ></div>
 
               <!-- Add Olympiad -->
-              <div
-                id="modal"
-                class="modal fixed top-10 left-1/2 z-30 hidden w-full max-w-xl -translate-x-1/2"
-              >
-                <div class="relative">
-                  <div class="flex flex-col rounded-3xl bg-white">
-                    <p
-                      class="border-gray-border border-b px-6 pt-6 pb-5 text-2xl font-bold"
-                    >
-                      Создание задачи
-                    </p>
 
-                    <form
-                      class="scrollbar max-h-[80vh] overflow-y-auto px-6 py-5"
-                    >
-                      <p class="text-gray-primary mb-2 text-sm">
-                        Выбрать тип задачи
-                      </p>
-                      <div class="flex gap-2">
-                        <label class="btn-option">
-                          Подготовительная задача
-                          <input
-                            type="radio"
-                            name="task"
-                            value="prepare-task"
-                            class="hidden"
-                            required
-                            checked
-                          />
-                        </label>
-
-                        <label class="btn-option">
-                          Задача дня
-                          <input
-                            type="radio"
-                            name="task"
-                            value="daily-task"
-                            class="hidden"
-                            required
-                          />
-                        </label>
-                        <!-- <button  class="">
-                        </button>
-                        <button  class="btn-option">
-                        </button> -->
-                      </div>
-
-                      <div class="mt-6 space-y-6">
-                        <div>
-                          <p class="mb-4 text-lg font-semibold text-gray-900">
-                            Общая информация
-                          </p>
-                          <div
-                            class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2"
-                          >
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Название задачи
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <input
-                                type="text"
-                                name="task-name"
-                                class="input-base border-default"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Класс
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <input
-                                type="number"
-                                name="grade"
-                                maxlength="2"
-                                min="1"
-                                max="11"
-                                class="input-base border-default"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Страна
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <input
-                                type="text"
-                                name="country"
-                                class="input-base border-default"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Город
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <input
-                                type="text"
-                                name="city"
-                                class="input-base border-default"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Школа
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <input
-                                type="text"
-                                name="school"
-                                class="input-base border-default"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Класс
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <input
-                                type="number"
-                                name="class"
-                                class="input-base border-default"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Пароль
-                                <span class="text-red-primary">*</span></label
-                              >
-                              <div class="relative">
-                                <input
-                                  type="password"
-                                  name="password"
-                                  class="input-base border-default"
-                                  required
-                                />
-                                <button
-                                  type="button"
-                                  class="hover:text-gray-primary absolute top-2.5 right-3 text-gray-500"
-                                >
-                                  👁️
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Данные родителя -->
-                        <div>
-                          <p class="mb-4 text-lg font-semibold text-gray-900">
-                            Данные родителя
-                          </p>
-                          <div
-                            class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2"
-                          >
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >ФИО родителя</label
-                              >
-                              <input
-                                type="text"
-                                name="parent_name"
-                                class="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-black"
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Номер телефона родителя</label
-                              >
-                              <input
-                                type="tel"
-                                name="parent_phone"
-                                class="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-black"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Данные учителя -->
-                        <div>
-                          <p class="mb-3 text-lg font-semibold text-gray-900">
-                            Данные учителя
-                          </p>
-                          <div
-                            class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2"
-                          >
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >ФИО учителя</label
-                              >
-                              <input
-                                type="text"
-                                name="teacher_name"
-                                class="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-black"
-                              />
-                            </div>
-                            <div>
-                              <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
-                                >Номер телефона учителя</label
-                              >
-                              <input
-                                type="tel"
-                                name="teacher_phone"
-                                class="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-black"
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                          <button class="btn-outline btn--red">
-                            <span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="size-5"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                />
-                              </svg>
-                            </span>
-                            Удалить
-                          </button>
-                          <div class="flex items-center gap-2">
-                            <button class="btn-outline btn--orange">
-                              <span
-                                ><svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="1.5"
-                                  stroke="currentColor"
-                                  class="size-5"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                  />
-                                </svg>
-                              </span>
-                              Отменить
-                            </button>
-                            <button class="btn-orange">
-                              <span>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="1.5"
-                                  stroke="currentColor"
-                                  class="size-5"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                  />
-                                </svg>
-                              </span>
-                              Сохранить
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-
-                  <button
-                    class="absolute top-6 right-5 cursor-pointer"
-                    onclick="toggleModal()"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="size-5"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -484,6 +176,8 @@
                 <input id="filter-search"
                   type="text"
                   placeholder="Поиск по ID участника / имени "
+                  data-i18n="payments.filter_id"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                 />
                 <svg
@@ -507,10 +201,10 @@
               <select id="filter-status"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все статусы</option>
-                <option value="paid">Оплачено</option>
-                <option value="error">Ошибка</option>
-                <option value="pending">В процессе</option>
+                <option value="" data-i18n="payments.filter_all_statuses">Все статусы</option>
+                <option value="paid" data-i18n="payments.filter_payed_status">Оплачено</option>
+                <option value="error" data-i18n="payments.filter_error_status">Ошибка</option>
+                <option value="pending" data-i18n="payments.filter_inprocess_status">В процессе</option>
               </select>
 
               <!-- Container -->
@@ -521,6 +215,8 @@
                   id="dateRange"
                   class="w-full bg-transparent outline-none"
                   placeholder="Выберите дату"
+                  data-i18n="payments.filter_date"
+                  data-i18n-attr="placeholder"
                   readonly
                 />
                 <svg
@@ -555,7 +251,7 @@
               class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Общая сумма поступлений</p>
+                <p class="text-sm" data-i18n="payments.summary_payments">Общая сумма поступлений</p>
                 <p id="summary-total_amount" class="text-orange-primary text-2xl font-semibold">
                 </p>
               </div>
@@ -566,7 +262,7 @@
               class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Успешных оплат</p>
+                <p class="text-sm" data-i18n="payments.success_payments">Успешных оплат</p>
                 <p id="summary-successful_payments" class="text-green-primary text-2xl font-semibold"></p>
               </div>
             </div>
@@ -576,7 +272,7 @@
               class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Ожидают подтверждения</p>
+                <p class="text-sm" data-i18n="payments.w_payments">Ожидают подтверждения</p>
                 <p id="summary-pending_confirmations" class="text-violet-primary text-2xl font-semibold"></p>
               </div>
             </div>
@@ -586,7 +282,7 @@
               class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Платежи с ошибками</p>
+                <p class="text-sm" data-i18n="payments.err_payments">Платежи с ошибками</p>
                 <p id="summary-payments_with_errors" class="text-red-primary text-2xl font-semibold"></p>
               </div>
             </div>
@@ -1287,5 +983,6 @@
     <script src="/auth.js" defer></script>
     <script src="/src/admin/payments.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

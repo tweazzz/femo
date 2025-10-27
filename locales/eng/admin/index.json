@@ -1,0 +1,12 @@
+{
+  "menu.home": "Home",
+  "menu.users": "Users",
+  "menu.olympiads": "Olympiads",
+  "menu.tasks": "Tasks",
+  "menu.results": "Results",
+  "menu.certificates": "Certificates",
+  "menu.payments": "Payments",
+  "menu.chat": "Chat with users",
+  "menu.logout": "Log out",
+  "menu.profile": "Profile"
+}

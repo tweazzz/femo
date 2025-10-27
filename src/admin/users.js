@@ -51,7 +51,9 @@ function renderUserInfo(profile) {
 
   nameEl.textContent    = profile.full_name_ru || '';
   const firstName       = (profile.full_name_ru || '').split(' ')[0];
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+  welcomeEl.innerHTML = `<span data-i18n="welcome.message">Добро пожаловать,</span> ${firstName} 👋`;
+// затем вызвать applyTranslations(window.i18nDict);
+
 
   const roleMap = { administrator: 'Администратор' };
   roleEl.textContent = roleMap[profile.role] || profile.role;
@@ -121,7 +123,7 @@ function initFilters(users) {
   const countries = [...new Set(users.map(u => u.country))].filter(Boolean)
   const countrySelect = document.querySelector('.country-filter')
   countrySelect.innerHTML = `
-    <option value="">Все страны</option>
+    <option value="" data-i18n="users.all_countries">Все страны</option>
     ${countries
        .map(c => `<option value="${c}">${c}</option>`)
        .join('')}
@@ -133,7 +135,7 @@ function initFilters(users) {
   const grades = [...new Set(users.map((u) => u.grade))].filter(Boolean).sort()
   const gradeSelect = document.querySelector('.grade-filter')
   gradeSelect.innerHTML = `
-      <option value="">Все классы</option>
+      <option value="" data-i18n="users.all_classes">Все классы</option>
       ${Object.entries(classMap)
         .map(([num, name]) => `<option value="${name}">${num}</option>`)
         .join('')}

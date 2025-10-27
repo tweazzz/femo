@@ -30,35 +30,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link active">
             <img src="/src/assets/images/ranking_active.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -69,7 +70,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -87,7 +88,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -156,12 +157,15 @@
           <div class="mb-6 overflow-x-auto">
             <div class="tabs !mb-1 w-md">
               <a href="/admin/results.html" class="tabs-link active"
+              data-i18n="results.results_page"
                 >Результаты олимпиады</a
               >
               <a href="/admin/results-overall-rate.html" class="tabs-link"
+              data-i18n="results.results-overall-rate"
                 >Общий рейтинг участников
               </a>
               <a href="/admin/results-countries-rate.html" class="tabs-link"
+              data-i18n="results.results-countries-rate"
                 >Рейтинг стран</a
               >
             </div>
@@ -170,14 +174,15 @@
           <div
             class="mb-2 flex flex-col space-y-2 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">Редактирование результата</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="results.results-h1">Редактирование результата</h1>
             <div
               class="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4"
             >
               <button
                 id="upload-button"
                 class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-1 rounded-xl border-1 bg-white px-4 py-2"
-              >
+                data-i18n="results.olympiad-download-grades"
+                >
                 Загрузить оценки олимпиады
               </button>
               <input
@@ -204,7 +209,7 @@
                     d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
                   />
                 </svg>
-                Опубликовать
+                <span data-i18n="results.publish-btn">Опубликовать</span>
               </button>
 
               <div
@@ -222,7 +227,7 @@
                     <p
                       class="border-gray-border border-b px-4 pt-6 pb-5 text-xl font-bold"
                     >
-                      Редактировать олимпиаду
+                      
                     </p>
 
                     <form
@@ -562,8 +567,8 @@
               href="#"
               onclick="exportTableToExcel()"
               class="text-orange-primary"
-              >Скачайте шаблон</a
-            >, введите оценки и загрузите обратно
+              ><span data-i18n="results.download_template">Скачайте шаблон</span></a
+            >, <span data-i18n="results.download_template_text">введите оценки и загрузите обратно</span>
           </p>
 
           <!-- Control Panel -->
@@ -574,6 +579,8 @@
                 <input
                   type="text"
                   placeholder="Искать участника"
+                  data-i18n="results.filter_search_user"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                   id="search-participant"
                 />
@@ -599,32 +606,32 @@
                 class="country-filter cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 id="filter-country"
               >
-                <option value="">Все страны</option>
+                <option value="" data-i18n="results.filter_all_countryies">Все страны</option>
               </select>
 
               <select
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 id="filter-grade"
               >
-                <option value="">Все классы</option>
-                <option value="1">1 класс</option>
-                <option value="2">2 класс</option>
-                <option value="3">3 класс</option>
-                <option value="4">4 класс</option>
-                <option value="5">5 класс</option>
-                <option value="6">6 класс</option>
-                <option value="7">7 класс</option>
-                <option value="8">8 класс</option>
-                <option value="9">9 класс</option>
-                <option value="10">10 класс</option>
-                <option value="11">11 класс</option>
+                <option value="" data-i18n="results.filter_all_classes">Все классы</option>
+                <option value="1">1 </option>
+                <option value="2">2 </option>
+                <option value="3">3 </option>
+                <option value="4">4 </option>
+                <option value="5">5 </option>
+                <option value="6">6 </option>
+                <option value="7">7 </option>
+                <option value="8">8 </option>
+                <option value="9">9 </option>
+                <option value="10">10 </option>
+                <option value="11">11 </option>
               </select>
 
               <select
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 id="filter-olympiad"
               >
-                <option value="">Выбрать олимпиаду</option>
+                <option value="" data-i18n="results.filter_choose_olympiad">Выбрать олимпиаду</option>
               </select>
             </div>
           </div>
@@ -650,7 +657,7 @@
               class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Дата проведения</p>
+                <p class="text-sm" data-i18n="results.olympiad_date">Дата проведения</p>
                 <p
                   id="summary-period"
                   class="text-red-primary text-2xl font-semibold"
@@ -663,7 +670,7 @@
               class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Участники</p>
+                <p class="text-sm" data-i18n="results.participants">Участники</p>
                 <p
                   id="summary-participants"
                   class="text-violet-primary text-2xl font-semibold"
@@ -676,7 +683,7 @@
               class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6"
             >
               <div>
-                <p class="text-sm">Средний балл участников</p>
+                <p class="text-sm" data-i18n="results.participants_average">Средний балл участников</p>
                 <p
                   id="summary-average"
                   class="text-orange-primary text-2xl font-semibold"
@@ -710,7 +717,7 @@
                   </th>
                   <th class="p-table">
                     <div id="sort-rank-header" class="flex items-center cursor-pointer">
-                      Место
+                      <span data-i18n="results.table_rank">Место</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -727,12 +734,12 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Имя участника</th>
-                  <th class="p-table">Страна</th>
-                  <th class="p-table">Класс</th>
+                  <th class="p-table" data-i18n="results.table_username">Имя участника</th>
+                  <th class="p-table" data-i18n="results.table_country">Страна</th>
+                  <th class="p-table" data-i18n="results.table_class">Класс</th>
                   <th class="p-table">
                     <div id="sort-score-header" class="flex items-center gap-1 cursor-pointer">
-                      Баллы за олимпиаду
+                      <span data-i18n="results.table_points">Баллы за олимпиаду</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -749,8 +756,8 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Результат</th>
-                  <th class="p-table">Действия</th>
+                  <th class="p-table" data-i18n="results.table_result">Результат</th>
+                  <th class="p-table" data-i18n="results.table_action">Действия</th>
                 </tr>
               </thead>
               <tbody
@@ -763,7 +770,7 @@
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
             <div class="text-gray-primary text-sm">
-              Всего результатов: <span id="total-results-count">0</span>
+              <span data-i18n="results.count">Всего результатов: </span><span id="total-results-count">0</span>
             </div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
@@ -1310,7 +1317,7 @@
   <div class="relative">
     <form class="flex flex-col rounded-3xl bg-white shadow-xl">
       <div class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4">
-        <p class="text-xl font-bold">Удалить результат</p>
+        <p class="text-xl font-bold" data-i18n="results.delete_popup_h1">Удалить результат</p>
         <button
           type="button"
           onclick="openDeleteModal('${task.title}', '${task.id}')"
@@ -1320,7 +1327,7 @@
         </button>
       </div>
       <div class="px-6 py-4">
-        <p class="modal-task-title mb-4 text-sm">
+        <p class="modal-task-title mb-4 text-sm" data-i18n="results.delete_popup_text">
           Вы точно уверены, что хотите удалить результат...?
         </p>
       </div>
@@ -1333,10 +1340,10 @@
                 d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
             </svg>
           </span>
-          Удалить
+          <span data-i18n="results.delete_popup_btn">Удалить</span>
         </button>
         <button type="button" onclick="toggleModal('modalDel')" class="btn-gray-b">
-          Отмена
+          <span data-i18n="results.cancel_popup_btn">Отмена</span>
         </button>
       </div>
     </form>
@@ -1418,5 +1425,6 @@
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/results.js"></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

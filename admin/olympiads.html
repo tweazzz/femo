@@ -28,35 +28,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link active">
+          <a href="/admin/olympiads.html" class="sidebar-link active" >
             <img src="/src/assets/images/olympiad_active.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -67,7 +68,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -85,7 +86,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -154,7 +155,7 @@
           <div
             class="mb-6 flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">Управление олимпиадами</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="olympiads.olympiad">Управление олимпиадами</h1>
             <div class="flex items-center gap-4">
               <button
                 onclick="toggleModal('modalAdd')"
@@ -165,7 +166,7 @@
               <path d="M10 15V5" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
 
-                Создать олимпиаду
+                <span data-i18n="olympiads.create_olympiad_btn">Создать олимпиаду</span>
               </button>
 
               <div
@@ -182,6 +183,7 @@
                   <div class="flex flex-col rounded-3xl bg-white">
                     <p
                       class="border-gray-border border-b px-4 pt-6 pb-5 text-xl font-bold"
+                      data-i18n="olympiads.add_olympiad"
                     >
                       Добавить олимпиаду
                     </p>
@@ -191,7 +193,7 @@
                     >
                       <div class="space-y-6">
                         <div>
-                          <p class="mb-4 text-lg font-semibold text-gray-900">
+                          <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="olympiads.full_info">
                             Общая информация
                           </p>
                           <div
@@ -199,7 +201,7 @@
                           >
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.name"
                                 >Название олимпиады
                                 <span class="text-red-primary">*</span></label
                               >
@@ -254,7 +256,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.classes"
                                 >Классы
                                 <span class="text-red-primary">*</span></label
                               >
@@ -266,17 +268,17 @@
                                   name="grades"
                                   required
                                 >
-                                  <option value="1">1 класс</option>
-                                  <option value="2">2 класс</option>
-                                  <option value="3">3 класс</option>
-                                  <option value="4">4 класс</option>
-                                  <option value="5">5 класс</option>
-                                  <option value="6">6 класс</option>
-                                  <option value="7">7 класс</option>
-                                  <option value="8">8 класс</option>
-                                  <option value="9">9 класс</option>
-                                  <option value="10">10 класс</option>
-                                  <option value="11">11 класс</option>
+                                  <option value="1">1 </option>
+                                  <option value="2">2 </option>
+                                  <option value="3">3 </option>
+                                  <option value="4">4 </option>
+                                  <option value="5">5 </option>
+                                  <option value="6">6 </option>
+                                  <option value="7">7 </option>
+                                  <option value="8">8 </option>
+                                  <option value="9">9 </option>
+                                  <option value="10">10 </option>
+                                  <option value="11">11 </option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -300,7 +302,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.year"
                                 >Год</label
                               >
                               <div class="relative">
@@ -341,6 +343,7 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiads.status"
                                 >Статус олимпиады
                                 <span class="text-red-primary">*</span>
                               </label>
@@ -350,9 +353,9 @@
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="ongoing">Идет сейчас</option>
-                                  <option value="finished">Завершено</option>
-                                  <option value="upcoming">Скоро</option>
+                                  <option data-i18n="olympiads.status_ongoing" value="ongoing">Идет сейчас</option>
+                                  <option data-i18n="olympiads.status_finished" value="finished">Завершено</option>
+                                  <option data-i18n="olympiads.status_upcoming" value="upcoming">Скоро</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -376,7 +379,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.website_link"
                                 >Ссылка на страницу сайта</label
                               >
                               <input
@@ -391,6 +394,7 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiads.summary"
                                 >Стоимость участия</label
                               >
                               <div class="relative">
@@ -419,6 +423,7 @@
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
                                 for="language-add"
+                                data-i18n="olympiad.lang"
                                 >Язык олимпиады
                                 <span class="text-red-primary">*</span>
                               </label>
@@ -447,13 +452,14 @@
                             <div class="sm:col-span-2">
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiad.description"
                                 >Описание олимпиады</label
                               >
                               <div class="relative">
                                 <textarea
                                   oninput="auto_grow(this)"
                                   rows="2"
-                                  placeholder="Введите ваше сообщение..."
+                                  placeholder="..."
                                   class="textarea input-base border-default px-4"
                                   id="disc-add"
                                 ></textarea>
@@ -465,28 +471,30 @@
                         <!-- Этапы олимпиады -->
                         <div>
                           <p class="mb-4 text-lg font-semibold text-gray-900">
-                            Этапы олимпиады
+                            <span data-i18n="olympiad.stages">Этапы олимпиады</span>
                           </p>
                           <div id="stages-container" class="border-default rounded-2xl p-4">
                             <div id="stage-template" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                               <div>
-                                <label class="text-gray-primary mb-1 block text-sm font-medium">Название этапа</label>
+                                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.stages_name">Название этапа</label>
                                 <div class="relative">
                                   <input
                                     type="text"
                                     class="step-name-add input-base border-default"
-                                    placeholder="Название этапа (например: Регистрация, Этап 1, Финал)"
+                                    placeholder="(Регистрация, Этап 1, Финал)"
                                     required
                                   />
                                 </div>
                               </div>
                             
                               <div>
-                                <label class="text-gray-primary mb-1 block text-sm font-medium">Период этапа</label>
+                                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.dates">Период этапа</label>
                                 <div class="relative">
                                   <input
                                     class="date-range-add input-base border-default"
                                     placeholder="Выберите дату"
+                                    data-i18n="olympiad.dates_placeholder"
+                                    data-i18n-attr="placeholder"
                                     readonly
                                   />
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -515,14 +523,14 @@
                                     />
                                   </svg>
                                 </span>
-                                Добавить этап
+                                <span data-i18n="olympiad.add_stage">Добавить этап</span>
                               </button>
                             </div>
                           </div>
                         </div>
 
                         <div>
-                          <p class="mb-3 text-lg font-semibold text-gray-900">
+                          <p class="mb-3 text-lg font-semibold text-gray-900" data-i18n="olympiad.edit_certificate">
                             Настройки шаблона сертификата
                           </p>
                           <div
@@ -530,15 +538,15 @@
                           >
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.h1_certificate"
                                 >Текст заголовка сертификата</label
                               >
                               <input
                                 type="text"
                                 name="title_certificate"
                                 class="input-base border-default"
-                                placeholder="Диплом участника олимпиады"
-                                value="Диплом участника олимпиады"
+                                placeholder="Диплом"
+                                value=""
                                 id="title_certificate-add"
                               />
                             </div>
@@ -546,6 +554,7 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiad.certificate_desc"
                                 >Описание сертификата</label
                               >
                               <div class="relative">
@@ -553,7 +562,6 @@
                                   id="certificate-description-add"
                                   oninput="auto_grow(this)"
                                   rows="2"
-                                  placeholder="Введите ваше сообщение..."
                                   class="textarea input-base border-default scrollbar px-4"
                                   id="disc_certificate-add"
                                 ></textarea>
@@ -563,6 +571,7 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiad.certificate_background"
                               >
                                 Фон сертификата (загрузить файл PNG/JPG)
                               </label>
@@ -578,6 +587,7 @@
                               <p
                                 id="file-name-add"
                                 class="mt-2 text-sm text-gray-500"
+                                data-i18n="olympiad.upload_file"
                               >Выберите файл</p>
                             </div>
                           </div>
@@ -607,7 +617,7 @@
                                 />
                               </svg>
                             </span>
-                            Добавить олимпиаду
+                            <span data-i18n="olympiad.add_olympiad_btn">Добавить олимпиаду</span>
                           </button>
                         </div>
                       </div>
@@ -695,7 +705,7 @@
                     <div
                       class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4"
                     >
-                      <p class="text-xl font-bold">Удалить олимпиаду</p>
+                      <p class="text-xl font-bold" data-i18n="olympiad.delete_olympiad_btn">Удалить олимпиаду</p>
                       <button
                         type="button"
                         onclick="toggleModal('modalDel')"
@@ -706,7 +716,7 @@
                     </div>
 
                     <div class="px-6 py-4">
-                      <p class="mb-4 text-sm">
+                      <p class="mb-4 text-sm"  data-i18n="olympiad.delete_olympiad_text">
                         Вы точно уверены, что хотите удалить олимпиаду
                         <span
                           id="olympiad-name-to-delete"
@@ -762,6 +772,7 @@
                   <div class="flex flex-col rounded-3xl bg-white">
                     <p
                       class="border-gray-border border-b px-4 pt-6 pb-5 text-xl font-bold"
+                      data-i18n="olympiads.edit_olympiad"
                     >
                       Редактировать олимпиаду
                     </p>
@@ -771,7 +782,7 @@
                     >
                       <div class="space-y-6">
                         <div>
-                          <p class="mb-4 text-lg font-semibold text-gray-900">
+                          <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="olympiads.full_info">
                             Общая информация
                           </p>
                           <div
@@ -779,7 +790,7 @@
                           >
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.name"
                                 >Название олимпиады
                                 <span class="text-red-primary">*</span></label
                               >
@@ -832,7 +843,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.classes"
                                 >Классы
                                 <span class="text-red-primary">*</span></label
                               >
@@ -843,17 +854,17 @@
                                   multiple
                                   required
                                 >
-                                  <option value="1">1 класс</option>
-                                  <option value="2">2 класс</option>
-                                  <option value="3">3 класс</option>
-                                  <option value="4">4 класс</option>
-                                  <option value="5" >5 класс</option>
-                                  <option value="6" >6 класс</option>
-                                  <option value="7">7 класс</option>
-                                  <option value="8">8 класс</option>
-                                  <option value="9">9 класс</option>
-                                  <option value="10">10 класс</option>
-                                  <option value="11">11 класс</option>
+                                  <option value="1">1 </option>
+                                  <option value="2">2 </option>
+                                  <option value="3">3 </option>
+                                  <option value="4">4 </option>
+                                  <option value="5" >5 </option>
+                                  <option value="6" >6 </option>
+                                  <option value="7">7 </option>
+                                  <option value="8">8 </option>
+                                  <option value="9">9 </option>
+                                  <option value="10">10 </option>
+                                  <option value="11">11 </option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -877,7 +888,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.year"
                                 >Год</label
                               >
                               <div class="relative">
@@ -917,7 +928,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.status"
                                 >Статус олимпиады
                                 <span class="text-red-primary">*</span>
                               </label>
@@ -927,9 +938,9 @@
                                   class="multi-select input-base border-default appearance-none"
                                   required
                                 >
-                                  <option value="ongoing">Идет сейчас</option>
-                                  <option value="finished">Завершено</option>
-                                  <option value="upcoming">Скоро</option>
+                                  <option value="ongoing" data-i18n="olympiads.status_ongoing">Идет сейчас</option>
+                                  <option value="finished" data-i18n="olympiads.status_finished">Завершено</option>
+                                  <option value="upcoming" data-i18n="olympiads.status_upcoming">Скоро</option>
                                 </select>
                                 <div
                                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -953,7 +964,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.website_link"
                                 >Ссылка на страницу сайта</label
                               >
                               <input
@@ -966,7 +977,7 @@
                             </div>
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.summary"
                                 >Стоимость участия</label
                               >
                               <div class="relative">
@@ -1005,7 +1016,7 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
-                                for="language-edit"
+                                for="language-edit" data-i18n="olympiad.lang"
                               >
                                 Язык олимпиады
                                 <span class="text-red-primary">*</span>
@@ -1035,7 +1046,7 @@
                             </div>
                             <div class="sm:col-span-2">
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.description"
                                 >Описание олимпиады</label
                               >
                               <div class="relative">
@@ -1053,29 +1064,31 @@
 
                         <!-- Этапы олимпиады -->
                         <div>
-                          <p class="mb-4 text-lg font-semibold text-gray-900">
+                          <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="olympiad.stages">
                             Этапы олимпиады
                           </p>
                           <div id="stages-container-edit" class="border-default rounded-2xl p-4">
                             <div id="stage-template-edit" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                               <div>
-                                <label class="text-gray-primary mb-1 block text-sm font-medium">Название этапа</label>
+                                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.stages_name">Название этапа</label>
                                 <div class="relative">
                                   <input
                                     type="text"
                                     class="step-name-add input-base border-default"
-                                    placeholder="Название этапа (например: Регистрация, Этап 1, Финал)"
+                                    placeholder="(Регистрация, Этап 1, Финал)"
                                     required
                                   />
                                 </div>
                               </div>
                             
                               <div>
-                                <label class="text-gray-primary mb-1 block text-sm font-medium">Период этапа</label>
+                                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.dates">Период этапа</label>
                                 <div class="relative">
                                   <input
                                     class="date-range-add input-base border-default"
                                     placeholder="Выберите дату"
+                                    data-i18n="olympiad.dates_placeholder"
+                                    data-i18n-attr="placeholder"
                                     readonly
                                   />
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -1104,7 +1117,7 @@
                                     />
                                   </svg>
                                 </span>
-                                Добавить этап
+                                <span data-i18n="olympiad.add_stage">Добавить этап</span>
                               </button>
                             </div>
                           </div>
@@ -1112,7 +1125,7 @@
 
                         <!-- Данные учителя -->
                         <div>
-                          <p class="mb-3 text-lg font-semibold text-gray-900">
+                          <p class="mb-3 text-lg font-semibold text-gray-900" data-i18n="olympiad.edit_certificate">
                             Настройки шаблона сертификата
                           </p>
                           <div
@@ -1120,7 +1133,7 @@
                           >
                             <div>
                               <label
-                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.h1_certificate"
                                 >Текст заголовка сертификата</label
                               >
                               <input
@@ -1128,13 +1141,14 @@
                                 name="title_certificate"
                                 class="input-base border-default"
                                 placeholder="Диплом участника олимпиады"
-                                value="Диплом участника олимпиады"
+                                value="Диплом"
                               />
                             </div>
 
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiad.certificate_desc"
                                 >Описание сертификата</label
                               >
                               <div class="relative">
@@ -1142,7 +1156,7 @@
                                   id="certificate-description-edit" 
                                   oninput="auto_grow(this)"
                                   rows="2"
-                                  placeholder="Введите ваше сообщение..."
+                                  placeholder="..."
                                   class="textarea input-base border-default px-4"
                                 ></textarea>
                               </div>
@@ -1151,6 +1165,7 @@
                             <div>
                               <label
                                 class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="olympiad.certificate_background"
                               >
                                 Фон сертификата (загрузить файл PNG/JPG)
                               </label>
@@ -1165,7 +1180,7 @@
 
                               <p
                                 id="file-name-edit"
-                                class="mt-2 text-sm text-gray-500"
+                                class="mt-2 text-sm text-gray-500" data-i18n="olympiad.upload_file"
                               >Выберите файл</p>
                             </div>
                           </div>
@@ -1194,7 +1209,7 @@
                               />
                             </svg>
                           </span>
-                          Удалить
+                          <span data-i18n="olympiad.edit_olympiad_btn_delete">Удалить</span>
                         </button>
                         <div class="flex items-center gap-2">
                           <button
@@ -1218,7 +1233,7 @@
                                 />
                               </svg>
                             </span>
-                            Отменить
+                            <span data-i18n="olympiad.edit_olympiad_btn_cancel">Отменить</span>
                           </button>
                           <button type="button" onclick="updateOlympiadForm(currentEditId)" class="btn-orange">
                             <span>
@@ -1237,7 +1252,7 @@
                                 />
                               </svg>
                             </span>
-                            Сохранить
+                            <span data-i18n="olympiad.edit_olympiad_btn_save">Сохранить</span>
                           </button>
                         </div>
                       </div>
@@ -1380,6 +1395,8 @@
                   type="text"
                   id="search-olympiads"
                   placeholder="Поиск по названию олимпиады или ID"
+                  data-i18n="olympiad.filter_id_name"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                 />
                 <svg
@@ -1403,18 +1420,18 @@
                 id="filter-class"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все классы</option>
-                <option value="1">1 класс</option>
-                <option value="2">2 класс</option>
-                <option value="3">3 класс</option>
-                <option value="4">4 класс</option>
-                <option value="5">5 класс</option>
-                <option value="6">6 класс</option>
-                <option value="7">7 класс</option>
-                <option value="8">8 класс</option>
-                <option value="9">9 класс</option>
-                <option value="10">10 класс</option>
-                <option value="11">11 класс</option>
+                <option value="" data-i18n="olympiad.filter_all_class">Все классы</option>
+                <option value="1">1 </option>
+                <option value="2">2 </option>
+                <option value="3">3 </option>
+                <option value="4">4 </option>
+                <option value="5">5 </option>
+                <option value="6">6 </option>
+                <option value="7">7 </option>
+                <option value="8">8 </option>
+                <option value="9">9 </option>
+                <option value="10">10 </option>
+                <option value="11">11 </option>
               </select>
 
               <select
@@ -1422,9 +1439,9 @@
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
                 <option value="">Статус</option>
-                <option value="ongoing">Идёт сейчас</option>
-                <option value="finished">Завершено</option>
-                <option value="upcoming">Скоро</option>
+                <option value="ongoing" data-i18n="olympiads.status_ongoing">Идёт сейчас</option>
+                <option value="finished" data-i18n="olympiads.status_finished">Завершено</option>
+                <option value="upcoming" data-i18n="olympiads.status_upcoming">Скоро</option>
               </select>
             </div>
           </div>
@@ -1454,7 +1471,7 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div class="flex items-center">Название олимпиады</div>
+                    <div class="flex items-center" data-i18n="olympiad.table_olympiad_name">Название олимпиады</div>
                   </th>
                   <th class="p-table">
                     <div id="sort-tour-header" class="flex items-center gap-1 cursor-pointer">
@@ -1475,10 +1492,10 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Класс</th>
+                  <th class="p-table" data-i18n="olympiad.table_olympiad_class">Класс</th>
                   <th class="p-table">
                     <div id="sort-year-header" class="flex items-center gap-1 cursor-pointer">
-                      Год
+                      <span data-i18n="olympiad.table_olympiad_year">Год</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -1497,7 +1514,7 @@
                   </th>
                   <th class="p-table">
                     <div id="sort-participant-header" class="flex items-center gap-1 cursor-pointer">
-                      Участники
+                      <span data-i18n="olympiad.table_olympiad_participants">Участники</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -1514,8 +1531,8 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Статус</th>
-                  <th class="p-table">Действия</th>
+                  <th class="p-table" data-i18n="olympiad.table_olympiad_status">Статус</th>
+                  <th class="p-table" data-i18n="olympiad.table_olympiad_action">Действия</th>
                 </tr>
               </thead>
               <tbody
@@ -1528,7 +1545,7 @@
           <!-- Pagination -->
           <div class="pagination mt-6 flex items-center justify-end"></div>
           <div class="text-gray-primary text-sm">
-            Всего олимпиад: <span id="total-olympiad-count">0</span>
+            <span data-i18n="olympiad.count">Всего олимпиад: </span><span id="total-olympiad-count">0</span>
           </div>
         </main>
       </div>
@@ -2154,5 +2171,6 @@
     <script src="/src/admin/notifications.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>

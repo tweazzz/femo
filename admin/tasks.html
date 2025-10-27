@@ -28,35 +28,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link active">
             <img src="/src/assets/images/task_active.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -67,7 +68,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -85,7 +86,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -154,7 +155,7 @@
           <div
             class="mb-6 flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">Управление задачами</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="tasks.control">Управление задачами</h1>
             <div class="flex items-center gap-4">
               <!-- <button
                 
@@ -185,7 +186,7 @@
                   <path d="M5 10H15" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M10 15V5" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Создать задачу
+                <span data-i18n="tasks.add_task_btn">Создать задачу</span>
               </button>
               <div
                 id="overlayModal"
@@ -201,6 +202,7 @@
                   <div class="flex flex-col rounded-3xl bg-white">
                     <p
                       class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold"
+                      data-i18n="tasks.add_task_h1"
                     >
                       Создание задачи
                     </p>
@@ -208,11 +210,11 @@
                     <div
                       class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 sm:px-6"
                     >
-                      <p class="text-gray-primary mb-2 text-sm">
+                      <p class="text-gray-primary mb-2 text-sm" data-i18n="tasks.add_task_select_type">
                         Выбрать тип задачи
                       </p>
                       <div class="flex gap-2">
-                        <label class="btn-option">
+                        <label class="btn-option" data-i18n="tasks.add_task_type_podg">
                           Подготовительная задача
                           <input
                             type="radio"
@@ -224,7 +226,7 @@
                           />
                         </label>
 
-                        <label class="btn-option">
+                        <label class="btn-option" data-i18n="tasks.add_task_type_daily">
                           Задача дня
                           <input
                             type="radio"
@@ -240,7 +242,7 @@
                       <form id="participant-form" class="role-form">
                         <div class="mt-6 space-y-6">
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="tasks.add_task_info">
                               Общая информация
                             </p>
                             <div
@@ -249,6 +251,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_name"
                                   >Название задачи
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -264,6 +267,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_class"
                                   >Класс
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -274,17 +278,17 @@
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
-                                    <option value="1">1 класс</option>
-                                    <option value="2">2 класс</option>
-                                    <option value="3">3 класс</option>
-                                    <option value="4">4 класс</option>
-                                    <option value="5" selected>5 класс</option>
-                                    <option value="6" selected>6 класс</option>
-                                    <option value="7">7 класс</option>
-                                    <option value="8">8 класс</option>
-                                    <option value="9">9 класс</option>
-                                    <option value="10">10 класс</option>
-                                    <option value="11">11 класс</option>
+                                    <option value="1">1 </option>
+                                    <option value="2">2 </option>
+                                    <option value="3">3 </option>
+                                    <option value="4">4 </option>
+                                    <option value="5" selected>5 </option>
+                                    <option value="6" selected>6 </option>
+                                    <option value="7">7 </option>
+                                    <option value="8">8 </option>
+                                    <option value="9">9 </option>
+                                    <option value="10">10 </option>
+                                    <option value="11">11 </option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -309,6 +313,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_level"
                                   >Уровень</label
                                 >
                                 <div class="relative">
@@ -317,9 +322,9 @@
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
-                                    <option value="easy">Лёгкий</option>
-                                    <option value="medium">Средний</option>
-                                    <option value="hard">Сложный</option>
+                                    <option value="easy" data-i18n="tasks.level_easy">Лёгкий</option>
+                                    <option value="medium" data-i18n="tasks.level_medium">Средний</option>
+                                    <option value="hard" data-i18n="tasks.level_hard">Сложный</option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -344,6 +349,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_bonus"
                                   >Баллы за выполнения
                                   <span class="text-red-primary">*</span>
                                 </label>
@@ -380,6 +386,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.status"
                                   >Статус задачи
                                   <span class="text-red-primary">*</span>
                                 </label>
@@ -389,9 +396,9 @@
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
-                                    <option value="archived">Архив</option>
-                                    <option value="active">Активно</option>
-                                    <option value="draft">Черновик</option>
+                                    <option value="archived" data-i18n="tasks.status_archieve">Архив</option>
+                                    <option value="active" data-i18n="tasks.status_active">Активно</option>
+                                    <option value="draft" data-i18n="tasks.status_draft">Черновик</option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -417,7 +424,8 @@
                           </div>
 
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900"
+                            data-i18n="tasks.add_task_soderjanie">
                               Содержание задачи
                             </p>
                             <div
@@ -426,6 +434,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_uslovie"
                                   >Условие задачи
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -437,15 +446,14 @@
                                     placeholder="Введите ваше сообщение..."
                                     class="textarea input-base border-default px-4"
                                     required
-                                  >
-На доске написано число 2025. За один ход разрешается: 1. Уменьшить его на 1. 2. Разделить на 5, если оно делится на 5 без остатка. Сколько различных чисел можно получить, выполнив любое количество таких ходов?
-                                </textarea
+                                  >...</textarea
                                   >
                                 </div>
                               </div>
 
                               <div>
-                                <label class="text-gray-primary mb-1 block text-sm font-medium" for="files-add-participant">
+                                <label class="text-gray-primary mb-1 block text-sm font-medium" for="files-add-participant"
+                                data-i18n="tasks.upload_file">
                                   Прикрепите файл
                                 </label>
                                 <input
@@ -464,7 +472,7 @@
                           </div>
 
                           <div>
-                            <p class="mb-3 text-lg font-semibold text-gray-900">
+                            <p class="mb-3 text-lg font-semibold text-gray-900" data-i18n="tasks.correct_answer">
                               Правильный ответ
                             </p>
                             <div
@@ -472,7 +480,7 @@
                             >
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="tasks.correct_answer_type"
                                   >Выбрать тип правильного ответа
                                   <span class="text-red-primary mb-1"
                                     >*</span
@@ -482,7 +490,7 @@
                                   <label
                                     class="btn-option flex items-center gap-2"
                                   >
-                                    <span>Число</span>
+                                    <span data-i18n="tasks.correct_answer_type_number">Число</span>
                                     <input
                                       id="answer1-type-add-participant"
                                       type="radio"
@@ -497,7 +505,7 @@
                                   <label
                                     class="btn-option flex items-center gap-2"
                                   >
-                                    <span>Текст</span>
+                                    <span data-i18n="tasks.correct_answer_type_text">Текст</span>
                                     <input
                                       id="answer2-type-add-participant"
                                       type="radio"
@@ -513,6 +521,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.correct_answer"
                                   >Правильный ответ
                                   <span class="text-red-primary mb-1"
                                     >*</span
@@ -555,7 +564,7 @@
                                   />
                                 </svg>
                               </span>
-                              Создать задачу
+                              <span data-i18n="tasks.add_task_btn">Создать задачу</span>
                             </button>
                           </div>
                         </div>
@@ -592,6 +601,7 @@
                   <div class="flex flex-col rounded-3xl bg-white">
                     <p
                       class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold"
+                      data-i18n="tasks.edit_task"
                     >
                       Редактировать задачу
                     </p>
@@ -599,11 +609,11 @@
                     <div
                       class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 sm:px-6"
                     >
-                      <p class="text-gray-primary mb-2 text-sm">
+                      <p class="text-gray-primary mb-2 text-sm" data-i18n="tasks.add_task_select_type">
                         Выбрать тип задачи
                       </p>
                       <div class="flex gap-2">
-                        <label class="btn-option">
+                        <label class="btn-option" data-i18n="tasks.add_task_type_podg">
                           Подготовительная задача
                           <input
                             type="radio"
@@ -615,7 +625,7 @@
                           />
                         </label>
 
-                        <label class="btn-option">
+                        <label class="btn-option" data-i18n="tasks.add_task_type_daily">
                           Задача дня
                           <input
                             type="radio"
@@ -631,7 +641,7 @@
                       <form id="participant-form2" class="role-form">
                         <div class="mt-6 space-y-6">
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="tasks.add_task_info">
                               Общая информация
                             </p>
                             <div
@@ -640,6 +650,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_name"
                                   >Название задачи
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -655,6 +666,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_class"
                                   >Класс
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -664,17 +676,17 @@
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
-                                    <option value="1">1 класс</option>
-                                    <option value="2">2 класс</option>
-                                    <option value="3">3 класс</option>
-                                    <option value="4">4 класс</option>
-                                    <option value="5" selected>5 класс</option>
-                                    <option value="6" selected>6 класс</option>
-                                    <option value="7">7 класс</option>
-                                    <option value="8">8 класс</option>
-                                    <option value="9">9 класс</option>
-                                    <option value="10">10 класс</option>
-                                    <option value="11">11 класс</option>
+                                    <option value="1">1 </option>
+                                    <option value="2">2 </option>
+                                    <option value="3">3 </option>
+                                    <option value="4">4 </option>
+                                    <option value="5" selected>5 </option>
+                                    <option value="6" selected>6 </option>
+                                    <option value="7">7 </option>
+                                    <option value="8">8 </option>
+                                    <option value="9">9 </option>
+                                    <option value="10">10 </option>
+                                    <option value="11">11 </option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -699,6 +711,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_level"
                                   >Уровень</label
                                 >
                                 <div class="relative">
@@ -707,9 +720,9 @@
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
-                                    <option value="easy">Лёгкий</option>
-                                    <option value="medium">Средний</option>
-                                    <option value="hard">Сложный</option>
+                                    <option value="easy" data-i18n="tasks.level_easy">Лёгкий</option>
+                                    <option value="medium" data-i18n="tasks.level_medium">Средний</option>
+                                    <option value="hard" data-i18n="tasks.level_hard">Сложный</option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -734,6 +747,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_bonus"
                                   >Баллы за выполнения
                                   <span class="text-red-primary">*</span>
                                 </label>
@@ -770,6 +784,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.status"
                                   >Статус задачи
                                   <span class="text-red-primary">*</span>
                                 </label>
@@ -779,9 +794,9 @@
                                     class="multi-select input-base border-default appearance-none"
                                     required
                                   >
-                                    <option value="archived">Архив</option>
-                                    <option value="active">Активно</option>
-                                    <option value="draft">Черновик</option>
+                                    <option value="archived" data-i18n="tasks.status_archieve">Архив</option>
+                                    <option value="active" data-i18n="tasks.status_active">Активно</option>
+                                    <option value="draft" data-i18n="tasks.status_draft">Черновик</option>
                                   </select>
                                   <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
@@ -807,7 +822,7 @@
                           </div>
 
                           <div>
-                            <p class="mb-4 text-lg font-semibold text-gray-900">
+                            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="tasks.add_task_soderjanie">
                               Содержание задачи
                             </p>
                             <div
@@ -816,6 +831,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.add_task_uslovie"
                                   >Условие задачи
                                   <span class="text-red-primary">*</span></label
                                 >
@@ -827,9 +843,7 @@
                                     placeholder="Введите ваше сообщение..."
                                     class="textarea input-base border-default px-4"
                                     required
-                                  >
-На доске написано число 2025. За один ход разрешается: 1. Уменьшить его на 1. 2. Разделить на 5, если оно делится на 5 без остатка. Сколько различных чисел можно получить, выполнив любое количество таких ходов?
-                                </textarea
+                                  ></textarea
                                   >
                                 </div>
                               </div>
@@ -840,6 +854,7 @@
                             <label
                               for="files-edit-participant"
                               class="text-gray-primary mb-1 block text-sm font-medium"
+                              data-i18n="tasks.upload_file"
                             >
                               Прикреплённые файлы
                             </label>
@@ -856,7 +871,7 @@
                           </div>
 
                           <div>
-                            <p class="mb-3 text-lg font-semibold text-gray-900">
+                            <p class="mb-3 text-lg font-semibold text-gray-900" data-i18n="tasks.correct_answer">
                               Правильный ответ
                             </p>
                             <div
@@ -864,7 +879,7 @@
                             >
                               <div>
                                 <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
+                                  class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="tasks.correct_answer_type"
                                   >Выбрать тип правильного ответа
                                   <span class="text-red-primary mb-1"
                                     >*</span
@@ -874,7 +889,7 @@
                                   <label
                                     class="btn-option flex items-center gap-2"
                                   >
-                                    <span>Число</span>
+                                    <span data-i18n="tasks.correct_answer_type_number">Число</span>
                                     <input
                                       id="answer1-type-edit-participant"
                                       type="radio"
@@ -889,7 +904,7 @@
                                   <label
                                     class="btn-option flex items-center gap-2"
                                   >
-                                    <span>Текст</span>
+                                    <span data-i18n="tasks.correct_answer_type_text">Текст</span>
                                     <input
                                       id="answer2-type-edit-participant"
                                       type="radio"
@@ -905,6 +920,7 @@
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
+                                  data-i18n="tasks.correct_answer"
                                   >Правильный ответ
                                   <span class="text-red-primary mb-1"
                                     >*</span
@@ -947,7 +963,7 @@
                                   />
                                 </svg>
                               </span>
-                              Изменить задачу
+                              <span data-i18n="tasks.edit_task_btn">Изменить задачу</span>
                             </button>
                           </div>
                         </div>
@@ -1050,6 +1066,8 @@
                   type="text"
                   id="search-assignments"
                   placeholder="Поиск по названию задачи или ID"
+                  data-i18n="tasks.filter_name_id"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                 />
                 <svg
@@ -1073,48 +1091,48 @@
                 id="filter-class"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все классы</option>
-                <option value="1">1 класс</option>
-                <option value="2">2 класс</option>
-                <option value="3">3 класс</option>
-                <option value="4">4 класс</option>
-                <option value="5">5 класс</option>
-                <option value="6">6 класс</option>
-                <option value="7">7 класс</option>
-                <option value="8">8 класс</option>
-                <option value="9">9 класс</option>
-                <option value="10">10 класс</option>
-                <option value="11">11 класс</option>
+                <option value="" data-i18n="tasks.filter_all_classes">Все классы</option>
+                <option value="1">1 </option>
+                <option value="2">2 </option>
+                <option value="3">3 </option>
+                <option value="4">4 </option>
+                <option value="5">5 </option>
+                <option value="6">6 </option>
+                <option value="7">7 </option>
+                <option value="8">8 </option>
+                <option value="9">9 </option>
+                <option value="10">10 </option>
+                <option value="11">11 </option>
               </select>
 
               <select
                 id="filter-level"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Уровень задачи</option>
-                <option value="easy">Легкий</option>
-                <option value="medium">Средний</option>
-                <option value="hard">Сложный</option>
+                <option value="" data-i18n="tasks.filter_level">Уровень задачи</option>
+                <option value="easy" data-i18n="tasks.level_easy">Легкий</option>
+                <option value="medium" data-i18n="tasks.level_medium">Средний</option>
+                <option value="hard" data-i18n="tasks.level_hard">Сложный</option>
               </select>
 
               <select
                 id="filter-type"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все типы задач</option>
-                <option value="preparatory">Подготовительная</option>
-                <option value="daily">Задача дня</option>
+                <option value="" data-i18n="tasks.filter_type">Все типы задач</option>
+                <option value="preparatory" data-i18n="tasks.add_task_type_podg">Подготовительная</option>
+                <option value="daily" data-i18n="tasks.add_task_type_daily">Задача дня</option>
               </select>
 
               <select
                 id="filter-status"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Статус</option>
-                <option value="active">Активно</option>
-                <option value="archived">Архив</option>
-                <option value="pending">Ожидает публикации</option>
-                <option value="draft">Черновик</option>
+                <option value="" data-i18n="tasks.status">Статус</option>
+                <option value="active" data-i18n="tasks.status_active">Активно</option>
+                <option value="archived" data-i18n="tasks.status_archieve">Архив</option>
+                <option value="pending" data-i18n="tasks.pending">Ожидает публикации</option>
+                <option value="draft" data-i18n="tasks.status_draft">Черновик</option>
               </select>
             </div>
           </div>
@@ -1142,7 +1160,8 @@
                     </div>
                   </th>
                   <th class="p-table">
-                    <div id="sort-name-header" class="flex items-center cursor-pointer">
+                    <div id="sort-name-header" class="flex items-center cursor-pointer"
+                    data-i18n="tasks.sort-name">
                       Название задачи
                       <span>
                         <svg
@@ -1160,9 +1179,9 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Класс</th>
+                  <th class="p-table" data-i18n="tasks.sort-class">Класс</th>
                   <th class="p-table">
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-1" data-i18n="tasks.sort-deadline">
                       Дедлайн
                       <span>
                         <svg
@@ -1180,10 +1199,10 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Уровень</th>
-                  <th class="p-table">Тип задачи</th>
-                  <th class="p-table">Статус</th>
-                  <th class="p-table">Действия</th>
+                  <th class="p-table" data-i18n="tasks.sort-level">Уровень</th>
+                  <th class="p-table" data-i18n="tasks.sort-type">Тип задачи</th>
+                  <th class="p-table" data-i18n="tasks.sort-status">Статус</th>
+                  <th class="p-table" data-i18n="tasks.sort-action">Действия</th>
                 </tr>
               </thead>
               <tbody
@@ -1196,7 +1215,7 @@
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
             <div class="text-gray-primary text-sm">
-              Всего задач: <span id="total-assignments-count">0</span>
+              <span data-i18n="tasks.count">Всего задач: </span><span id="total-assignments-count">0</span>
             </div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
@@ -1868,6 +1887,7 @@ function renderFiles(formKey) {
 }
 
    </script>
+   <script src="/src/scripts/i18n.js"></script>
 <!-- ваш Tom Select
 <link
   href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css"

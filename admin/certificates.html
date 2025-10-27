@@ -21,36 +21,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
 
           <a href="/admin/certificates.html" class="sidebar-link active">
             <img src="/src/assets/images/certificate_active.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -61,7 +61,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -79,7 +79,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -147,7 +147,7 @@
           <div
             class="mb-2 flex flex-col space-y-2 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
           >
-            <h1 class="text-2xl font-semibold">Сертификаты участников</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="certificate.header">Сертификаты участников</h1>
             <div class="flex items-center gap-4">
               <button
                 onclick="handlePublishClick()"
@@ -167,7 +167,7 @@
                     d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
                   />
                 </svg>
-                Опубликовать
+                <span data-i18n="results.publish-btn">Опубликовать</span>
               </button>
 
               <div
@@ -198,14 +198,14 @@
                         alt="horse"
                         class="mx-auto w-fit"
                       />
-                      <p class="mb-2 text-center text-xl font-bold">
+                      <p class="mb-2 text-center text-xl font-bold" data-i18n="certificate.succes_msg">
                         Сертификаты успешно отправлены
                       </p>
-                      <p class="mb-6 text-center text-xs">
+                      <p class="mb-6 text-center text-xs" data-i18n="certificate.succes_msg_txt">
                         Мы отправили сертификаты на выбранных участников.  Они
                         появятся в их профилях.
                       </p>
-                      <p class="text-center text-xs">
+                      <p class="text-center text-xs" data-i18n="certificate.succes_msg_count">
                         Всего отправлено:
                         <span id="sent-certificates-count" class="text-green-primary">0 сертификатов</span>
                       </p>
@@ -224,6 +224,8 @@
                 <input id="filter-search"
                   type="text"
                   placeholder="Поиск по ID участника / имени "
+                  data-i18n="certificate.filter_id"
+                  data-i18n-attr="placeholder"
                   class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                 />
                 <svg
@@ -247,23 +249,23 @@
               <select id="filter-category"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все категорий</option>
-                <option value="participant">Участник</option>
-                <option value="winner">Победитель</option>
+                <option value="" data-i18n="certificate.filter_all_cat">Все категорий</option>
+                <option value="participant" data-i18n="certificate.filter_participant">Участник</option>
+                <option value="winner" data-i18n="certificate.filter_winner">Победитель</option>
               </select>
 
               <select id="filter-status"
                 class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Все статусы</option>
-                <option value="sent">Отправлен</option>
-                <option value="not_sent">Не отправлен</option>
+                <option value="" data-i18n="certificate.filter_all_statuses">Все статусы</option>
+                <option value="sent" data-i18n="certificate.filter_sent">Отправлен</option>
+                <option value="not_sent" data-i18n="certificate.filter_not_sent">Не отправлен</option>
               </select>
 
               <select id="filter-olympiad"
                 class="w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
               >
-                <option value="">Выбрать олимпиаду</option>
+                <option value="" data-i18n="results.filter_choose_olympiad">Выбрать олимпиаду</option>
               </select>
             </div>
           </div>
@@ -276,11 +278,13 @@
                     <label id="select-all" class="flex items-center gap-1 cursor-pointer">
                       <span 
                         style="color:#F4891E; font-family:'Proxima Nova',sans-serif; font-weight:400; font-size:14px;"
-                      >Все</span>
+                      data-i18n="certificate.table_all"
+                        >Все</span>
                     </label>
                   </th>
                   <th class="p-table">
-                    <div id="sort-rank-header" class="flex items-center justify-center gap-1 cursor-pointer">
+                    <div id="sort-rank-header" class="flex items-center justify-center gap-1 cursor-pointer"
+                    data-i18n="certificate.table_rank">
                       Место
                       <span>
                         <svg
@@ -298,12 +302,13 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Имя участника</th>
-                  <th class="p-table">Олимпиада</th>
-                  <th class="p-table">Категория</th>
-                  <th class="p-table">Статус</th>
+                  <th class="p-table" data-i18n="certificate.table_username">Имя участника</th>
+                  <th class="p-table" data-i18n="certificate.table_olymp">Олимпиада</th>
+                  <th class="p-table" data-i18n="certificate.table_cat">Категория</th>
+                  <th class="p-table" data-i18n="certificate.table_status">Статус</th>
                   <th class="p-table">
-                    <div id="sort-date-header" class="flex items-center justify-center gap-1 cursor-pointer">
+                    <div id="sort-date-header" class="flex items-center justify-center gap-1 cursor-pointer"
+                    data-i18n="certificate.table_date">
                       Дата
                       <span>
                         <svg
@@ -321,7 +326,7 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Действия</th>
+                  <th class="p-table" data-i18n="certificate.table_action">Действия</th>
                 </tr>
               </thead>
               <tbody id="certificates-tbody" class="divide-y divide-gray-200">
@@ -331,7 +336,7 @@
 
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
-            <div class="text-gray-primary text-sm">Всего сертификатов: <span id="total-certificates-count">0</span></div>
+            <div class="text-gray-primary text-sm"><span data-i18n="certificate.count">Всего сертификатов: </span><span id="total-certificates-count">0</span></div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
@@ -935,5 +940,6 @@
     <script src="/auth.js" defer></script>
     <script src="/src/admin/certificates.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/scripts/i18n.js"></script>
   </body>
 </html>
