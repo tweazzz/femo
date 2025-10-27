@@ -500,53 +500,63 @@ async function openEditModal(title, id) {
     document.getElementById('price').value = data.cost || ''
     document.getElementById('disc-edit').value = data.description || ''
     // Язык олимпиады
+    // --- Язык: поддерживаем массив languages (если пришёл) ---
     const langSelect = document.getElementById('language-edit');
     if (langSelect) {
-      // data.language приходит из API как 'kazakh'|'russian'|'english'
-      langSelect.value = data.language || 'kazakh';
+      // Если API вернул data.languages (массив) — ставим их, иначе пробуем data.language
+      if (Array.isArray(data.languages) && data.languages.length) {
+        Array.from(langSelect.options).forEach(opt => {
+          opt.selected = data.languages.includes(opt.value);
+        });
+      } else {
+        langSelect.value = data.language || 'kazakh';
+      }
     }
 
-    // Классы
-    const gradesSelect = document.getElementById('grades-edit')
-    Array.from(gradesSelect.options).forEach(option => {
-      option.selected = data.grades.includes(parseInt(option.value))
-    })
-
-    const stageTemplate = document.getElementById('stage-template-edit')
-    const stageContainer = stageTemplate.parentElement
-    const addButton = stageContainer.querySelector('.btn-white')
-
-    // Удаляем все клоны, кроме шаблона
-    stageContainer.querySelectorAll('.grid:not(#stage-template-edit)').forEach(el => el.remove());
+    // --- Этапы: очистка и рендер ---
+    const stageTemplate = document.getElementById('stage-template-edit');
+    const stageContainer = stageTemplate.parentElement;
+    // Удаляем все реальные блоки (оставляем шаблон)
+    stageContainer.querySelectorAll('.stage-block').forEach(el => el.remove());
 
     if (data.stages && data.stages.length > 0) {
       // скрываем шаблон-пустышку
       stageTemplate.classList.add('hidden');
-    
+
       data.stages.forEach(stage => {
         const clone = stageTemplate.cloneNode(true);
         clone.removeAttribute('id');
         clone.classList.remove('hidden');
         clone.classList.add('stage-block');
-    
+
         const nameEl = clone.querySelector('.step-name-add');
         if (nameEl) nameEl.value = stage.name || '';
-    
+
         const dateEl = clone.querySelector('.date-range-add');
         if (dateEl) {
-          dateEl.value = `${formatDateReverse(stage.start_date)} — ${formatDateReverse(stage.end_date)}`;
+          // Если даты одинаковы — показываем одну дату, иначе — диапазон
+          const from = formatDateReverse(stage.start_date || '');
+          const to   = formatDateReverse(stage.end_date || '');
+          if (from && to && from === to) {
+            dateEl.value = from;
+          } else if (from && to) {
+            dateEl.value = `${from} — ${to}`;
+          } else {
+            dateEl.value = from || to || '';
+          }
         }
-    
+
         // вставляем перед кнопкой
         const btnWrapper = stageContainer.querySelector('.mt-4');
         stageContainer.insertBefore(clone, btnWrapper);
-    
-        // инициализируем flatpickr для клона
+
+        // инициализируем flatpickr (mode: range, но пользователь может выбрать одну дату)
         if (dateEl) {
           flatpickr(dateEl, {
             mode: 'range',
             dateFormat: 'd.m.Y',
             locale: flatpickr.l10ns.ru,
+            allowInput: true,
           });
         }
       });
@@ -554,6 +564,7 @@ async function openEditModal(title, id) {
       // если этапов нет — показываем пустой шаблон
       stageTemplate.classList.remove('hidden');
     }
+
 
   // Сертификат
   if (data.certificate_template) {
@@ -604,36 +615,41 @@ function isAddFormValid() {
   if (!gradesSelected.length) return false;
   if (!yearEl || !yearEl.value) return false;
   if (!statusEl || !statusEl.value) return false;
-  if (!languageEl || !languageEl.value) return false;
+
+  // Языки — допускаем несколько (select multiple)
+  if (!languageEl) return false;
+  const selectedLangs = Array.from(languageEl.selectedOptions || []).map(o => o.value).filter(Boolean);
+  if (!selectedLangs.length) return false;
+
   if (!priceEl || priceEl.value === '' || Number(priceEl.value) < 0) return false;
   if (!certFileEl || !certFileEl.files[0]) return false;
 
-  // stages: берем только реальные блоки .stage-block (шаблон у тебя #stage-template и не должен иметь класс .stage-block)
-// stages: учитываем и реальные .stage-block, и видимый шаблон #stage-template (если он видим)
-let stageBlocks = Array.from(document.querySelectorAll('#stages-container .stage-block'));
+  // stages: берём реальные блоки .stage-block (шаблон #stage-template можно учитывать, если он видим)
+  let stageBlocks = Array.from(document.querySelectorAll('#stages-container .stage-block'));
 
-// если шаблон видим и ещё не имеет stage-block — добавим его в начало списка
-const templateEl = document.getElementById('stage-template');
-if (templateEl && !templateEl.classList.contains('hidden') && !templateEl.classList.contains('stage-block')) {
-  stageBlocks.unshift(templateEl);
-}
+  const templateEl = document.getElementById('stage-template');
+  if (templateEl && !templateEl.classList.contains('hidden') && !templateEl.classList.contains('stage-block')) {
+    stageBlocks.unshift(templateEl);
+  }
 
-if (stageBlocks.length < MIN_STAGE_COUNT) return false;
+  if (stageBlocks.length < MIN_STAGE_COUNT) return false;
 
-for (const block of stageBlocks) {
-  const dateInput = block.querySelector('.date-range-add');
-  if (!dateInput) return false;
-  const raw = (dateInput.value || '').trim();
-  if (!raw) return false;
-  // разделитель — принимаем разные виды тире/дефиса
-  const parts = raw.split(/\s*[-–—]\s*/).filter(Boolean);
-  if (parts.length < 2) return false;
-  if (!parts[0].includes('.') || !parts[1].includes('.')) return false;
-}
-
+  for (const block of stageBlocks) {
+    const dateInput = block.querySelector('.date-range-add');
+    if (!dateInput) return false;
+    const raw = (dateInput.value || '').trim();
+    if (!raw) return false;
+    // принимаем 1 дату (дд.мм.гггг) или диапазон (дд.мм.гггг — дд.мм.гггг)
+    const parts = raw.split(/\s*[-–—]\s*/).filter(Boolean);
+    if (parts.length < 1 || parts.length > 2) return false;
+    // проверяем формат dd.mm.yyyy (грубая проверка точки и длины частей)
+    if (!parts[0].includes('.') || parts[0].split('.').length !== 3) return false;
+    if (parts.length === 2 && (!parts[1].includes('.') || parts[1].split('.').length !== 3)) return false;
+  }
 
   return true;
 }
+
 
 function focusFirstInvalid() {
   const titleEl = document.getElementById('title-add');
@@ -740,12 +756,12 @@ async function submitOlympiadForm() {
     alert('Токен не найден. Пожалуйста, войдите заново.');
     return;
   }
-    if (!isAddFormValid()) {
+  if (!isAddFormValid()) {
     focusFirstInvalid();
     return;
   }
 
-  // 1) ОБЩАЯ ИНФОРМАЦИЯ
+  // --- Общая информация ---
   const titleEl       = document.getElementById('title-add');
   const typeEl        = document.getElementById('tour-add');
   const gradesSelect  = document.getElementById('grades-add');
@@ -756,62 +772,46 @@ async function submitOlympiadForm() {
   const descriptionEl = document.getElementById('disc-add');
   const languageEl    = document.getElementById('language-add');
 
-  // Валидация
-  if (!titleEl.value.trim()) {
-    alert('Введите название олимпиады');
+  const rawAdd = tomGradesAdd.items || [];
+  const gradesArr = rawAdd.map(v => String(v));
+
+  // --- Stages: собираем .stage-block и видимый шаблон, если есть ---
+  const stages = [];
+  let stageNodes = Array.from(document.querySelectorAll('#stages-container .stage-block'));
+  const templateAdd = document.getElementById('stage-template');
+  if (templateAdd && !templateAdd.classList.contains('hidden') && !templateAdd.classList.contains('stage-block')) {
+    stageNodes.unshift(templateAdd);
+  }
+
+  for (const block of stageNodes) {
+    const nameEl = block.querySelector('.step-name-add');
+    const dateEl = block.querySelector('.date-range-add');
+
+    const name = nameEl ? nameEl.value.trim() : '';
+    const raw  = dateEl ? dateEl.value.trim() : '';
+
+    if (!raw) {
+      alert(`Укажите период для этапа "${name || 'без названия'}"`);
+      throw new Error('stage validation failed');
+    }
+
+    // Разрешаем одну дату или диапазон
+    const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim()).filter(Boolean);
+    const d1 = parts[0] || '';
+    const d2 = parts[1] || parts[0] || ''; // если только одна — дублируем
+    stages.push({
+      name,
+      start_date: formatDate(d1),
+      end_date: formatDate(d2),
+    });
+  }
+
+  if (stages.length === 0) {
+    alert('Добавьте хотя бы один этап');
     return;
   }
-  // на:
-  const rawAdd = tomGradesAdd.items || []; // массив строковых значений, например ["5","6"]
-  // если нужны числа:
-  const gradesArr = rawAdd.map(v => String(v)); // либо Number(v) если нужно цифры
-  if (gradesArr.length === 0) {
-    alert('Выберите хотя бы один класс');
-    return;
-  }
-  
-  // 2) ЭТАПЫ
-// 2) ЭТАПЫ — собираем и .stage-block, и видимый шаблон, если он видим
-const stages = [];
-let stageNodes = Array.from(document.querySelectorAll('#stages-container .stage-block'));
 
-const templateAdd = document.getElementById('stage-template');
-if (templateAdd && !templateAdd.classList.contains('hidden') && !templateAdd.classList.contains('stage-block')) {
-  // если шаблон видим и это реальный первый блок — учитываем его
-  stageNodes.unshift(templateAdd);
-}
-
-stageNodes.forEach(block => {
-  const nameEl = block.querySelector('.step-name-add');
-  const dateEl = block.querySelector('.date-range-add');
-
-  const name = nameEl ? nameEl.value.trim() : '';
-  const raw  = dateEl ? dateEl.value.trim() : '';
-
-  if (!raw) {
-    alert(`Укажите период для этапа "${name || 'без названия'}"`);
-    throw new Error('stage validation failed');
-  }
-
-  // Надёжный сплит для разных тире/дефисов и пробелов
-  const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim());
-  const d1 = parts[0] || '';
-  const d2 = parts[1] || '';
-  stages.push({
-    name,
-    start_date: formatDate(d1),
-    end_date: formatDate(d2),
-  });
-});
-
-
-if (stages.length === 0) {
-  alert('Добавьте хотя бы один этап');
-  return;
-}
-
-
-  // 3) СЕРТИФИКАТ
+  // --- Certificate ---
   const headerEl       = document.getElementById('title_certificate-add');
   const certDescEl     = document.getElementById('certificate-description-add');
   const backgroundEl   = document.getElementById('certificate-background');
@@ -820,18 +820,30 @@ if (stages.length === 0) {
     return;
   }
 
-  // 4) СОБИРАЕМ FormData
+  // --- Languages: support multiple selections ---
+  const selectedLangs = Array.from(languageEl.selectedOptions || []).map(o => o.value).filter(Boolean);
+  if (!selectedLangs.length) {
+    alert('Выберите хотя бы один язык олимпиады');
+    return;
+  }
+
+  // --- Собираем FormData ---
   const formData = new FormData();
   formData.append('title',                      titleEl.value.trim());
   formData.append('type',                       typeEl.value);
-  formData.append('grades', gradesArr.join(','));
+  formData.append('grades',                     gradesArr.join(','));
   formData.append('year',                       yearEl.value);
   formData.append('status',                     statusEl.value);
   formData.append('website',                    websiteEl.value.trim());
   formData.append('cost',                       costEl.value);
   formData.append('description',                descriptionEl.value.trim());
-  formData.append('language',                   languageEl.value);
 
+  // Для совместимости: отправляем первое как single "language"
+  formData.append('language', selectedLangs[0]);
+  // И отправляем все как массив languages[]
+  selectedLangs.forEach(lang => formData.append('language', lang));
+
+  // Stages
   stages.forEach((st, i) => {
     formData.append(`stages[${i}].name`,       st.name);
     formData.append(`stages[${i}].start_date`, st.start_date);
@@ -842,7 +854,7 @@ if (stages.length === 0) {
   formData.append('certificate_template.description',  certDescEl.value.trim());
   formData.append('certificate_template.background',   backgroundEl.files[0]);
 
-  // 5) ОТПРАВКА POST
+  // --- Отправка POST ---
   try {
     const res = await fetch(
       'https://portal.femo.kz/api/olympiads/dashboard/',
@@ -864,6 +876,7 @@ if (stages.length === 0) {
     alert(`Не удалось создать олимпиаду: ${err.message}`);
   }
 }
+
 
 // Утилита: «дд.мм.гггг» → «гггг‑мм‑дд»
 function formatDate(dateStr) {
@@ -981,42 +994,46 @@ async function updateOlympiadForm(olympiadId) {
   const website     = document.getElementById('link-edit').value.trim();
   const cost        = document.getElementById('price').value;
   const description = document.getElementById('disc-edit').value.trim();
-  const language    = document.getElementById('language-edit').value;
+  const languageEl  = document.getElementById('language-edit');
 
-  // Сбор этапов
-// Сбор этапов для редактирования — учитываем .stage-block и видимый шаблон #stage-template-edit
-const stages = [];
-let stageNodesEdit = Array.from(document.querySelectorAll('#stages-container-edit .stage-block'));
+  // Stages сбор (учитываем .stage-block и видимый шаблон)
+  const stages = [];
+  let stageNodesEdit = Array.from(document.querySelectorAll('#stages-container-edit .stage-block'));
 
-const templateEdit = document.getElementById('stage-template-edit');
-if (templateEdit && !templateEdit.classList.contains('hidden') && !templateEdit.classList.contains('stage-block')) {
-  stageNodesEdit.unshift(templateEdit);
-}
-
-stageNodesEdit.forEach(block => {
-  const nameEl = block.querySelector('.step-name-add');
-  const dateEl = block.querySelector('.date-range-add');
-  const name = nameEl ? nameEl.value.trim() : '';
-  const raw = dateEl ? dateEl.value.trim() : '';
-
-  // допустим немного мягче — если пустой период — пропустим или выкинем ошибку
-  if (!raw) {
-    alert(`Укажите период для этапа "${name || 'без названия'}"`);
-    throw new Error('stage validation failed (edit)');
+  const templateEdit = document.getElementById('stage-template-edit');
+  if (templateEdit && !templateEdit.classList.contains('hidden') && !templateEdit.classList.contains('stage-block')) {
+    stageNodesEdit.unshift(templateEdit);
   }
 
-  const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim());
-  const d1 = parts[0] || '';
-  const d2 = parts[1] || '';
-  stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
-});
+  for (const block of stageNodesEdit) {
+    const nameEl = block.querySelector('.step-name-add');
+    const dateEl = block.querySelector('.date-range-add');
+    const name = nameEl ? nameEl.value.trim() : '';
+    const raw = dateEl ? dateEl.value.trim() : '';
 
+    if (!raw) {
+      alert(`Укажите период для этапа "${name || 'без названия'}"`);
+      throw new Error('stage validation failed (edit)');
+    }
 
-  // Сертификат
+    const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim()).filter(Boolean);
+    const d1 = parts[0] || '';
+    const d2 = parts[1] || parts[0] || '';
+    stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
+  }
+
+  // Certificate fields
   const headerText      = document.querySelector('input[name="title_certificate"]').value.trim();
   const certDescriptionEl = document.getElementById('certificate-description-edit');
   const certDescription = certDescriptionEl ? certDescriptionEl.value.trim() : '';
   const backgroundFile  = document.getElementById('certificate-background-edit').files[0];
+
+  // Languages: multiple
+  const selectedLangs = Array.from(languageEl.selectedOptions || []).map(o => o.value).filter(Boolean);
+  if (!selectedLangs.length) {
+    alert('Выберите хотя бы один язык');
+    return;
+  }
 
   const formData = new FormData();
   formData.append('title', title);
@@ -1027,7 +1044,11 @@ stageNodesEdit.forEach(block => {
   formData.append('website', website);
   formData.append('cost', cost);
   formData.append('description', description);
-  formData.append('language', language);
+
+  // backwards-compatible single language
+  formData.append('language', selectedLangs[0]);
+  // multiple languages entries
+  selectedLangs.forEach(lang => formData.append('languages', lang));
 
   stages.forEach((st, i) => {
     formData.append(`stages[${i}].name`,       st.name);
@@ -1041,7 +1062,7 @@ stageNodesEdit.forEach(block => {
     formData.append('certificate_template.background', backgroundFile);
   }
 
-  // PUT‑запрос
+  // PUT request
   const res = await authorizedFetch(
     `https://portal.femo.kz/api/olympiads/dashboard/${olympiadId}/`,
     {
@@ -1059,6 +1080,7 @@ stageNodesEdit.forEach(block => {
 }
 
 
+
 // Делегируем клик по документу
 document.addEventListener('click', function (e) {
   const tr = e.target.closest('tr');
@@ -1071,6 +1093,7 @@ document.addEventListener('click', function (e) {
   const olympiadId = parseInt(idCell.textContent.trim(), 10);
   openViewModal(olympiadId);
 });
+
 async function openViewModal(id) {
   try {
     const token = localStorage.getItem('access_token');
@@ -1094,11 +1117,19 @@ async function openViewModal(id) {
       summer:        '☀️ Лето',
       international: '🌍 Международный',
     };
+    // language: если пришёл массив languages — показываем все, иначе single language
     const LANG_MAP = {
       kazakh:  'Казахский',
       russian: 'Русский',
       english: 'Английский',
     };
+    let langsToShow = [];
+    if (Array.isArray(data.languages) && data.languages.length) {
+      langsToShow = data.languages;
+    } else if (data.language) {
+      langsToShow = [data.language];
+    }
+    document.getElementById('view-field-language').textContent = langsToShow.map(l => LANG_MAP[l] || l).join(', ') || '—';
 
     document.getElementById('view-field-type').textContent        = TOUR_MAP[data.type] || data.type;
     document.getElementById('view-field-grades').textContent      = data.grades.join(', ');

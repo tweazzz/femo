@@ -135,35 +135,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     await ensureValuesCommitted();
-
+  
     // очистим ошибки
     messageContainer.textContent = '';
     messageContainer.classList.remove('text-red-500', 'text-green-600');
-
+  
     const { emailInput, nameInput, passwordInput } = findInputs(form);
-
+  
     if (passwordInput && !passwordInput.name) {
       passwordInput.name = 'password_temp_for_read';
     }
-
+  
     const roleValue = roleSelect ? roleSelect.value : '';
     const email = emailInput ? emailInput.value.trim() : '';
     const fullName = nameInput ? nameInput.value.trim() : '';
     const password = passwordInput ? passwordInput.value : '';
     const countryCode = countrySelect ? countrySelect.value : '';
-
-    console.log('Submit attempt — values:', {
-      roleValue,
-      email,
-      fullName,
-      passwordPresent: !!password,
-      countryCode,
-      roleSelected: isSelectChosen(roleSelect),
-      countrySelected: isSelectChosen(countrySelect)
-    });
-
+  
     if (!isSelectChosen(roleSelect) || !email || !fullName || !password || !isSelectChosen(countrySelect)) {
       messageContainer.textContent = 'Пожалуйста, заполните все поля корректно (включая страну).';
       messageContainer.classList.add('text-red-500');
@@ -171,10 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (maybePassword) maybePassword.removeAttribute('name');
       return;
     }
-
+  
     if (submitButton) submitButton.disabled = true;
-
-    const payload = {
+  
+    const regPayload = {
       email,
       password,
       country: countryCode,
@@ -183,28 +172,113 @@ document.addEventListener('DOMContentLoaded', () => {
         role: roleValue
       }
     };
-
+  
     try {
+      // 1) регистрация
       const response = await fetch('https://portal.femo.kz/api/users/registration/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(regPayload)
       });
-
+  
       const data = await response.json().catch(() => null);
-
+  
       if (!response.ok) {
         const errMsg = data?.detail || data?.message || 'Произошла ошибка при регистрации.';
         messageContainer.textContent = errMsg;
         messageContainer.classList.add('text-red-500');
         return;
       }
-
-      // ПОКАЗЫВАЕМ ПОПАП СВЕРХУ (маленький, зелёный фон, тёмно-зелёный текст)
-      showSuccessBanner('Регистрация прошла успешно! Перенаправляем...', 1500);
-
-      // редирект через 1.5 секунды (как и просили)
-      setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+  
+      // 2) регистрация успешна — теперь логинимся, чтобы получить access_token
+      const tokenResp = await fetch('https://portal.femo.kz/api/users/token/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+  
+      const tokenData = await tokenResp.json().catch(() => null);
+  
+      if (!tokenResp.ok) {
+        // регистрация прошла, но логин не удался — покажем сообщение, но всё равно сохраним профиль без токена
+        console.warn('Token fetch failed', tokenData);
+        messageContainer.textContent = tokenData?.detail || 'Регистрация успешна, но не удалось получить токен. Войдите вручную.';
+        messageContainer.classList.add('text-red-500');
+        // можно продолжить — но не редиректим в автоматическом режиме
+        return;
+      }
+  
+      // Попытка извлечь access token из возможных ключей
+      const possibleTokenKeys = ['access_token', 'access', 'token', 'auth_token', 'key'];
+      let accessToken = null;
+      if (tokenData && typeof tokenData === 'object') {
+        for (const k of possibleTokenKeys) {
+          if (tokenData[k]) { accessToken = tokenData[k]; break; }
+        }
+        // иногда токен внутри data
+        if (!accessToken && tokenData.data && typeof tokenData.data === 'object') {
+          for (const k of possibleTokenKeys) {
+            if (tokenData.data[k]) { accessToken = tokenData.data[k]; break; }
+          }
+        }
+      }
+  
+      if (!accessToken) {
+        messageContainer.textContent = 'Токен не получен от сервера после логина.';
+        messageContainer.classList.add('text-red-500');
+        return;
+      }
+  
+      // 3) сохраняем access_token в localStorage (и совместимый ключ token)
+      try {
+        localStorage.setItem('access_token', accessToken);
+        localStorage.setItem('token', accessToken);
+      } catch (err) {
+        console.warn('Не удалось сохранить токен в localStorage', err);
+      }
+  
+      // 4) сохраним минимальную информацию о пользователе
+      const userInfo = {
+        email,
+        full_name_ru: fullName,
+        role: roleValue,
+        country: countryCode,
+        id: data?.id || data?.user?.id || data?.data?.id || null
+      };
+      try {
+        localStorage.setItem('user', JSON.stringify(userInfo));
+      } catch (err) {
+        console.warn('Не удалось сохранить user в localStorage', err);
+      }
+  
+      // 5) поведение для role === 'participant'
+      if (roleValue === 'participant') {
+        // НЕ кладём пароль в localStorage. Если нужен временный пароль — в sessionStorage (но лучше не хранить)
+        try {
+          // Сохраняем pending participant с токеном и id — чтобы продолжить профиль
+          const pending = {
+            email,
+            full_name_ru: fullName,
+            country: countryCode,
+            role: roleValue,
+            access_token: accessToken,
+            id: userInfo.id,
+            __saved_at: Date.now()
+          };
+          localStorage.setItem('pending_participant', JSON.stringify(pending));
+        } catch (err) {
+          console.error('Не удалось сохранить pending_participant', err);
+        }
+  
+        showSuccessBanner('Регистрация и логин прошли успешно. Продолжите профиль участника...', 900);
+        setTimeout(() => { window.location.href = 'participant/register.html'; }, 900);
+        return;
+      }
+  
+      // 6) если не participant — обычный успех и редирект (например в профиль)
+      showSuccessBanner('Регистрация и вход выполнены. Перенаправляем...', 900);
+      setTimeout(() => { window.location.href = '/participant/dashboard.html'; }, 900);
+  
     } catch (error) {
       console.error('Ошибка при отправке:', error);
       messageContainer.textContent = 'Ошибка соединения с сервером.';
@@ -215,5 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (maybePassword) maybePassword.removeAttribute('name');
     }
   });
-
+  
+  
 }); // DOMContentLoaded

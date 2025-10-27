@@ -113,120 +113,139 @@ function formatDate(dateStr) {
 
 
 async function loadOlympiadCards() {
-  const token = localStorage.getItem('access_token');
-  if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.');
-    return;
-  }
-
-  try {
-    // 1) Собираем все страницы из API
-    let url = 'https://portal.femo.kz/api/olympiads/participant/dashboard/?tab=upcoming';
-    const allOlympiads = [];
-    while (url) {
-      const resp = await authorizedFetch(url, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!resp.ok) {
-        throw new Error(`Ошибка загрузки олимпиад: ${resp.status}`);
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Токен не найден. Пожалуйста, войдите заново.');
+        return;
       }
-      const page = await resp.json();
-      allOlympiads.push(...page.results);
-      url = page.next;  // URL следующей страницы или null
+    
+      try {
+        // Собираем все страницы из API
+        let url = 'https://portal.femo.kz/api/olympiads/participant/dashboard/?tab=upcoming';
+        const allOlympiads = [];
+        while (url) {
+          const resp = await authorizedFetch(url, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (!resp.ok) {
+            throw new Error(`Ошибка загрузки олимпиад: ${resp.status}`);
+          }
+          const page = await resp.json();
+          allOlympiads.push(...page.results);
+          url = page.next;  // URL следующей страницы или null
+        }
+    
+        // Очищаем контейнер и рисуем карточки
+        const container = document.querySelector('.grid');
+        container.innerHTML = '';
+    
+        allOlympiads.forEach(olympiad => {
+          // Вспомогательные переменные
+          let dateInfoText = '';
+          let dateInfo     = '';
+          let statusClass  = '';
+    
+          // статус → CSS-класс
+          switch (olympiad.status) {
+            case 'Завершена':
+            case 'Вы участвуете':
+              statusClass = 'bg-green-100 text-green-primary';
+              break;
+            case 'Регистрация открыта':
+              statusClass = 'bg-orange-100 text-orange-primary';
+              break;
+            case 'Идет сейчас':
+              statusClass = 'bg-red-100 text-red-primary';
+              break;
+            case 'Регистрация скоро откроется':
+              statusClass = 'bg-grey-100 text-grey-primary';
+              break;
+            default:
+              statusClass = '';
+          }
+    
+          // безопасно парсим даты
+          const startDate = olympiad.first_start_date ? new Date(olympiad.first_start_date) : null;
+          const endDate   = olympiad.last_end_date  ? new Date(olympiad.last_end_date)  : null;
+    
+          // статус → текст даты
+          if (olympiad.status === 'Завершена') {
+            dateInfoText = 'Даты олимпиады';
+            dateInfo     = (startDate && endDate) ? `${formatDate(olympiad.first_start_date)} — ${formatDate(olympiad.last_end_date)}` : '—';
+          } else if (olympiad.status === 'Регистрация открыта' || olympiad.status === 'Идет сейчас') {
+            dateInfoText = 'Осталось';
+            if (olympiad.time_left) {
+              dateInfo = olympiad.time_left;
+            } else if (endDate) {
+              const daysLeft = Math.max(0, Math.round((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+              dateInfo = `${daysLeft} дней`;
+            } else {
+              dateInfo = '—';
+            }
+          } else if (olympiad.status === 'Регистрация скоро откроется') {
+            dateInfoText = 'Откроется';
+            dateInfo     = startDate ? formatDate(olympiad.first_start_date) : '—';
+          } else if (olympiad.status === 'Вы участвуете') {
+            dateInfoText = 'Олимпиада начнётся';
+            dateInfo     = startDate ? formatDate(olympiad.first_start_date) : '—';
+          } else {
+            dateInfoText = '';
+            dateInfo = olympiad.time_left || '';
+          }
+    
+          // тексты/иконка
+          const buttonText = olympiad.status === 'Завершена' ? 'Посмотреть результаты' : 'Подробнее';
+          const useVuesaxIcon = ['Завершена','Вы участвуете','Регистрация скоро откроется'].includes(olympiad.status);
+          const iconHTML = useVuesaxIcon
+            ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block h-5 w-5" />`
+            : `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                    viewBox="0 0 20 20" class="mb-1 inline-block h-5 w-5">
+                 <path fill-rule="evenodd"
+                       d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5
+                          c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
+                       clip-rule="evenodd"/>
+               </svg>`;
+    
+          // создаём карточку (чтобы текст не "зажимался")
+          const card = document.createElement('div');
+          card.className = 'border-default flex flex-col justify-between rounded-xl bg-white p-4 min-h-[200px]';
+    
+          // Кнопки: detail (белая/оранжевая) и (опционально) register (оранжевая)
+          const detailButtonHTML = `<a href="${olympiad.url || '#'}" class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap">${buttonText}</a>`;
+          // Пробрасываем id в query param удобнее
+          const registerButtonHTML = `<a href="/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}" class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap">Зарегистрироваться</a>`;
+    
+          // Показываем register только если registered === false (иначе только detail)
+          let buttonsHTML = `<div class="flex items-center gap-3">${detailButtonHTML}</div>`;
+          if (olympiad.registered === false) {
+            buttonsHTML = `<div class="flex items-center gap-3">${detailButtonHTML}${registerButtonHTML}</div>`;
+          }
+    
+          card.innerHTML = `
+            <div>
+              <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">${olympiad.status}</div>
+              <h3 class="mb-1 text-lg font-semibold break-words">${olympiad.title}</h3>
+              <p class="text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal">Тур: ${olympiad.tour_type}</p>
+            </div>
+    
+            <div>
+              <div class="mb-4">
+                <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
+                <p class="text-black-primary text-sm flex items-center gap-1 leading-relaxed whitespace-normal">
+                  ${iconHTML}
+                  ${dateInfo}
+                </p>
+              </div>
+    
+              ${buttonsHTML}
+            </div>
+          `;
+    
+          container.appendChild(card);
+        });
+    
+      } catch (error) {
+        console.error('Ошибка загрузки списка олимпиад:', error);
+      }
     }
-
-    // 2) Очищаем контейнер и рисуем карточки
-    const container = document.querySelector('.grid');
-    container.innerHTML = '';
-
-    allOlympiads.forEach(olympiad => {
-      // Вспомогательные переменные
-      let dateInfoText = '';
-      let dateInfo     = '';
-      let statusClass  = '';
-
-      // статус → CSS-класс
-      switch (olympiad.status) {
-        case 'Завершена':
-        case 'Вы участвуете':
-          statusClass = 'bg-green-100 text-green-primary';
-          break;
-        case 'Регистрация открыта':
-          statusClass = 'bg-orange-100 text-orange-primary';
-          break;
-        case 'Идет сейчас':
-          statusClass = 'bg-red-100 text-red-primary';
-          break;
-        case 'Регистрация скоро откроется':
-          statusClass = 'bg-grey-100 text-grey-primary';
-          break;
-      }
-
-      // статус → текст даты
-      if (olympiad.status === 'Завершена') {
-        dateInfoText = 'Даты олимпиады';
-        dateInfo     = `${formatDate(olympiad.first_start_date)} — ${formatDate(olympiad.last_end_date)}`;
-      } else if (olympiad.status === 'Регистрация открыта' ||
-                 olympiad.status === 'Идет сейчас') {
-        dateInfoText = 'Осталось';
-        const daysLeft = Math.round(
-          (new Date(olympiad.last_end_date) - new Date()) / (1000 * 60 * 60 * 24)
-        );
-        dateInfo = `${daysLeft} дней`;
-      } else if (olympiad.status === 'Регистрация скоро откроется') {
-        dateInfoText = 'Откроется';
-        dateInfo     = formatDate(olympiad.first_start_date);
-      } else if (olympiad.status === 'Вы участвуете') {
-        dateInfoText = 'Олимпиада начнётся';
-        dateInfo     = formatDate(olympiad.first_start_date);
-      }
-
-      // текст кнопки
-      const buttonText = olympiad.status === 'Завершена'
-        ? 'Посмотреть результаты'
-        : 'Подробнее';
-
-      // иконка
-      const useVuesaxIcon = ['Завершена','Вы участвуете','Регистрация скоро откроется']
-        .includes(olympiad.status);
-      const iconHTML = useVuesaxIcon
-        ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block h-5 w-5" />`
-        : `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                viewBox="0 0 20 20" class="mb-1 inline-block h-5 w-5">
-             <path fill-rule="evenodd"
-                   d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5
-                      c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
-                   clip-rule="evenodd"/>
-           </svg>`;
-
-      // создаём карточку
-      const card = document.createElement('div');
-      card.className = 'border-default flex flex-col rounded-xl bg-white p-4';
-
-      card.innerHTML = `
-        <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">
-          ${olympiad.status}
-        </div>
-        <h3 class="mb-1 text-lg font-semibold">${olympiad.title}</h3>
-        <p class="text-gray-primary mb-3 text-sm">Тур: ${olympiad.tour_type}</p>
-        <div class="mt-auto mb-4 flex">
-          <div>
-            <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
-            <p class="text-black-primary text-sm flex items-center gap-1">
-              ${iconHTML}
-              ${dateInfo}
-            </p>
-          </div>
-        </div>
-        <a href="${olympiad.url}" class="btn-base">
-          ${buttonText}
-        </a>
-      `;
-
-      container.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error('Ошибка загрузки списка олимпиад:', error);
-  }
-}
+    

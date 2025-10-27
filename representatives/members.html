@@ -20,19 +20,19 @@
       </div>
 
       <nav class="flex-1 px-4">
-        <a href="/representatives/index.html" class="sidebar-link">
+        <a href="/representatives/index.html" class="sidebar-link" data-i18n="index.nav_index">
           <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
           Главная
         </a>
-        <a href="/representatives/members.html" class="sidebar-link active">
+        <a href="/representatives/members.html" class="sidebar-link active" data-i18n="index.nav_users">
           <img src="/src/assets/images/users_active.svg" alt="Участники" class="mr-3 size-6" />
           Участники
         </a>
-        <a href="/representatives/results.html" class="sidebar-link">
+        <a href="/representatives/results.html" class="sidebar-link" data-i18n="index.nav_results">
           <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
           Результаты
         </a>
-        <a href="/representatives/chat.html" class="sidebar-link">
+        <a href="/representatives/chat.html" class="sidebar-link" data-i18n="index.nav_chat">
           <img src="/src/assets/images/chat_noactive.svg" alt="Чат" class="mr-3 size-6" />
           Чат
         </a>
@@ -45,7 +45,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="index.logout">Выйти из аккаунта</span>
         </a>
         <a href="/representatives/profile.html" class="sidebar-link">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -867,6 +867,8 @@
     })
   
   </script>
+  <script src="/src/scripts/i18n.js"></script>
+  <script src="/src/scripts/langInit.js"></script>
   <script src="/auth.js" defer></script>
   <script src="/src/representatives/members.js" defer></script>
   <script src="/src/representatives/notification.js" defer></script>

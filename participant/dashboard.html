@@ -19,25 +19,29 @@
         </div>
 
         <nav class="flex-1 px-4">
-          <a href="/participant/dashboard.html" class="sidebar-link active">
+          <a href="/participant/dashboard.html" class="sidebar-link active" data-i18n="dashboard.nav_index">
             <img src="/src/assets/images/index_active.svg" alt="Главная" class="mr-3 size-6" />
             Главная
           </a>
-          <a href="/participant/olympiads.html" class="sidebar-link">
+          <a href="/participant/olympiads.html" class="sidebar-link" data-i18n="dashboard.nav_olympiads">
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
             Олимпиады
           </a>
-          <a href="/participant/tasks.html" class="sidebar-link">
+          <a href="/participant/tasks.html" class="sidebar-link" data-i18n="dashboard.nav_tasks">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
             Задачи
           </a>
-          <a href="/participant/certificates.html" class="sidebar-link">
+          <a href="/participant/certificates.html" class="sidebar-link" data-i18n="dashboard.nav_certificates">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
             Сертификаты
           </a>
-          <a href="/participant/rate-overall.html" class="sidebar-link">
+          <a href="/participant/rate-overall.html" class="sidebar-link" data-i18n="dashboard.nav_ratings">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Рейтинг" class="mr-3 size-6" />
             Рейтинг
+          </a>
+          <a href="/participant/payments.html" class="sidebar-link" data-i18n="">
+            <img src="/src/assets/images/balance_active.png" alt="Баланс и платежи" class="mr-3 size-6" />
+            <span>Баланс и платежи</span>
           </a>
         </nav>
 
@@ -48,7 +52,7 @@
           <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-            Выйти из аккаунта
+            <span data-i18n="dashboard.logout">Выйти из аккаунта</span>
           </a>
           <a href="/participant/my-way.html" class="sidebar-link">
             <svg
@@ -66,7 +70,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="dashboard.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -513,6 +517,8 @@
         })
       })
     </script>
+    <script src="/src/scripts/i18n.js"></script>
+    <script src="/src/scripts/langInit.js"></script>
     <script src="/auth.js" defer></script>
     <script src="/src/participant/dashboard.js" defer></script>
     <script src="/src/participant/notifications.js" defer></script>

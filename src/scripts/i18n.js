@@ -1,20 +1,38 @@
-// ===== i18n.js (универсальный минимальный) =====
+// src/scripts/i18n.js
+// Универсальный i18n: поддержка frontend 'kz'|'en'|'ru' и backend header 'kk'|'en' (null для ru).
+// Подгружает /locales/{frontendLang}/{role}/{page}.json (пытается page.json -> index.json).
 
+window.i18nDict = window.i18nDict || {};
+
+// map frontend -> backend header
+const FRONTEND_TO_BACKEND_LANG = { kz: 'kk', kk: 'kk', en: 'en', ru: null };
+
+// safe fetch JSON
 async function fetchJson(url) {
   try {
     const res = await fetch(url, { cache: 'no-cache' });
-    if (!res.ok) {
-      console.warn('❌ Не удалось загрузить JSON:', url, res.status);
-      return {};
-    }
+    if (!res.ok) return null;
     return await res.json();
   } catch (e) {
-    console.warn('❌ Ошибка fetch:', e);
-    return {};
+    console.warn('i18n fetchJson error', e);
+    return null;
   }
 }
 
-// заменяем только текстовый узел внутри элемента, не трогая HTML (img и т.д.)
+// try page-specific then index.json
+async function fetchLocaleForPage(frontendLang, role, page) {
+  const urls = [
+    `/locales/${frontendLang}/${role}/${page}.json`,
+    `/locales/${frontendLang}/${role}/index.json`
+  ];
+  for (const u of urls) {
+    const data = await fetchJson(u);
+    if (data) return data;
+  }
+  return {};
+}
+
+// replace only text node to avoid wiping images etc
 function setElementTextPreserveHtml(el, text) {
   for (let node of el.childNodes) {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
@@ -22,40 +40,67 @@ function setElementTextPreserveHtml(el, text) {
       return;
     }
   }
-  // если текстовый узел не найден — добавим в конец
   el.appendChild(document.createTextNode(text));
 }
 
+// apply translations to elements with data-i18n (supports data-i18n-attr)
 function applyTranslations(dict) {
+  if (!dict || typeof dict !== 'object') return;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
-    const attr = el.dataset.i18nAttr; // например "placeholder" или "alt"
-
-    if (!(key in dict)) {
-      console.warn('⚠️ i18n missing key:', key);
-      return;
-    }
-
+    if (!key) return;
+    const attr = el.dataset.i18nAttr;
     const value = dict[key];
-
-    if (attr) {
-      // установить атрибут (placeholder, title, alt, value и т.д.)
-      el.setAttribute(attr, value);
-    } else {
-      // заменить текст внутри элемента, сохранив html-детей
-      setElementTextPreserveHtml(el, value);
-    }
+    if (value == null) return; // skip missing keys
+    if (attr) el.setAttribute(attr, value);
+    else setElementTextPreserveHtml(el, value);
   });
 }
 
-async function setLanguage(lang = 'ru', role = 'admin', page = 'index') {
-  const url = `/locales/${lang}/${role}/${page}.json`;
-  console.log('🌐 i18n: загружаю', url);
-  const dict = await fetchJson(url);
-  applyTranslations(dict);
-  try { localStorage.setItem('lang', lang); } catch(e){}
-  console.log(`✅ i18n applied: ${lang}/${role}/${page}`);
+// get role from localStorage.user if exists
+function getRoleFromLocalStorageUser() {
+  try {
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
+    const user = JSON.parse(raw);
+    return user?.profile?.role || null;
+  } catch (e) {
+    return null;
+  }
 }
 
-// видимая в консоли функция
+/**
+ * setLanguage(frontendLang = 'ru', role = null, page = 'index')
+ * - frontendLang: 'ru'|'kz'|'en' (accepts 'kk' -> normalized to 'kz')
+ * - role: if null -> try localStorage.user.profile.role -> fallback 'admin'
+ * - page: 'index' by default
+ */
+async function setLanguage(lang = 'ru', role = null, page = 'index') {
+  const detectedRole = role || getRoleFromLocalStorageUser() || 'admin';
+  const frontendLang = (lang === 'kk') ? 'kz' : lang;
+  try { localStorage.setItem('lang', frontendLang); } catch(e){}
+
+  const backendLang = FRONTEND_TO_BACKEND_LANG[frontendLang] || null;
+  try {
+    if (backendLang) localStorage.setItem('backend_lang', backendLang);
+    else localStorage.removeItem('backend_lang');
+  } catch(e){}
+
+  if (frontendLang === 'ru') {
+    window.i18nDict = {};
+    window.dispatchEvent(new CustomEvent('i18n:languageChanged', { detail: { frontendLang, backendLang, role: detectedRole, page } }));
+    console.log('i18n: ru selected — skip frontend JSON (default RU markup).');
+    return;
+  }
+
+  // try to load page-specific, fallback to index.json
+  const dict = await fetchLocaleForPage(frontendLang, detectedRole, page);
+  window.i18nDict = dict || {};
+  applyTranslations(window.i18nDict);
+  window.dispatchEvent(new CustomEvent('i18n:languageChanged', { detail: { frontendLang, backendLang, role: detectedRole, page } }));
+  console.log(`i18n: applied frontend=${frontendLang} backend=${backendLang} role=${detectedRole} page=${page}`);
+}
+
+// expose globally
 window.setLanguage = setLanguage;
+window.FRONTEND_TO_BACKEND_LANG = FRONTEND_TO_BACKEND_LANG;

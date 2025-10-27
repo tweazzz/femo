@@ -43,45 +43,62 @@ function renderUserInfo(profile) {
   const roleEl    = document.getElementById('user-role');
   const welcomeEl = document.querySelector('h1.text-xl');
 
-  // --- аватар, имя, приветствие (как было) ---
-  const defaultAvatar = '/src/assets/images/user_logo.jpg';
-  const imgPath       = profile?.image;
-  let finalAvatar = defaultAvatar;
-  if (imgPath && typeof imgPath === 'string') {
-    finalAvatar = imgPath.startsWith('http')
-      ? imgPath
-      : `https://portal.femo.kz${imgPath}`;
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
+    console.warn('renderUserInfo: missing DOM elements');
+    return;
   }
-  avatarEl.src        = finalAvatar;
-  nameEl.textContent  = profile.full_name_ru || '';
-  const firstName     = profile.full_name_ru?.split(' ')[0] || '';
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
 
-  // --- роль + флаг ---
-  // Очищаем контейнер
-  roleEl.innerHTML = '';
+  const imgPath = profile.image || '';
+  avatarEl.src = imgPath
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
+    : '';
 
-  // Спан для текста
-  const span = document.createElement('span');
-  span.textContent = 'Представитель';
-  // inline-block и выравнивание по средней линии
-  span.className = 'inline-block align-middle';
-  roleEl.appendChild(span);
+  // name (если хочешь имя на en/ru — решай отдельно)
+  nameEl.textContent = profile.full_name_ru || profile.full_name_en || '';
 
-  // Флаг, если есть
-  const country = profile.country;
-  if (country?.code) {
-    const code    = country.code.toLowerCase();
-    const flagUrl = `https://flagcdn.com/16x12/${code}.png`;
-    const img = document.createElement('img');
-    img.src       = flagUrl;
-    img.alt       = `Флаг ${country.name}`;
-    // inline-block, выравнивание по средней линии, отступ слева
-    img.className = 'inline-block align-middle ml-1';
-    roleEl.appendChild(img);
+  const firstName = (profile.full_name_ru || profile.full_name_en || '').split(' ')[0] || '';
+
+  // вместо innerHTML — создаём span программно и не ломаем DOM
+  // если внутри welcomeEl уже есть span с data-i18n — перезаписываем только его текст
+  let greetSpan = welcomeEl.querySelector('span[data-i18n="welcome.message_rep"]');
+  if (!greetSpan) {
+    greetSpan = document.createElement('span');
+    greetSpan.setAttribute('data-i18n', 'welcome.message_rep');
+    // английский/русский запасной текст
+    greetSpan.textContent = 'Добро пожаловать,';
+    // вставляем span в начало h1
+    welcomeEl.innerHTML = ''; // очищаем, но затем добавим span and name
+    welcomeEl.appendChild(greetSpan);
+    welcomeEl.append(document.createTextNode(' ' + firstName + ' 👋'));
+  } else {
+    // если span уже есть, просто обновляем имя (не трогаем span текст, чтобы i18n мог его заменить)
+    // удаляем все текстовые узлы после span и добавляем имя
+    // сначала убираем все узлы после span
+    let node = greetSpan.nextSibling;
+    while (node) {
+      const next = node.nextSibling;
+      node.remove();
+      node = next;
+    }
+    // добавляем пробел + имя
+    greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
   }
+
+  // если словарь уже загружен, применим перевод к новому span
+  if (window.i18nDict && Object.keys(window.i18nDict).length > 0) {
+    try {
+      // вызываем applyTranslations для нового span (или всей страницы)
+      applyTranslations(window.i18nDict);
+    } catch (e) {
+      console.warn('applyTranslations error', e);
+    }
+  } else {
+    // если словарь ещё не загружен — ничего не делаем. langInit / setLanguage позже подхватит span.
+  }
+
+  const roleMap = { administrator: 'Представитель', representative: 'Представитель' };
+  roleEl.textContent = roleMap[profile.role] || profile.role || '';
 }
-
 
 async function loadRepresentativeProfileForHeader() {
   try {
@@ -411,7 +428,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  renderUserInfo(user)
   document.querySelector('[data-sort-rank]').addEventListener('click', () => {
   if (currentSortDirection === 'asc') {
     currentSortDirection = 'desc'
@@ -423,6 +439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderRankingTable(allRankingData, isExpanded)
 })
   try {
+    renderUserInfo(user)
     await loadRepresentativeStats()
     await loadCurrentOlympiad()
     await loadRepresentativeRanking()

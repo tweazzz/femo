@@ -202,7 +202,7 @@ async function updateUserSettings(updatedFields) {
       if (text.includes('О статусе оплаты')) settings.notify_payments = checkbox.checked;
     });
 
-    const response = await fetch('https://portal.femo.kz/api/users/settings/', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/users/settings/', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

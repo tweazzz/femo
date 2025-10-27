@@ -1,0 +1,340 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/dist/style.css" rel="stylesheet" />
+    <script defer src="src/scripts/showpass.js"></script>
+    <title>Регистрация</title>
+  </head>
+
+  <body class="bg-gray-background">
+    <div class="mx-auto my-8 max-w-lg rounded-3xl bg-white p-5 shadow-md">
+
+      <div class="mb-2 text-center text-2xl font-bold">
+        <p>Расскажи немного о себе 👋</p>
+      </div>
+
+      <div class="text-primary mb-6 rounded-lg text-center text-sm">
+        Это поможет подобрать задания твоего уровня
+      </div>
+
+      <form class="space-y-6">
+        <br>
+        <div>
+            <label for="city" class="text-gray-primary mb-1 block text-sm">Ваш город</label>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              placeholder="Алматы"
+              class="input-base border-default w-full rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            />
+        </div>
+        <div>
+          <label class="text-gray-primary mb-1 block text-sm">Школа</label>
+          <input name="school"
+            placeholder="Общеобразовательная школа №16 им. А. Шарипова"
+            class="input-base border-default"
+          />
+        </div>
+        <div>
+            <label for="grade" class="text-gray-primary mb-1 block text-sm">Класс</label>
+            <select
+              id="grade"
+              name="grade"
+              class="input-base border-default w-full rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            >
+              <option value="">Выберите класс</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+            </select>
+        </div>
+        <div class="border-default rounded-2xl">
+            <p class="mb-3 text-sm">Язык обучения</p>
+          
+            <div class="flex flex-wrap items-start justify-start gap-4">
+              <label class="switch-btn flex items-center gap-2 cursor-pointer">
+                <img
+                  src="https://flagcdn.com/w40/ru.png"
+                  alt="Флаг России"
+                  class="h-3 w-5 object-contain"
+                />
+                <input
+                  type="radio"
+                  name="lang"
+                  value="ru"
+                  class="hidden"
+                  required
+                  checked
+                />
+                Русский
+              </label>
+          
+              <label class="switch-btn flex items-center gap-2 cursor-pointer">
+                <img
+                  src="https://flagcdn.com/w40/kz.png"
+                  alt="Флаг Казахстана"
+                  class="h-3 w-5 object-contain"
+                />
+                <input
+                  type="radio"
+                  name="lang"
+                  value="kz"
+                  class="hidden"
+                  required
+                />
+                Қазақша
+              </label>
+          
+              <label class="switch-btn flex items-center gap-2 cursor-pointer">
+                <img
+                  src="https://flagcdn.com/w40/gb.png"
+                  alt="Флаг Великобритании"
+                  class="h-3 w-5 object-contain"
+                />
+                <input
+                  type="radio"
+                  name="lang"
+                  value="en"
+                  class="hidden"
+                  required
+                />
+                English
+              </label>
+            </div>
+        </div>
+                    
+        <div>
+          <label class="text-gray-primary mb-1 block text-sm">ФИО родителя</label>
+          <input
+            type="text" name="full_name"
+            placeholder="Айжан Ахметова"
+            class="input-base border-default"
+          />
+        </div>
+        <div>
+            <label class="text-gray-primary mb-1 block text-sm">Телефон родителя</label>
+            <input
+              type="tel"
+              name="parent_phone"
+              placeholder="+7 (___) ___-__-__"
+              class="input-base border-default"
+            />
+        </div>
+        <!-- ФИО учителя -->
+        <div>
+            <label class="text-gray-primary mb-1 block text-sm">ФИО учителя</label>
+            <input
+            type="text"
+            name="teacher_full_name"
+            placeholder="Гульмира Абдрахманова"
+            class="input-base border-default"
+            />
+        </div>
+        
+        <!-- Телефон и Email учителя в одну строку -->
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+            <label class="text-gray-primary mb-1 block text-sm">Телефон учителя</label>
+            <input
+                type="tel"
+                name="teacher_phone"
+                placeholder="+7 (___) ___-__-__"
+                class="input-base border-default w-full"
+            />
+            </div>
+        
+            <div class="flex-1">
+            <label class="text-gray-primary mb-1 block text-sm">Email учителя</label>
+            <input
+                type="email"
+                name="teacher_email"
+                placeholder="teacher@example.com"
+                class="input-base border-default w-full"
+            />
+            </div>
+        </div>
+  
+
+        <button
+          type="submit"
+          class="bg-orange-primary w-full cursor-pointer rounded-xl py-2 text-white transition"
+        >
+            Начать учиться
+        </button>
+
+      </form>
+
+    </div>
+  </body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.querySelector('form.space-y-6');
+      const submitBtn = form.querySelector('button[type="submit"]');
+    
+      // Конвертер числового класса в словесный (если API ожидает такие строки)
+      const gradeMap = {
+        '1': 'first',
+        '2': 'second',
+        '3': 'third',
+        '4': 'fourth',
+        '5': 'fifth',
+        '6': 'sixth',
+        '7': 'seventh',
+        '8': 'eighth',
+        '9': 'ninth',
+        '10': 'tenth',
+        '11': 'eleventh'
+      };
+    
+      function showError(message) {
+        alert(message);
+      }
+    
+      function getAccessTokenFromLocalStorage() {
+        // 1) прямой ключ access_token
+        let token = localStorage.getItem('access_token') || localStorage.getItem('token');
+        if (token) return token;
+    
+        // 2) попробовать парсить localStorage.user и взять common поля (access, access_token, token)
+        try {
+          const raw = localStorage.getItem('user') || localStorage.getItem('auth') || null;
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          return parsed?.access_token || parsed?.access || parsed?.token || null;
+        } catch (e) {
+          return null;
+        }
+      }
+    
+      async function sendProfile(payload) {
+        const url = 'https://portal.femo.kz/api/users/participant/profile/';
+    
+        const token = getAccessTokenFromLocalStorage();
+        if (!token) {
+          throw new Error('no_token');
+        }
+    
+        const headers = {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        };
+    
+        const resp = await fetch(url, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(payload),
+          // credentials: 'include' // если используется cookie-based auth — включи
+        });
+    
+        return resp;
+      }
+    
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = 'Сохраняем...';
+    
+        try {
+          const city = (form.querySelector('input[name="city"]')?.value || '').trim();
+          const school = (form.querySelector('input[name="school"]')?.value || '').trim();
+          const gradeValue = (form.querySelector('select[name="grade"]')?.value || '').trim();
+          const studyLanguage = (form.querySelector('input[name="lang"]:checked')?.value || '').trim();
+    
+          const parentName = (form.querySelector('input[name="full_name"]')?.value || '').trim();
+          const parentPhone = (form.querySelector('input[name="parent_phone"]')?.value || '').trim();
+    
+          const teacherName = (form.querySelector('input[name="teacher_full_name"]')?.value || '').trim();
+          const teacherPhone = (form.querySelector('input[name="teacher_phone"]')?.value || '').trim();
+          // const teacherEmail = (form.querySelector('input[name="teacher_email"]')?.value || '').trim();
+    
+          // Простая валидация
+          if (!city) { showError('Пожалуйста, укажите город.'); throw new Error('validation'); }
+          if (!school) { showError('Пожалуйста, укажите школу.'); throw new Error('validation'); }
+          if (!gradeValue) { showError('Пожалуйста, выберите класс.'); throw new Error('validation'); }
+          if (!studyLanguage) { showError('Пожалуйста, выберите язык обучения.'); throw new Error('validation'); }
+          if (!parentName) { showError('Пожалуйста, укажите ФИО родителя.'); throw new Error('validation'); }
+          if (!parentPhone) { showError('Пожалуйста, укажите телефон родителя.'); throw new Error('validation'); }
+          if (!teacherName) { showError('Пожалуйста, укажите ФИО учителя.'); throw new Error('validation'); }
+          if (!teacherPhone) { showError('Пожалуйста, укажите телефон учителя.'); throw new Error('validation'); }
+    
+          const grade = gradeMap[gradeValue] || gradeValue;
+    
+          const body = {
+            city: city,
+            school: school,
+            grade: grade,
+            study_language: studyLanguage,
+            parent: {
+              name_ru: parentName,
+              phone_number: parentPhone
+            },
+            teacher: {
+              name_ru: teacherName,
+              phone_number: teacherPhone
+            }
+          };
+    
+          let resp;
+          try {
+            resp = await sendProfile(body);
+          } catch (err) {
+            if (err.message === 'no_token') {
+              showError('Токен не найден в localStorage. Нужен access_token для авторизации.');
+              return;
+            }
+            throw err;
+          }
+    
+          if (resp.ok) {
+            window.location.href = '/participant/dashboard.html';
+            return;
+          } else {
+            let errText = `Ошибка сервера: ${resp.status}`;
+            try {
+              const json = await resp.json();
+              if (typeof json === 'object' && json !== null) {
+                const msgs = [];
+                for (const key in json) {
+                  if (Array.isArray(json[key])) msgs.push(`${key}: ${json[key].join(', ')}`);
+                  else if (typeof json[key] === 'object') msgs.push(`${key}: ${JSON.stringify(json[key])}`);
+                  else msgs.push(`${key}: ${String(json[key])}`);
+                }
+                if (msgs.length) errText = msgs.join('\n');
+                else errText = JSON.stringify(json);
+              } else {
+                errText = String(json);
+              }
+            } catch (parseErr) {
+              // оставим базовый errText
+            }
+            showError(errText);
+          }
+        } catch (err) {
+          if (err.message !== 'validation') {
+            console.error(err);
+            showError('Не удалось отправить данные. Проверь консоль для деталей.');
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerText = originalText;
+        }
+      });
+    });
+</script>
+    
+    
+    
+    
