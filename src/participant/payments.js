@@ -505,7 +505,7 @@ async function payOlympiad(olympiadId) {
 
   try {
     const response = await authorizedFetch(
-      `https://portal.femo.kz/payments/participant/dashboard/pay/${olympiadId}/`,
+      `https://portal.femo.kz/api/payments/participant/dashboard/pay/${olympiadId}/`,
       {
         method: 'POST',
         headers: {
