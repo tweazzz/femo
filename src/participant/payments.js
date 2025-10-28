@@ -455,8 +455,8 @@ function renderActiveOlympiads(olympiads) {
 }
 
 function downloadPayment(id) {
-  const url = `https://portal.femo.kz/api/payments/participant/dashboard/${id}/download`
-  const token = localStorage.getItem('access_token') // или где вы его храните
+  const url = `https://portal.femo.kz/api/payments/participant/dashboard/${id}/download/`
+  const token = localStorage.getItem('access_token')
 
   authorizedFetch(url, {
     method: 'GET',
@@ -473,7 +473,7 @@ function downloadPayment(id) {
     .then((blob) => {
       const link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
-      link.download = `payment_${transactionId}.pdf`
+      link.download = `payment_${id}.pdf` // исправлено
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -524,7 +524,7 @@ async function payOlympiad(olympiadId) {
       // Закрываем окно и показываем ошибку
       payWindow.close()
       const errText = result.detail || result.error || 'Не удалось инициировать платёж'
-      alert('Ошибка: ' + errText)
+      alert(errText)
     }
   } catch (err) {
     console.error('Ошибка при запросе оплаты:', err)
