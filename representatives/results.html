@@ -102,20 +102,20 @@
       <!-- Dashboard Content -->
       <main class="flex-1 overflow-y-auto p-6">
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-2xl font-semibold">Результаты Казахстана</h1>
+          <h1 class="text text-2xl font-semibold" data-i18n="result.kz_res">Результаты Казахстана</h1>
         </div>
 
         <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <!-- Activity Chart 1 -->
           <div class="border-default bg-blue-secondary rounded-xl p-6 max-h-350">
             <div class="mb-4 flex items-center justify-between">
-              <h3 class="text-lg font-bold">Распределение % участников</h3>
+              <h3 class="text-lg font-bold" data-i18n="result.%_participants">Распределение % участников</h3>
             </div>
             <div class="flex flex-wrap gap-4">
               <!-- Filters -->
               <div class="relative">
                 <select id="grade-filter" class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
-                  <option>Все классы</option>
+                  <option >Все классы</option>
                   <option>1 класс</option>
                   <option>2 класс</option>
                   <option>3 класс</option>
@@ -133,9 +133,7 @@
                 <select id="olympiad-filter" class="h-10 cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2.5"
                   style="width: 100%">
                   <option>Выбрать олимпиаду</option>
-                  <option>FEMO Весна 2025</option>
-                  <option>FEMO Осень 2025</option>
-                  <option>FEMO Лето 2025</option>
+
                 </select>
               </div>
             </div>
@@ -148,7 +146,7 @@
           <!-- Activity Chart 2 -->
           <div class="border-default bg-green-secondary rounded-xl p-6 max-h-350">
             <div class="mb-6 flex items-center justify-between">
-              <h3 class="text-lg font-bold">Динамика участников по годам</h3>
+              <h3 class="text-lg font-bold" data-i18n="result.dinamic_p">Динамика участников по годам</h3>
             </div>
             <div class="chart-container relative" style="height: 260px">
               <canvas id="participantsChart"></canvas>
@@ -158,14 +156,14 @@
 
         <div class="relative">
           <div class="tabs w-fit">
-            <a href="/representatives/results.html" class="tabs-link active">Общий рейтинг</a>
-            <a href="/representatives/results-rate.html" class="tabs-link">Рейтинг по олимпиаде</a>
+            <a href="/representatives/results.html" class="tabs-link active" data-i18n="result.obwii_rate">Общий рейтинг</a>
+            <a href="/representatives/results-rate.html" class="tabs-link" data-i18n="result.rate_po_olymp">Рейтинг по олимпиаде</a>
           </div>
         </div>
 
         <!-- Header -->
         <div class="mb-6 flex items-center justify-between">
-          <h1 class="text-2xl text-xl font-semibold">Общий рейтинг страны</h1>
+          <h1 class="text-2xl text-xl font-semibold" data-i18n="result.obwii_rate_country">Общий рейтинг страны</h1>
           <div class="flex items-center gap-4">
             <button id="download-btn"
               class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
@@ -174,7 +172,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
-              Скачать результаты
+              <span data-i18n="result.download_rate">Скачать результаты</span>
             </button>
 
           </div>
@@ -186,6 +184,8 @@
             <!-- Search -->
             <div class="relative w-full max-w-[350px]">
               <input type="text" placeholder="Искать участника по имени"
+                data-i18n="result.filter_name"
+                data-i18n-attr="placeholder"
                 class="search-input focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none" />
               <svg xmlns="http://www.w3.org/2000/svg"
                 class="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24"
@@ -199,18 +199,18 @@
 
             <div class="relative">
               <select class="grade-select py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
-                <option value="">Все классы</option>
-                <option value="first">1 класс</option>
-                <option value="second">2 класс</option>
-                <option value="third">3 класс</option>
-                <option value="fourth">4 класс</option>
-                <option value="fifth">5 класс</option>
-                <option value="sixth">6 класс</option>
-                <option value="seventh">7 класс</option>
-                <option value="eights">8 класс</option>
-                <option value="ninth">9 класс</option>
-                <option value="tenth">10 класс</option>
-                <option value="eleventh">11 класс</option>
+                <option value="" data-i18n="result.filter_all_classes">Все классы</option>
+                <option value="first">1 </option>
+                <option value="second">2 </option>
+                <option value="third">3 </option>
+                <option value="fourth">4 </option>
+                <option value="fifth">5 </option>
+                <option value="sixth">6 </option>
+                <option value="seventh">7 </option>
+                <option value="eights">8 </option>
+                <option value="ninth">9 </option>
+                <option value="tenth">10 </option>
+                <option value="eleventh">11 </option>
               </select>
             </div>
           </div>
@@ -221,7 +221,7 @@
           <!-- Card 1 -->
           <div class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Средний балл участников</p>
+              <p class="text-sm" data-i18n="result.average_point">Средний балл участников</p>
               <p id="summary-avg-score" class="text-orange-primary text-2xl font-semibold">—</p>
             </div>
           </div>
@@ -229,7 +229,7 @@
           <!-- Card 2 -->
           <div class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Участники с более 50% баллов</p>
+              <p class="text-sm" data-i18n="result.50%">Участники с более 50% баллов</p>
               <p id="summary-above-half" class="text-violet-primary text-2xl font-semibold">
                 — (—%)
               </p>
@@ -239,7 +239,7 @@
 
           <div class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">ТОП-100 Участников</p>
+              <p class="text-sm" data-i18n="result.top100_part">ТОП-100 Участников</p>
               <p id="summary-top100" class="text-blue-primary text-2xl font-semibold">—</p>
             </div>
           </div>
@@ -247,7 +247,7 @@
           <!-- Card 4 -->
           <div class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">% выполнения задач страной</p>
+              <p class="text-sm" data-i18n="result.task%">% выполнения задач страной</p>
               <p id="summary-tasks-percent" class="text-red-primary text-2xl font-semibold">—</p>
             </div>
           </div>
@@ -270,8 +270,8 @@
                   </div>
                 </th>
                 <th class="p-table w-13 sortable" data-field="country_rank">
-                  <div class="flex items-center gap-1">
-                    # в стране
+                  <div class="flex items-center gap-1" >
+                    <span data-i18n="result.rank_in_country"># в стране</span>
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
                         <path fill-rule="evenodd"
@@ -281,10 +281,10 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table">Имя участника</th>
-                <th class="p-table">Класс</th>
+                <th class="p-table" data-i18n="result.filter_name_user">Имя участника</th>
+                <th class="p-table" data-i18n="result.filter_class">Класс</th>
                 <th class="p-table sortable" data-field="olympiad_score">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="result.filter_point_olymp">
                     Баллы за олимпиаду
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
@@ -296,7 +296,7 @@
                   </div>
                 </th>
                 <th class="p-table sortable" data-field="task_score">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="result.filter_point_task">
                     Баллы за задачи
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
@@ -308,7 +308,7 @@
                   </div>
                 </th>
                 <th class="p-table sortable" data-field="total_score">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="result.filter_point_obwii">
                     Общие Баллы
                     <span>
                       <img src="/src/assets/images/coin.png" alt="coin" class="h-5 w-5" />
@@ -325,45 +325,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <!-- <tr class="hover:bg-gray-50">
-                <td class="text-center">8</td>
-                <td class="text-center">1</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">600</td>
-                <td class="text-center">3400</td>
-              </tr>
 
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">16</td>
-                <td class="text-center">2</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">800</td>
-                <td class="text-center">4400</td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">18</td>
-                <td class="text-center">3</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">600</td>
-                <td class="text-center">3400</td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">20</td>
-                <td class="text-center">4</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">600</td>
-                <td class="text-center">3400</td>
-              </tr> -->
             </tbody>
           </table>
         </div>
@@ -380,21 +342,7 @@
               </svg>
             </button>
             <div class="flex gap-1 *:cursor-pointer pagination-pages">
-              <!-- <button class="border-orange-primary text-orange-primary rounded border-1 px-3 py-1">
-                1
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                2
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                3
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                4
-              </button>
-              <button class="px-3 py-1 text-gray-600 hover:bg-gray-50">
-                5
-              </button> -->
+
             </div>
             <button class="pagination-next cursor-pointer px-3 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6">
@@ -410,37 +358,37 @@
 
         <div class="banner bg-blue-secondary mb-6 flex justify-between rounded-2xl">
             <div class="space-y-2 px-6 py-5 sm:w-3/5">
-              <p class="title mb-2 text-lg font-bold">
+              <p class="title mb-2 text-lg font-bold" data-i18n="result.points_info">
                 Как можно заработать ещё баллы?
               </p>
               <p>
-                <span class="text-blue-primary font-bold">Баллы за олимпиады —</span>
-                получаешь XP за участие в турах. Чем выше место — тем больше
-                баллов.
+                <span class="text-blue-primary font-bold" data-i18n="result.points_info2">Баллы за олимпиады —</span>
+                <span data-i18n="result.points_info3">получаешь XP за участие в турах. Чем выше место — тем больше
+                баллов.</span>
               </p>
 
               <ul class="list-inside list-disc ps-4 marker:ms-1">
-                <li>🥇 1 место — +100 XP</li>
-                <li>🥈 2 место — +70 XP</li>
-                <li>🥉 3 место — +50 XP</li>
-                <li>✅ Участие — +10 XP</li>
+                <li>🥇 <span data-i18n="result.place1">1 место</span> — +100 XP</li>
+                <li>🥈 <span data-i18n="result.place2">2 место</span> — +70 XP</li>
+                <li>🥉 <span data-i18n="result.place3">3 место</span> — +50 XP</li>
+                <li>✅ <span data-i18n="result.place4">Участие</span> — +10 XP</li>
               </ul>
 
               <p>
-                <span class="text-blue-primary font-bold">Баллы за решение задачи —</span>
-                выполняй подготовительные задачи и ли решишь все задачи до
-                дедлайна, получишь +15 XP дополнительно
+                <span class="text-blue-primary font-bold" data-i18n="result.points_info5">Баллы за решение задачи —</span>
+                <span data-i18n="result.points_info6">выполняй подготовительные задачи и ли решишь все задачи до
+                дедлайна, получишь +15 XP дополнительно</span>
               </p>
 
               <p>
-                <span class="text-blue-primary font-bold">Награды —</span>
-                просматриваются в профиле участника
+                <span class="text-blue-primary font-bold" data-i18n="result.points_info7">Награды —</span>
+                <span data-i18n="result.points_info8">просматриваются в профиле участника</span>
               </p>
             </div>
             <div
               class="hidden w-2/5 bg-[url('/src/assets/images/man.png')] bg-contain bg-bottom-right bg-no-repeat sm:block">
             </div>
-          </div>
+        </div>
       </main>
     </div>
 
@@ -574,151 +522,6 @@
       // Body scroll control
       document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
     }
-
-
-    // Chart data for different periods
-    // document.addEventListener('DOMContentLoaded', function () {
-    //   const ctx = document
-    //     .getElementById('participantsChart')
-    //     .getContext('2d')
-
-    //   new Chart(ctx, {
-    //     type: 'line',
-    //     data: {
-    //       labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-    //       datasets: [
-    //         {
-    //           data: [0, 50, 30, 80, 30, 66, 85], // Fixed to 7 values to match years
-    //           borderColor: '#10b981',
-    //           backgroundColor: 'rgba(16, 185, 129, 0.08)',
-    //           borderWidth: 1,
-    //           pointRadius: 3,
-    //           pointHoverRadius: 10,
-    //           pointBackgroundColor: '#fff',
-    //           tension: 0.6,
-    //           fill: true,
-    //           borderCapStyle: 'round',
-    //           borderJoinStyle: 'round',
-    //           pointStyle: 'circle',
-    //         },
-    //       ],
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       maintainAspectRatio: false,
-    //       scales: {
-    //         y: {
-    //           beginAtZero: true,
-    //           suggestedMax: 100, // Force maximum value
-    //           ticks: {
-    //             callback: function (value) {
-    //               return value === 0 ? 0 : value + ' участников'
-    //             },
-    //           },
-    //           // title: {
-    //           //     display: true,
-    //           //     text: 'Количество'
-    //           // }
-    //           stepSize: 20, // Force ticks every 20 units
-    //           precision: 0,
-    //           autoSkip: false,
-    //         },
-
-    //         x: {
-    //           grid: {
-    //             display: false, // Remove vertical grid lines
-    //           },
-    //           ticks: {
-    //             autoSkip: false,
-    //           },
-    //           // title: {
-    //           //     display: true,
-    //           //     text: 'Год'
-    //           // }
-    //         },
-    //       },
-    //       plugins: {
-    //         legend: {
-    //           display: false,
-    //         },
-    //         // legend: {
-    //         //     position: 'top',
-    //         //     labels: {
-    //         //         usePointStyle: true
-    //         //     }
-    //         // },
-    //         tooltip: {
-    //           mode: 'index',
-    //           intersect: false,
-    //         },
-    //       },
-    //     },
-    //   })
-    // })
-
-    // Chart data for different periods
-    // document.addEventListener('DOMContentLoaded', function () {
-    //   const ctx = document
-    //     .getElementById('participantsChart2')
-    //     .getContext('2d')
-
-    //   new Chart(ctx, {
-    //     type: 'bar',
-    //     data: {
-    //       labels: ['0-20%', '21-40%', '41-60%', '61-80%', '81-100%'],
-    //       datasets: [
-    //         {
-    //           label: 'Количество участников',
-    //           data: [60, 50, 30, 80, 30],
-    //           backgroundColor: 'rgba(54, 162, 235, 1)',
-    //           borderColor: 'rgba(54, 162, 235, 1)',
-    //           borderWidth: 1,
-    //           borderSkipped: false,
-    //           borderRadius: {
-    //             topLeft: 10,
-    //             topRight: 10,
-    //             bottomLeft: 10,
-    //             bottomRight: 10,
-    //           },
-    //           barThickness: 25,
-    //           maxBarThickness: 25,
-    //         },
-    //       ],
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       maintainAspectRatio: false,
-    //       scales: {
-    //         x: {
-    //           grid: { display: false },
-    //           ticks: { autoSkip: false },
-    //         },
-
-    //         y: {
-    //           beginAtZero: true,
-    //           suggestedMax: 100, // Force maximum value
-    //           ticks: {
-    //             callback: function (value) {
-    //               return value === 0 ? 0 : value + ' участников'
-    //             },
-    //           },
-    //           stepSize: 20, // Force ticks every 20 units
-    //           precision: 0,
-    //           autoSkip: false,
-    //         },
-    //       },
-    //       plugins: {
-    //         legend: {
-    //           display: false,
-    //         },
-    //         tooltip: {
-    //           mode: 'index',
-    //           intersect: false,
-    //         },
-    //       },
-    //     },
-    //   })
-    // })
 
     document.addEventListener('DOMContentLoaded', function () {
       const tabs = document.querySelectorAll('.tabs-link')

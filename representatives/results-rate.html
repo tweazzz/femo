@@ -102,14 +102,14 @@
       <!-- Dashboard Content -->
       <main class="flex-1 overflow-y-auto p-6">
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-2xl font-semibold">Результаты Казахстана</h1>
+          <h1 class="text text-2xl font-semibold" data-i18n="result.kz_res">Результаты Казахстана</h1>
         </div>
 
         <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <!-- Activity Chart 1 -->
           <div class="border-default bg-blue-secondary rounded-xl p-6 max-h-350">
             <div class="mb-4 flex items-center justify-between">
-              <h3 class="text-lg font-bold">Распределение % участников</h3>
+              <h3 class="text-lg font-bold" data-i18n="result.%_participants">Распределение % участников</h3>
             </div>
             <div class="flex flex-wrap gap-4">
               <!-- Filters -->
@@ -148,7 +148,7 @@
           <!-- Activity Chart 2 -->
           <div class="border-default bg-green-secondary rounded-xl p-6 max-h-350">
             <div class="mb-6 flex items-center justify-between">
-              <h3 class="text-lg font-bold">Динамика участников по годам</h3>
+              <h3 class="text-lg font-bold" data-i18n="result.dinamic_p">Динамика участников по годам</h3>
             </div>
             <div class="chart-container relative" style="height: 260px">
               <canvas id="participantsChart"></canvas>
@@ -157,14 +157,13 @@
         </div>
 
         <div class="tabs w-fit">
-          <a href="/representatives/results.html" class="tabs-link">Общий рейтинг</a>
-          <a href="/representatives/results-rate.html" class="tabs-link active">Рейтинг по олимпиаде
-          </a>
+          <a href="/representatives/results.html" class="tabs-link" data-i18n="result.obwii_rate">Общий рейтинг</a>
+          <a href="/representatives/results-rate.html" class="tabs-link active" data-i18n="result.rate_po_olymp">Рейтинг по олимпиаде</a>
         </div>
 
         <!-- Header -->
         <div class="mb-6 flex items-center justify-between">
-          <h1 class="text-2xl text-xl font-semibold">Рейтинг по олимпиаде</h1>
+          <h1 class="text-2xl text-xl font-semibold" data-i18n="result.olympiad_rate">Рейтинг по олимпиаде</h1>
           <div class="flex items-center gap-4">
             <button id="download-ranking"
               class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
@@ -173,7 +172,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
-              Скачать результаты
+              <span data-i18n="result.download_rate">Скачать результаты</span>
             </button>
 
           </div>
@@ -185,6 +184,8 @@
             <!-- Search -->
             <div class="relative w-full max-w-[350px]">
               <input id="search-name" type="text" placeholder="Искать участника по имени"
+                data-i18n="result.filter_name"
+                data-i18n-attr="placeholder"
                 class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none" />
               <svg xmlns="http://www.w3.org/2000/svg"
                 class="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24"
@@ -198,18 +199,18 @@
 
             <div class="relative">
               <select id="filter-grade" class="py-2.9 h-10 w-full cursor-pointer rounded-lg border border-gray-200 bg-white px-4">
-                <option>Все классы</option>
-                <option>1 класс</option>
-                <option>2 класс</option>
-                <option>3 класс</option>
-                <option>4 класс</option>
-                <option>5 класс</option>
-                <option>6 класс</option>
-                <option>7 класс</option>
-                <option>8 класс</option>
-                <option>9 класс</option>
-                <option>10 класс</option>
-                <option>11 класс</option>
+                <option data-i18n="result.filter_all_classes">Все классы</option>
+                <option>1 </option>
+                <option>2 </option>
+                <option>3 </option>
+                <option>4 </option>
+                <option>5 </option>
+                <option>6 </option>
+                <option>7 </option>
+                <option>8 </option>
+                <option>9 </option>
+                <option>10 </option>
+                <option>11 </option>
               </select>
             </div>
 
@@ -229,9 +230,9 @@
           <!-- Card 1 -->
           <div id="summary-title" class="bg-blue-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Олимпиада</p>
+              <p class="text-sm" data-i18n="result-rate.olympiad">Олимпиада</p>
               <p class="text-blue-primary text-2xl font-semibold">
-                FEMO Осень 2024
+                
               </p>
             </div>
           </div>
@@ -239,9 +240,9 @@
           <!-- Card 2 -->
           <div id="summary-dates" class="bg-red-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Дата проведения</p>
+              <p class="text-sm" data-i18n="result-rate.date">Дата проведения</p>
               <p class="text-red-primary text-2xl font-semibold">
-                12-15 октября 24г.
+                
               </p>
             </div>
           </div>
@@ -249,7 +250,7 @@
 
           <div id="summary-participants" class="bg-violet-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Участники</p>
+              <p class="text-sm" data-i18n="result-rate.summary-participants">Участники</p>
               <p class="text-violet-primary text-2xl font-semibold">800</p>
             </div>
           </div>
@@ -257,7 +258,7 @@
           <!-- Card 4 -->
           <div id="summary-avg-score" class="bg-orange-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Средний балл участников</p>
+              <p class="text-sm" data-i18n="result-rate.summary-avg-score">Средний балл участников</p>
               <p class="text-orange-primary text-2xl font-semibold">85</p>
             </div>
           </div>
@@ -281,7 +282,7 @@
                 </th>
                 <th data-sort-key="country_rank" class="p-table w-13">
                   <div class="flex items-center gap-1">
-                    # в стране
+                    <span data-i18n="result.rank_in_country"># в стране</span>
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
                         <path fill-rule="evenodd"
@@ -291,10 +292,10 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table">Имя участника</th>
-                <th class="p-table">Класс</th>
+                <th class="p-table" data-i18n="result.filter_name_user">Имя участника</th>
+                <th class="p-table" data-i18n="result.filter_class">Класс</th>
                 <th data-sort-key="olympiad_score" class="p-table">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="result.filter_point_olymp">
                     Баллы за олимпиаду
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
@@ -306,7 +307,7 @@
                   </div>
                 </th>
                 <th data-sort-key="solved_tasks" class="p-table">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="result.solved_tasks">
                     Результат
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
@@ -318,7 +319,7 @@
                   </div>
                 </th>
                 <th data-sort-key="total_score" class="p-table">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="result.filter_point_obwii">
                     Общие Баллы
                     <span>
                       <img src="/src/assets/images/coin.png" alt="coin" class="h-5 w-5" />
@@ -335,45 +336,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">8</td>
-                <td class="text-center">👑</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">6/6</td>
-                <td class="text-center">1520</td>
-              </tr>
 
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">16</td>
-                <td class="text-center">👑</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">6/6</td>
-                <td class="text-center">1620</td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">18</td>
-                <td class="text-center">👑</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">6/6</td>
-                <td class="text-center">1720</td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td class="text-center">21</td>
-                <td class="text-center">4</td>
-                <td>Айдана Ержанова</td>
-                <td class="text-center">11</td>
-                <td class="text-center">600</td>
-                <td class="text-center">6/6</td>
-                <td class="text-center">1820</td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -404,39 +367,39 @@
 
         <div class="space" style="height: 30px"></div>
 
-       <div class="banner bg-blue-secondary mb-6 flex justify-between rounded-2xl">
+        <div class="banner bg-blue-secondary mb-6 flex justify-between rounded-2xl">
             <div class="space-y-2 px-6 py-5 sm:w-3/5">
-              <p class="title mb-2 text-lg font-bold">
+              <p class="title mb-2 text-lg font-bold" data-i18n="result.points_info">
                 Как можно заработать ещё баллы?
               </p>
               <p>
-                <span class="text-blue-primary font-bold">Баллы за олимпиады —</span>
-                получаешь XP за участие в турах. Чем выше место — тем больше
-                баллов.
+                <span class="text-blue-primary font-bold" data-i18n="result.points_info2">Баллы за олимпиады —</span>
+                <span data-i18n="result.points_info3">получаешь XP за участие в турах. Чем выше место — тем больше
+                баллов.</span>
               </p>
 
               <ul class="list-inside list-disc ps-4 marker:ms-1">
-                <li>🥇 1 место — +100 XP</li>
-                <li>🥈 2 место — +70 XP</li>
-                <li>🥉 3 место — +50 XP</li>
-                <li>✅ Участие — +10 XP</li>
+                <li>🥇 <span data-i18n="result.place1">1 место</span> — +100 XP</li>
+                <li>🥈 <span data-i18n="result.place2">2 место</span> — +70 XP</li>
+                <li>🥉 <span data-i18n="result.place3">3 место</span> — +50 XP</li>
+                <li>✅ <span data-i18n="result.place4">Участие</span> — +10 XP</li>
               </ul>
 
               <p>
-                <span class="text-blue-primary font-bold">Баллы за решение задачи —</span>
-                выполняй подготовительные задачи и ли решишь все задачи до
-                дедлайна, получишь +15 XP дополнительно
+                <span class="text-blue-primary font-bold" data-i18n="result.points_info5">Баллы за решение задачи —</span>
+                <span data-i18n="result.points_info6">выполняй подготовительные задачи и ли решишь все задачи до
+                дедлайна, получишь +15 XP дополнительно</span>
               </p>
 
               <p>
-                <span class="text-blue-primary font-bold">Награды —</span>
-                просматриваются в профиле участника
+                <span class="text-blue-primary font-bold" data-i18n="result.points_info7">Награды —</span>
+                <span data-i18n="result.points_info8">просматриваются в профиле участника</span>
               </p>
             </div>
             <div
               class="hidden w-2/5 bg-[url('/src/assets/images/man.png')] bg-contain bg-bottom-right bg-no-repeat sm:block">
             </div>
-          </div>
+        </div>
 
       </main>
     </div>

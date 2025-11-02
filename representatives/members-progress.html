@@ -102,7 +102,7 @@
       <!-- Dashboard Content -->
       <main class="flex-1 overflow-y-auto p-6">
         <p class="mb-6 text-sm text-gray-900">
-          Управление участниками &gt
+          <span data-i18n="members.participant_t">Управление участниками</span> &gt
           <a href="members.html" id="participant-name-link" class="text-orange-primary"></a>
         </p>
 
@@ -122,22 +122,22 @@
 
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="#" id="tab-progress" class="tabs-link active">Прогресс</a>
-          <a href="#" id="tab-personal" class="tabs-link">Личные данные
+          <a href="#" id="tab-progress" class="tabs-link active" data-i18n="members-progress.progress">Прогресс</a>
+          <a href="#" id="tab-personal" class="tabs-link" data-i18n="members-progress.info">Личные данные
           </a>
-          <a href="#" id="tab-payments" class="tabs-link">Баланс и платежи</a>
+          <a href="#" id="tab-payments" class="tabs-link" data-i18n="members-progress.balance">Баланс и платежи</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">Прогресс</h1>
+          <h1 class="text text-base font-semibold" data-i18n="members-progress.progress">Прогресс</h1>
         </div>
 
         <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <!-- Card 1 -->
           <div class="bg-orange-secondary border-default flex items-center space-x-1 rounded-xl p-6">
             <div class="w-full">
-              <span id="level-value" class="text-orange-primary text-2xl font-semibold">7</span>
-              <span class="ml-2 text-black">уровень</span>
+              <span id="level-value" class="text-orange-primary text-2xl font-semibold"></span>
+              <span class="ml-2 text-black" data-i18n="members-progress.level">уровень</span>
 
               <!-- Горизонтальный блок: прогресс + текст -->
               <div class="mt-2 flex items-center space-x-4">
@@ -149,7 +149,7 @@
                 <img src="/src/assets/images/coin.png" alt="coin" class="h-8 w-8" />
               </div>
 
-              <span class="ml-1 text-xs text-black">Осталось</span>
+              <span class="ml-1 text-xs text-black" data-i18n="members-progress.ostalos'">Осталось</span>
               <span id="xp-to-next" class="text-1xl text-orange-primary font-semibold">48xp</span>
               <span class="ml-1 text-xs text-black">до следующего уровня. Вперед!</span>
             </div>
@@ -159,109 +159,35 @@
 
           <div class="bg-green-secondary border-default flex items-center space-x-5 rounded-xl p-6">
             <div>
-              <p class="text-sm">Заработано</p>
+              <p class="text-sm" data-i18n="members-progress.zarabotano">Заработано</p>
               <p id="xp-today" class="text-green-primary text-2xl font-semibold">0 XP</p>
             </div>
           </div>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">Результаты олимпиады</h1>
+          <h1 class="text text-base font-semibold" data-i18n="members-progress.result">Результаты олимпиады</h1>
         </div>
 
         <div class="border-default mb-6 overflow-x-auto rounded-2xl border max-w-200">
           <table class="table-olympiads w-full rounded-2xl pb-6 min-w-max">
             <thead>
               <tr class="border-b border-gray-200">
-                <th class="p-table">Олимпиада</th>
-                <th class="p-table">Баллы</th>
-                <th class="p-table">Задачи решено</th>
-                <th class="p-table">Место</th>
-                <th class="p-table">Действия</th>
+                <th class="p-table" data-i18n="members-progress.olympiad">Олимпиада</th>
+                <th class="p-table" data-i18n="members-progress.points">Баллы</th>
+                <th class="p-table" data-i18n="members-progress.tasks">Задачи решено</th>
+                <th class="p-table" data-i18n="members-progress.rank">Место</th>
+                <th class="p-table" data-i18n="members-progress.action">Действия</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <!-- <tr class="hover:bg-gray-50">
-                <td>FEMO Весенний тур 2024</td>
-                <td>92</td>
-                <td>6/7</td>
-                <td>4-ое</td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5 text-orange-500">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
-                  </div>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td>FEMO Зимний тур 2024</td>
-                <td>86</td>
-                <td>6/7</td>
-                <td>6-ое</td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5 text-orange-500">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
-                  </div>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td>FEMO Весенний тур 2022</td>
-                <td>34</td>
-                <td>6/7</td>
-                <td>48-ое</td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5 text-orange-500">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
-                  </div>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td>FEMO Летний тур 2020</td>
-                <td>90</td>
-                <td>6/7</td>
-                <td>3-е</td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5 text-orange-500">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    <span class="ml-1 text-sm text-orange-500">Скачать</span>
-                  </div>
-                </td>
-              </tr> -->
+ 
             </tbody>
           </table>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">Достижения</h1>
+          <h1 class="text text-base font-semibold" data-i18n="members-progress.achievement">Достижения</h1>
         </div>
 
         <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -270,7 +196,7 @@
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <div class="flex w-full items-center justify-between">
-                <p class="mr-4 text-xs">Заполнил профиль</p>
+                <p class="mr-4 text-xs" data-i18n="members-progress.zapolnil_profile">Заполнил профиль</p>
                 <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
                   <p class="text text-xs font-semibold text-orange-500">
                     5 XP
@@ -278,7 +204,7 @@
                   <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
                 </div>
               </div>
-              <p class="text-orange-primary text-2xl font-semibold">
+              <p class="text-orange-primary text-2xl font-semibold" data-i18n="members-progress.first_step">
                 Первый шаг
               </p>
             </div>
@@ -289,7 +215,7 @@
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <div class="flex w-full items-center justify-between">
-                <p class="mr-4 text-xs">Вошел в ТОП-10</p>
+                <p class="mr-4 text-xs" data-i18n="members-progress.top_10">Вошел в ТОП-10</p>
                 <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
                   <p class="text text-xs font-semibold text-orange-500">
                     70 XP
@@ -297,7 +223,7 @@
                   <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
                 </div>
               </div>
-              <p class="text-red-primary text-2xl font-semibold">Максимум</p>
+              <p class="text-red-primary text-2xl font-semibold" data-i18n="members-progress.maximum">Максимум</p>
             </div>
           </div>
         </div>
@@ -308,7 +234,7 @@
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <div class="flex w-full items-center justify-between">
-                <p class="mr-4 text-xs">7 дней без пропусков</p>
+                <p class="mr-4 text-xs" data-i18n="members-progress.7day">7 дней без пропусков</p>
                 <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
                   <p class="text text-xs font-semibold text-orange-500">
                     25 XP
@@ -316,7 +242,7 @@
                   <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
                 </div>
               </div>
-              <p class="text-blue-primary text-2xl font-semibold">Комбо 7</p>
+              <p class="text-blue-primary text-2xl font-semibold" data-i18n="members-progress.combo7">Комбо 7</p>
             </div>
           </div>
           <!-- Card 2--->
@@ -325,7 +251,7 @@
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <div class="flex w-full items-center justify-between">
-                <p class="mr-4 text-xs">1000+ набранных баллов</p>
+                <p class="mr-4 text-xs" data-i18n="members-progress.plus_100">1000+ набранных баллов</p>
                 <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
                   <p class="text text-xs font-semibold text-orange-500">
                     50 XP
@@ -333,7 +259,7 @@
                   <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
                 </div>
               </div>
-              <p class="text-violet-primary text-2xl font-semibold">
+              <p class="text-violet-primary text-2xl font-semibold" data-i18n="members-progress.elite_participant">
                 Элитный участник
               </p>
             </div>
@@ -346,7 +272,7 @@
             <img src="/src/assets/images/login56x56.png" alt="paper" />
             <div>
               <div class="flex w-full items-center justify-between">
-                <p class="mr-4 text-xs">Участие в 3+ олимпиадах</p>
+                <p class="mr-4 text-xs" data-i18n="members-progress.3+">Участие в 3+ олимпиадах</p>
                 <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
                   <p class="text text-xs font-semibold text-orange-500">
                     5 XP
@@ -354,7 +280,7 @@
                   <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
                 </div>
               </div>
-              <p class="text-red-primary text-2xl font-semibold">Умник</p>
+              <p class="text-red-primary text-2xl font-semibold" data-i18n="members-progress.umnik">Умник</p>
             </div>
           </div>
           <!-- Card 2--->
@@ -363,7 +289,7 @@
             <img src="/src/assets/images/stars.png" alt="stars" />
             <div>
               <div class="flex w-full items-center justify-between">
-                <p class="mr-4 text-xs">1-е место на олимпиаде</p>
+                <p class="mr-4 text-xs" data-i18n="members-progress.1_place">1-е место на олимпиаде</p>
                 <div class="border-default flex w-fit items-center rounded-2xl bg-white px-3 py-1">
                   <p class="text text-xs font-semibold text-orange-500">
                     100 XP
@@ -371,7 +297,7 @@
                   <img src="/src/assets/images/coin.png" alt="coin" class="h-4 w-4" />
                 </div>
               </div>
-              <p class="text-green-primary text-2xl font-semibold">
+              <p class="text-green-primary text-2xl font-semibold" data-i18n="members-progress.winner">
                 Победитель
               </p>
             </div>

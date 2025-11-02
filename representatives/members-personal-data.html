@@ -102,7 +102,7 @@
       <!-- Dashboard Content -->
       <main class="flex-1 overflow-y-auto p-6">
         <p class="mb-6 text-sm text-gray-900">
-          Управление участниками &gt
+          <span data-i18n="members.participant_t">Управление участниками</span> &gt
           <a id='participant-name-link' href="members.html" class="text-orange-primary"></a>
         </p>
 
@@ -122,20 +122,20 @@
 
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="#" id="tab-progress" class="tabs-link">Прогресс</a>
-          <a href="#" id="tab-personal" class="tabs-link active">Личные данные
+          <a href="#" id="tab-progress" class="tabs-link" data-i18n="members-progress.progress">Прогресс</a>
+          <a href="#" id="tab-personal" class="tabs-link active" data-i18n="members-progress.info">Личные данные
           </a>
-          <a href="#" id="tab-payments" class="tabs-link">Баланс и платежи</a>
+          <a href="#" id="tab-payments" class="tabs-link" data-i18n="members-progress.balance">Баланс и платежи</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">Личные данные</h1>
+          <h1 class="text text-base font-semibold" data-i18n="members-progress.info">Личные данные</h1>
         </div>
 
         <div class="mt-6 space-y-6">
           <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2 max-w-200">
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">ID участника
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.id">ID участника
               </label>
               <p id="profile-id" class="input-base border-default">-</p>
             </div>
@@ -145,37 +145,37 @@
               <p id="profile-email" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.fio">ФИО
               </label>
               <p id="profile-full-name-ru" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.fio_eng">ФИО на английском
               </label>
               <p id="profile-full-name-en" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.country">Страна
               </label>
               <p id="profile-country" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Город
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.city">Город
               </label>
               <p id="profile-city" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Школа
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.school">Школа
               </label>
-              <p id="profile-school" class="input-base border-default">Название школы</p>
+              <p id="profile-school" class="input-base border-default" data-i18n="members-progress.school_name">Название школы</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Класс
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.class">Класс
               </label>
               <p id="profile-grade" class="input-base border-default">-</p>
             </div>
             <div class="relative">
-              <p class="text-primary text-xs">Изображение</p>
+              <p class="text-primary text-xs" data-i18n="members-progress.image">Изображение</p>
               <div class="space" style="height: 5px"></div>
               <div class="flex items-center space-x-3">
                 <img id="participant-photo" src="" alt="Profile"
@@ -189,22 +189,22 @@
 
           <!-- Данные родителя -->
           <div>
-            <p class="mb-4 text-lg font-semibold text-gray-900">
+            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="members-progress.parents_info">
               Данные родителя
             </p>
             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2 max-w-200">
               <div>
-                <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.parents_fio">ФИО
                 </label>
                 <p id="parent-name-ru" class="input-base border-default">-</p>
               </div>
               <div>
-                <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
+                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.parents_fio_eng">ФИО на английском
                 </label>
                 <p id="parent-name-en" class="input-base border-default">-</p>
               </div>
               <div>
-                <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
+                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.parents_phone_number">Номер телефона
                 </label>
                 <p id="parent-phone" class="input-base border-default">-</p>
               </div>
@@ -213,22 +213,22 @@
 
           <!-- Данные учителя -->
           <div>
-            <p class="mb-4 text-lg font-semibold text-gray-900">
+            <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="members-progress.teacher_info">
               Данные учителя
             </p>
             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2 max-w-200">
               <div>
-                <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.teacher_fio">ФИО
                 </label>
                 <p id="teacher-name-ru" class="input-base border-default">-</p>
               </div>
               <div>
-                <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
+                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.teacher_fio_eng">ФИО на английском
                 </label>
                 <p id="teacher-name-en" class="input-base border-default">-</p>
               </div>
               <div>
-                <label class="text-gray-primary mb-1 block text-sm font-medium">Номер телефона
+                <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="members-progress.teacher_phone_number">Номер телефона
                 </label>
                 <p id="teacher-phone" class="input-base border-default">-</p>
               </div>
@@ -244,7 +244,7 @@
                     d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                 </svg>
               </span>
-              Удалить аккаунт
+              <span data-i18n="members-progress.delete_account">Удалить аккаунт</span>
             </button>
           </div>
         </div>
@@ -256,14 +256,14 @@
         <div class="relative">
           <form class="flex flex-col rounded-3xl bg-white shadow-xl">
             <div class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4">
-              <p class="text-xl font-bold">Удалить аккаунт</p>
+              <p class="text-xl font-bold" data-i18n="members-progress.delete_account">Удалить аккаунт</p>
               <button type="button" onclick="toggleModal('modalDel')" class="text-gray-400 hover:text-gray-500">
                 <i data-lucide="x" class="h-5 w-5 cursor-pointer"></i>
               </button>
             </div>
 
             <div class="px-6 py-4">
-              <p class="mb-4 text-sm">
+              <p class="mb-4 text-sm" data-i18n="members-progress.delete_text">
                 Вы точно уверены, что хотите удалить аккаунт? Это
                 действие необратимо. Мы отправим письмо на ваш email для
                 подтверждения
@@ -279,10 +279,10 @@
                       d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                   </svg>
                 </span>
-                Удалить
+                <span data-i18n="members.delete_btn">Удалить</span>
               </button>
 
-              <button type="button" onclick="toggleModal('modalDel')" class="btn-gray-b">
+              <button type="button" onclick="toggleModal('modalDel')" class="btn-gray-b" data-i18n="members.delete_btn_cancel">
                 Отмена
               </button>
             </div>

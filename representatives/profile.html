@@ -104,18 +104,18 @@
       <main class="flex-1 overflow-y-auto p-6">
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="/representatives/profile.html" class="tabs-link active">Личные данные</a>
-          <a href="/representatives/profile-setting.html" class="tabs-link">Настройки</a>
+          <a href="/representatives/profile.html" class="tabs-link active" data-i18n="profile.user_info">Личные данные</a>
+          <a href="/representatives/profile-setting.html" class="tabs-link" data-i18n="profile.settings">Настройки</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">Личные данные</h1>
+          <h1 class="text text-base font-semibold" data-i18n="profile.user_info">Личные данные</h1>
         </div>
 
         <div class="mt-6 space-y-6">
           <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2" style="max-width: 800px">
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">ID представителя
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.id_rep">ID представителя
               </label>
               <p id="rep-id" class="input-base border-default">-</p>
             </div>
@@ -125,17 +125,17 @@
               <p id="rep-email" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.fio">ФИО
               </label>
               <p id="rep-full-name-ru" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.fio_eng" >ФИО на английском
               </label>
               <p id="rep-full-name-en" class="input-base border-default">-</p>
             </div>
             <div>
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.country">Страна
               </label>
               <p id="rep-country" class="input-base border-default">-</p>
             </div>
@@ -144,7 +144,7 @@
             </div>
             <div class="relative">
                 <!-- Hidden file input -->
-                <p class="text-gray-primary mb-1 block text-sm font-medium">
+                <p class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.image">
                   Изображение
                 </p>
                 <div class="flex items-center gap-4">
@@ -169,7 +169,7 @@
                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </span>
-              Редактировать
+              <span data-i18n="profile.edit_btn">Редактировать</span>
             </button>
           </div>
         </div>
@@ -181,7 +181,7 @@
       class="modal fixed top-18 z-30 hidden max-w-xl max-sm:inset-x-4 sm:top-10 sm:left-1/2 sm:w-full sm:-translate-x-1/2">
       <div class="relative">
         <div class="flex flex-col rounded-3xl bg-white">
-          <p class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold">
+          <p class="border-gray-border border-b px-6 pt-6 pb-5 text-xl font-bold" data-i18n="profile.edit_profile_popup">
             Редактировать профиль
           </p>
 
@@ -191,7 +191,7 @@
             <form id="participant-form" class="role-form">
               <div class="mt-6 space-y-6">
                 <div>
-                  <p class="mb-4 text-lg font-semibold text-gray-900">
+                  <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="profile.user_info">
                     Личные данные
                   </p>
                   <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2">
@@ -202,25 +202,25 @@
                         class="input-base border-default" required />
                     </div>
                     <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+                      <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.fio">ФИО
                         <span class="text-red-primary">*</span></label>
-                      <input placeholder="Айжан Ахметова" type="text" name="fullname"
+                      <input placeholder="Aizhan Akhmetova" type="text" name="fullname"
                         class="input-base border-default" required />
                     </div>
                     <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">Страна
+                      <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.country">Страна
                         <span class="text-red-primary">*</span></label>
                       <input placeholder="Казахстан" type="text" name="country"
                         class="input-base border-default" required />
                     </div>
                     <div>
-                      <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО на английском
+                      <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.fio_eng">ФИО на английском
                         <span class="text-red-primary">*</span></label>
                       <input placeholder="Ayzhan Akhmetova" type="text" name="fullname_eng" class="input-base border-default"
                         required />
                     </div>
                     <div class="mb-4">
-                      <label for="imageInput" class="block text-sm font-medium text-gray-700">Фото профиля</label>
+                      <label for="imageInput" class="block text-sm font-medium text-gray-700" data-i18n="profile.image">Фото профиля</label>
                       <input 
                         id="imageInput" 
                         name="image" 
@@ -244,7 +244,7 @@
                           d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                       </svg>
                     </span>
-                    Отменить
+                    <span data-i18n="profile.edit_cancel_btn">Отменить</span>
                   </button>
                   <button class="btn-orange">
                     <span>
@@ -254,7 +254,7 @@
                           d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                       </svg>
                     </span>
-                    Сохранить
+                    <span data-i18n="profile.edit_save_btn">Сохранить</span>
                   </button>
                 </div>
               </div>

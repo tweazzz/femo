@@ -102,7 +102,7 @@
       <!-- Dashboard Content -->
       <main class="flex-1 overflow-y-auto p-6">
         <p class="mb-6 text-sm text-gray-900">
-          Управление участниками &gt
+          <span data-i18n="members.participant_t">Управление участниками</span> &gt
           <a href="members.html" id="participant-name-link" class="text-orange-primary"></a>
         </p>
 
@@ -122,23 +122,23 @@
 
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="#" id="tab-progress" class="tabs-link">Прогресс</a>
-          <a href="#" id="tab-personal" class="tabs-link">Личные данные
+          <a href="#" id="tab-progress" class="tabs-link" data-i18n="members-progress.progress">Прогресс</a>
+          <a href="#" id="tab-personal" class="tabs-link" data-i18n="members-progress.info">Личные данные
           </a>
-          <a href="#" id="tab-payments" class="tabs-link active">Баланс и платежи</a>
+          <a href="#" id="tab-payments" class="tabs-link active" data-i18n="members-progress.balance">Баланс и платежи</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">История платежей</h1>
+          <h1 class="text text-base font-semibold" data-i18n="members-payments.history">История платежей</h1>
         </div>
 
         <div class="border-default mb-6 overflow-x-auto rounded-2xl border">
           <table class="table-payments w-full rounded-2xl pb-6">
             <thead>
               <tr class="border-b border-gray-200">
-                <th class="p-table">ID платежа</th>
+                <th class="p-table" data-i18n="members-payments.id">ID платежа</th>
                 <th class="p-table">
-                  <div class="flex items-center gap-1">
+                  <div class="flex items-center gap-1" data-i18n="members-payments.date_p">
                     Дата получения
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
@@ -149,106 +149,14 @@
                     </span>
                   </div>
                 </th>
-                <th class="p-table">Описание</th>
-                <th class="p-table">Сумма</th>
-                <th class="p-table">Статус</th>
-                <th class="p-table">Действия</th>
+                <th class="p-table" data-i18n="members-payments.description">Описание</th>
+                <th class="p-table" data-i18n="members-payments.summa">Сумма</th>
+                <th class="p-table" data-i18n="members-payments.status">Статус</th>
+                <th class="p-table" data-i18n="members-payments.action">Действия</th>
               </tr>
             </thead>
             <tbody id="payments-tbody" class="divide-y divide-gray-200">
-              <!-- <tr class="hover:bg-gray-50">
-                <td>FEMO-PAY-21433</td>
-                <td>15.11.23</td>
-                <td>FEMO 2023 Зимний тур</td>
-                <td>
-                  <span class="text-red-primary">-2 000 ₸</span>
-                </td>
-                <td>
-                  <span class="card paid">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    Оплачено
-                  </span>
-                </td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    Скачать
-                  </div>
-                </td>
-              </tr>
 
-              <tr class="hover:bg-gray-50">
-                <td>FEMO-PAY-21433</td>
-                <td>15.11.23</td>
-                <td>Пополнить баланс</td>
-                <td>
-                  <span class="text-green-primary">+4 000 ₸</span>
-                </td>
-                <td>
-                  <span class="card error">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-
-                    Ошибка
-                  </span>
-                </td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    Скачать
-                  </div>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td>FEMO-PAY-21433</td>
-                <td>15.11.23</td>
-                <td>FEMO 2023 Зимний тур</td>
-                <td>
-                  <span class="text-red-primary">-2 000 ₸</span>
-                </td>
-                <td>
-                  <span class="card onprocess">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    В процессе
-                  </span>
-                </td>
-                <td>
-                  <div class="flex cursor-pointer items-center gap-1">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-                      </svg>
-                    </span>
-                    Скачать
-                  </div>
-                </td>
-              </tr> -->
             </tbody>
           </table>
         </div>

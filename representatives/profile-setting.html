@@ -123,17 +123,17 @@
       <main class="flex-1 overflow-y-auto p-6">
         <!-- Tabs -->
         <div class="tabs w-fit">
-          <a href="/representatives/profile.html" class="tabs-link">Личные данные</a>
-          <a href="/representatives/profile-setting.html" class="tabs-link active">Настройки</a>
+          <a href="/representatives/profile.html" class="tabs-link" data-i18n="profile.user_info">Личные данные</a>
+          <a href="/representatives/profile-setting.html" class="tabs-link active" data-i18n="profile.settings">Настройки</a>
         </div>
 
         <div class="mb-2 flex items-center justify-between">
-          <h1 class="text text-base font-semibold">Настройки</h1>
+          <h1 class="text text-base font-semibold" data-i18n="profile.settings">Настройки</h1>
         </div>
 
         <div class="mt-6 space-y-6">
           <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5" style="max-width: 800px">
-            <p class="text-gray-primary mb-2 text-sm">
+            <p class="text-gray-primary mb-2 text-sm" data-i18n="profile-settings.choose_lang">
               Выберите язык, который будет использоваться на платформе
             </p>
 
@@ -141,7 +141,7 @@
               <label class="btn-option flex items-center gap-2">
                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain" />
                 <span>Русский</span>
-                <input type="radio" name="language" value="ru" class="hidden" required checked />
+                <input type="radio" name="language" value="ru" class="hidden" required />
               </label>
 
               <label class="btn-option flex items-center gap-2">
@@ -159,7 +159,7 @@
           </div>
 
           <div class="mb-2 flex items-center justify-between">
-            <h1 class="text text-base font-semibold">
+            <h1 class="text text-base font-semibold" data-i18n="profile-settings.choose_notific">
               Настройки уведомлений на сайте
             </h1>
           </div>
@@ -167,40 +167,40 @@
           <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5 sm:grid-cols-2" style="max-width: 800px">
             <div class="flex items-center gap-2">
               <input type="checkbox" class="custom-checkbox" id="option1" />
-              <label for="option1" class="text-gray-primary text-sm font-medium">О результатах</label>
+              <label for="option1" class="text-gray-primary text-sm font-medium" data-i18n="profile-settings.about_results_nots">О результатах</label>
             </div>
 
             <div class="flex items-center gap-2">
               <input type="checkbox" class="custom-checkbox" id="option2" />
-              <label for="option1" class="text-gray-primary text-sm font-medium">О олимпиадах</label>
+              <label for="option1" class="text-gray-primary text-sm font-medium" data-i18n="profile-settings.about_olymps_nots">О олимпиадах</label>
             </div>
 
             <div class="flex items-center gap-2">
               <input type="checkbox" class="custom-checkbox" id="option3" />
-              <label for="option1" class="text-gray-primary text-sm font-medium">О статусе оплаты</label>
+              <label for="option1" class="text-gray-primary text-sm font-medium" data-i18n="profile-settings.about_status_payments_nots">О статусе оплаты</label>
             </div>
 
             <div class="flex items-center gap-2">
               <input type="checkbox" class="custom-checkbox" id="option4" />
-              <label for="option1" class="text-gray-primary text-sm font-medium">О задачах</label>
+              <label for="option1" class="text-gray-primary text-sm font-medium" data-i18n="profile-settings.about_tasks_nots">О задачах</label>
             </div>
 
             <div class="flex items-center gap-2">
               <input type="checkbox" class="custom-checkbox" id="option5" />
-              <label for="option1" class="text-gray-primary text-sm font-medium">О профиле</label>
+              <label for="option1" class="text-gray-primary text-sm font-medium" data-i18n="profile-settings.about_profile_nots">О профиле</label>
             </div>
           </div>
 
           <div class="mb-2 flex items-center justify-between">
-            <h1 class="text text-base font-semibold">Сменить пароль</h1>
+            <h1 class="text text-base font-semibold" data-i18n="profile-settings.change_pass">Сменить пароль</h1>
           </div>
 
           <div class="border-default flex flex-wrap gap-4 rounded-2xl p-5" style="max-width: 800px">
             <!-- Текущий пароль -->
             <div class="w-[240px]">
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Текущий пароль</label>
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile-settings.current_pass">Текущий пароль</label>
               <div class="relative">
-                <input id="password" type="password" placeholder="Введите пароль"
+                <input id="password" type="password" placeholder="***********"
                   class="input-base border-default w-full pr-10" />
                 <button type="button"
                   class="text-gray-primary hover:text-primary absolute top-1/2 right-2 -translate-y-1/2 transform">
@@ -220,9 +220,9 @@
 
             <!-- Новый пароль -->
             <div class="w-[240px]">
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Новый пароль</label>
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile-settings.new_pass">Новый пароль</label>
               <div class="relative">
-                <input id="newpassword" type="password" placeholder="Введите пароль"
+                <input id="newpassword" type="password" placeholder="***********"
                   class="input-base border-default w-full pr-10" />
                 <button type="button"
                   class="text-gray-primary hover:text-primary absolute top-1/2 right-2 -translate-y-1/2 transform">
@@ -241,9 +241,9 @@
 
             <!-- Подтвердите пароль -->
             <div class="w-[240px]">
-              <label class="text-gray-primary mb-1 block text-sm font-medium">Подтвердите пароль</label>
+              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile-settings.verify_pass">Подтвердите пароль</label>
               <div class="relative">
-                <input id="confirm-password" type="password" placeholder="Введите пароль"
+                <input id="confirm-password" type="password" placeholder="***********"
                   class="input-base border-default w-full pr-10" />
                 <button type="button"
                   class="text-gray-primary hover:text-primary absolute top-1/2 right-2 -translate-y-1/2 transform">
@@ -261,7 +261,7 @@
             </div>
           </div>
 
-          <button id="reset-password"
+          <button id="reset-password" data-i18n="profile-settings.change_pass_btn"
             class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2">
             Обновить пароль
           </button>
@@ -269,7 +269,7 @@
           <div class="space" style="height: 50px"></div>
 
           <div class="mb-2 flex items-center justify-between">
-            <h1 class="text text-base font-semibold">
+            <h1 class="text text-base font-semibold" data-i18n="profile-settings.2step_auth">
               Двухэтапная аутентификация
             </h1>
           </div>
@@ -277,17 +277,17 @@
           <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-5" style="max-width: 800px">
             <div class="flex items-center gap-2">
               <img src="/src/assets/images/resetImg.png" alt="reset" class="h-12 w-12" />
-              <h1 class="text text-base font-semibold">
+              <h1 class="text text-base font-semibold" data-i18n="profile-settings.2step_auth_1">
                 Защитите свой аккаунт
               </h1>
             </div>
-            <p class="text-gray-primary mb-2 text-sm">
+            <p class="text-gray-primary mb-2 text-sm" data-i18n="profile-settings.2step_auth_1_txt">
               Включите двухэтапную аутентификацию и подтвердите вход кодом с
               телефона.
             </p>
           </div>
 
-          <button
+          <button data-i18n="profile-settings.2step_auth_btn"
             class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2" onclick="toggleModal('modal')">
             Включить двухэтапную аутентификацию
           </button>
@@ -301,7 +301,7 @@
                     d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                 </svg>
               </span>
-              Удалить аккаунт
+              <span data-i18n="profile-settings.delete_account_btn">Удалить аккаунт</span>
             </button>
           </div>
         </div>
