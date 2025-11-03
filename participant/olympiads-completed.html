@@ -19,23 +19,23 @@
         </div>
 
         <nav class="flex-1 px-4">
-          <a href="/participant/dashboard.html" class="sidebar-link">
+          <a href="/participant/dashboard.html" class="sidebar-link" data-i18n="dashboard.nav_index">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
             Главная
           </a>
-          <a href="/participant/olympiads.html" class="sidebar-link active">
+          <a href="/participant/olympiads.html" class="sidebar-link active" data-i18n="dashboard.nav_olympiads">
             <img src="/src/assets/images/olympiad_active.svg" alt="Олимпиады" class="mr-3 size-6" />
             Олимпиады
           </a>
-          <a href="/participant/tasks.html" class="sidebar-link">
+          <a href="/participant/tasks.html" class="sidebar-link" data-i18n="dashboard.nav_tasks">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
             Задачи
           </a>
-          <a href="/participant/certificates.html" class="sidebar-link">
+          <a href="/participant/certificates.html" class="sidebar-link" data-i18n="dashboard.nav_certificates">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
             Сертификаты
           </a>
-          <a href="/participant/rate-overall.html" class="sidebar-link">
+          <a href="/participant/rate-overall.html" class="sidebar-link" data-i18n="dashboard.nav_ratings">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Рейтинг" class="mr-3 size-6" />
             Рейтинг
           </a>
@@ -52,7 +52,7 @@
           <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-            Выйти из аккаунта
+            <span data-i18n="dashboard.logout">Выйти из аккаунта</span>
           </a>
           <a href="/participant/my-way.html" class="sidebar-link">
             <svg
@@ -70,7 +70,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="dashboard.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -136,13 +136,19 @@
         <!-- Dashboard Content -->
         <main class="flex-1 overflow-y-auto p-6">
           <!-- Tabs -->
-          <div class="tabs">
-            <a href="olympiads.html" class="tabs-link">Все олимпиады</a>
-            <a href="olympiads-active.html" class="tabs-link">Активные</a>
-            <a href="olympiads-incoming.html" class="tabs-link">Предстоящие</a>
-            <a href="olympiads-completed.html" class="tabs-link active"
-              >Завершённые</a
-            >
+          <div class="overflow-x-auto">
+            <div class="tabs w-[26rem]">
+              <a href="olympiads.html" class="tabs-link" data-i18n="olympiads.olympiads_page"
+                >Все олимпиады</a
+              >
+              <a href="olympiads-active.html" class="tabs-link" data-i18n="olympiads.olympiads-active">Активные</a>
+              <a href="olympiads-incoming.html" class="tabs-link" data-i18n="olympiads.olympiads-incoming"
+                >Предстоящие</a
+              >
+              <a href="olympiads-completed.html" class="tabs-link active" data-i18n="olympiads.olympiads-completed"
+                >Завершённые</a
+              >
+            </div>
           </div>
           <!-- Cards Grid -->
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -164,7 +170,7 @@
         <div
           class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base"
         >
-          <p class="text-xl font-bold">Уведомление</p>
+          <p class="text-xl font-bold" data-i18n="notification.nots-popup">Уведомление</p>
 
           <div class="tabs !mb-4 justify-between overflow-x-auto">
             <div

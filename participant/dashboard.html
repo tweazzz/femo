@@ -149,7 +149,7 @@
                 alt="paper"
               />
               <div>
-                <p class="text-sm">Количество олимпиад</p>
+                <p class="text-sm" data-i18n="dashboard.summary-olympiads_count">Количество олимпиад</p>
                 <p id="summary-olympiads_count" class="text-red-primary text-2xl font-semibold"></p>
               </div>
             </div>
@@ -164,7 +164,7 @@
                 alt="paper"
               />
               <div>
-                <p class="text-sm">Общий балл</p>
+                <p class="text-sm" data-i18n="dashboard.summary-total_points">Общий балл</p>
                 <p id="summary-total_points" class="text-orange-primary text-2xl font-semibold"></p>
               </div>
             </div>
@@ -180,7 +180,7 @@
                 alt="paper"
               />
               <div>
-                <p class="text-sm">Лучший рейтинг</p>
+                <p class="text-sm" data-i18n="dashboard.summary-best_rank">Лучший рейтинг</p>
                 <p id="summary-best_rank" class="text-green-primary text-2xl font-semibold"></p>
               </div>
 
@@ -208,7 +208,7 @@
                 alt="paper"
               />
               <div>
-                <p class="text-sm">Нерешенные задачи</p>
+                <p class="text-sm" data-i18n="dashboard.summary-unsolved_tasks">Нерешенные задачи</p>
                 <p id="summary-unsolved_tasks" class="text-violet-primary text-2xl font-semibold"></p>
               </div>
             </div>
@@ -220,14 +220,14 @@
               <div
                 class="mb-6 flex items-center justify-between max-sm:flex-col max-sm:items-start"
               >
-                <h3 class="text-lg font-bold max-sm:mb-2">
+                <h3 class="text-lg font-bold max-sm:mb-2" data-i18n="dashboard.chart1_activnost">
                   Активность в задачах
                 </h3>
 
                 <div class="flex items-center gap-2">
-                  <button id="week" class="chart-tab active">Неделя</button>
-                  <button id="month" class="chart-tab">Месяц</button>
-                  <button id="year" class="chart-tab">Год</button>
+                  <button id="week" class="chart-tab active" data-i18n="dashboard.chart1_tab_week">Неделя</button>
+                  <button id="month" class="chart-tab" data-i18n="dashboard.chart1_tab_month">Месяц</button>
+                  <button id="year" class="chart-tab" data-i18n="dashboard.chart1_tab_year">Год</button>
                 </div>
               </div>
 
@@ -241,10 +241,11 @@
               class="border-default bg-orange-secondary col-span-1 h-fit overflow-hidden rounded-xl px-6 pt-6"
             >
               <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-lg font-bold">Мои задачи</h2>
+                <h2 class="text-lg font-bold" data-i18n="dashboard.my_tasks">Мои задачи</h2>
                 <a
                   href="/participant/tasks.html"
                   class="text-orange-primary flex cursor-pointer text-sm font-bold"
+                  data-i18n="dashboard.my_tasks_see_all_btn"
                 >
                   Посмотреть все
                   <svg
@@ -273,7 +274,7 @@
                   <div
                     class="flex flex-col space-y-4 rounded-3xl bg-white p-4 pt-6 text-base"
                   >
-                    <p class="text-xl font-bold">Уведомление</p>
+                    <p class="text-xl font-bold" data-i18n="notification.nots-popup">Уведомление</p>
 
                     <div class="tabs !mb-4 justify-between overflow-x-auto">
                       <div
@@ -392,10 +393,11 @@
           <div class="mx-auto max-w-7xl">
             <div class="border-default overflow-hidden rounded-xl bg-white">
               <div class="mb-4 flex items-center justify-between px-6 pt-6">
-                <h2 class="text-lg font-bold">Общий рейтинг</h2>
+                <h2 class="text-lg font-bold" data-i18n="dashboard.all_rate">Общий рейтинг</h2>
                 <a
                   href="/participant/rate-overall.html"
                   class="flex items-center text-sm font-bold text-orange-500 hover:text-orange-600"
+                  data-i18n="dashboard.my_tasks_see_all_btn"
                 >
                   Посмотреть все
                   <svg
@@ -418,7 +420,8 @@
                   <thead>
                     <tr class="table-tr">
                       <th id="rank" class="p-table">
-                        <span id="sort-rank-header" class="flex items-center cursor-pointer">
+                        <span id="sort-rank-header" class="flex items-center cursor-pointer"
+                        data-i18n="dashboard.sort-rank-header">
                           Ранк
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -434,12 +437,12 @@
                           </svg>
                         </span>
                       </th>
-                      <th id="full_name" class="p-table">Имя участника</th>
-                      <th id="grade" class="p-table">Класс</th>
-                      <th id="country" class="p-table">Страна</th>
-                      <th id="total_points" class="p-table">Общие Баллы</th>
-                      <th id="olympiad_points" class="p-table">Баллы за олимпиады</th>
-                      <th id="assignment_points" class="p-table">Баллы за задачи</th>
+                      <th id="full_name" class="p-table" data-i18n="dashboard.sort-name-header">Имя участника</th>
+                      <th id="grade" class="p-table" data-i18n="dashboard.sort-class-header">Класс</th>
+                      <th id="country" class="p-table" data-i18n="dashboard.sort-country-header">Страна</th>
+                      <th id="total_points" class="p-table" data-i18n="dashboard.total_points-header">Общие Баллы</th>
+                      <th id="olympiad_points" class="p-table" data-i18n="dashboard.olympiad_points-header">Баллы за олимпиады</th>
+                      <th id="assignment_points" class="p-table" data-i18n="dashboard.assignment_points-header">Баллы за задачи</th>
                     </tr>
                   </thead>
                   <tbody id="ranking-tbody">
@@ -450,7 +453,7 @@
           </div>
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
-            <div class="text-gray-primary text-sm">Всего строк: <span id="total-rank-count">0</span></div>
+            <div class="text-gray-primary text-sm"><span data-i18n="dashboard.table_count">Всего строк: </span><span id="total-rank-count">0</span></div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
