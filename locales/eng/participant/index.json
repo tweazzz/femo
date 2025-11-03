@@ -1,0 +1,67 @@
+{
+    "welcome.message_rep": "Welcome,",
+    "dashboard.nav_index": "Home",
+    "dashboard.nav_olympiads": "Olympiads",
+    "dashboard.nav_tasks": "Tasks",
+    "dashboard.nav_certificates": "Certificates",
+    "dashboard.nav_ratings": "Ranking",
+    "dashboard.nav_payments": "Balance and payments",
+    "dashboard.logout": "Log out",
+    "dashboard.profile": "Profile",
+
+    "dashboard.summary-olympiads_count": "Number of olympiads",
+    "dashboard.summary-total_points": "Total score",
+    "dashboard.summary-best_rank": "Best ranking",
+    "dashboard.summary-unsolved_tasks": "Unsolved tasks",
+    "dashboard.chart1_activnost": "Activity in tasks",
+    "dashboard.chart1_tab_year": "Year",
+    "dashboard.chart1_tab_month": "Month",
+    "dashboard.chart1_tab_week": "Week",
+    "dashboard.my_tasks": "My tasks",
+    "dashboard.my_tasks_see_all_btn": "View all",
+
+    "dashboard.all_rate": "Overall ranking",
+    "dashboard.sort-rank-header": "Rank",
+    "dashboard.sort-name-header": "Participant’s name",
+    "dashboard.sort-class-header": "Grade",
+    "dashboard.sort-country-header": "Country",
+    "dashboard.total_points-header": "Total points",
+    "dashboard.olympiad_points-header": "Olympiad points",
+    "dashboard.assignment_points-header": "Task points",
+    "dashboard.table_count": "All: ",
+
+    "notification.nots-popup": "Notifications",
+
+    "olympiads.olympiads_page": "All olympiads",
+    "olympiads.olympiads-active": "Active",
+    "olympiads.olympiads-incoming": "Upcoming",
+    "olympiads.olympiads-completed": "Completed",
+  
+    "olympiads.olympiads-ongoing": "Ongoing",
+    "olympiads.olympiads-registered'": "You’re participating",
+    "olympiads.olympiads-registration-open": "Registration open",
+    "olympiads.olympiads-registration-soon": "Registration opens soon",
+
+    "olympiads.tour-winter": "Winter",
+    "olympiads.tour-spring": "Spring",
+    "olympiads.tour-summer": "Summer",
+    "olympiads.tour-autumn": "Autumn",
+
+    "olympiads.registrate_btn": "Registration",
+  
+    "olympiads.start_now": "Start Now",
+    "olympiads.podrobnee_btn": "More details",
+    "olympiads.view-results": "View results",
+
+    "tasks.daily_tasks": "Daily tasks",
+    "tasks.all_tasks": "All tasks",
+    "tasks.all_classes111": "Барлық сыныптар",
+    "":"",
+    "":"",
+    "":"",
+    "":"",
+    "":"",
+    "":"",
+    "":""
+  }
+  

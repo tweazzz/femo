@@ -49,32 +49,66 @@ async function loadUserProfile() {
 }
 let currentUserFullName = '';
 function renderUserInfo(profile) {
-  const avatarEl   = document.getElementById('user-avatar');
-  const nameEl     = document.getElementById('user-name');
-  const roleEl     = document.getElementById('user-role');
-  const welcomeEl  = document.querySelector('h1.text-xl');
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-  // Безопасный путь к картинке: если нет — используем заглушку
-  const imgPath = profile && profile.image ? profile.image : null;
-  if (imgPath && typeof imgPath === 'string') {
-    avatarEl.src = imgPath.startsWith('http')
-      ? imgPath
-      : `https://portal.femo.kz${imgPath}`;
-  } else {
-    // вставь тут свой путь к дефолтной аватарке или пустую картинку
-    avatarEl.src = '/src/assets/images/default-avatar.png'; // <- поменяй если нужно
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
+    console.warn('renderUserInfo: missing DOM elements');
+    return;
   }
 
-  // Имя (берём безопасно: русское, английское, либо fallback)
-  const fullNameRu = (profile && (profile.full_name_ru || profile.full_name_en || profile.full_name)) || '';
-  nameEl.textContent = fullNameRu || 'Пользователь';
+  const imgPath = profile.image || '';
+  avatarEl.src = imgPath
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
+    : '';
 
-  // безопасно отделяем firstName
-  const firstName = fullNameRu ? fullNameRu.split(' ')[0] : 'Привет';
-  welcomeEl.textContent = `Добро пожаловать, ${firstName} 👋`;
+  // name (если хочешь имя на en/ru — решай отдельно)
+  nameEl.textContent = profile.full_name_ru || profile.full_name_en || '';
 
-  // Роль
-  roleEl.textContent = 'Участник';
+  const firstName = (profile.full_name_ru || profile.full_name_en || '').split(' ')[0] || '';
+
+  // вместо innerHTML — создаём span программно и не ломаем DOM
+  // если внутри welcomeEl уже есть span с data-i18n — перезаписываем только его текст
+  let greetSpan = welcomeEl.querySelector('span[data-i18n="welcome.message_rep"]');
+  if (!greetSpan) {
+    greetSpan = document.createElement('span');
+    greetSpan.setAttribute('data-i18n', 'welcome.message_rep');
+    // английский/русский запасной текст
+    greetSpan.textContent = 'Добро пожаловать,';
+    // вставляем span в начало h1
+    welcomeEl.innerHTML = ''; // очищаем, но затем добавим span and name
+    welcomeEl.appendChild(greetSpan);
+    welcomeEl.append(document.createTextNode(' ' + firstName + ' 👋'));
+  } else {
+    // если span уже есть, просто обновляем имя (не трогаем span текст, чтобы i18n мог его заменить)
+    // удаляем все текстовые узлы после span и добавляем имя
+    // сначала убираем все узлы после span
+    let node = greetSpan.nextSibling;
+    while (node) {
+      const next = node.nextSibling;
+      node.remove();
+      node = next;
+    }
+    // добавляем пробел + имя
+    greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
+  }
+
+  // если словарь уже загружен, применим перевод к новому span
+  if (window.i18nDict && Object.keys(window.i18nDict).length > 0) {
+    try {
+      // вызываем applyTranslations для нового span (или всей страницы)
+      applyTranslations(window.i18nDict);
+    } catch (e) {
+      console.warn('applyTranslations error', e);
+    }
+  } else {
+    // если словарь ещё не загружен — ничего не делаем. langInit / setLanguage позже подхватит span.
+  }
+
+  const roleMap = { administrator: 'Участник', representative: 'Участник' };
+  roleEl.textContent = roleMap[profile.role] || profile.role || '';
 }
 
 

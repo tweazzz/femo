@@ -146,140 +146,227 @@ function formatDate(dateStr) {
     }
 
 
+// helper: slugify for fallback keys
+function slugify(str) {
+  return String(str || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '-')
+    .replace(/\-+/g, '-')
+    .replace(/^\-+|\-+$/g, '');
+}
+
+// helper: create ascii-friendly slug for fallback i18n keys
+function slugify(str) {
+  return String(str || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '-')
+    .replace(/\-+/g, '-')
+    .replace(/^\-+|\-+$/g, '');
+}
+
 async function loadOlympiadCards() {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        alert('Токен не найден. Пожалуйста, войдите заново.');
-        return;
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
+  }
+
+  // подстрой эти мапы если нужно (ключи i18n из твоего JSON)
+  const statusI18nMap = {
+    'Завершена': 'olympiads.olympiads-completed',
+    'Вы участвуете': 'olympiads.olympiads-registered',
+    'Регистрация открыта': 'olympiads.olympiads-registration-open',
+    'Идет сейчас': 'olympiads.olympiads-ongoing',
+    'Регистрация скоро откроется': 'olympiads.olympiads-registration-soon'
+  };
+
+  const tourTypeI18nMap = {
+    'Зима': 'olympiads.tour-winter',
+    'Весна': 'olympiads.tour-spring',
+    'Лето': 'olympiads.tour-summer',
+    'Осень': 'olympiads.tour-autumn',
+    'Международный': 'olympiads.tour-international'
+  };
+
+  try {
+    const response = await authorizedFetch('https://portal.femo.kz/api/olympiads/participant/dashboard/?tab=upcoming', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!response.ok) throw new Error(`Ошибка загрузки олимпиад: ${response.status}`);
+
+    const data = await response.json();
+    const container = document.querySelector('.grid');
+    if (!container) throw new Error('Container .grid не найден в DOM');
+    container.innerHTML = ''; // Очистить перед добавлением
+
+    data.results.forEach(olympiad => {
+      const statusRaw = (olympiad.status || '').toString();
+      const tourRaw = (olympiad.tour_type || '').toString();
+
+      const statusKey = statusI18nMap[statusRaw] || `olympiads.status-${slugify(statusRaw)}`;
+      const tourKey = tourTypeI18nMap[tourRaw] || `olympiads.tour-${slugify(tourRaw)}`;
+
+      // Нормализуем для проверки "завершен"
+      const statusNorm = statusRaw.trim().toLowerCase();
+      const isFinished = statusNorm.includes('заверш'); // покрывает "Завершена", "Завершено" и т.п.
+
+      // Определяем классы по статусу (твоя логика)
+      let statusClass = '';
+      if (statusRaw === 'Завершена' || statusRaw === 'Вы участвуете') statusClass = 'bg-green-100 text-green-primary';
+      else if (statusRaw === 'Регистрация открыта') statusClass = 'bg-orange-100 text-orange-primary';
+      else if (statusRaw === 'Идет сейчас') statusClass = 'bg-red-100 text-red-primary';
+      else if (statusRaw === 'Регистрация скоро откроется') statusClass = 'bg-grey-100 text-grey-primary';
+
+      // Даты / инфо
+      let dateInfoText = '';
+      let dateInfo = '';
+      const startDate = olympiad.first_start_date ? new Date(olympiad.first_start_date) : null;
+      const endDate = olympiad.last_end_date ? new Date(olympiad.last_end_date) : null;
+      if (statusRaw === 'Завершена') {
+        dateInfoText = 'Даты олимпиады';
+        dateInfo = (startDate && endDate) ? `${formatDate(olympiad.first_start_date)} - ${formatDate(olympiad.last_end_date)}` : '—';
+      } else if (statusRaw === 'Регистрация открыта' || statusRaw === 'Идет сейчас') {
+        dateInfoText = 'Осталось';
+        if (olympiad.time_left) dateInfo = olympiad.time_left;
+        else if (endDate) dateInfo = `${Math.max(0, Math.round((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} дней`;
+        else dateInfo = '—';
+      } else if (statusRaw === 'Регистрация скоро откроется') {
+        dateInfoText = 'Откроется';
+        dateInfo = startDate ? formatDate(olympiad.first_start_date) : '—';
+      } else if (statusRaw === 'Вы участвуете') {
+        dateInfoText = 'Олимпиада начнется';
+        dateInfo = startDate ? formatDate(olympiad.first_start_date) : '—';
+      } else {
+        dateInfoText = '';
+        dateInfo = olympiad.time_left || '';
       }
-    
-      try {
-        // Собираем все страницы из API
-        let url = 'https://portal.femo.kz/api/olympiads/participant/dashboard/?tab=upcoming';
-        const allOlympiads = [];
-        while (url) {
-          const resp = await authorizedFetch(url, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (!resp.ok) {
-            throw new Error(`Ошибка загрузки олимпиад: ${resp.status}`);
-          }
-          const page = await resp.json();
-          allOlympiads.push(...page.results);
-          url = page.next;  // URL следующей страницы или null
+
+      // Подготовим i18n-ключи для кнопок (ты прислал эти ключи в JSON)
+      // "olympiads.start_now", "olympiads.podrobnee_btn", "olympiads.view-results"
+      const keyStartNow = 'olympiads.start_now';
+      const keyMore = 'olympiads.podrobnee_btn';
+      const keyViewResults = 'olympiads.view-results';
+      const keyRegister = 'olympiads.registrate_btn' /* если у тебя другой ключ, поменяй */;
+
+      // Тексты кнопок: берем из window.i18nDict если есть, иначе fallback на русские
+      const startText = (window.i18nDict && window.i18nDict[keyStartNow]) || 'Начать сейчас';
+      const moreText = (window.i18nDict && window.i18nDict[keyMore]) || 'Подробнее';
+      const viewResultsText = (window.i18nDict && window.i18nDict[keyViewResults]) || 'Посмотреть результаты';
+      const registerText = (window.i18nDict && window.i18nDict[keyRegister]) || 'Зарегистрироваться';
+
+      // создаём карточку безопасно
+      const card = document.createElement('div');
+      card.className = 'border-default flex flex-col justify-between rounded-xl bg-white p-4 min-h-[220px]';
+
+      // top block
+      const top = document.createElement('div');
+
+      // статус (с svg для "Завершена")
+      const statusEl = document.createElement('div');
+      statusEl.className = `${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs flex items-center gap-1`;
+      statusEl.setAttribute('data-i18n', statusKey);
+      if (isFinished) {
+        // небольшой svg check
+        statusEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="inline-block"><path d="M6 11C8.75 11 11 8.75 11 6C11 3.25 8.75 1 6 1C3.25 1 1 3.25 1 6C1 8.75 3.25 11 6 11Z" stroke="#0DB459" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.875 5.99996L5.29 7.41496L8.125 4.58496" stroke="#0DB459" stroke-linecap="round" stroke-linejoin="round"/></svg> ${statusRaw}`;
+      } else {
+        statusEl.textContent = statusRaw;
+      }
+      top.appendChild(statusEl);
+
+      // title
+      const h3 = document.createElement('h3');
+      h3.className = 'mb-1 text-lg font-semibold break-words';
+      h3.textContent = olympiad.title || '';
+      top.appendChild(h3);
+
+      // tour with data-i18n on span
+      const pTour = document.createElement('p');
+      pTour.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal';
+      const tourLabel = document.createTextNode('Тур: ');
+      const tourSpan = document.createElement('span');
+      tourSpan.setAttribute('data-i18n', tourKey);
+      tourSpan.textContent = tourRaw;
+      pTour.appendChild(tourLabel);
+      pTour.appendChild(tourSpan);
+      top.appendChild(pTour);
+
+      card.appendChild(top);
+
+      // bottom block
+      const bottom = document.createElement('div');
+
+      // date info
+      const dateBlock = document.createElement('div');
+      dateBlock.className = 'mb-4';
+      const dateLabel = document.createElement('span');
+      dateLabel.className = 'text-gray-secondary mb-1 text-xs';
+      dateLabel.textContent = dateInfoText;
+      const dateP = document.createElement('p');
+      dateP.className = 'text-black-primary text-sm leading-relaxed whitespace-normal';
+      // icon (simple)
+      const useVuesaxIcon = ['Завершена', 'Вы участвуете', 'Регистрация скоро откроется'].includes(statusRaw);
+      const iconHTML = useVuesaxIcon
+        ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block size-5" />`
+        : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mb-1 inline-block size-5"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/></svg>`;
+      dateP.innerHTML = `${iconHTML} ${dateInfo}`;
+
+      dateBlock.appendChild(dateLabel);
+      dateBlock.appendChild(dateP);
+      bottom.appendChild(dateBlock);
+
+      // buttons container
+      const btns = document.createElement('div');
+      btns.className = 'flex items-center gap-3';
+
+      // decide which detail button (view-results if finished, otherwise more)
+      const detailBtn = document.createElement('a');
+      detailBtn.href = olympiad.url || '#';
+      detailBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap';
+      const detailKey = isFinished ? keyViewResults : keyMore;
+      const detailText = isFinished ? viewResultsText : moreText;
+      detailBtn.setAttribute('data-i18n', detailKey);
+      detailBtn.textContent = detailText;
+      btns.appendChild(detailBtn);
+
+      // If ongoing & not registered -> show register; if ongoing & registered -> show start
+      if (statusRaw === 'Идет сейчас') {
+        if (olympiad.registered === true) {
+          const startBtn = document.createElement('a');
+          startBtn.href = '/participant/tasks.html';
+          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+          startBtn.setAttribute('data-i18n', keyStartNow);
+          startBtn.textContent = startText;
+          btns.appendChild(startBtn);
+        } else {
+          const registerBtn = document.createElement('a');
+          registerBtn.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}`;
+          registerBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+          registerBtn.setAttribute('data-i18n', keyRegister);
+          registerBtn.textContent = registerText;
+          btns.appendChild(registerBtn);
         }
-    
-        // Очищаем контейнер и рисуем карточки
-        const container = document.querySelector('.grid');
-        container.innerHTML = '';
-    
-        allOlympiads.forEach(olympiad => {
-          // Вспомогательные переменные
-          let dateInfoText = '';
-          let dateInfo     = '';
-          let statusClass  = '';
-    
-          // статус → CSS-класс
-          switch (olympiad.status) {
-            case 'Завершена':
-            case 'Вы участвуете':
-              statusClass = 'bg-green-100 text-green-primary';
-              break;
-            case 'Регистрация открыта':
-              statusClass = 'bg-orange-100 text-orange-primary';
-              break;
-            case 'Идет сейчас':
-              statusClass = 'bg-red-100 text-red-primary';
-              break;
-            case 'Регистрация скоро откроется':
-              statusClass = 'bg-grey-100 text-grey-primary';
-              break;
-            default:
-              statusClass = '';
-          }
-    
-          // безопасно парсим даты
-          const startDate = olympiad.first_start_date ? new Date(olympiad.first_start_date) : null;
-          const endDate   = olympiad.last_end_date  ? new Date(olympiad.last_end_date)  : null;
-    
-          // статус → текст даты
-          if (olympiad.status === 'Завершена') {
-            dateInfoText = 'Даты олимпиады';
-            dateInfo     = (startDate && endDate) ? `${formatDate(olympiad.first_start_date)} — ${formatDate(olympiad.last_end_date)}` : '—';
-          } else if (olympiad.status === 'Регистрация открыта' || olympiad.status === 'Идет сейчас') {
-            dateInfoText = 'Осталось';
-            if (olympiad.time_left) {
-              dateInfo = olympiad.time_left;
-            } else if (endDate) {
-              const daysLeft = Math.max(0, Math.round((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-              dateInfo = `${daysLeft} дней`;
-            } else {
-              dateInfo = '—';
-            }
-          } else if (olympiad.status === 'Регистрация скоро откроется') {
-            dateInfoText = 'Откроется';
-            dateInfo     = startDate ? formatDate(olympiad.first_start_date) : '—';
-          } else if (olympiad.status === 'Вы участвуете') {
-            dateInfoText = 'Олимпиада начнётся';
-            dateInfo     = startDate ? formatDate(olympiad.first_start_date) : '—';
-          } else {
-            dateInfoText = '';
-            dateInfo = olympiad.time_left || '';
-          }
-    
-          // тексты/иконка
-          const buttonText = olympiad.status === 'Завершена' ? 'Посмотреть результаты' : 'Подробнее';
-          const useVuesaxIcon = ['Завершена','Вы участвуете','Регистрация скоро откроется'].includes(olympiad.status);
-          const iconHTML = useVuesaxIcon
-            ? `<img src="/src/assets/images/vuesax.svg" alt="vuesax" class="mb-1 inline-block h-5 w-5" />`
-            : `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                    viewBox="0 0 20 20" class="mb-1 inline-block h-5 w-5">
-                 <path fill-rule="evenodd"
-                       d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5
-                          c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
-                       clip-rule="evenodd"/>
-               </svg>`;
-    
-          // создаём карточку (чтобы текст не "зажимался")
-          const card = document.createElement('div');
-          card.className = 'border-default flex flex-col justify-between rounded-xl bg-white p-4 min-h-[200px]';
-    
-          // Кнопки: detail (белая/оранжевая) и (опционально) register (оранжевая)
-          const detailButtonHTML = `<a href="${olympiad.url || '#'}" class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap">${buttonText}</a>`;
-          // Пробрасываем id в query param удобнее
-          const registerButtonHTML = `<a href="/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}" class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap">Зарегистрироваться</a>`;
-    
-          // Показываем register только если registered === false (иначе только detail)
-          let buttonsHTML = `<div class="flex items-center gap-3">${detailButtonHTML}</div>`;
-          if (olympiad.registered === false) {
-            buttonsHTML = `<div class="flex items-center gap-3">${detailButtonHTML}${registerButtonHTML}</div>`;
-          }
-    
-          card.innerHTML = `
-            <div>
-              <div class="${statusClass} mb-2 w-fit rounded-full px-2 py-1 text-xs">${olympiad.status}</div>
-              <h3 class="mb-1 text-lg font-semibold break-words">${olympiad.title}</h3>
-              <p class="text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal">Тур: ${olympiad.tour_type}</p>
-            </div>
-    
-            <div>
-              <div class="mb-4">
-                <span class="text-gray-secondary mb-1 text-xs">${dateInfoText}</span>
-                <p class="text-black-primary text-sm flex items-center gap-1 leading-relaxed whitespace-normal">
-                  ${iconHTML}
-                  ${dateInfo}
-                </p>
-              </div>
-    
-              ${buttonsHTML}
-            </div>
-          `;
-    
-          container.appendChild(card);
-        });
-    
-      } catch (error) {
-        console.error('Ошибка загрузки списка олимпиад:', error);
+      } else {
+        // for other statuses we may still want a register button if appropriate
+        // here we append no extra button (only detail). If you want register for other statuses — add logic.
       }
+
+      bottom.appendChild(btns);
+      card.appendChild(bottom);
+
+      container.appendChild(card);
+    });
+
+    // если словарь уже загружен — применим translate
+    if (window.i18nDict && typeof applyTranslations === 'function') {
+      try { applyTranslations(window.i18nDict); } catch (e) { console.warn('applyTranslations error', e); }
     }
-    
+  } catch (error) {
+    console.error('Ошибка загрузки списка олимпиад:', error);
+  }
+}
+
