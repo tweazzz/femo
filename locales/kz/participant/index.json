@@ -56,12 +56,60 @@
     "tasks.daily_tasks": "Күн тапсырмалары",
     "tasks.all_tasks": "Барлық тапсырмалар",
     "tasks.all_classes": "Барлық сыныптар",
-    "":"",
-    "":"",
-    "":"",
-    "":"",
-    "":"",
-    "":"",
-    "":""
+
+    "tasks.all_classes111": "Барлық сыныптар",
+    "tasks.all_levels": "Барлық деңгей",
+    "tasks.empty_tasks":"Бүгінге тапсырмалар жоқ.",
+    "tasks.for_grade": "{grade} сыныпқа арналған",
+    "levels.easy": "Оңай",       
+    "levels.medium": "Орташа",
+    "levels.hard": "Қиын",
+    "tasks.solved": "Тапсырма тапсырылған", 
+    "tasks.not_solved": "Тапсырма тапсырылмаған",
+    "tasks.show_only_completed_tasks":"Аяқталғандарын көрсету",
+
+    "task.correct_answer":"Сен жеңдің! Жауап дұрыс және уақытында — сен ",
+    "task.incorrect_answer":"Өкінішті, жауап дұрыс емес. Қайта жіберіп көріңіз",
+    "task.form":"Тапсырма шарты",
+    "task.your_answer":"Сіздің жауабыңыз",
+    "task.form_number_answer":"Сан енгізіңіз",
+    "task.details":"Тапсырма туралы",
+    "task.deadline_do": "Тапсыру мерзімі",
+    "task.deadline_ostalos": "Қалған уақыт",
+    "task.level": "Қиындық деңгейі",
+    "task.bonus_for_correct_ans": "Дұрыс жауап үшін",
+    "task.bonus_for_speed_ans": "Жылдамдық бонусы",
+    "task.status": "Статус",
+    "task.answer_btn": "Жауапты жіберу",
+    "task.answer_clear": "Жауапты тазалау",
+    "task.next_task_btn": "Келесі тапсырмаға өту",
+
+
+    "certicates.header": "Сертификаттар",
+    "certificates.table_name_olymp": "Олимпиада атауы",
+    "certificates.table_date": "Берілген күні",
+    "certificates.table_cat": "Санат",
+    "certificates.table_rank": "Орын",
+    "certificates.table_certificate": "Сертификат",
+    "certificates.count": "Барлығы: ",
+    "certificates.empty_text": "Сенің сертификаттарың алда! Алғашқы сынақтардан өт — жетістіктер есігі ашылады!",
+    "certificate.category.participant": "Қатысушы",
+    "certificate.category.winner": "Жеңімпаз",
+
+
+    "rate.my_rate_header": "Менің рейтингім",
+    "rate.point_for_task": "Тапсырмалар үшін ұпайлар",
+    "rate.point_for_task_txt1": "Сен ",
+    "rate.point_for_task_txt2": " тапсырманы орындадың — керемет!",
+    "rate.point_for_power": "Күш ұпайлары",
+    "rate.point_for_power_txt1": "Бұл қатысушылардың ",
+    "rate.point_for_power_txt2": "-нан жоғары",
+    "rate.point_for_olymp": "Олимпиада ұпайлары",
+    "rate.point_for_olymp_txt1": "Сенің көрсеткішің жоғары ",
+    "rate.recomend": "Рейтингті арттыруға кеңес",
+    "rate.level": " Деңгей",
+    "rate.recommend_lvl_txt1": "Келесі деңгейге дейін ",
+    "rate.recommend_lvl_txt2": "XP қалды. Алға!"
+
   }
   

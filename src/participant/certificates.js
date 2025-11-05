@@ -1,49 +1,96 @@
-async function ensureUserAuthenticated() {
-  let userData = localStorage.getItem('user')
+// certificates.js
 
-  if (!userData) {
-    console.warn(
-      'user не найден в localStorage. Пробуем обновить access_token...'
-    )
-    const newAccessToken = await refreshAccessToken()
-    console.log('Результат refreshAccessToken:', newAccessToken)
-
-    if (!newAccessToken) {
-      console.warn(
-        'refreshAccessToken вернул null. Перенаправление на /login.html'
-      )
-      window.location.href = '/index.html'
-      return null
-    }
-
-    userData = localStorage.getItem('user')
-    if (!userData) {
-      console.warn('user всё ещё не найден после обновления токена. Редирект.')
-      window.location.href = '/index.html'
-      return null
-    }
-  }
-
-  const user = JSON.parse(userData)
-
-  // Проверяем роль
-  const role = user.profile?.role
-  if (role !== 'participant') {
-    console.warn(
-      `Пользователь с ролью "${role}" не имеет доступа к участникам. Редирект.`
-    )
-    window.location.href = '/index.html'
-    return null
-  }
-
-  return user
+// ---------- Utilities ----------
+function escapeHtml(unsafe) {
+  if (unsafe == null) return '';
+  return String(unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
-// 1) Функция для загрузки полного профиля участника
+// применяется переводы аккуратно: не ломает html-структуру (не очищает innerHTML).
+function applyTranslationsSafe(root = document) {
+  try {
+    const dict = window.i18nDict || {};
+
+    // если есть глобальная функция — вызвать её (поддержка существующего i18n.js)
+    if (typeof window.applyTranslations === 'function') {
+      try { window.applyTranslations(dict); } catch (e) { /* ignore */ }
+    }
+
+    root.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (!key) return;
+      const raw = dict[key];
+      if (raw == null) return;
+
+      // params: JSON в data-i18n-params или data-i18n-param-*
+      let params = {};
+      const paramsAttr = el.getAttribute('data-i18n-params');
+      if (paramsAttr) {
+        try { params = JSON.parse(paramsAttr); } catch (e) { params = {}; }
+      }
+      Object.keys(el.dataset || {}).forEach((k) => {
+        if (k.startsWith('i18nParam')) {
+          const name = k.slice('i18nParam'.length);
+          if (name) {
+            const paramName = name[0].toLowerCase() + name.slice(1);
+            params[paramName] = el.dataset[k];
+          }
+        }
+      });
+
+      // подставляем параметры
+      const out = String(raw).replace(/\{([^}]+)\}/g, (m, p) => (params[p] !== undefined ? params[p] : m));
+
+      const attr = el.getAttribute('data-i18n-attr');
+      if (attr) el.setAttribute(attr, out);
+      else {
+        let replaced = false;
+        for (let node of el.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+            node.textContent = out;
+            replaced = true;
+            break;
+          }
+        }
+        if (!replaced) el.appendChild(document.createTextNode(out));
+      }
+    });
+  } catch (e) {
+    // silent fail
+  }
+}
+
+// ---------- Auth/profile ----------
+async function ensureUserAuthenticated() {
+  let userData = localStorage.getItem('user');
+
+  if (!userData) {
+    // попробуем обновить токен, если есть функция
+    const newAccessToken = (typeof refreshAccessToken === 'function') ? await refreshAccessToken() : null;
+    if (!newAccessToken) {
+      window.location.href = '/index.html';
+      return null;
+    }
+    userData = localStorage.getItem('user');
+    if (!userData) { window.location.href = '/index.html'; return null; }
+  }
+
+  const user = JSON.parse(userData);
+  const role = user.profile?.role;
+  if (role !== 'participant') {
+    window.location.href = '/index.html';
+    return null;
+  }
+  return user;
+}
+
 async function loadUserProfile() {
-  const res = await authorizedFetch(
-    'https://portal.femo.kz/api/users/participant/profile/'
-  );
+  const res = await authorizedFetch('https://portal.femo.kz/api/users/participant/profile/');
   if (!res.ok) throw new Error('Не удалось загрузить профиль');
   return await res.json();
 }
@@ -54,211 +101,134 @@ function renderUserInfo(profile) {
   const roleEl    = document.getElementById('user-role');
   const welcomeEl = document.querySelector('h1.text-xl');
 
-  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
-    console.warn('renderUserInfo: missing DOM elements');
-    return;
-  }
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) return;
 
   const imgPath = profile.image || '';
-  avatarEl.src = imgPath
-    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
-    : '';
-
-  // name (если хочешь имя на en/ru — решай отдельно)
+  avatarEl.src = imgPath ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`) : '';
   nameEl.textContent = profile.full_name_ru || profile.full_name_en || '';
-
   const firstName = (profile.full_name_ru || profile.full_name_en || '').split(' ')[0] || '';
 
-  // вместо innerHTML — создаём span программно и не ломаем DOM
-  // если внутри welcomeEl уже есть span с data-i18n — перезаписываем только его текст
   let greetSpan = welcomeEl.querySelector('span[data-i18n="welcome.message_rep"]');
   if (!greetSpan) {
     greetSpan = document.createElement('span');
     greetSpan.setAttribute('data-i18n', 'welcome.message_rep');
-    // английский/русский запасной текст
     greetSpan.textContent = 'Добро пожаловать,';
-    // вставляем span в начало h1
-    welcomeEl.innerHTML = ''; // очищаем, но затем добавим span and name
+    welcomeEl.innerHTML = '';
     welcomeEl.appendChild(greetSpan);
     welcomeEl.append(document.createTextNode(' ' + firstName + ' 👋'));
   } else {
-    // если span уже есть, просто обновляем имя (не трогаем span текст, чтобы i18n мог его заменить)
-    // удаляем все текстовые узлы после span и добавляем имя
-    // сначала убираем все узлы после span
     let node = greetSpan.nextSibling;
     while (node) {
       const next = node.nextSibling;
       node.remove();
       node = next;
     }
-    // добавляем пробел + имя
     greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
   }
 
-  // если словарь уже загружен, применим перевод к новому span
-  if (window.i18nDict && Object.keys(window.i18nDict).length > 0) {
-    try {
-      // вызываем applyTranslations для нового span (или всей страницы)
-      applyTranslations(window.i18nDict);
-    } catch (e) {
-      console.warn('applyTranslations error', e);
-    }
-  } else {
-    // если словарь ещё не загружен — ничего не делаем. langInit / setLanguage позже подхватит span.
-  }
-
+  applyTranslationsSafe(welcomeEl);
   const roleMap = { administrator: 'Участник', representative: 'Участник' };
   roleEl.textContent = roleMap[profile.role] || profile.role || '';
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const user = await ensureUserAuthenticated()
-  if (!user) return
-
-  // сначала загрузим детали профиля
-  let profile
-  try {
-    profile = await loadUserProfile()
-  } catch (e) {
-    console.error(e)
-    return
-  }
-  renderUserInfo(profile)
-
-  try {
-    await loadAssignments()
-
-    let sortAscending = true
-
-      const sortHeader = document.getElementById('sort-date-header')
-      const sortHeader2 = document.getElementById('sort-place-header')
-      if (sortHeader) {
-        sortHeader.addEventListener('click', () => {
-          allAssignments.sort((a, b) => {
-            const dateA = new Date(a.created_at)
-            const dateB = new Date(b.created_at)
-            return sortAscending ? dateA - dateB : dateB - dateA
-          })
-          sortAscending = !sortAscending
-          renderPaginatedAssignments()
-        })}
-
-        if (sortHeader2) {
-    sortHeader2.addEventListener('click', () => {
-      allAssignments.sort((a, b) => {
-        const A = a.place
-        const B = b.place
-        return sortAscending ? A - B : B - A
-      })
-      sortAscending = !sortAscending
-      renderPaginatedAssignments()
-    })}
-
-  } catch (err) {
-    console.error('Ошибка при загрузке данных:', err)
-  }
-})
-
-
-let allAssignments = []
-let currentAssignmentPage = 1
-const assignmentPageSize = 20
-let totalAssignmentCount = 0
-
+// ---------- Assignments / Certificates ----------
+let allAssignments = [];
+let currentAssignmentPage = 1;
+const assignmentPageSize = 20;
+let totalAssignmentCount = 0;
 
 async function loadAssignments(page = 1) {
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
+    alert('Токен не найден. Пожалуйста, войдите заново.');
+    return;
   }
-
-  const params = new URLSearchParams()
-  params.append('page', page)
+  const params = new URLSearchParams();
+  params.append('page', page);
 
   try {
-    const response = await authorizedFetch(
-      `https://portal.femo.kz/api/certificates/participant/dashboard/?${params.toString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    const response = await authorizedFetch(`https://portal.femo.kz/api/certificates/participant/dashboard/?${params.toString()}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-    if (!response.ok) {
-      throw new Error(`Ошибка загрузки: ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`Ошибка загрузки: ${response.status}`);
 
-    const data = await response.json()
-    allAssignments = data.results
-    totalAssignmentCount = data.count
-    currentAssignmentPage = page
+    const data = await response.json();
+    allAssignments = data.results || [];
+    totalAssignmentCount = data.count || 0;
+    currentAssignmentPage = page;
 
-    renderAssignmentTable(allAssignments)
-    renderAssignmentPagination()
-    document.getElementById('total-certificate-count').textContent =
-      totalAssignmentCount
+    renderAssignmentTable(allAssignments.slice((page-1)*assignmentPageSize, page*assignmentPageSize));
+    renderAssignmentPagination();
+    const totalEl = document.getElementById('total-certificate-count');
+    if (totalEl) totalEl.textContent = totalAssignmentCount;
   } catch (err) {
-    console.error('Ошибка при загрузке задач:', err)
-    document.getElementById('certificate-tbody').innerHTML = `
-      <tr><td colspan="8" class="text-center text-red-500 py-4">${err.message}</td></tr>
-    `
+    console.error('Ошибка при загрузке задач:', err);
+    const tbody = document.getElementById('certificate-tbody');
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red-500 py-4">${escapeHtml(err.message)}</td></tr>`;
+    }
   }
 }
 
-
-function getCertificateCategoryLabel(category) {
+function getCertificateCategoryI18nKey(category) {
   const map = {
-    participant: 'Участник',
-    winner: 'Победитель',
-  }
-  return map[category] || category
+    participant: 'certificate.category.participant',
+    winner: 'certificate.category.winner'
+  };
+  return map[category] || null;
 }
 
 function getCertificateCategoryClass(category) {
   const map = {
     participant: 'bg-blue-100 text-blue-800',
-    winner: 'bg-yellow-100 text-yellow-800',
-  }
-  return map[category] || ''
+    winner: 'bg-yellow-100 text-yellow-800'
+  };
+  return map[category] || '';
 }
 
-
 function renderAssignmentTable(assignments) {
-  const tbody = document.getElementById('certificate-tbody')
-  const noCertificatesEl = document.getElementById('no-certificates')
-  const noCertificatesElPNG = document.getElementById('no-certificates-png')
-  const tableContainer = document.getElementById('certificate-table-container') // Добавим id на обертку таблицы
-  if (!tbody || !noCertificatesEl || !tableContainer) return
+  const tbody = document.getElementById('certificate-tbody');
+  const noCertificatesEl = document.getElementById('no-certificates');
+  const noCertificatesElPNG = document.getElementById('no-certificates-png');
+  const tableContainer = document.getElementById('certificate-table-container');
+  if (!tbody || !noCertificatesEl || !tableContainer) return;
 
-  if (assignments.length === 0) {
-    // Показываем заглушку
-    noCertificatesEl.classList.remove('hidden')
-    noCertificatesElPNG.classList.remove('hidden')
-    tableContainer.classList.add('hidden')
-    return
+  if (!assignments || assignments.length === 0) {
+    noCertificatesEl.classList.remove('hidden');
+    noCertificatesElPNG.classList.remove('hidden');
+    tableContainer.classList.add('hidden');
+    tbody.innerHTML = '';
+    return;
   }
 
-  // Иначе показываем таблицу и скрываем заглушку
-  noCertificatesEl.classList.add('hidden')
-  noCertificatesElPNG.classList.add('hidden')
-  tableContainer.classList.remove('hidden')
-  tbody.innerHTML =
-    assignments.length === 0
-      ? `<tr><td colspan="8" class="text-center text-gray-500 py-4">Нет данных</td></tr>`
-      : assignments
-          .map((task) => {
-            const encodedTask = encodeURIComponent(JSON.stringify(task))
-            return `
+  noCertificatesEl.classList.add('hidden');
+  noCertificatesElPNG.classList.add('hidden');
+  tableContainer.classList.remove('hidden');
+
+  tbody.innerHTML = assignments.map((task) => {
+    const i18nKey = getCertificateCategoryI18nKey(task.category);
+    const fallbackText = (i18nKey === 'certificate.category.participant') ? 'Участник'
+                       : (i18nKey === 'certificate.category.winner') ? 'Победитель'
+                       : (task.category || '');
+    const categoryClass = getCertificateCategoryClass(task.category);
+    const placeDisplay = ((task.place === 1) || (task.place === 2) || (task.place === 3))
+      ? `${task.place}👑` : (task.place != null ? `${task.place}` : '');
+    const encodedTask = encodeURIComponent(JSON.stringify(task));
+
+    return `
       <tr class="hover:bg-gray-50">
-        <td>${task.olympiad}</td>
-        <td>${task.date_received}</td>
-        <td><span class="card ${getCertificateCategoryClass(task.category)}">${getCertificateCategoryLabel(task.category)}</span></td>
-        <td>${((task.place === 1) || (task.place === 2) || (task.place === 3)) ? task.place+'👑' : task.place}</td>
+        <td>${escapeHtml(task.olympiad)}</td>
+        <td>${escapeHtml(task.date_received)}</td>
+        <td>
+          <span class="card ${categoryClass}">
+            <span ${i18nKey ? `data-i18n="${i18nKey}"` : ''}>${escapeHtml(fallbackText)}</span>
+          </span>
+        </td>
+        <td>${escapeHtml(placeDisplay)}</td>
         <td>
           <div class="flex justify-between gap-2 *:cursor-pointer">
-              <button onclick="downloadCertificate(${task.id})" data-task="${encodedTask}" class="text-gray-400 hover:text-blue-primary">
+            <button onclick="downloadCertificate(${task.id})" data-task="${encodedTask}" class="text-gray-400 hover:text-blue-primary" aria-label="Download certificate">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
@@ -267,27 +237,21 @@ function renderAssignmentTable(assignments) {
           </div>
         </td>
       </tr>
-    `
-          })
-          .join('')
+    `;
+  }).join('');
+
+  // Применяем переводы к вставленному tbody
+  applyTranslationsSafe(tbody);
 }
 
-
 function renderAssignmentPagination() {
-  const container = document.querySelector('.pagination')
-  if (!container) return
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(totalAssignmentCount / assignmentPageSize)
-  )
-  let buttons = ''
+  const container = document.querySelector('.pagination');
+  if (!container) return;
+  const totalPages = Math.max(1, Math.ceil(totalAssignmentCount / assignmentPageSize));
+  let buttons = '';
 
   for (let i = 1; i <= totalPages; i++) {
-    buttons += `
-      <button class="${i === currentAssignmentPage ? 'text-orange-primary border-orange-primary border' : 'text-gray-600'} px-3 py-1 rounded"
-        onclick="goToAssignmentPage(${i})">${i}</button>
-    `
+    buttons += `<button class="${i === currentAssignmentPage ? 'text-orange-primary border-orange-primary border' : 'text-gray-600'} px-3 py-1 rounded" onclick="goToAssignmentPage(${i})">${i}</button>`;
   }
 
   container.innerHTML = `
@@ -296,50 +260,60 @@ function renderAssignmentPagination() {
       ${buttons}
       <button onclick="goToAssignmentPage(${Math.min(totalPages, currentAssignmentPage + 1)})" class="px-3 py-1">→</button>
     </div>
-  `
+  `;
 }
 
 function goToAssignmentPage(page) {
-  loadAssignments(page)
+  loadAssignments(page);
 }
 
 function renderPaginatedAssignments() {
-  const start = (currentAssignmentPage - 1) * assignmentPageSize
-  const end = start + assignmentPageSize
-  const pageData = allAssignments.slice(start, end)
-
-  document.getElementById('total-certificate-count').textContent =
-    allAssignments.length
-  renderAssignmentTable(pageData)
-  renderAssignmentPagination()
+  const start = (currentAssignmentPage - 1) * assignmentPageSize;
+  const end = start + assignmentPageSize;
+  const pageData = allAssignments.slice(start, end);
+  const totalEl = document.getElementById('total-certificate-count');
+  if (totalEl) totalEl.textContent = allAssignments.length;
+  renderAssignmentTable(pageData);
+  renderAssignmentPagination();
 }
-
 
 function downloadCertificate(id) {
-  const url = `https://portal.femo.kz/api/certificates/participant/dashboard/${id}/download`
-  const token = localStorage.getItem('access_token')
-
-  fetch(url, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  })
+  const url = `https://portal.femo.kz/api/certificates/participant/dashboard/${id}/download`;
+  const token = localStorage.getItem('access_token');
+  fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } })
     .then((response) => {
-      if (!response.ok) {
-        throw new Error('Ошибка при загрузке файла')
-      }
-      return response.blob()
+      if (!response.ok) throw new Error('Ошибка при загрузке файла');
+      return response.blob();
     })
     .then((blob) => {
-      const link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = `certificate_${id}.pdf` // Можно изменить на нужный формат
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `certificate_${id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     })
     .catch((error) => {
-      alert(`Ошибка: ${error.message}`)
-    })
+      alert(`Ошибка: ${error.message}`);
+    });
 }
+
+// ---------- Init ----------
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await ensureUserAuthenticated();
+  if (!user) return;
+
+  try {
+    const profile = await loadUserProfile();
+    renderUserInfo(profile);
+  } catch (e) {
+    // ignore profile errors
+  }
+
+  // попробуем инициализировать язык (если langInit доступен)
+  if (typeof window.initLanguageOnPage === 'function') {
+    try { await window.initLanguageOnPage(); } catch (e) { /* ignore */ }
+  }
+
+  await loadAssignments();
+});

@@ -137,7 +137,7 @@
         <main class="flex-1 overflow-y-auto p-6">
           <!-- Header -->
           <div class="mb-6 flex items-center justify-between">
-            <h1 class="text-2xl font-bold">Сертификаты</h1>
+            <h1 class="text-2xl font-bold" data-i18n="certificates.header">Сертификаты</h1>
           </div>
 
           <div id="certificate-table-container" class="border-default mb-6 overflow-x-auto rounded-2xl border">
@@ -145,11 +145,11 @@
               <thead>
                 <tr class="border-b border-gray-200">
                   <th class="p-table">
-                    <div class="flex items-center">Название олимпиады</div>
+                    <div class="flex items-center" data-i18n="certificates.table_name_olymp">Название олимпиады</div>
                   </th>
                   <th class="p-table">
                     <div id="sort-date-header" class="flex items-center gap-1 cursor-pointer">
-                      Дата получения
+                      <span data-i18n="certificates.table_date">Дата получения</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -166,10 +166,10 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Категория</th>
+                  <th class="p-table" data-i18n="certificates.table_cat">Категория</th>
                   <th class="p-table">
                     <div id="sort-place-header" class="flex items-center gap-1 cursor-pointer">
-                      Место
+                      <span data-i18n="certificates.table_rank">Место</span>
                       <span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +186,7 @@
                       </span>
                     </div>
                   </th>
-                  <th class="p-table">Сертификат</th>
+                  <th class="p-table" data-i18n="certificates.table_certificate">Сертификат</th>
                 </tr>
               </thead>
               <tbody id="certificate-tbody" class="divide-y divide-gray-200">
@@ -196,12 +196,12 @@
 
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
-            <div class="text-gray-primary text-sm">Всего сертификатов: <span id="total-certificate-count">0</span></div>
+            <div class="text-gray-primary text-sm" ><span data-i18n="certificates.count">Всего сертификатов: </span><span id="total-certificate-count">0</span></div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
 
           <div id="no-certificates" class="mt-6 mb-6 flex items-center justify-between">
-            <h1 class="text-xl font-bold">
+            <h1 class="text-xl font-bold" data-i18n="certificates.empty_text">
               Твои сертификаты ещё впереди. Пройди первые испытания — и двери
               достижений откроются!
             </h1>

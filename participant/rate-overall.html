@@ -137,7 +137,7 @@
         <main class="flex-1 overflow-y-auto p-6">
           <!-- Header -->
           <div class="mb-6 flex items-center justify-between">
-            <h1 class="text-2xl font-semibold">Мой рейтинг</h1>
+            <h1 class="text-2xl font-semibold" data-i18n="rate.my_rate_header">Мой рейтинг</h1>
           </div>
 
           <div class="grid-cards mb-6">
@@ -145,10 +145,10 @@
               class="grid-item-a bg-violet-secondary border-default flex flex-col items-center justify-center rounded-xl px-3 text-center"
             >
               <p id="assignment_points" class="text-violet-primary text-5xl font-bold"></p>
-              <p class="text-lg font-bold">Баллы за задачи</p>
+              <p class="text-lg font-bold" data-i18n="rate.point_for_task">Баллы за задачи</p>
               <p>
-                Ты закрыл <span id="assignments_percent" class="text-violet-primary">0</span> % задач —
-                круто!
+                <span data-i18n="rate.point_for_task_txt1">Ты закрыл </span><span id="assignments_percent" class="text-violet-primary">0</span><span data-i18n="rate.point_for_task_txt2">% задач —
+                  круто!</span>
               </p>
             </div>
 
@@ -163,7 +163,7 @@
               <div class="space-y-1">
                 <p id="total_points" class="text-orange-primary text-6xl font-bold"></p>
                 <p class="flex items-center gap-1 text-lg font-bold">
-                  Очки силы
+                  <span data-i18n="rate.point_for_power">Очки силы</span>
                   <img
                     src="/src/assets/images/coin.png"
                     class="h-6"
@@ -171,8 +171,8 @@
                   />
                 </p>
                 <p class="text-sm">
-                  Это больше, чем у
-                  <span id="total_percentile" class="text-orange-primary">0%</span> участников
+                  <span data-i18n="rate.point_for_power_txt1">Это больше, чем у </span>
+                  <span id="total_percentile" class="text-orange-primary">0%</span><span data-i18n="rate.point_for_power_txt2">участников</span>
                 </p>
               </div>
             </div>
@@ -181,20 +181,20 @@
               class="grid-item-c bg-green-secondary border-default flex flex-col items-center justify-center space-y-1 rounded-xl px-3 text-center"
             >
               <p id="olympiad_points" class="text-green-primary text-5xl font-bold"></p>
-              <p class="text-center text-lg font-bold">Баллы за олимпиады</p>
+              <p class="text-center text-lg font-bold" data-i18n="rate.point_for_olymp">Баллы за олимпиады</p>
               <p class="text-sm">
-                У вас выше, чем у <span id="olympiad_percentile" class="text-green-primary">0</span> %
+                <span data-i18n="rate.point_for_olymp_txt1">У вас выше, чем у </span><span id="olympiad_percentile" class="text-green-primary">0</span> %
               </p>
             </div>
           </div>
 
           <div class="border-default mb-6 rounded-xl p-6">
-            <p class="mb-2 text-lg font-bold">Рекомендация по росту рейтинга</p>
+            <p class="mb-2 text-lg font-bold" data-i18n="rate.recomend">Рекомендация по росту рейтинга</p>
 
             <div class="space-y-2">
               <p class="text-sm">
                 <span id="current_level" class="text-orange-primary text-2xl font-bold"></span>
-                Уровень
+                <span data-i18n="rate.level">Уровень</span>
               </p>
 
               <div class="progress-container bg-gray-200 rounded-md h-6 w-full">
@@ -204,8 +204,9 @@
 
               <!-- Текст с XP -->
               <p class="text-sm">
-                Осталось <span id="xp_to_next" class="font-bold">0</span> XP до следующего
-                уровня
+                <span data-i18n="rate.recommend_lvl_txt1">Осталось </span><span id="xp_to_next" class="font-bold">0</span>
+                <span data-i18n="rate.recommend_lvl_txt2">XP до следующего
+                  уровня</span>
               </p>
             </div>
           </div>
