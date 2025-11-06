@@ -137,23 +137,30 @@
         <main class="flex-1 space-y-6 overflow-y-auto p-4 sm:p-6">
           <div class="mb-6 overflow-x-auto">
             <!-- Tabs -->
-            <div class="tabs !mb-1 w-[26rem]">
-              <a href="/participant/my-way.html" class="tabs-link">Мой путь</a>
-              <a href="/participant/personal.html" class="tabs-link active"
-                >Личные данные</a
-              >
-              <a href="/participant/payments.html" class="tabs-link"
-                >Баланс и платежи</a
-              >
-              <a href="/participant/settings.html" class="tabs-link"
-                >Настройки</a
-              >
+            <div class="mb-6 overflow-x-auto">
+              <div class="tabs !mb-1 w-[26rem]">
+                <a href="/participant/my-way.html" class="tabs-link" data-i18n="my_way.my_way"
+                  >Мой путь</a
+                >
+                <a href="/participant/personal.html" class="tabs-link active"
+                data-i18n="my_way.personal_info"
+                  >Личные данные</a
+                >
+                <a href="/participant/payments.html" class="tabs-link"
+                data-i18n="my_way.payments"
+                  >Баланс и платежи</a
+                >
+                <a href="/participant/settings.html" class="tabs-link"
+                data-i18n="my_way.settings"
+                  >Настройки</a
+                >
+              </div>
             </div>
           </div>
 
           <div>
             <form>
-              <p class="mb-4 text-lg font-bold">Личные данные</p>
+              <p class="mb-4 text-lg font-bold" data-i18n="my_way.personal_info">Личные данные</p>
 
               <div
                 class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4 sm:grid-cols-2 sm:p-6"
@@ -161,7 +168,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >ID участника</label
+                    data-i18n="my_way.personal_id">ID участника</label
                   >
                   <input
                     placeholder="12345"
@@ -189,7 +196,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >ФИО</label
+                    data-i18n="my_way.fio">ФИО</label
                   >
                   <input
                     placeholder="Айжан Ахметова"
@@ -203,7 +210,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >ФИО на английском</label
+                    data-i18n="my_way.fio_eng">ФИО на английском</label
                   >
                   <input
                     placeholder="Айжан Ахметова"
@@ -560,7 +567,7 @@
                   />
                 </svg>
               </span>
-              Все
+              <span data-i18n="notification.all">Все</span>
               <span class="count-msg">4</span>
             </div>
             <div
@@ -582,7 +589,7 @@
               </svg>
 
               </span>
-              Олимпиады
+              <span data-i18n="notification.olympiads">Олимпиады</span>
               <span class="count-msg">0</span>
             </div>
             <div
@@ -599,7 +606,7 @@
               </svg>
 
               </span>
-              Задачи
+              <span data-i18n="notification.tasks">Задачи</span>
               <span class="count-msg">1</span>
             </div>
             <div
@@ -614,7 +621,7 @@
 
 
               </span>
-              Профиль
+              <span data-i18n="notification.profile">Профиль</span>
               <span class="count-msg">2</span>
             </div>
           </div>

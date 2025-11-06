@@ -54,8 +54,8 @@ function detectRoleAndPage() {
 
   // 3) pathname heuristics
   const parts = location.pathname.split('/').filter(Boolean);
-  const knownRoles = ['admin','representative','participant'];
-  let role = 'admin';
+  const knownRoles = ['administrator','representative','participant'];
+  let role = 'administrator';
   for (const p of parts) if (knownRoles.includes(p)) { role = p; break; }
   let page = 'index';
   const last = parts.length ? parts[parts.length - 1] : '';

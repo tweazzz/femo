@@ -232,6 +232,8 @@
                   <input id="filter-search"
                     type="text"
                     placeholder="Искать участника"
+                    data-i18n="rate.search_name"
+                    data-i18n-attr="placeholder"   
                     class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                   />
                   <svg
@@ -255,30 +257,30 @@
                 <select id="filter-country"
                   class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 >
-                  <option value="">Все страны</option>
+                  <option value="" data-i18n="rate.all_country">Все страны</option>
                 </select>
 
                 <select id="filter-grade"
                   class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 >
-                <option value="">Все классы</option>
-                <option value="first">1 класс</option>
-                <option value="second">2 класс</option>
-                <option value="third">3 класс</option>
-                <option value="fourth">4 класс</option>
-                <option value="fifth">5 класс</option>
-                <option value="sixth">6 класс</option>
-                <option value="seventh">7 класс</option>
-                <option value="eights">8 класс</option>
-                <option value="ninth">9 класс</option>
-                <option value="tenth">10 класс</option>
-                <option value="eleventh">11 класс</option>
+                <option value="" data-i18n="rate.all_grades">Все классы</option>
+                <option value="first">1 </option>
+                <option value="second">2 </option>
+                <option value="third">3 </option>
+                <option value="fourth">4 </option>
+                <option value="fifth">5 </option>
+                <option value="sixth">6 </option>
+                <option value="seventh">7 </option>
+                <option value="eights">8 </option>
+                <option value="ninth">9 </option>
+                <option value="tenth">10 </option>
+                <option value="eleventh">11 </option>
                 </select>
 
                 <select id="filter-olympiad"
                   class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 >
-                  <option value="">Выбрать олимпиаду</option>
+                  <option value="" data-i18n="rate_overall.choose_olymp">Выбрать олимпиаду</option>
                 </select>
               </div>
             </div>
@@ -289,7 +291,7 @@
                   <tr class="border-b border-gray-200">
                     <th class="p-table">
                       <div id="sort-rank-header" class="flex items-center gap-1 cursor-pointer">
-                        Ранк
+                        <span data-i18n="rate_overall.table_rank">Ранк</span>
                         <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -306,9 +308,9 @@
                         </span>
                       </div>
                     </th>
-                    <th class="p-table">Имя участника</th>
-                    <th class="p-table">Класс</th>
-                    <th class="p-table">Страна</th>
+                    <th class="p-table" data-i18n="rate_overall.table_part_name">Имя участника</th>
+                    <th class="p-table" data-i18n="rate_overall.table_grade">Класс</th>
+                    <th class="p-table" data-i18n="rate_overall.table_country">Страна</th>
                     <!--<th class="p-table">
                       <div class="flex items-center gap-1">
                         Общее Баллы
@@ -321,8 +323,8 @@
                         </span>
                       </div>
                     </th>-->
-                    <th class="p-table">Баллы за олимпиады</th>
-                    <th class="p-table">Баллы за задачи</th>
+                    <th class="p-table" data-i18n="rate_overall.points_for_olymp">Баллы за олимпиады</th>
+                    <th class="p-table" data-i18n="rate_overall.points_for_tasks">Баллы за задачи</th>
                   </tr>
                 </thead>
                 <tbody id="rateolympiad-tbody" class="tbody-rate divide-y divide-gray-200">
@@ -332,7 +334,7 @@
 
             <!-- Pagination -->
             <div class="mt-6 flex flex-col gap-2">
-              <div class="text-gray-primary text-sm">Всего рейтингов: <span id="total-rateolympiad-count">0</span></div>
+              <div class="text-gray-primary text-sm"><span data-i18n="rate_overall.count">Всего рейтингов: </span><span id="total-rateolympiad-count">0</span></div>
               <div class="pagination mt-6 flex items-center justify-end"></div>
             </div>
 
@@ -409,7 +411,7 @@
                   />
                 </svg>
               </span>
-              Все
+              <span data-i18n="notification.all">Все</span>
               <span class="count-msg">4</span>
             </div>
             <div
@@ -431,7 +433,7 @@
               </svg>
 
               </span>
-              Олимпиады
+              <span data-i18n="notification.olympiads">Олимпиады</span>
               <span class="count-msg">0</span>
             </div>
             <div
@@ -448,7 +450,7 @@
               </svg>
 
               </span>
-              Задачи
+              <span data-i18n="notification.tasks">Задачи</span>
               <span class="count-msg">1</span>
             </div>
             <div
@@ -463,7 +465,7 @@
 
 
               </span>
-              Профиль
+              <span data-i18n="notification.profile">Профиль</span>
               <span class="count-msg">2</span>
             </div>
           </div>

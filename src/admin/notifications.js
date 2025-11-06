@@ -417,7 +417,7 @@ function updateCountsAndFill() {
     if (toRender.length === 0) {
       const p = document.createElement('p');
       p.className = 'text-gray-primary text-sm';
-      p.textContent = 'Нет уведомлений';
+      p.textContent = 'EMPTY';
       cont.appendChild(p);
     } else {
       toRender.forEach(n => {

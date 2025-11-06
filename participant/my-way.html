@@ -163,7 +163,7 @@
               <div class="bg-orange-third/60 space-y-2 rounded-2xl p-6">
                 <p class="text-sm">
                   <span id="current_level" class="text-orange-primary text-2xl font-bold"></span>
-                Уровень
+                <span data-i18n="my_way.level">Уровень</span>
               </p>
 
               <div class="progress-container bg-gray-200 rounded-md h-6 w-full">
@@ -172,31 +172,31 @@
 
                 <!-- Текст с XP -->
                 <p class="text-sm">
-                  Осталось
-                  <span id="xp_to_next" class="text-orange-primary font-bold">0</span> XP до
-                  следующего уровня
+                  <span data-i18n="my_way.level_txt1">Осталось</span>
+                  <span id="xp_to_next" class="text-orange-primary font-bold">0</span><span data-i18n="my_way.level_txt2"> XP до
+                    следующего уровня</span>
                 </p>
               </div>
 
               <div class="bg-green-secondary h-fit rounded-2xl p-6">
-                <p class="text-sm">Заработано сегодня</p>
+                <p class="text-sm" data-i18n="my_way.zarabotano_today">Заработано сегодня</p>
                 <p id="xp_today" class="text-green-primary text-2xl font-bold">0 XP</p>
               </div>
             </div>
           </div>
 
           <div class="table-group">
-            <p class="mb-4 text-xl font-bold">Результаты олимпиады</p>
+            <p class="mb-4 text-xl font-bold" data-i18n="my_way.result_olymp">Результаты олимпиады</p>
 
             <div id="my_way-table-container" class="border-default mb-6 overflow-x-auto rounded-2xl border">
               <table class="table-olympiads min-w-6xl w-full rounded-2xl pb-6">
                 <thead>
                   <tr class="border-b border-gray-200">
-                    <th class="p-table">Олимпиада</th>
-                    <th class="p-table">Место</th>
-                    <th class="p-table">Баллы</th>
-                    <th class="p-table">Задачи решено</th>
-                    <th class="p-table">Действия</th>
+                    <th class="p-table" data-i18n="my_way.olymp">Олимпиада</th>
+                    <th class="p-table" data-i18n="my_way.rank">Место</th>
+                    <th class="p-table" data-i18n="my_way.points">Баллы</th>
+                    <th class="p-table" data-i18n="my_way.solved_tasks">Задачи решено</th>
+                    <th class="p-table" data-i18n="my_way.action">Действия</th>
                   </tr>
                 </thead>
                 <tbody id="my_way-tbody" class="divide-y divide-gray-200">
@@ -211,9 +211,9 @@
           </div>
 
           <div>
-            <p class="mb-4 text-xl font-bold">Достижения</p>
+            <p class="mb-4 text-xl font-bold" data-i18n="my_way.achievments">Достижения</p>
 
-            <div class="grid gap-5 lg:grid-cols-2">
+            <!-- <div class="grid gap-5 lg:grid-cols-2">
               <div
                 class="bg-orange-secondary flex items-center gap-6 rounded-2xl p-5"
               >
@@ -401,7 +401,7 @@
                   <p class="text-red-primary text-2xl font-bold">Победитель</p>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </main>
       </div>
@@ -441,7 +441,7 @@
                   />
                 </svg>
               </span>
-              Все
+              <span data-i18n="notification.all">Все</span>
               <span class="count-msg">4</span>
             </div>
             <div
@@ -463,7 +463,7 @@
               </svg>
 
               </span>
-              Олимпиады
+              <span data-i18n="notification.olympiads">Олимпиады</span>
               <span class="count-msg">0</span>
             </div>
             <div
@@ -480,7 +480,7 @@
               </svg>
 
               </span>
-              Задачи
+              <span data-i18n="notification.tasks">Задачи</span>
               <span class="count-msg">1</span>
             </div>
             <div
@@ -495,7 +495,7 @@
 
 
               </span>
-              Профиль
+              <span data-i18n="notification.profile">Профиль</span>
               <span class="count-msg">2</span>
             </div>
           </div>

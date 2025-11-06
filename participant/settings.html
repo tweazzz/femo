@@ -137,17 +137,24 @@
         <main class="flex-1 space-y-6 overflow-y-auto p-6">
           <div class="mb-6 overflow-x-auto">
             <!-- Tabs -->
-            <div class="tabs !mb-1 w-[26rem]">
-              <a href="/participant/my-way.html" class="tabs-link">Мой путь</a>
-              <a href="/participant/personal.html" class="tabs-link"
-                >Личные данные</a
-              >
-              <a href="/participant/payments.html" class="tabs-link"
-                >Баланс и платежи</a
-              >
-              <a href="/participant/settings.html" class="tabs-link active"
-                >Настройки</a
-              >
+            <div class="mb-6 overflow-x-auto">
+              <div class="tabs !mb-1 w-[26rem]">
+                <a href="/participant/my-way.html" class="tabs-link" data-i18n="my_way.my_way"
+                  >Мой путь</a
+                >
+                <a href="/participant/personal.html" class="tabs-link"
+                data-i18n="my_way.personal_info"
+                  >Личные данные</a
+                >
+                <a href="/participant/payments.html" class="tabs-link"
+                data-i18n="my_way.payments"
+                  >Баланс и платежи</a
+                >
+                <a href="/participant/settings.html" class="tabs-link active"
+                data-i18n="my_way.settings"
+                  >Настройки</a
+                >
+              </div>
             </div>
           </div>
 
@@ -167,7 +174,6 @@
                       value="ru"
                       class="hidden"
                       required
-                      checked
                     />
                     🇷🇺 Русский
                   </label>
@@ -770,7 +776,7 @@
                             />
                           </svg>
                         </span>
-                        Все
+                        <span data-i18n="notification.all">Все</span>
                         <span class="count-msg">4</span>
                       </div>
                       <div
@@ -792,7 +798,7 @@
                         </svg>
 
                         </span>
-                        Олимпиады
+                        <span data-i18n="notification.olympiads">Олимпиады</span>
                         <span class="count-msg">0</span>
                       </div>
                       <div
@@ -809,7 +815,7 @@
                         </svg>
 
                         </span>
-                        Задачи
+                        <span data-i18n="notification.tasks">Задачи</span>
                         <span class="count-msg">1</span>
                       </div>
                       <div
@@ -824,7 +830,7 @@
 
 
                         </span>
-                        Профиль
+                        <span data-i18n="notification.profile">Профиль</span>
                         <span class="count-msg">2</span>
                       </div>
                     </div>

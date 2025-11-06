@@ -31,6 +31,10 @@
     "dashboard.table_count": "All: ",
 
     "notification.nots-popup": "Notifications",
+    "notification.all": "All",
+    "notification.olympiads": "Olympiads",
+    "notification.tasks": "Tasks",
+    "notification.profile": "Profile",
 
     "olympiads.olympiads_page": "All olympiads",
     "olympiads.olympiads-active": "Active",
@@ -136,10 +140,32 @@
     "rate_overall.points_for_tasks": "Task points",
     "rate_overall.count": "Total: ",
 
-    "my_way.my_way": "Менің жолым",
-    "my_way.personal_info": "Жеке деректер",
-    "my_way.payments": "Баланс және төлемдер",
-    "my_way.settings": "Параметрлер"
+    "my_way.my_way": "My journey",
+    "my_way.personal_info": "Personal info",
+    "my_way.payments": "Balance & Payments",
+    "my_way.settings": "Settings",
+    "my_way.level": "Level",
+    "my_way.level_txt1": " XP ",
+    "my_way.level_txt2": " left to reach the next level",
+    "my_way.zarabotano_today": "Earned Today",
+    "my_way.result_olymp": "Olympiad Results",
+    "my_way.olymp": "Olympiad ",
+    "my_way.rank": "Place",
+    "my_way.points": "Points",
+    "my_way.solved_tasks": "Tasks solved",
+    "my_way.action": "Action",
+    "my_way.achievments": "Achievements",
+
+    "my_way.personal_id": "Participant ID",
+    "my_way.fio": "Full Name",
+    "my_way.fio_eng": "Full Name in English",
+
+
+    "my_way.my_balance": "My balance",
+    "my_way.top_up_balance": "Top up balance",
+    "my_way.active_olymp": "Active olympiads"
+
+
 
   }
   

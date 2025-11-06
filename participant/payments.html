@@ -137,17 +137,24 @@
         <main class="flex-1 space-y-6 overflow-y-auto p-6">
           <div class="mb-6 overflow-x-auto">
             <!-- Tabs -->
-            <div class="tabs !mb-1 w-[26rem]">
-              <a href="/participant/my-way.html" class="tabs-link">Мой путь</a>
-              <a href="/participant/personal.html" class="tabs-link"
-                >Личные данные</a
-              >
-              <a href="/participant/payments.html" class="tabs-link active"
-                >Баланс и платежи</a
-              >
-              <a href="/participant/settings.html" class="tabs-link"
-                >Настройки</a
-              >
+            <div class="mb-6 overflow-x-auto">
+              <div class="tabs !mb-1 w-[26rem]">
+                <a href="/participant/my-way.html" class="tabs-link" data-i18n="my_way.my_way"
+                  >Мой путь</a
+                >
+                <a href="/participant/personal.html" class="tabs-link"
+                data-i18n="my_way.personal_info"
+                  >Личные данные</a
+                >
+                <a href="/participant/payments.html" class="tabs-link active"
+                data-i18n="my_way.payments"
+                  >Баланс и платежи</a
+                >
+                <a href="/participant/settings.html" class="tabs-link"
+                data-i18n="my_way.settings"
+                  >Настройки</a
+                >
+              </div>
             </div>
           </div>
 
@@ -155,7 +162,7 @@
             <div
               class="bg-orange-secondary relative w-full max-w-xl overflow-hidden rounded-2xl p-5"
             >
-              <p class="text-sm">Мой баланс</p>
+              <p class="text-sm" data-i18n="my_way.my_balance">Мой баланс</p>
               <p class="balance text-orange-primary mb-6 text-4xl font-bold">
                 0 ₸
               </p>
@@ -164,6 +171,7 @@
                 type="button"
                 onclick="toggleModal('modal')"
                 class="text-orange-primary border-orange-primary cursor-pointer rounded-xl border-1 px-4 py-2"
+                data-i18n="my_way.top_up_balance"
               >
                 Пополнить баланс
               </button>
@@ -176,7 +184,7 @@
             </div>
 
             <div>
-              <p class="mb-4 text-lg font-bold">Активные олимпиады</p>
+              <p class="mb-4 text-lg font-bold" data-i18n="my_way.active_olymp">Активные олимпиады</p>
               <div data-olympiads-wrapper></div>
 
               <div class="border-default w-full max-w-sm rounded-2xl p-4">
@@ -402,7 +410,7 @@
                   />
                 </svg>
               </span>
-              Все
+              <span data-i18n="notification.all">Все</span>
               <span class="count-msg">4</span>
             </div>
             <div
@@ -424,7 +432,7 @@
               </svg>
 
               </span>
-              Олимпиады
+              <span data-i18n="notification.olympiads">Олимпиады</span>
               <span class="count-msg">0</span>
             </div>
             <div
@@ -441,7 +449,7 @@
               </svg>
 
               </span>
-              Задачи
+              <span data-i18n="notification.tasks">Задачи</span>
               <span class="count-msg">1</span>
             </div>
             <div
@@ -456,7 +464,7 @@
 
 
               </span>
-              Профиль
+              <span data-i18n="notification.profile">Профиль</span>
               <span class="count-msg">2</span>
             </div>
           </div>

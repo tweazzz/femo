@@ -72,9 +72,24 @@ function timeAgo(iso) {
   return `${diffYears} г назад`;
 }
 
+// helpers safe
+function byId(id) { return document.getElementById(id); }
+function safeQuery(sel) { return document.querySelector(sel); }
+
+// get backend language code for notifications ('kk'|'en'|null)
+function getBackendLangForNotifications() {
+  const stored = localStorage.getItem('backend_lang');
+  if (stored) return stored;
+  const front = localStorage.getItem('lang');
+  if (!front) return null;
+  if (front === 'kz' || front === 'kk') return 'kk';
+  if (front === 'en') return 'en';
+  return null; // ru -> null (backend default ru)
+}
+
 // 3) Инициализатор вкладок: просто показывает панель, соответствующую активной .tabs-link
 function initPopupTabs() {
-  const modal = document.getElementById('modalNotification');
+  const modal = byId('modalNotification');
   if (!modal) return;
   const links = modal.querySelectorAll('.tabs > .tabs-link');
   const panels = modal.querySelectorAll('.tabs-content > .tabs-notification');
@@ -86,11 +101,7 @@ function initPopupTabs() {
   }
   const activeTab = activeLink?.dataset.tab;
   panels.forEach(panel => {
-    if (panel.dataset.tab === activeTab) {
-      panel.style.display = 'block';
-    } else {
-      panel.style.display = 'none';
-    }
+    panel.style.display = (panel.dataset.tab === activeTab) ? 'block' : 'none';
   });
   // Навешиваем слушатель на вкладки (заменяем клоны, чтобы не дублировать)
   links.forEach(link => {
@@ -112,8 +123,9 @@ function initPopupTabs() {
 
 // 4) Заполнить панели заново, без дублирования
 function updatePopupNotifications(nots) {
-  const modal = document.getElementById('modalNotification');
+  const modal = byId('modalNotification');
   if (!modal) return;
+
   // Группировка
   const buckets = {
     all: [...nots],
@@ -128,6 +140,7 @@ function updatePopupNotifications(nots) {
     else if (t === 'Users' || t === 'Payments') buckets.profile.push(n);
     else buckets.tasks.push(n);
   });
+
   // Обновляем счётчики в вкладках
   modal.querySelectorAll('.tabs > .tabs-link').forEach(link => {
     const ct = link.dataset.tab;
@@ -140,10 +153,21 @@ function updatePopupNotifications(nots) {
     else if (ct === 'profile') count = buckets.profile.length;
     span.textContent = count;
   });
+
   // Перестроить панели:
   const content = modal.querySelector('.tabs-content');
   if (!content) return;
   content.innerHTML = '';
+
+  // Try to use i18n labels for types (if available)
+  const i18n = window.i18nDict || {};
+  const typeLabelKey = {
+    Users: 'notification.users',
+    Payments: 'notification.payments',
+    Olympiads: 'notification.olympiads',
+    Tasks: 'notification.tasks'
+  };
+
   ['all','olympiads','tasks','profile'].forEach(tabKey => {
     const panel = document.createElement('div');
     panel.className = 'tabs-notification';
@@ -153,16 +177,23 @@ function updatePopupNotifications(nots) {
     if (!arr || arr.length === 0) {
       const p = document.createElement('p');
       p.className = 'text-gray-primary text-sm py-4 text-center';
-      p.textContent = 'Нет уведомлений';
+      // set data-i18n so i18n.js can translate later; fallback text if key not present
+      p.setAttribute('data-i18n', 'notification.no_notifications');
+      if (i18n['notification.no_notifications']) p.textContent = i18n['notification.no_notifications'];
+      else p.textContent = 'Нет уведомлений';
       panel.appendChild(p);
     } else {
       arr.forEach(n => {
         const { icon, fg, bg, hover } = getNotificationMeta(n.type_display);
-        const typeRu = (n.type_display === 'Users' ? 'Пользователи'
+        // localized type label if available
+        const keyForType = typeLabelKey[n.type_display];
+        const typeLabel = (keyForType && i18n[keyForType]) ? i18n[keyForType] : (
+          n.type_display === 'Users' ? 'Пользователи'
           : n.type_display === 'Payments' ? 'Платежи'
           : n.type_display === 'Olympiads' ? 'Олимпиады'
           : n.type_display === 'Tasks' ? 'Задачи'
-          : n.type_display);
+          : n.type_display
+        );
         const timeText = timeAgo(n.created_at);
         const html = `
         <div class="flex items-start gap-4 rounded-2xl bg-white p-4 mb-2 notification-item ${hover}"
@@ -175,7 +206,7 @@ function updatePopupNotifications(nots) {
             </div>
             <p class="text-gray-primary flex items-center gap-1 text-xs">
               <span>${timeText}</span> |
-              <span>${typeRu}</span>
+              <span>${typeLabel}</span>
             </p>
           </div>
         </div>`;
@@ -183,64 +214,80 @@ function updatePopupNotifications(nots) {
       });
     }
   });
+
   // Снова инициализировать вкладки, чтобы корректно показать активную
   initPopupTabs();
 }
 
-// 5) WebSocket
+// 5) WebSocket — теперь с передачей lang=kk|en если доступно
 (function connectNotifications() {
   const token = localStorage.getItem('access_token');
   if (!token) return;
+
+  // уже открыт?
   if (window.notificationSocket?.readyState === WebSocket.OPEN) return;
-  window.notificationSocket = new WebSocket(`wss://portal.femo.kz/ws/notifications/?token=${token}`);
+
+  const backendLang = getBackendLangForNotifications(); // 'kk' | 'en' | null
+  const langQuery = backendLang ? `&lang=${encodeURIComponent(backendLang)}` : '';
+  const wsUrl = `wss://portal.femo.kz/ws/notifications/?token=${encodeURIComponent(token)}${langQuery}`;
+
+  try {
+    window.notificationSocket = new WebSocket(wsUrl);
+  } catch (e) {
+    console.error('WS connect error', e);
+    return;
+  }
+
   const socket = window.notificationSocket;
-  socket.addEventListener('open', () => console.log('WS уведомлений открыт'));
+
+  socket.addEventListener('open', () => console.log('WS уведомлений открыт', { wsUrl }));
   socket.addEventListener('message', evt => {
     let data;
     try { data = JSON.parse(evt.data); }
-    catch { return; }
+    catch (e) { console.warn('WS parse message error', e); return; }
     const nots = Array.isArray(data.latest_notifications) ? data.latest_notifications : [];
     updatePopupNotifications(nots);
   });
   socket.addEventListener('close', () => {
     window.notificationSocket = null;
+    // reconnect after a delay
     setTimeout(connectNotifications, 5000);
   });
-  socket.addEventListener('error', () => {
-    socket.close();
+  socket.addEventListener('error', (e) => {
+    console.warn('WS notification error', e);
+    try { socket.close(); } catch (er) {}
   });
 })();
 
 // 6) После загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
   initPopupTabs();
+
   // Клик по overlay закрывает
   const overlay = document.getElementById('overlayModal');
-  overlay?.addEventListener('click', () => {
-    document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
-    overlay.classList.add('hidden');
-    document.body.style.overflow = 'auto';
-  });
-  // Можно навесить клики по notification-item, если нужен переход
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
+      overlay.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  // Обработчик клика на уведомления (переходы)
   const modal = document.getElementById('modalNotification');
-  modal?.addEventListener('click', function(e) {
-    const item = e.target.closest('.notification-item');
-    if (item && !e.target.closest('a')) {
-      const type = item.dataset.type?.toLowerCase();
-      let href = '#';
-
-      if (type === 'olympiads') {
-        href = '/participant/olympiads.html';
-      } else if (type === 'users' || type === 'payments') {
-        href = '/participant/my-way.html';
-      } else if (type === 'tasks') {
-        href = '/participant/tasks.html';
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      const item = e.target.closest('.notification-item');
+      if (item && !e.target.closest('a')) {
+        const type = (item.dataset.type || '').toLowerCase();
+        let href = '#';
+        if (type === 'olympiads') href = '/participant/olympiads.html';
+        else if (type === 'users' || type === 'payments') href = '/participant/my-way.html';
+        else if (type === 'tasks') href = '/participant/tasks.html';
+        if (href !== '#') window.location.href = href;
       }
-
-      window.location.href = href;
-    }
-  });
-
+    });
+  }
 });
 
 // 7) toggleModal
