@@ -85,7 +85,7 @@
     "task.next_task_btn": "Келесі тапсырмаға өту",
 
 
-    "certicates.header": "Сертификаттар",
+    "certificates.header": "Сертификаттар",
     "certificates.table_name_olymp": "Олимпиада атауы",
     "certificates.table_date": "Берілген күні",
     "certificates.table_cat": "Санат",
@@ -109,7 +109,39 @@
     "rate.recomend": "Рейтингті арттыруға кеңес",
     "rate.level": " Деңгей",
     "rate.recommend_lvl_txt1": "Келесі деңгейге дейін ",
-    "rate.recommend_lvl_txt2": "XP қалды. Алға!"
+    "rate.recommend_lvl_txt2": "XP қалды. Алға!",
+    "result.points_info": "How to Earn More Points?",
+    "result.points_info2": "Olympiad Points — ",
+    "result.points_info3": "You earn XP for participating in tours. The higher the rank, the more XP",
+    "result.place1": "1st place",
+    "result.place2": "2nd place",
+    "result.place3": "3rd place",
+    "result.place4": "Participation",
+    "result.points_info5": "Task Points — ",
+    "result.points_info6": "complete training tasks or solve all tasks before the deadline to get +15 XP bonus",
+    "result.points_info7": "Rewards —",
+    "result.points_info8": " can be viewed in the participant’s profile",
+
+    "rate.obwii_rate": "Жалпы рейтинг",
+    "rate.rate_olympiad": "Олимпиада бойынша рейтинг",
+    "rate.all_country": "Барлық елдер",
+    "rate.all_grades": "Барлық сыныптар",
+    "rate.search_name": "Қатысушыны іздеу",
+    "rate_overall.table_rank": "Ранк",
+    "rate_overall.table_part_name": "Қатысушының аты",
+    "rate_overall.table_grade": "Сынып",
+    "rate_overall.table_country": "Ел",
+    "rate_overall.total_points": "Жалпы ұпай",
+    "rate_overall.points_for_olymp": "Олимпиада ұпайлары",
+    "rate_overall.points_for_tasks": "Тапсырма ұпайлары",
+    "rate_overall.count": "Жалпы: ",
+
+    "my_way.my_way": "Менің жолым",
+    "my_way.personal_info": "Жеке деректер",
+    "my_way.payments": "Баланс және төлемдер",
+    "my_way.settings": "Параметрлер"
+
+
 
   }
   

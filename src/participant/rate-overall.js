@@ -442,7 +442,7 @@ async function populateCountryFilter() {
     }
 
     // Очистка списка перед заполнением
-    select.innerHTML = '<option value="">Все страны</option>';
+    select.innerHTML = '<option value="" data-i18n="rate.all_country">Все страны</option>';
 
     // Заполняем список стран
     data.results.forEach((country) => {

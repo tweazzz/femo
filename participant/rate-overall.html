@@ -212,14 +212,16 @@
           </div>
 
           <div class="table-group">
-            <p class="mb-4 text-xl font-bold">Общий рейтинг</p>
+            <p class="mb-4 text-xl font-bold" data-i18n="rate.obwii_rate">Общий рейтинг</p>
 
             <!-- Tabs -->
             <div class="tabs w-fit">
               <a href="/participant/rate-overall.html" class="tabs-link active"
+              data-i18n="rate.obwii_rate"
                 >Общий рейтинг</a
               >
               <a href="/participant/rate-olympiad.html" class="tabs-link"
+              data-i18n="rate.rate_olympiad"
                 >Рейтинг по олимпиаде</a
               >
             </div>
@@ -232,6 +234,8 @@
                   <input id="filter-search"
                     type="text"
                     placeholder="Искать участника"
+                    data-i18n="rate.search_name"
+                    data-i18n-attr="placeholder"           
                     class="focus:ring-orange-primary w-full rounded-lg border border-gray-200 py-2 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:outline-none"
                   />
                   <svg
@@ -255,24 +259,24 @@
                 <select id="filter-country"
                   class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 >
-                  <option value="">Все страны</option>
+                  <option value="" data-i18n="rate.all_country">Все страны</option>
                 </select>
 
                 <select id="filter-grade"
                   class="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-2"
                 >
-                <option value="">Все классы</option>
-                <option value="first">1 класс</option>
-                <option value="second">2 класс</option>
-                <option value="third">3 класс</option>
-                <option value="fourth">4 класс</option>
-                <option value="fifth">5 класс</option>
-                <option value="sixth">6 класс</option>
-                <option value="seventh">7 класс</option>
-                <option value="eights">8 класс</option>
-                <option value="ninth">9 класс</option>
-                <option value="tenth">10 класс</option>
-                <option value="eleventh">11 класс</option>
+                <option value="" data-i18n="rate.all_grades">Все классы</option>
+                <option value="first">1 </option>
+                <option value="second">2 </option>
+                <option value="third">3 </option>
+                <option value="fourth">4 </option>
+                <option value="fifth">5 </option>
+                <option value="sixth">6 </option>
+                <option value="seventh">7 </option>
+                <option value="eights">8 </option>
+                <option value="ninth">9 </option>
+                <option value="tenth">10 </option>
+                <option value="eleventh">11 </option>
                 </select>
               </div>
             </div>
@@ -283,7 +287,7 @@
                   <tr class="border-b border-gray-200">
                     <th class="p-table">
                       <div id="sort-rank-header" class="flex items-center gap-1 cursor-pointer">
-                        Ранк
+                        <span data-i18n="rate_overall.table_rank">Ранк</span>
                         <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -300,12 +304,12 @@
                         </span>
                       </div>
                     </th>
-                    <th class="p-table">Имя участника</th>
-                    <th class="p-table">Класс</th>
-                    <th class="p-table">Страна</th>
+                    <th class="p-table" data-i18n="rate_overall.table_part_name">Имя участника</th>
+                    <th class="p-table" data-i18n="rate_overall.table_grade">Класс</th>
+                    <th class="p-table" data-i18n="rate_overall.table_country">Страна</th>
                     <th class="p-table">
                       <div class="flex items-center gap-1">
-                        Общее Баллы
+                        <span data-i18n="rate_overall.total_points">Общее Баллы</span>
                         <span>
                           <img
                             src="/src/assets/images/coin.png"
@@ -315,8 +319,8 @@
                         </span>
                       </div>
                     </th>
-                    <th class="p-table">Баллы за олимпиады</th>
-                    <th class="p-table">Баллы за задачи</th>
+                    <th class="p-table" data-i18n="rate_overall.points_for_olymp">Баллы за олимпиады</th>
+                    <th class="p-table" data-i18n="rate_overall.points_for_tasks">Баллы за задачи</th>
                   </tr>
                 </thead>
                 <tbody id="rateoverall-tbody" class="tbody-rate divide-y divide-gray-200">
@@ -326,49 +330,43 @@
 
             <!-- Pagination -->
             <div class="mt-6 flex flex-col gap-2">
-              <div class="text-gray-primary text-sm">Всего рейтингов: <span id="total-rateoverall-count">0</span></div>
+              <div class="text-gray-primary text-sm"><span data-i18n="rate_overall.count">Всего рейтингов: </span><span id="total-rateoverall-count">0</span></div>
               <div class="pagination mt-6 flex items-center justify-end"></div>
             </div>
 
-            <div
-              class="banner bg-blue-secondary mb-6 flex justify-between rounded-2xl"
-            >
+            <div class="banner bg-blue-secondary mb-6 flex justify-between rounded-2xl">
               <div class="space-y-2 px-6 py-5 sm:w-3/5">
-                <p class="title mb-2 text-lg font-bold">
+                <p class="title mb-2 text-lg font-bold" data-i18n="result.points_info">
                   Как можно заработать ещё баллы?
                 </p>
                 <p>
-                  <span class="text-blue-primary font-bold"
-                    >Баллы за олимпиады —</span
-                  >
-                  получаешь XP за участие в турах. Чем выше место — тем больше
-                  баллов.
+                  <span class="text-blue-primary font-bold" data-i18n="result.points_info2">Баллы за олимпиады —</span>
+                  <span data-i18n="result.points_info3">получаешь XP за участие в турах. Чем выше место — тем больше
+                  баллов.</span>
                 </p>
-
+  
                 <ul class="list-inside list-disc ps-4 marker:ms-1">
-                  <li>🥇 1 место — +100 XP</li>
-                  <li>🥈 2 место — +70 XP</li>
-                  <li>🥉 3 место — +50 XP</li>
-                  <li>✅ Участие — +10 XP</li>
+                  <li>🥇 <span data-i18n="result.place1">1 место</span> — +100 XP</li>
+                  <li>🥈 <span data-i18n="result.place2">2 место</span> — +70 XP</li>
+                  <li>🥉 <span data-i18n="result.place3">3 место</span> — +50 XP</li>
+                  <li>✅ <span data-i18n="result.place4">Участие</span> — +10 XP</li>
                 </ul>
-
+  
                 <p>
-                  <span class="text-blue-primary font-bold"
-                    >Баллы за решение задачи —</span
-                  >
-                  выполняй подготовительные задачи и ли решишь все задачи до
-                  дедлайна, получишь +15 XP дополнительно
+                  <span class="text-blue-primary font-bold" data-i18n="result.points_info5">Баллы за решение задачи —</span>
+                  <span data-i18n="result.points_info6">выполняй подготовительные задачи и ли решишь все задачи до
+                  дедлайна, получишь +15 XP дополнительно</span>
                 </p>
-
+  
                 <p>
-                  <span class="text-blue-primary font-bold">Награды —</span>
-                  просматриваются в профиле участника
+                  <span class="text-blue-primary font-bold" data-i18n="result.points_info7">Награды —</span>
+                  <span data-i18n="result.points_info8">просматриваются в профиле участника</span>
                 </p>
               </div>
               <div
-                class="hidden w-2/5 bg-[url('/src/assets/images/man.png')] bg-contain bg-bottom-right bg-no-repeat sm:block"
-              ></div>
-            </div>
+                class="hidden w-2/5 bg-[url('/src/assets/images/man.png')] bg-contain bg-bottom-right bg-no-repeat sm:block">
+              </div>
+          </div>
           </div>
         </main>
       </div>
