@@ -157,6 +157,7 @@ async function autoSaveUserSettings() {
 
     if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
     console.log('Настройки успешно обновлены');
+    location.reload();
   } catch (err) {
     console.error('Ошибка при автосохранении настроек:', err);
   }

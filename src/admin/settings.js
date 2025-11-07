@@ -213,6 +213,7 @@ async function updateUserSettings(updatedFields) {
 
     if (!response.ok) throw new Error('Ошибка при обновлении настроек');
     console.log('✅ Настройки успешно обновлены');
+    location.reload();
   } catch (error) {
     console.error('❌ Ошибка при обновлении настроек:', error);
   }

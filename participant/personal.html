@@ -224,7 +224,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >Страна</label
+                    data-i18n="my_way.country">Страна</label
                   >
                   <input
                     placeholder="Казахстан"
@@ -238,7 +238,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >Город</label
+                    data-i18n="my_way.city">Город</label
                   >
                   <input
                     placeholder="Алматы"
@@ -252,7 +252,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >Школа</label
+                    data-i18n="my_way.school">Школа</label
                   >
                   <input
                     placeholder="Название школы"
@@ -266,7 +266,7 @@
                 <div>
                   <label
                     class="text-gray-primary mb-1 block text-sm font-medium"
-                    >Класс</label
+                    data-i18n="my_way.class">Класс</label
                   >
                   <input
                     min="1"
@@ -284,7 +284,7 @@
                 <div>
                   <!-- Hidden file input -->
                   <p class="text-gray-primary mb-1 block text-sm font-medium">
-                    Изображение
+                    <span data-i18n="my_way.image">Изображение</span>
                   </p>
                   <div class="flex items-center gap-4">
                     <input
@@ -314,7 +314,7 @@
               </div>
 
               <!-- Данные родителя -->
-              <p class="mt-5 mb-4 text-lg font-semibold text-gray-900">
+              <p class="mt-5 mb-4 text-lg font-semibold text-gray-900" data-i18n="my_way.parents_info">
                 Данные родителя
               </p>
 
@@ -323,7 +323,7 @@
               >
                 <div>
                   <label
-                    class="text-gray-primary mb-1 block text-sm font-medium"
+                    class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="my_way.parents_fio"
                     >ФИО родителя</label
                   >
                   <input
@@ -335,7 +335,7 @@
                 </div>
                 <div>
                   <label
-                    class="text-gray-primary mb-1 block text-sm font-medium"
+                    class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="my_way.parents_fio_eng"
                     >ФИО на английском</label
                   >
                   <input
@@ -347,7 +347,7 @@
                 </div>
                 <div>
                   <label
-                    class="text-gray-primary mb-1 block text-sm font-medium"
+                    class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="my_way.parents_number"
                     >Номер телефона родителя</label
                   >
                   <input
@@ -360,7 +360,7 @@
               </div>
 
               <!-- Данные учителя -->
-              <p class="mt-5 mb-4 text-lg font-semibold text-gray-900">
+              <p class="mt-5 mb-4 text-lg font-semibold text-gray-900" data-i18n="my_way.teacher_info">
                 Данные учителя
               </p>
 
@@ -370,7 +370,7 @@
                 >
                   <div>
                     <label
-                      class="text-gray-primary mb-1 block text-sm font-medium"
+                      class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="my_way.teacher_fio"
                       >ФИО учителя</label
                     >
                     <input
@@ -383,7 +383,7 @@
                   <div>
                     <label
                       class="text-gray-primary mb-1 block text-sm font-medium"
-                      >ФИО на английсклм</label
+                      data-i18n="my_way.teacher_fio_eng">ФИО на английсклм</label
                     >
                     <input
                       type="text"
@@ -395,7 +395,7 @@
                   <div>
                     <label
                       class="text-gray-primary mb-1 block text-sm font-medium"
-                      >Номер телефона учителя</label
+                      data-i18n="my_way.teacher_number">Номер телефона учителя</label
                     >
                     <input
                       type="tel"
@@ -408,7 +408,7 @@
               </div>
 
               <div class="mt-6 flex items-center justify-end gap-4">
-                <button id="cancel-button" type="button" class="btn-outline btn--orange hidden">Отменить</button>
+                <button id="cancel-button" type="button" class="btn-outline btn--orange hidden" data-i18n="my_way.cancel_btn">Отменить</button>
                 <button
                   type="button" class="btn-orange hidden"
                   onclick="toggleModal('modal')"
@@ -430,7 +430,7 @@
                       />
                     </svg>
                   </span>
-                  Отправить на модерацию
+                  <span data-i18n="my_way.sent_to_moderation">Отправить на модерацию</span>
                 </button>
 
                 <div
@@ -446,12 +446,13 @@
                     <div class="flex flex-col rounded-3xl bg-white">
                       <p
                         class="border-gray-border border-b px-6 pt-6 pb-3 text-xl font-bold"
+                        data-i18n="my_way.waiting_approove"
                       >
                         Ожидает подтверждения
                       </p>
 
                       <div class="px-6 pt-3 pb-5">
-                        <p class="mb-4 text-sm">
+                        <p class="mb-4 text-sm" data-i18n="my_way.waiting_approove_txt">
                           Спасибо! Ваши изменения отправлены на проверку
                           администратору. Мы сообщим, когда они будут
                           подтверждены.
@@ -478,7 +479,7 @@
                                 />
                               </svg>
                             </span>
-                            Понятно
+                            <span data-i18n="my_way.pon_btn">Понятно</span>
                           </button>
                         </div>
                       </div>
@@ -523,7 +524,7 @@
                       />
                     </svg>
                   </span>
-                  Редактировать
+                  <span data-i18n="my_way.edit_btn">Редактировать</span>
                 </button>
               </div>
             </form>

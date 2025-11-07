@@ -160,9 +160,9 @@
 
           <div class="space-y-4">
             <div>
-              <p class="mb-4 text-lg font-bold">Настройки</p>
+              <p class="mb-4 text-lg font-bold" data-i18n="my_way.settings">Настройки</p>
               <div class="border-default rounded-2xl p-6">
-                <p class="mb-3 text-sm">
+                <p class="mb-3 text-sm" data-i18n="profile_settings.choose_lang">
                   Выберите язык, который будет использоваться на платформе
                 </p>
 
@@ -204,7 +204,7 @@
             </div>
 
             <div>
-              <p class="mb-4 text-lg font-bold">
+              <p class="mb-4 text-lg font-bold" data-i18n="profile_settings.notification">
                 Настройки уведомлений в сайте
               </p>
 
@@ -230,7 +230,7 @@
                       />
                     </svg>
                   </div>
-                  О результатах
+                  <span data-i18n="profile_settings.notification_result">О результатах</span>
                 </label>
 
                 <label class="flex cursor-pointer items-center gap-2">
@@ -252,7 +252,7 @@
                       />
                     </svg>
                   </div>
-                  О задачах
+                  <span data-i18n="profile_settings.notification_tasks">О задачах</span>
                 </label>
 
                 <label class="flex cursor-pointer items-center gap-2">
@@ -274,7 +274,7 @@
                       />
                     </svg>
                   </div>
-                  О олимпиадах
+                  <span data-i18n="profile_settings.notification_olymp">О олимпиадах</span>
                 </label>
 
                 <label class="flex cursor-pointer items-center gap-2">
@@ -296,7 +296,7 @@
                       />
                     </svg>
                   </div>
-                  О профиле
+                  <span data-i18n="profile_settings.notification_profile">О профиле</span>
                 </label>
 
                 <label class="flex cursor-pointer items-center gap-2">
@@ -318,24 +318,24 @@
                       />
                     </svg>
                   </div>
-                  О статусе оплаты
+                  <span data-i18n="profile_settings.notification_status_payment">О статусе оплаты</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <p class="mb-4 text-lg font-bold">Сменить пароль</p>
+              <p class="mb-4 text-lg font-bold" data-i18n="profile_settings.edit_pass">Сменить пароль</p>
 
               <form class="space-y-6">
                 <div class="border-default space-y-6 rounded-2xl p-6">
                   <div class="relative">
-                    <label class="text-primary mb-1 block text-sm"
+                    <label class="text-primary mb-1 block text-sm" data-i18n="profile_settings.current_pass"
                       >Текущий пароль</label
                     >
                     <input
                       id="password1"
                       type="password"
-                      placeholder="Введите пароль"
+                      placeholder="**********"
                       class="input-base border-default"
                     />
                     <button
@@ -361,12 +361,12 @@
                   </div>
                   <div class="relative">
                     <label class="text-primary mb-1 block text-sm"
-                      >Новый пароль</label
+                    data-i18n="profile_settings.new_pass">Новый пароль</label
                     >
                     <input
                       id="password2"
                       type="password"
-                      placeholder="Введите пароль"
+                      placeholder="**********"
                       class="input-base border-default"
                     />
                     <button
@@ -393,12 +393,12 @@
 
                   <div class="relative">
                     <label class="text-primary mb-1 block text-sm"
-                      >Подтвердите пароль</label
+                    data-i18n="profile_settings.verify_pass">Подтвердите пароль</label
                     >
                     <input
                       id="password3"
                       type="password"
-                      placeholder="Введите пароль"
+                      placeholder="**********"
                       class="input-base border-default"
                     />
                     <button
@@ -427,13 +427,14 @@
                 <button
                   type="submit"
                   class="border-orange-primary text-orange-primary ms-auto block cursor-pointer rounded-xl border-1 px-3 py-2 transition"
+                  data-i18n="profile_settings.update_pass_btn"
                 >
                   Обновить пароль
                 </button>
               </form>
             </div>
 
-            <div class="space-y-6">
+            <!-- <div class="space-y-6">
               <p class="text-lg font-bold">Двухэтапная аутентификация</p>
 
               <div class="border-default space-y-6 rounded-2xl p-6">
@@ -861,7 +862,7 @@
                   </button>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <div

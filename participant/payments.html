@@ -201,7 +201,7 @@
                   <div class="relative">
                     <form class="flex flex-col rounded-3xl bg-white">
                       <p
-                        class="border-gray-border border-b px-6 pt-6 pb-3 text-xl font-bold"
+                        class="border-gray-border border-b px-6 pt-6 pb-3 text-xl font-bold" data-i18n="my_way.top_up_balance"
                       >
                         Пополнить баланс
                       </p>
@@ -209,7 +209,7 @@
                       <div class="space-y-4 px-6 pt-3 pb-5">
                         <div>
                           <label
-                            class="text-gray-primary mb-1 block text-sm font-medium"
+                            class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="my_way.top_up_amount"
                             >Введите сумму для пополнения</label
                           >
                           <div class="relative">
@@ -248,7 +248,7 @@
                         <div>
                           <label
                             class="text-gray-primary mb-1 block text-sm font-medium"
-                            >Выберите способ оплаты</label
+                            data-i18n="my_way.choose_card">Выберите способ оплаты</label
                           >
                           <div class="flex items-center">
                             <label class="btn-switch rounded-s-2xl">
@@ -305,6 +305,7 @@
                         <button
                           class="btn-orange w-full justify-center"
                           onclick="toggleModal('modal')"
+                          data-i18n="my_way.top_up_balance_btn"
                         >
                           Пополнить баланс
                         </button>
@@ -334,7 +335,7 @@
             </div>
 
             <div class="table-group">
-              <p class="mb-4 text-xl font-bold">История платежей</p>
+              <p class="mb-4 text-xl font-bold" data-i18n="my_way.history_payment">История платежей</p>
 
               <div
                 class="border-default mb-6 overflow-x-auto rounded-2xl border"
@@ -342,8 +343,8 @@
                 <table class="table-olympiads w-full rounded-2xl pb-6">
                   <thead>
                     <tr class="border-b border-gray-200">
-                      <th class="p-table">ID платежа</th>
-                      <th id="sort-date-header" class="p-table flex items-center gap-1 cursor-pointer">
+                      <th class="p-table" data-i18n="my_way.id_payment">ID платежа</th>
+                      <th id="sort-date-header" class="p-table flex items-center gap-1 cursor-pointer" data-i18n="my_way.data_received">
                         Дата получения
                         <span>
                           <svg
@@ -360,10 +361,10 @@
                           </svg>
                         </span>
                       </th>
-                      <th class="p-table">Описание</th>
-                      <th class="p-table">Сумма</th>
-                      <th class="p-table">Статус</th>
-                      <th class="p-table">Действия</th>
+                      <th class="p-table" data-i18n="my_way.desc">Описание</th>
+                      <th class="p-table" data-i18n="my_way.amount">Сумма</th>
+                      <th class="p-table" data-i18n="my_way.status">Статус</th>
+                      <th class="p-table" data-i18n="my_way.action">Действия</th>
                     </tr>
                   </thead>
                   <tbody id="payments-tbody" lass="divide-y divide-gray-200">
@@ -374,7 +375,7 @@
           </div>
           <!-- Pagination -->
           <div class="mt-6 flex flex-col gap-2">
-            <div class="text-gray-primary text-sm">Всего платежей: <span id="total-payments-count">0</span></div>
+            <div class="text-gray-primary text-sm"><span data-i18n="my_way.total">Всего платежей: </span><span id="total-payments-count">0</span></div>
             <div class="pagination mt-6 flex items-center justify-end"></div>
           </div>
         </main>
