@@ -39,28 +39,121 @@ async function ensureUserAuthenticated() {
     return user
 }
 
-function renderUserInfo(user) {
-    const avatarEl = document.getElementById('user-avatar');
-    const nameEl = document.getElementById('user-name');
-    const roleEl = document.getElementById('user-role');
-    const welcomeEl = document.querySelector('h1.text-xl');
-    const imgPath = user.profile.image;
-  
-    avatarEl.src = imgPath.startsWith('http')
-      ? imgPath
-      : `https://portal.femo.kz${imgPath}`;
-    nameEl.textContent = user.profile.full_name_ru;
-  
-    const firstName = user.profile.full_name_ru.split(' ')[0];
-    welcomeEl.innerHTML = `<span data-i18n="welcome.message">Добро пожаловать,</span> ${firstName} 👋`;
-  
-    const roleMap = {
-      administrator: 'Администратор',
-      // можно добавить другие роли при необходимости
-    };
-  
-    // Устанавливаем роль по умолчанию, если не найдена
-    roleEl.textContent = roleMap[user.profile.role] || 'Администратор';
+function renderUserInfo(profile) {
+  // допускаем вызов с объектом { profile: {...} } или прямым profile
+  const p = profile && profile.profile ? profile.profile : (profile || {});
+
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
+
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
+    console.warn('renderUserInfo: отсутствуют элементы в DOM для отрисовки профиля');
+    return;
+  }
+
+  // картинка
+  const imgPath = p.image || '';
+  avatarEl.src = imgPath
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
+    : '';
+
+  // имя: выбираем имя в зависимости от frontend языка (если есть)
+  const frontendLang = (localStorage.getItem('lang') === 'kk') ? 'kz' : (localStorage.getItem('lang') || 'ru');
+  const fullName = (frontendLang === 'en')
+    ? (p.full_name_en || p.full_name_ru || '')
+    : (p.full_name_ru || p.full_name_en || '');
+  nameEl.textContent = fullName;
+
+  const firstName = (fullName.split && fullName.split(' ')[0]) || '';
+
+  // Вставляем span с data-i18n для welcome — так i18n.applyTranslations сможет заменить текст
+  // Пытаемся использовать сначала ключ admin, затем generic
+  const welcomeKeyCandidates = ['welcome.message_admin', 'welcome.message', 'welcome.message_rep'];
+
+  // Если внутри welcomeEl уже есть span[data-i18n] — используем его и обновляем имя рядом
+  let greetSpan = welcomeEl.querySelector('span[data-i18n]');
+  if (!greetSpan) {
+    greetSpan = document.createElement('span');
+    // поставим первый candidate как data-i18n — applyTranslations заменит при наличии
+    greetSpan.setAttribute('data-i18n', welcomeKeyCandidates[0]);
+    // запасной текст (русский) — если перевод ещё не доступен
+    greetSpan.textContent = 'Добро пожаловать,';
+    // Очистим h1 и вставим: [greetSpan] [space + firstName + emoji]
+    welcomeEl.innerHTML = '';
+    welcomeEl.appendChild(greetSpan);
+    welcomeEl.appendChild(document.createTextNode(' ' + firstName + ' 👋'));
+  } else {
+    // обновляем имя рядом с существующим span
+    // удалим все текстовые узлы после span и добавим имя
+    let node = greetSpan.nextSibling;
+    while (node) {
+      const next = node.nextSibling;
+      node.remove();
+      node = next;
+    }
+    greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
+  }
+
+  // Если словарь загружен — попробуем подобрать корректный ключ и применить перевод
+  try {
+    const dict = window.i18nDict || {};
+    // найдем первый существующий ключ в словаре и установим data-i18n на него
+    const foundKey = welcomeKeyCandidates.find(k => Object.prototype.hasOwnProperty.call(dict, k));
+    if (foundKey) {
+      greetSpan.dataset.i18n = foundKey;
+    } else {
+      // оставляем по-умолчанию welcome.message_admin (или русский) — перевод придёт позже
+    }
+
+    if (typeof applyTranslations === 'function') {
+      // применим перевод к всем элементам с data-i18n (включая наш span)
+      applyTranslations(dict);
+    }
+  } catch (e) {
+    console.warn('renderUserInfo: applyTranslations error', e);
+  }
+
+  // role
+  const roleMap = { administrator: 'Администратор' };
+  roleEl.textContent = roleMap[p.role] || p.role || '';
+
+  // подписка на изменения языка: при смене языка — снова применим перевод и обновим имя
+  // (на случай, если словарь придёт позже)
+  function onLanguageChanged(ev) {
+    try {
+      const dict = window.i18nDict || {};
+      const foundKey = welcomeKeyCandidates.find(k => Object.prototype.hasOwnProperty.call(dict, k));
+      if (foundKey) greetSpan.dataset.i18n = foundKey;
+      if (typeof applyTranslations === 'function') applyTranslations(dict);
+      // обновим имя (возможна смена full_name_{lang})
+      const lang = localStorage.getItem('lang') || 'ru';
+      const resolvedLang = (lang === 'kk') ? 'kz' : lang;
+      const newFullName = (resolvedLang === 'en') ? (p.full_name_en || p.full_name_ru || '') : (p.full_name_ru || p.full_name_en || '');
+      const newFirst = (newFullName.split && newFullName.split(' ')[0]) || '';
+      // обновим nameEl and trailing text node after greetSpan
+      nameEl.textContent = newFullName;
+      // remove existing trailing text nodes after span
+      let afterNode = greetSpan.nextSibling;
+      while (afterNode) {
+        const next = afterNode.nextSibling;
+        afterNode.remove();
+        afterNode = next;
+      }
+      greetSpan.after(document.createTextNode(' ' + newFirst + ' 👋'));
+    } catch (e) {
+      console.warn('onLanguageChanged error', e);
+    }
+  }
+
+  // чтобы не добавлять много слушателей при многократных вызовах — удалим старые и добавим новый
+  window.removeEventListener('i18n:languageChanged', onLanguageChanged);
+  window.addEventListener('i18n:languageChanged', onLanguageChanged);
+
+  // также реагируем на i18n:languageReady (иногда используется)
+  window.removeEventListener('i18n:languageReady', onLanguageChanged);
+  window.addEventListener('i18n:languageReady', onLanguageChanged);
 }
   
 
@@ -114,6 +207,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 function fillProfileData(data) {
     document.querySelector('input[name="email"]').value = data.email || ''
     document.querySelector('input[name="full_name_ru"]').value = data.full_name_ru || ''
+    document.querySelector('input[name="full_name_en"]').value = data.full_name_en || '';
+    // для read-only версии:
+    const readFullEn = document.querySelector('input[name="full_name_en"][disabled]');
+    if (readFullEn) readFullEn.value = data.full_name_en || '';
+
 
     const img = document.getElementById('imagePreview')
     if (img && data.image) {
