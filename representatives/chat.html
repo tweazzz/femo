@@ -142,8 +142,8 @@
                       </svg>
                     </div>
                     <div>
-                      <p class="text-sm font-bold">Групповой чат</p>
-                      <p class="mt-1 text-xs text-gray-500 truncate">Нет сообщений</p>
+                      <p class="text-sm font-bold" data-i18n="chat.group_chat">Групповой чат</p>
+                      <p class="mt-1 text-xs text-gray-500 truncate" data-i18n="chat.no_messages">Нет сообщений</p>
                     </div>
                   </div>
                   <div id="group-status-icon" class="flex items-center justify-center w-6 h-6 flex-shrink-0">
@@ -164,8 +164,8 @@
                       </svg>
                     </div>
                     <div>
-                      <p class="text-sm font-bold">Объявления</p>
-                      <p class="mt-1 text-xs text-gray-500 truncate">Нет сообщений</p>
+                      <p class="text-sm font-bold" data-i18n="chat.announcements">Объявления</p>
+                      <p class="mt-1 text-xs text-gray-500 truncate" data-i18n="chat.no_messages">Нет сообщений</p>
                     </div>
                   </div>
                   <div id="announcements-status-icon" class="flex items-center justify-center w-6 h-6 flex-shrink-0">
@@ -186,7 +186,7 @@
                     stroke="currentColor" class="size-5 md:hidden">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                   </svg>
-                  <span>Объявления</span>
+                  <span data-i18n="chat.announcements">Объявления</span>
                 </div>
               </div>
             </div>
@@ -204,7 +204,7 @@
                   <div id="group-chat" class="chat-content hidden flex flex-col gap-6 min-h-full">
                   <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
                     <div class="text-center">
-                      <p class="text-base">Пока нет сообщений</p>
+                      <p class="text-base" data-i18n="chat.no_messages">Пока нет сообщений</p>
                     </div>
                   </div>
                 </div>
@@ -213,7 +213,7 @@
                 <div id="announcements-chat" class="chat-content active flex flex-col gap-6 min-h-full">
                   <div class="chat-placeholder flex items-center justify-center flex-1 text-gray-400">
                     <div class="text-center">
-                      <p class="text-base">Пока нет сообщений</p>
+                      <p class="text-base" data-i18n="chat.no_messages">Пока нет сообщений</p>
                     </div>
                   </div>
                 </div>
@@ -470,56 +470,101 @@
 
     let participantProfile = null;
 
-    function renderUserInfo(profile) {
-      const avatarEl = document.getElementById('user-avatar');
-      const nameEl = document.getElementById('user-name');
-      const roleEl = document.getElementById('user-role');
-      const welcomeEl = document.querySelector('h1.text-xl');
+function renderUserInfo(profile) {
+  const p = profile && profile.profile ? profile.profile : (profile || {});
 
-      if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
-        console.warn('renderUserInfo: missing DOM elements');
-        return;
-      }
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
 
-      const imgPath = profile.image || '';
-      avatarEl.src = imgPath
-        ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
-        : '';
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
+    console.warn('renderUserInfo: отсутствуют элементы в DOM для отрисовки профиля');
+    return;
+  }
 
-      nameEl.textContent = profile.full_name_ru || profile.full_name_en || '';
+  const imgPath = p.image || '';
+  avatarEl.src = imgPath
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
+    : '';
 
-      const firstName = (profile.full_name_ru || profile.full_name_en || '').split(' ')[0] || '';
+  // Определяем frontend language для выбора имени (которое может быть на en/ru)
+  const storedLang = localStorage.getItem('lang') || 'ru';
+  const frontendLang = (storedLang === 'kk') ? 'kz' : storedLang; // устойчиво: если случайно кто-то записал kk
+  const fullName = (frontendLang === 'en') ? (p.full_name_en || p.full_name_ru || '') : (p.full_name_ru || p.full_name_en || '');
+  nameEl.textContent = fullName;
 
-      let greetSpan = welcomeEl.querySelector('span[data-i18n=\"welcome.message_rep\"]');
-      if (!greetSpan) {
-        greetSpan = document.createElement('span');
-        greetSpan.setAttribute('data-i18n', 'welcome.message_rep');
-        greetSpan.textContent = 'Добро пожаловать,';
-        welcomeEl.innerHTML = '';
-        welcomeEl.appendChild(greetSpan);
-        welcomeEl.append(document.createTextNode(' ' + firstName + ' 👋'));
-      } else {
-        let node = greetSpan.nextSibling;
-        while (node) {
-          const next = node.nextSibling;
-          node.remove();
-          node = next;
-        }
-        greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
-      }
+  const firstName = (fullName.split && fullName.split(' ')[0]) || '';
 
-      if (window.i18nDict && Object.keys(window.i18nDict).length > 0) {
-        try {
-          applyTranslations(window.i18nDict);
-        } catch (e) {
-          console.warn('applyTranslations error', e);
-        }
-      }
+  const welcomeKeyCandidates = ['welcome.message_admin', 'welcome.message', 'welcome.message_rep'];
 
-      const roleMap = { administrator: 'Представитель', representative: 'Представитель' };
-      roleEl.textContent = roleMap[profile.role] || profile.role || '';
+  // Находим или создаём span[data-i18n]
+  let greetSpan = welcomeEl.querySelector('span[data-i18n]');
+  if (!greetSpan) {
+    greetSpan = document.createElement('span');
+    greetSpan.setAttribute('data-i18n', welcomeKeyCandidates[0]);
+    greetSpan.textContent = 'Добро пожаловать,'; // fallback
+    welcomeEl.innerHTML = '';
+    welcomeEl.appendChild(greetSpan);
+    welcomeEl.appendChild(document.createTextNode(' ' + firstName + ' 👋'));
+  } else {
+    // обновляем имя (не трогаем span текст)
+    let node = greetSpan.nextSibling;
+    while (node) {
+      const next = node.nextSibling;
+      node.remove();
+      node = next;
     }
+    greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
+  }
 
+  try {
+    const dict = window.i18nDict || {};
+    const foundKey = welcomeKeyCandidates.find(k => Object.prototype.hasOwnProperty.call(dict, k));
+    if (foundKey) greetSpan.dataset.i18n = foundKey;
+    if (typeof applyTranslations === 'function') applyTranslations(dict);
+  } catch (e) {
+    console.warn('renderUserInfo: applyTranslations error', e);
+  }
+
+  const roleMap = { representative: 'Представитель' };
+  roleEl.textContent = roleMap[p.role] || p.role || '';
+
+  // Подписка на смену языка (обновит перевод и имя)
+  function onLanguageChanged() {
+    try {
+      const dict = window.i18nDict || {};
+      const foundKey = welcomeKeyCandidates.find(k => Object.prototype.hasOwnProperty.call(dict, k));
+      if (foundKey) greetSpan.dataset.i18n = foundKey;
+      if (typeof applyTranslations === 'function') applyTranslations(dict);
+
+      const langNow = localStorage.getItem('lang') || 'ru';
+      const resolvedLang = (langNow === 'kk') ? 'kz' : langNow;
+      const newFullName = (resolvedLang === 'en') ? (p.full_name_en || p.full_name_ru || '') : (p.full_name_ru || p.full_name_en || '');
+      nameEl.textContent = newFullName;
+      let node = greetSpan.nextSibling;
+      while (node) {
+        const next = node.nextSibling;
+        node.remove();
+        node = next;
+      }
+      const newFirst = (newFullName.split && newFullName.split(' ')[0]) || '';
+      greetSpan.after(document.createTextNode(' ' + newFirst + ' 👋'));
+    } catch (e) {
+      console.warn('onLanguageChanged error', e);
+    }
+  }
+
+  // remove old listeners then add
+  try {
+    window.removeEventListener('i18n:languageChanged', onLanguageChanged);
+    window.addEventListener('i18n:languageChanged', onLanguageChanged);
+    window.removeEventListener('i18n:languageReady', onLanguageChanged);
+    window.addEventListener('i18n:languageReady', onLanguageChanged);
+  } catch (e) {
+    // ignore
+  }
+}
     async function loadRepresentativeProfile() {
       try {
         const res = await authorizedFetch('https://portal.femo.kz/api/users/representative/profile/');

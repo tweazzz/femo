@@ -175,7 +175,12 @@
     "profile-settings.2step_auth_1": "Secure your account",
     "profile-settings.2step_auth_1_txt": "Enable two-factor authentication and verify login with a code from your phone.",
     "profile-settings.2step_auth_btn": "Enable two-factor authentication",
-    "profile-settings.delete_account_btn": "Delete account"
+    "profile-settings.delete_account_btn": "Delete account",
+
+
+    "chat.group_chat": "Group chat",
+    "chat.no_messages": "No messages!",
+    "chat.announcements": "Announcements"
 
   }
   

@@ -908,7 +908,7 @@ class RepresentativeChat {
       placeholder.className = 'chat-placeholder flex items-center justify-center flex-1 text-gray-400'
       placeholder.innerHTML = `
         <div class="text-center">
-          <p class="text-base">Пока нет сообщений</p>
+          <p class="text-base" data-i18n="chat.no_messages">Пока нет сообщений</p>
         </div>
       `
       chatContainer.appendChild(placeholder)

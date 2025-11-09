@@ -174,7 +174,12 @@
     "profile-settings.2step_auth_1": "Аккаунтыңызды қорғаңыз.",
     "profile-settings.2step_auth_1_txt": "Екі қадамды аутентификацияны қосып, телефонға келген код арқылы кіруді растаңыз.",
     "profile-settings.2step_auth_btn": "Екі қадамды аутентификацияны қосу",
-    "profile-settings.delete_account_btn": "Аккаунтты жою"
+    "profile-settings.delete_account_btn": "Аккаунтты жою",
+
+
+    "chat.group_chat": "Группалық чат",
+    "chat.no_messages": "No messages!",
+    "chat.announcements": "Хабарландырулар"
 
   }
   

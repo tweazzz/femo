@@ -62,6 +62,7 @@
   "users.form_teacher_num": "Teacher’s phone number",
   "users.form_submit_btn": "Add participant",
   "users.form_representative_num": "Representative's phone number",
+  "users.empty": "No data",
 
 
   "olympiads.olympiad": "Olympiad management",
@@ -259,10 +260,18 @@
   "profile.edit_btn":"Edit",
   "profile.edit_popup":"Edit profile",
   "profile.full_name_en_label":"Full name (EN)",
-  "":"",
-  "":"",
-  "":"",
-  "":"",
-  "":"",
-  "":""
+  "profile.full_name":"Full name",
+  "profile.image":"Image",
+  "profile.btn_cancel":"Cancel",
+  "profile.btn_save":"Save",
+  "profile.choose_lang":"Choose the language to use on the platform",
+  "profile.change_pass":"Change password",
+  "profile.current_pass":"Current password",
+  "profile.new_pass":"New password",
+  "profile.verify_pass": "Confirm password",
+  "profile.update_pass_btn": "Update password",
+  "profile.2f_auth": "Two-factor Authentication",
+  "profile.2f_auth_save":"Secure your account",
+  "profile.2f_auth_save_txt": "Enable two-factor authentication and verify login with a code from your phone.",
+  "profile.delete_acc": "Delete account"
 }

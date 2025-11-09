@@ -204,30 +204,102 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 })
 
+// --------- Обновлённая fillProfileData: заполняем все формы/inputs с одинаковыми именами ----------
 function fillProfileData(data) {
-    document.querySelector('input[name="email"]').value = data.email || ''
-    document.querySelector('input[name="full_name_ru"]').value = data.full_name_ru || ''
-    document.querySelector('input[name="full_name_en"]').value = data.full_name_en || '';
-    // для read-only версии:
-    const readFullEn = document.querySelector('input[name="full_name_en"][disabled]');
-    if (readFullEn) readFullEn.value = data.full_name_en || '';
+  // Заполним все inputs с соответствующими name (чтобы и main, и modal получили значения)
+  const names = ['email', 'full_name_ru', 'full_name_en'];
+  names.forEach((name) => {
+    const els = document.querySelectorAll(`input[name="${name}"]`);
+    els.forEach(el => {
+      el.value = data[name] || '';
+    });
+  });
 
+  const img = document.getElementById('imagePreview');
+  if (img && data.image) {
+    img.src = data.image;
+    img.classList.remove('bg-gray-50');
+  }
 
-    const img = document.getElementById('imagePreview')
-    if (img && data.image) {
-        img.src = data.image
-        img.classList.remove('bg-gray-50')
-        const fileNameEl = document.getElementById('fileName')
-        // if (fileNameEl) fileNameEl.innerHTML = `<img src="${data.image}">`;
-    }
-
-    // ID участника — только для чтения
-    const idInput = document.querySelector('input[name="id"]')
-    if (idInput) {
-        idInput.readOnly = true
-        idInput.disabled = true
-    }
+  // ID участника — только для чтения везде
+  const idInputs = document.querySelectorAll('input[name="id"]');
+  idInputs.forEach(idInput => {
+    idInput.readOnly = true;
+    idInput.disabled = true;
+  });
 }
+
+// --------- Обработчик submit для формы модалки (admin-form-modal) ----------
+const modalForm = document.querySelector('#admin-form-modal');
+if (modalForm) {
+  modalForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target; // это точно модальная форма
+
+    // Убедимся, что поля включены (FormData не включает disabled)
+    form.querySelectorAll('input, textarea, select').forEach(el => {
+      if (el.name !== 'id') el.disabled = false;
+    });
+
+    const formData = new FormData(form);
+
+    // DEBUG: что реально уходит
+    console.log('FormData entries (modal):');
+    for (const [k, v] of formData.entries()) {
+      console.log(k, v instanceof File ? v.name : v);
+    }
+
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) throw new Error('Токен не найден');
+
+      const hasFile = [...formData.keys()].some(k => k === 'image');
+      let response;
+      if (!hasFile) {
+        const payload = Object.fromEntries(formData.entries());
+        response = await fetch('https://portal.femo.kz/api/users/administrator/profile/', {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        response = await fetch('https://portal.femo.kz/api/users/administrator/profile/', {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            // НЕ указываем Content-Type
+          },
+          body: formData,
+        });
+      }
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Ошибка сервера: ${response.status} ${text}`);
+      }
+
+      const updatedData = await response.json();
+      // Обновляем все поля (как main так и modal)
+      fillProfileData(updatedData);
+      renderUserInfo({ profile: updatedData });
+      alert('Профиль успешно обновлён!');
+      // закроем модалку
+      if (typeof toggleModal === 'function') toggleModal('modalEdit', false);
+    } catch (err) {
+      console.error('Submit error (modal):', err);
+      alert('Не удалось обновить профиль: ' + err.message);
+    } finally {
+      // можно вернуть disabled обратно
+      toggleEditMode(false);
+    }
+  });
+} else {
+  console.warn('Форма модалки #admin-form-modal не найдена — проверь HTML');
+}
+
 
 function toggleEditMode(enable = true) {
     setFormDisabled(!enable)
@@ -281,6 +353,7 @@ function getFileNameFromUrl(url) {
 // === ПРОСТОЕ ПОВЕДЕНИЕ ДЛЯ КНОПКИ "Редактировать" ===
 
 // Находим кнопку и вешаем обработчик
+// === Обновлённый обработчик кнопки "Редактировать" ===
 const editBtn = document.getElementById('edit-button');
 if (editBtn) {
   editBtn.addEventListener('click', async () => {
@@ -291,8 +364,8 @@ if (editBtn) {
         return;
       }
 
-      // Получаем данные профиля
-      const response = await fetch('https://portal.femo.kz/api/users/administrator/profile/', {
+      // Получаем актуальные данные профиля (чтобы подтянуть full_name_en)
+      const response = await authorizedFetch('https://portal.femo.kz/api/users/administrator/profile/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -305,7 +378,7 @@ if (editBtn) {
 
       const data = await response.json();
 
-      // Заполняем только 2 поля в модалке
+      // Находим модалку и поля
       const modal = document.getElementById('modalEdit');
       if (!modal) {
         alert('Модалка не найдена');
@@ -313,13 +386,40 @@ if (editBtn) {
       }
 
       const emailInput = modal.querySelector('input[name="email"]');
-      const fullNameInput = modal.querySelector('input[name="full_name_ru"]');
+      const fullNameRuInput = modal.querySelector('input[name="full_name_ru"]');
+      const fullNameEnInput = modal.querySelector('input[name="full_name_en"]');
+      const imagePreview = modal.querySelector('#imagePreview');
 
       if (emailInput) emailInput.value = data.email || '';
-      if (fullNameInput) fullNameInput.value = data.full_name_ru || '';
+      if (fullNameRuInput) fullNameRuInput.value = data.full_name_ru || '';
+      if (fullNameEnInput) fullNameEnInput.value = data.full_name_en || '';
 
-      // Показываем модалку
-      modal.classList.remove('hidden');
+      if (imagePreview && data.image) {
+        imagePreview.src = data.image;
+        imagePreview.classList.remove('bg-gray-50');
+      }
+
+      // Включаем режим редактирования (чтобы inputs были enabled и FormData их включал)
+      // toggleEditMode(true) установит видимость кнопок Cancel/Save и снимет disabled с полей
+      if (typeof toggleEditMode === 'function') {
+        toggleEditMode(true);
+      } else {
+        // запасной вариант — вручную снять disabled у полей формы
+        const form = modal.querySelector('form');
+        if (form) {
+          const inputs = form.querySelectorAll('input, select, textarea');
+          inputs.forEach((el) => {
+            if (el.name !== 'id') el.disabled = false;
+          });
+        }
+      }
+
+      // Показываем модалку (если у вас есть toggleModal, используем его)
+      if (typeof toggleModal === 'function') {
+        toggleModal('modalEdit', true);
+      } else {
+        modal.classList.remove('hidden');
+      }
 
     } catch (err) {
       console.error(err);
@@ -327,6 +427,7 @@ if (editBtn) {
     }
   });
 }
+
 
 // Чтобы при закрытии модалки кнопка "Редактировать" не исчезала
 const closeBtn = document.querySelector('#modalEdit button[data-close], #modalEdit .close-btn, #modalEdit .btn-close');

@@ -185,7 +185,7 @@
                 </div>
                 <div>
                   <label
-                    class="text-gray-primary mb-1 block text-sm font-medium"
+                    class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.full_name"
                     >ФИО</label
                   >
                   <input
@@ -203,7 +203,7 @@
                 </div>
                 <div>
                   <!-- Hidden file input -->
-                  <p class="text-gray-primary mb-1 block text-sm font-medium">
+                  <p class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.image">
                     Изображение
                   </p>
                   <div class="flex items-center gap-4">
@@ -397,7 +397,7 @@
             <div class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5 sm:px-6">
   
               <!-- Participant Form (shown by default) -->
-              <form id="admin-form" class="role-form" enctype="multipart/form-data"
+              <form id="admin-form-modal" class="role-form" enctype="multipart/form-data"
               method="post">
                 <div class="mt-6 space-y-6">
                   <div>
@@ -412,7 +412,7 @@
                         <input placeholder="ivan.ivanov@example.com" type="email" name="email" class="input-base border-default" required="">
                       </div>
                       <div>
-                        <label class="text-gray-primary mb-1 block text-sm font-medium">ФИО
+                        <label class="text-gray-primary mb-1 block text-sm font-medium"><span data-i18n="profile.full_name">ФИО</span>
                           <span class="text-red-primary">*</span></label>
                         <input placeholder="Айжан Ахметова" type="text" name="full_name_ru" class="input-base border-default" required="">
                       </div>
@@ -422,7 +422,7 @@
                         <input placeholder="Daniya Maxsatkyzy" type="text" name="full_name_en" class="input-base border-default" required>
                       </div>
                       <div>
-                        <label for="editImageInput" class="text-gray-primary mb-1 block text-sm font-medium">Фото</label>
+                        <label for="editImageInput" class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.image">Фото</label>
                         <input type="file"
                               name="image"
                               id="editImageInput"
@@ -441,15 +441,15 @@
                           <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
                         </svg>
                       </span>
-                      Отменить
+                      <span data-i18n="profile.btn_cancel">Отменить</span>
                     </button>
-                    <button id="submit-button" type="submit" form="admin-form" class="btn-orange">
+                    <button id="submit-button" type="submit" form="admin-form-modal" class="btn-orange">
                       <span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
                         </svg>
                       </span>
-                      Сохранить
+                      <span data-i18n="profile.btn_save">Сохранить</span>
                     </button>
                   </div>
                 </div>

@@ -302,78 +302,120 @@ function getCountryFlagImg(countryName) {
     : ''
 }
 
+const ROLE_I18N_KEYS = {
+  participant: 'users.participant',
+  representative: 'users.representative'
+};
+
+// Простая утилита для безопасного вставления текста в HTML
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// Переводит элементы внутри переданного узла, опираясь на window.i18nDict
+function translateNode(root) {
+  const dict = window.i18nDict || {};
+  if (!root) return;
+  root.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (!key) return;
+    const translated = dict[key];
+    if (typeof translated !== 'undefined') {
+      // для option и других элементов используем textContent
+      el.textContent = translated;
+    }
+  });
+}
+
 function renderUsers(users) {
-  const tbody = document.querySelector('tbody')
-  tbody.innerHTML =
-    users.length === 0
-      ? `
+  const tbody = document.querySelector('tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = users.length === 0
+    ? `
     <tr>
-      <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-        Пользователи не найдены
+      <td colspan="6" class="px-6 py-4 text-center text-gray-500" data-i18n="users.empty">
+        ${escapeHtml((window.i18nDict && window.i18nDict['users.empty']) || 'Пользователи не найдены')}
       </td>
     </tr>
   `
-      : users
-          .map((user) => {
-            const roleInfo =
-              user.role === 'participant'
-                ? {
-                    class: 'text-blue-primary',
-                    label: 'Участник',
-                  }
-                : {
-                    class: 'text-violet-primary',
-                    label: 'Представитель',
-                  }
+    : users.map((user) => {
+        // роль: класс и i18n-ключ
+        const roleKey = ROLE_I18N_KEYS[user.role] || '';
+        const roleClass = user.role === 'participant' ? 'text-blue-primary' : 'text-violet-primary';
+        // fallback label (если словаря нет)
+        const fallbackLabel = user.role === 'participant' ? 'Участник' : 'Представитель';
+        const translatedLabel = (window.i18nDict && roleKey && window.i18nDict[roleKey]) || fallbackLabel;
 
-            // 🧠 Проверка на наличие аватарки
-            const avatar = user.image
-              ? `<img src="${user.image}" alt="${user.full_name_ru}" class="h-8 w-8 rounded-full object-cover" />`
-              : `<div class="h-8 w-8 rounded-full bg-gray-300"></div>`
+        const roleHtml = `
+          <span class="${escapeHtml(roleClass)} flex items-center gap-2 rounded-full px-2 py-1 text-sm font-medium"
+                data-i18n="${escapeHtml(roleKey)}">
+            <span class="text-xl">•</span> ${escapeHtml(translatedLabel)}
+          </span>`;
 
-            return `
+        const avatar = user.image
+          ? `<img src="${escapeHtml(user.image)}" alt="${escapeHtml(user.full_name_ru)}" class="h-8 w-8 rounded-full object-cover" />`
+          : `<div class="h-8 w-8 rounded-full bg-gray-300"></div>`;
+
+        return `
       <tr class="hover:bg-gray-50">
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex items-center">
             ${avatar}
             <div class="ml-4">
               <div class="text-sm font-medium text-gray-900">
-                ${user.full_name_ru}
+                ${escapeHtml(user.full_name_ru)}
               </div>
             </div>
           </div>
         </td>
-        <td class="px-6 py-4 text-sm whitespace-nowrap">${user.id}</td>
+        <td class="px-6 py-4 text-sm whitespace-nowrap">${escapeHtml(String(user.id))}</td>
         <td class="px-6 py-4 whitespace-nowrap">
           <div class="flex items-center gap-1">
             ${getCountryFlagImg(user.country)}
-            <span class="text-sm text-gray-900">${user.country}</span>
+            <span class="text-sm text-gray-900">${escapeHtml(user.country)}</span>
           </div>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="${roleInfo.class} flex items-center gap-2 rounded-full px-2 py-1 text-sm font-medium">
-            <span class="text-xl">•</span> ${roleInfo.label}
-          </span>
+          ${roleHtml}
         </td>
-        <td class="px-6 py-4 text-sm whitespace-nowrap">${reverseClassMap[user.grade] || '—'}</td>
+        <td class="px-6 py-4 text-sm whitespace-nowrap">${escapeHtml(String(reverseClassMap[user.grade] || '—'))}</td>
         <td class="px-6 py-4 text-sm whitespace-nowrap">
           <div class="flex justify-between gap-2 *:cursor-pointer">
             <button type="button" onclick="confirmDeleteUser(${user.id})" class="text-gray-400 hover:text-red-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
             </button>
             <button type="button" onclick="openEditModal(${user.id})" class="hover:text-blue-primary text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
               </svg>
             </button>
           </div>
         </td>
       </tr>
-    `
-          })
-          .join('')
+    `;
+      }).join('');
+
+  // Сразу прогоняем перевод для вставленных элементов (если словарь уже есть)
+  translateNode(tbody);
+
+  // Подпишемся на события языка — при смене языка переведём tbody заново.
+  // (Если у тебя уже есть глобальные обработчики — этот блок можно убрать, но он безопасен.)
+  function onLang() { translateNode(tbody); }
+  window.removeEventListener('i18n:languageReady', onLang);
+  window.addEventListener('i18n:languageReady', onLang);
+  window.removeEventListener('i18n:languageChanged', onLang);
+  window.addEventListener('i18n:languageChanged', onLang);
 }
 
 // Вспомогательная функция для флагов
@@ -956,3 +998,81 @@ function populateCountryAndClassOptions() {
   });
 }
 
+// --- Вспомогательная: переводит элементы внутри node по data-i18n из window.i18nDict ---
+function translateNode(node) {
+  const dict = window.i18nDict || {};
+  if (!node) return;
+  node.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (!key) return;
+    const translated = dict[key];
+    if (typeof translated !== 'undefined') {
+      // Для option важно менять textContent
+      if (el.tagName.toLowerCase() === 'option') el.textContent = translated;
+      else el.textContent = translated;
+    }
+  });
+}
+
+// --- Обновлённый initFilters: использует словарь, ставит data-i18n и переводит сразу, либо позже по событию ---
+function initFilters(users) {
+  const dict = window.i18nDict || {};
+
+  // Страны
+  const countries = [...new Set(users.map(u => u.country))].filter(Boolean);
+  const countrySelect = document.querySelector('.country-filter');
+  if (countrySelect) {
+    const label = dict['users.all_countries'] || 'Все страны';
+    countrySelect.innerHTML = `
+      <option value="" data-i18n="users.all_countries">${label}</option>
+      ${countries.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+    `;
+    // если словарь уже есть — переведём сразу
+    if (Object.keys(dict).length) translateNode(countrySelect);
+  }
+
+  // Классы
+  const grades = [...new Set(users.map((u) => u.grade))].filter(Boolean).sort();
+  const gradeSelect = document.querySelector('.grade-filter');
+  if (gradeSelect) {
+    const label = dict['users.all_classes'] || 'Все классы';
+    gradeSelect.innerHTML = `
+      <option value="" data-i18n="users.all_classes">${label}</option>
+      ${Object.entries(classMap).map(([num, name]) => `<option value="${escapeHtml(name)}">${escapeHtml(num)}</option>`).join('')}
+    `;
+    if (Object.keys(dict).length) translateNode(gradeSelect);
+  }
+
+  // Навешиваем обработчики (если ещё не навешаны)
+  document.querySelectorAll('select').forEach((select) => {
+    // avoid double-binding: remove listener first (simple approach)
+    select.removeEventListener('change', applyFilters);
+    select.addEventListener('change', applyFilters);
+  });
+}
+
+// Простая утилита для безопасного вставления текста в HTML (предотвращает XSS при вставке значений)
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// --- Подписываемся на событие готовности словаря (если словарь придёт позже) ---
+window.addEventListener('i18n:languageReady', () => {
+  // переведём фильтры если они уже в DOM
+  const countrySelect = document.querySelector('.country-filter');
+  const gradeSelect = document.querySelector('.grade-filter');
+  translateNode(countrySelect);
+  translateNode(gradeSelect);
+});
+window.addEventListener('i18n:languageChanged', () => {
+  const countrySelect = document.querySelector('.country-filter');
+  const gradeSelect = document.querySelector('.grade-filter');
+  translateNode(countrySelect);
+  translateNode(gradeSelect);
+});

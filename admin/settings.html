@@ -21,35 +21,36 @@
         <nav class="flex-1 px-4">
           <a href="/admin/index.html" class="sidebar-link">
             <img src="/src/assets/images/index_noactive.svg" alt="Главная" class="mr-3 size-6" />
-            Главная
+            <span data-i18n="menu.home">Главная</span>
           </a>
           <a href="/admin/users.html" class="sidebar-link">
             <img src="/src/assets/images/users_noactive.svg" alt="Пользователи" class="mr-3 size-6" />
-            Пользователи
+            <span data-i18n="menu.users">Пользователи</span>
           </a>
-          <a href="/admin/olympiads.html" class="sidebar-link">
+          <a href="/admin/olympiads.html" class="sidebar-link" >
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
-            Олимпиады
+            <span data-i18n="menu.olympiads">Олимпиады</span>
           </a>
           <a href="/admin/tasks.html" class="sidebar-link">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
-            Задачи
+            <span data-i18n="menu.tasks">Задачи</span>
           </a>
           <a href="/admin/results.html" class="sidebar-link">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Результаты" class="mr-3 size-6" />
-            Результаты
+            <span data-i18n="menu.results">Результаты</span>
           </a>
+
           <a href="/admin/certificates.html" class="sidebar-link">
             <img src="/src/assets/images/certificate_noactive.svg" alt="Сертификаты" class="mr-3 size-6" />
-            Сертификаты
+            <span data-i18n="menu.certificates">Сертификаты</span>
           </a>
           <a href="/admin/payments.html" class="sidebar-link">
             <img src="/src/assets/images/card_noactive.svg" alt="Платежи" class="mr-3 size-6" />
-            Платежи
+            <span data-i18n="menu.payments">Платежи</span>
           </a>
           <a href="/admin/chat.html" class="sidebar-link">
             <img src="/src/assets/images/chat_noactive.svg" alt="Чат с пользователями" class="mr-3 size-6" />
-            Чат с пользователями
+            <span data-i18n="menu.chat">Чат с пользователями</span>
           </a>
         </nav>
 
@@ -60,7 +61,7 @@
             <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-              Выйти из аккаунта
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
@@ -78,7 +79,7 @@
               />
             </svg>
 
-            Профиль
+            <span data-i18n="menu.profile">Профиль</span>
           </a>
         </div>
       </aside>
@@ -147,9 +148,11 @@
             <!-- Tabs -->
             <div class="tabs !mb-1 flex flex-wrap gap-2 sm:gap-4 w-full sm:w-[26rem]">
               <a href="/admin/profile.html" class="tabs-link"
+              data-i18n="profile.profile_link"
                 >Личные данные</a
               >
               <a href="/admin/settings.html" class="tabs-link active"
+              data-i18n="profile.profile_settings_link"
                 >Настройки</a
               >
             </div>
@@ -157,9 +160,9 @@
 
           <div class="space-y-4">
             <div>
-              <p class="mb-4 text-lg font-bold">Настройки</p>
+              <p class="mb-4 text-lg font-bold" data-i18n="profile.profile_settings_link">Настройки</p>
               <div class="border-default rounded-2xl p-6">
-                <p class="mb-3 text-sm">
+                <p class="mb-3 text-sm" data-i18n="profile.choose_lang">
                   Выберите язык, который будет использоваться на платформе
                 </p>
 
@@ -204,18 +207,18 @@
             </div>
 
             <div>
-              <p class="mb-4 text-lg font-bold">Сменить пароль</p>
+              <p class="mb-4 text-lg font-bold" data-i18n="profile.change_pass">Сменить пароль</p>
 
               <form class="space-y-6">
                 <div class="border-default flex flex-wrap gap-6 rounded-2xl p-6">
                   <div class="relative w-[240px]">
-                    <label class="text-primary mb-1 block text-sm"
+                    <label class="text-primary mb-1 block text-sm" data-i18n="profile.current_pass"
                       >Текущий пароль</label
                     >
                     <input
                       id="password1"
                       type="password"
-                      placeholder="Введите пароль"
+                      placeholder="*******"
                       class="input-base border-default"
                     />
                     <button
@@ -240,13 +243,13 @@
                     </button>
                   </div>
                   <div class="relative w-[240px]">
-                    <label class="text-primary mb-1 block text-sm"
+                    <label class="text-primary mb-1 block text-sm" data-i18n="profile.new_pass"
                       >Новый пароль</label
                     >
                     <input
                       id="password2"
                       type="password"
-                      placeholder="Введите пароль"
+                      placeholder="*******"
                       class="input-base border-default"
                     />
                     <button
@@ -272,13 +275,13 @@
                   </div>
 
                   <div class="relative w-[240px]">
-                    <label class="text-primary mb-1 block text-sm"
+                    <label class="text-primary mb-1 block text-sm" data-i18n="profile.verify_pass"
                       >Подтвердите пароль</label
                     >
                     <input
                       id="password3"
                       type="password"
-                      placeholder="Введите пароль"
+                      placeholder="*******"
                       class="input-base border-default"
                     />
                     <button
@@ -307,6 +310,7 @@
                 <button
                   type="submit"
                   class="border-orange-primary text-orange-primary ms-auto block cursor-pointer rounded-xl border-1 px-3 py-2 transition"
+                  data-i18n="profile.update_pass_btn"
                 >
                   Обновить пароль
                 </button>
@@ -314,15 +318,15 @@
             </div>
 
             <div class="space-y-6">
-              <p class="text-lg font-bold">Двухэтапная аутентификация</p>
+              <p class="text-lg font-bold" data-i18n="profile.2f_auth">Двухэтапная аутентификация</p>
 
               <div class="border-default space-y-6 rounded-2xl p-6">
                 <div class="flex items-center gap-2 font-bold">
                   <img src="/src/assets/images/unlock.png" alt="unlock" />
-                  Защитите свой аккаунт
+                  <span data-i18n="profile.2f_auth_save">Защитите свой аккаунт</span>
                 </div>
 
-                <p class="text-sm">
+                <p class="text-sm" data-i18n="profile.2f_auth_save_txt">
                   Включите двухэтапную аутентификацию и подтвердите вход кодом с
                   телефона.
                 </p>
@@ -377,13 +381,13 @@
                 </div>
               </div>
 
-              <button
+              <!-- <button
                 type="button"
                 onclick="toggleModal('modal')"
                 class="border-orange-primary text-orange-primary ms-auto block w-full cursor-pointer rounded-xl border-1 px-3 py-2 text-center transition sm:w-auto"
               >
                 Включить двухэтапную аутентификацию
-              </button>
+              </button> -->
 
               <button
                 type="button"
@@ -406,7 +410,7 @@
                     />
                   </svg>
                 </span>
-                Удалить Аккаунт
+                <span data-i18n="profile.delete_acc">Удалить Аккаунт</span>
               </button>
 
               <div

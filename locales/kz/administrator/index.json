@@ -62,6 +62,7 @@
   "users.form_teacher_num": "Мұғалім телефон нөмірі",
   "users.form_submit_btn": "Қатысушыны қосу",
   "users.form_representative_num": "Өкіл телефон нөмірі",
+  "users.empty": "No data",
 
 
   "olympiads.olympiad": "Олимпиадаларды басқару",
@@ -258,10 +259,18 @@
   "profile.edit_btn":"Өңдеу",
   "profile.edit_popup":"Профильды өңдеу",
   "profile.full_name_en_label":"Аты-жөні (EN)",
-  "":"",
-  "":"",
-  "":"",
-  "":"",
-  "":"",
-  "":""
+  "profile.full_name":"Аты-жөні",
+  "profile.image":"Сурет",
+  "profile.btn_cancel":"Болдырмау",
+  "profile.btn_save":"Сақтау",
+  "profile.choose_lang":"Choose the language to use on the platform",
+  "profile.change_pass":"Құпиясөзді өзгерту",
+  "profile.current_pass":"Ағымдағы құпиясөз",
+  "profile.new_pass":"Жаңа құпиясөз",
+  "profile.verify_pass": "Құпиясөзді растау",
+  "profile.update_pass_btn": "Құпиясөзді жаңарту",
+  "profile.2f_auth": "Екі қадамды аутентификация",
+  "profile.2f_auth_save":"Аккаунтыңызды қорғаңыз.",
+  "profile.2f_auth_save_txt": "Екі қадамды аутентификацияны қосып, телефонға келген код арқылы кіруді растаңыз.",
+  "profile.delete_acc": "Аккаунтты жою"
 }
