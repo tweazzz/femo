@@ -50,10 +50,10 @@ function renderUserInfo(profile) {
     return;
   }
 
-  const imgPath = p.image || '';
+  const imgPath = p.image;
   avatarEl.src = imgPath
     ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
-    : '';
+    : '/src/assets/images/user-3296.svg';
 
   // Определяем frontend language для выбора имени (которое может быть на en/ru)
   const storedLang = localStorage.getItem('lang') || 'ru';

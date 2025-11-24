@@ -40,12 +40,100 @@ async function ensureUserAuthenticated() {
 }
 
 // 1) Функция для загрузки полного профиля участника
-async function loadUserProfile() {
-  const res = await authorizedFetch(
-    'https://portal.femo.kz/api/users/participant/profile/'
-  );
-  if (!res.ok) throw new Error('Не удалось загрузить профиль');
-  return await res.json();
+function renderUserInfo(profile) {
+  const p = profile && profile.profile ? profile.profile : (profile || {});
+
+  const avatarEl  = document.getElementById('user-avatar');
+  const nameEl    = document.getElementById('user-name');
+  const roleEl    = document.getElementById('user-role');
+  const welcomeEl = document.querySelector('h1.text-xl');
+
+  if (!avatarEl || !nameEl || !roleEl || !welcomeEl) {
+    console.warn('renderUserInfo: отсутствуют элементы в DOM для отрисовки профиля');
+    return;
+  }
+
+  const imgPath = p.image;
+  avatarEl.src = imgPath
+    ? (imgPath.startsWith('http') ? imgPath : `https://portal.femo.kz${imgPath}`)
+    : '/src/assets/images/user-3296.svg';
+  
+  // Определяем frontend language для выбора имени (которое может быть на en/ru)
+  const storedLang = localStorage.getItem('lang') || 'ru';
+  const frontendLang = (storedLang === 'kk') ? 'kz' : storedLang; // устойчиво: если случайно кто-то записал kk
+  const fullName = (frontendLang === 'en') ? (p.full_name_en || p.full_name_ru || '') : (p.full_name_ru || p.full_name_en || '');
+  nameEl.textContent = fullName;
+
+  const firstName = (fullName.split && fullName.split(' ')[0]) || '';
+
+  const welcomeKeyCandidates = ['welcome.message_admin', 'welcome.message', 'welcome.message_rep'];
+
+  // Находим или создаём span[data-i18n]
+  let greetSpan = welcomeEl.querySelector('span[data-i18n]');
+  if (!greetSpan) {
+    greetSpan = document.createElement('span');
+    greetSpan.setAttribute('data-i18n', welcomeKeyCandidates[0]);
+    greetSpan.textContent = 'Добро пожаловать,'; // fallback
+    welcomeEl.innerHTML = '';
+    welcomeEl.appendChild(greetSpan);
+    welcomeEl.appendChild(document.createTextNode(' ' + firstName + ' 👋'));
+  } else {
+    // обновляем имя (не трогаем span текст)
+    let node = greetSpan.nextSibling;
+    while (node) {
+      const next = node.nextSibling;
+      node.remove();
+      node = next;
+    }
+    greetSpan.after(document.createTextNode(' ' + firstName + ' 👋'));
+  }
+
+  try {
+    const dict = window.i18nDict || {};
+    const foundKey = welcomeKeyCandidates.find(k => Object.prototype.hasOwnProperty.call(dict, k));
+    if (foundKey) greetSpan.dataset.i18n = foundKey;
+    if (typeof applyTranslations === 'function') applyTranslations(dict);
+  } catch (e) {
+    console.warn('renderUserInfo: applyTranslations error', e);
+  }
+
+  const roleMap = { participant: 'Представитель' };
+  roleEl.textContent = roleMap[p.role] || p.role || '';
+
+  // Подписка на смену языка (обновит перевод и имя)
+  function onLanguageChanged() {
+    try {
+      const dict = window.i18nDict || {};
+      const foundKey = welcomeKeyCandidates.find(k => Object.prototype.hasOwnProperty.call(dict, k));
+      if (foundKey) greetSpan.dataset.i18n = foundKey;
+      if (typeof applyTranslations === 'function') applyTranslations(dict);
+
+      const langNow = localStorage.getItem('lang') || 'ru';
+      const resolvedLang = (langNow === 'kk') ? 'kz' : langNow;
+      const newFullName = (resolvedLang === 'en') ? (p.full_name_en || p.full_name_ru || '') : (p.full_name_ru || p.full_name_en || '');
+      nameEl.textContent = newFullName;
+      let node = greetSpan.nextSibling;
+      while (node) {
+        const next = node.nextSibling;
+        node.remove();
+        node = next;
+      }
+      const newFirst = (newFullName.split && newFullName.split(' ')[0]) || '';
+      greetSpan.after(document.createTextNode(' ' + newFirst + ' 👋'));
+    } catch (e) {
+      console.warn('onLanguageChanged error', e);
+    }
+  }
+
+  // remove old listeners then add
+  try {
+    window.removeEventListener('i18n:languageChanged', onLanguageChanged);
+    window.addEventListener('i18n:languageChanged', onLanguageChanged);
+    window.removeEventListener('i18n:languageReady', onLanguageChanged);
+    window.addEventListener('i18n:languageReady', onLanguageChanged);
+  } catch (e) {
+    // ignore
+  }
 }
 
 function renderUserInfo(profile) {
