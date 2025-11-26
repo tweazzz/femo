@@ -62,14 +62,6 @@
         </nav>
 
         <div class="p-4">
-          <a href="/" class="sidebar-link flex items-center gap-2">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-              <span data-i18n="menu.logout">Выйти из аккаунта</span>
-          </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -87,6 +79,14 @@
             </svg>
 
             <span data-i18n="menu.profile">Профиль</span>
+          </a>
+          <a href="/" class="sidebar-link flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
         </div>
       </aside>
@@ -475,7 +475,7 @@
                             <span data-i18n="olympiad.stages">Этапы олимпиады</span>
                           </p>
                           <div id="stages-container" class="border-default rounded-2xl p-4">
-                            <div id="stage-template" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div id="stage-template" class="grid grid-cols-1 gap-4 sm:grid-cols-2" style="margin-bottom: 16px;">
                               <div>
                                 <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.stages_name">Название этапа</label>
                                 <div class="relative">
@@ -490,7 +490,7 @@
                             
                               <div>
                                 <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.dates">Период этапа</label>
-                                <div class="relative">
+                                <div class="flex items-center gap-1">
                                   <input
                                     class="date-range-add input-base border-default"
                                     placeholder="Выберите дату"
@@ -498,12 +498,18 @@
                                     data-i18n-attr="placeholder"
                                     readonly
                                   />
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                       stroke-width="1.5" stroke="currentColor"
-                                       class="absolute top-1/2 right-2 size-5 -translate-y-1/2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5"/>
-                                  </svg>
+                                  <svg width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6.66699 1.66699V4.16699" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.333 1.66699V4.16699" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2.91699 7.5752H17.0837" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17.5 7.08366V14.167C17.5 16.667 16.25 18.3337 13.3333 18.3337H6.66667C3.75 18.3337 2.5 16.667 2.5 14.167V7.08366C2.5 4.58366 3.75 2.91699 6.66667 2.91699H13.3333C16.25 2.91699 17.5 4.58366 17.5 7.08366Z" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.0788 11.4167H13.0863" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.0788 13.9167H13.0863" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9.99632 11.4167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9.99632 13.9167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M6.91185 11.4167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M6.91185 13.9167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                 </div>
                               </div>
                             </div>
@@ -1070,7 +1076,7 @@
                             Этапы олимпиады
                           </p>
                           <div id="stages-container-edit" class="border-default rounded-2xl p-4">
-                            <div id="stage-template-edit" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div id="stage-template-edit" class="grid grid-cols-1 gap-4 sm:grid-cols-2" style="margin-bottom: 16px;">
                               <div>
                                 <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.stages_name">Название этапа</label>
                                 <div class="relative">
@@ -1085,7 +1091,7 @@
                             
                               <div>
                                 <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.dates">Период этапа</label>
-                                <div class="relative">
+                                <div class="flex items-center gap-1">
                                   <input
                                     class="date-range-add input-base border-default"
                                     placeholder="Выберите дату"
@@ -1093,12 +1099,19 @@
                                     data-i18n-attr="placeholder"
                                     readonly
                                   />
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                       stroke-width="1.5" stroke="currentColor"
-                                       class="absolute top-1/2 right-2 size-5 -translate-y-1/2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5"/>
-                                  </svg>
+                                  <svg width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6.66699 1.66699V4.16699" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.333 1.66699V4.16699" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2.91699 7.5752H17.0837" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17.5 7.08366V14.167C17.5 16.667 16.25 18.3337 13.3333 18.3337H6.66667C3.75 18.3337 2.5 16.667 2.5 14.167V7.08366C2.5 4.58366 3.75 2.91699 6.66667 2.91699H13.3333C16.25 2.91699 17.5 4.58366 17.5 7.08366Z" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.0788 11.4167H13.0863" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.0788 13.9167H13.0863" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9.99632 11.4167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M9.99632 13.9167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M6.91185 11.4167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M6.91185 13.9167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    
                                 </div>
                               </div>
                             </div>

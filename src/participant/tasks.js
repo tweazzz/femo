@@ -284,7 +284,7 @@
 
             <div class="mb-2 flex items-center justify-between text-sm text-gray-600">
               <span><span data-i18n="tasks.for_grade" data-i18n-params='{"grade":"${task.grade}"}'>Для ${task.grade} класса</span></span>
-              <p class="text-gray-primary flex"><span data-i18n="${solvedKey}">${task.solved ? 'Сдано' : 'Не сдано'}</span></p>
+              <p class="text-gray-primary flex"><span data-i18n="${solvedKey}">${task.solved ? 'Завершено' : 'Не завершено'}</span></p>
             </div>
 
             <div class="flex w-full items-center space-x-4">
@@ -377,7 +377,7 @@
 
             <div class="mb-2 flex items-center justify-between text-sm text-gray-600">
               <span><span data-i18n="tasks.for_grade" data-i18n-params='{"grade":"${task.grade}"}'>Для ${task.grade} класса</span></span>
-              <p class="text-gray-primary flex"><span data-i18n="${solvedKey}">${task.solved ? 'Сдано' : 'Не сдано'}</span></p>
+              <p class="text-gray-primary flex"><span data-i18n="${solvedKey}">${task.solved ? 'Завершено' : 'Не завершено'}</span></p>
             </div>
 
             <div class="flex w-full items-center space-x-4">

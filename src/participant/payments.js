@@ -327,11 +327,15 @@ function renderAssignmentTable(assignments) {
         <td><span class="card ${getPaymentStatusClass(task.status)}">${getPaymentStatusLabel(task.status)}</span></td>
         <td>
           <div class="flex justify-between gap-2 *:cursor-pointer">
-              <button onclick="downloadPayment(${task.id})" data-task="${encodedTask}" class="text-gray-400 hover:text-blue-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
-              </svg>
+              <button onclick="downloadPayment(${task.id})" data-task="${encodedTask}" class="text-gray-400 hover:text-blue-primary flex items-center gap-1">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.33301 18.3334H13.6663C15.3232 18.3334 16.6663 16.9903 16.6663 15.3334V8.04655C16.6663 7.17078 16.2837 6.33873 15.6187 5.76878L11.6756 2.38898C11.1319 1.92292 10.4394 1.66675 9.72324 1.66675H6.33301C4.67615 1.66675 3.33301 3.00989 3.33301 4.66675V15.3334C3.33301 16.9903 4.67615 18.3334 6.33301 18.3334Z" stroke="#F4891E" stroke-linejoin="round"/>
+              <path d="M10.833 2.08344V4.66677C10.833 5.77134 11.7284 6.66677 12.833 6.66677H16.2497" stroke="#F4891E" stroke-linejoin="round"/>
+              <path d="M6.66602 15.8335H13.3327" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M10 8.3335V13.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7.5 10.8335L10 13.3335L12.5 10.8335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg> 
+              <span class='text-orange-primary'> Скачать</span>             
             </button>
           </div>
         </td>

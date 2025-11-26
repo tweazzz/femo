@@ -382,7 +382,7 @@ function renderAssignmentTable(assignments) {
             || task.grade}
           </td>
           <td>${task.country.name}</td>
-          <td>${task.total_points}</td>
+          <td class="text-orange-primary font-bold">${task.total_points}</td>
           <td>${task.olympiad_points}</td>
           <td>${task.assignment_points}</td>
         </tr>

@@ -64,14 +64,6 @@
         </nav>
 
         <div class="p-4">
-          <a href="/" class="sidebar-link flex items-center gap-2">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-              <span data-i18n="menu.logout">Выйти из аккаунта</span>
-          </a>
           <a href="/admin/profile.html" class="sidebar-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,6 +81,14 @@
             </svg>
 
             <span data-i18n="menu.profile">Профиль</span>
+          </a>
+          <a href="/" class="sidebar-link flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+              <span data-i18n="menu.logout">Выйти из аккаунта</span>
           </a>
         </div>
       </aside>
@@ -227,16 +227,15 @@
                     <p
                       class="border-gray-border border-b px-4 pt-6 pb-5 text-xl font-bold"
                     >
-                      
+                    Редактирование результата
                     </p>
-
                     <form
                       class="scrollbar max-h-[80vh] overflow-y-auto px-4 py-5"
                     >
                       <div class="space-y-6">
                         <div>
                           <p class="mb-4 text-lg font-semibold text-gray-900">
-                            Основная информация (только для чтения)
+                            Основная информация
                           </p>
                           <div
                             class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4 sm:grid-cols-2"
@@ -566,7 +565,7 @@
             <a
               href="#"
               onclick="exportTableToExcel()"
-              class="text-orange-primary"
+              class="text-orange-primary custom-underline"
               ><span data-i18n="results.download_template">Скачайте шаблон</span></a
             >, <span data-i18n="results.download_template_text">введите оценки и загрузите обратно</span>
           </p>
@@ -768,12 +767,19 @@
           </div>
 
           <!-- Pagination -->
-          <div class="mt-6 flex flex-col gap-2">
-            <div class="text-gray-primary text-sm">
-              <span data-i18n="results.count">Всего результатов: </span><span id="total-results-count">0</span>
+          <div class="mt-6 flex items-center justify-between">
+            
+            <div class="text-gray-primary text-sm flex items-center gap-1">
+              <span data-i18n="results.count">Всего результатов: </span>
+              <span id="total-results-count">0</span>
             </div>
-            <div class="pagination mt-6 flex items-center justify-end"></div>
+
+            <div class="pagination flex items-center justify-end">
+              <!-- Кнопки пагинации будут добавляться сюда динамически -->
+            </div>
+
           </div>
+
         </main>
       </div>
       <div
@@ -1427,5 +1433,21 @@
     <script src="/auth.js" defer></script>
     <script defer src="/src/admin/results.js"></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <style>
+    .custom-underline {
+      position: relative;
+      color: var(--orange-primary, #FF7A00); /* или твой цвет */
+    }
+
+    .custom-underline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -0.5px; /* регулирует расстояние линии вниз */
+      height: 0.5px; /* толщина линии — очень тонкая */
+      background-color: currentColor; /* линия такого же цвета, как текст */
+    }
+    </style>
   </body>
 </html>

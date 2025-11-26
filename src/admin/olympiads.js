@@ -1180,7 +1180,7 @@ async function openViewModal(id) {
     const data = await res.json();
 
     // 1) Заголовок модалки: кликабельная ссылка
-    const titleLinkHtml = `<a href="${data.website}" target="_blank" class="text-blue-600 underline">${data.title}</a>`;
+    const titleLinkHtml = `<a href="${data.website}" target="_blank" class="text-blue-600 underline" style='text-decoration: none; color: inherit; '>${data.title}</a>`;
     document.getElementById('view-title').innerHTML       = titleLinkHtml;
     document.getElementById('view-field-title').innerHTML = titleLinkHtml;
 

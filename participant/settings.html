@@ -46,14 +46,6 @@
         </nav>
 
         <div class="p-4">
-          <a href="/" class="sidebar-link flex items-center gap-2">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-            <span data-i18n="dashboard.logout">Выйти из аккаунта</span>
-          </a>
           <a href="/participant/my-way.html" class="sidebar-link active">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +64,14 @@
 
             <span data-i18n="dashboard.profile">Профиль</span>
           </a>
+          <a href="/" class="sidebar-link flex items-center gap-2">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.41699 6.29995C7.67533 3.29995 9.21699 2.07495 12.592 2.07495H12.7003C16.4253 2.07495 17.917 3.56662 17.917 7.29162V12.725C17.917 16.45 16.4253 17.9416 12.7003 17.9416H12.592C9.24199 17.9416 7.70033 16.7333 7.42533 13.7833" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5002 10H3.01685" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.87467 7.20825L2.08301 9.99992L4.87467 12.7916" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+              <span data-i18n="dashboard.logout">Выйти из аккаунта</span>
+            </a>
         </div>
       </aside>
 
@@ -166,8 +166,9 @@
                   Выберите язык, который будет использоваться на платформе
                 </p>
 
-                <div class="flex items-center gap-4">
-                  <label class="switch-btn">
+                <div class="flex flex-wrap items-center gap-4">
+                  <label class="switch-btn flex items-center gap-2">
+                    <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
                     <input
                       type="radio"
                       name="lang"
@@ -175,10 +176,11 @@
                       class="hidden"
                       required
                     />
-                    🇷🇺 Русский
+                    Русский
                   </label>
 
-                  <label class="switch-btn">
+                  <label class="switch-btn flex items-center gap-2">
+                    <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
                     <input
                       type="radio"
                       name="lang"
@@ -186,10 +188,11 @@
                       class="hidden"
                       required
                     />
-                    🇰🇿 Казакша
+                    Қазақша
                   </label>
 
-                  <label class="switch-btn">
+                  <label class="switch-btn flex items-center gap-2">
+                    <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
                     <input
                       type="radio"
                       name="lang"
@@ -197,7 +200,7 @@
                       class="hidden"
                       required
                     />
-                    en English
+                    English
                   </label>
                 </div>
               </div>
@@ -326,7 +329,7 @@
             <div>
               <p class="mb-4 text-lg font-bold" data-i18n="profile_settings.edit_pass">Сменить пароль</p>
 
-              <form class="space-y-6">
+              <form class="space-y-6" style="max-width: 400px;">
                 <div class="border-default space-y-6 rounded-2xl p-6">
                   <div class="relative">
                     <label class="text-primary mb-1 block text-sm" data-i18n="profile_settings.current_pass"
