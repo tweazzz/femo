@@ -500,10 +500,7 @@ async function deleteOlympiad() {
   }
 
   const olympiad = allOlympiads.find((ol) => ol.id === olympiadIdToDelete)
-  if (olympiad?.status === 'finished') {
-    alert('Нельзя удалить завершённую олимпиаду.')
-    return
-  }
+
 
   try {
     const response = await fetch(

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/dist/style.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@lucide/web@latest"></script>
-    <script defer src="src/scripts/showpass.js"></script>
+    <!-- <script defer src="src/scripts/showpass.js"></script> -->
 
     <link
       rel="stylesheet"
@@ -1558,10 +1558,18 @@
           </div>
 
           <!-- Pagination -->
-          <div class="pagination mt-6 flex items-center justify-end"></div>
-          <div class="text-gray-primary text-sm">
-            <span data-i18n="olympiad.count">Всего олимпиад: </span><span id="total-olympiad-count">0</span>
+          <div class="flex items-center justify-between mt-6 w-full">
+              
+              <!-- Левая часть — текст -->
+              <div class="text-gray-primary text-sm">
+                  <span data-i18n="olympiad.count">Всего олимпиад: </span>
+                  <span id="total-olympiad-count">0</span>
+              </div>
+
+              <!-- Правая часть — пагинация -->
+              <div class="pagination flex items-center justify-end"></div>
           </div>
+
         </main>
       </div>
       <div

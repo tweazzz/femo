@@ -293,13 +293,27 @@ async function loadAssignments(page = 1) {
       throw new Error(`Ошибка загрузки: ${response.status}`)
     }
 
-    const data = await response.json()
-    console.log('История платежей:', data)
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : { results: [] };
+
     allAssignments = data.results || data
     totalAssignmentCount = allAssignments.length
     currentAssignmentPage = page
 
+    // ⛔ Если платежей нет — выводим сообщение и прекращаем выполнение
+    if (totalAssignmentCount === 0) {
+      document.getElementById('payments-tbody').innerHTML = `
+        <tr><td colspan="8" class="text-center text-gray-500 py-4">
+          Нет истории платежей
+        </td></tr>
+      `
+      document.querySelector('.pagination').innerHTML = ''
+      document.getElementById('total-payments-count').textContent = '0'
+      return
+    }
+
     renderPaginatedAssignments()
+
   } catch (err) {
     console.error('Ошибка при загрузке задач:', err)
     document.getElementById('payments-tbody').innerHTML = `
@@ -307,6 +321,7 @@ async function loadAssignments(page = 1) {
     `
   }
 }
+
 
 function renderAssignmentTable(assignments) {
   const tbody = document.getElementById('payments-tbody')

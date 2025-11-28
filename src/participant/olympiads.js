@@ -373,6 +373,8 @@ async function loadOlympiadCards() {
       const detailText = isFinished ? viewResultsText : moreText;
       detailBtn.setAttribute('data-i18n', detailKey);
       detailBtn.textContent = detailText;
+      detailBtn.target = '_blank';
+      detailBtn.rel = 'noopener noreferrer';
       btns.appendChild(detailBtn);
 
       // If ongoing & not registered -> show register; if ongoing & registered -> show start
