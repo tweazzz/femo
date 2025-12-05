@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@lucide/web@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
 
   <body>
@@ -96,40 +97,98 @@
               </button>
               <h1 class="text-xl max-md:hidden"></h1>
             </div>
-            <div class="flex items-center space-x-4">
-              <button
-                type="button"
-                onclick="toggleModal('modalNotification')"
-                class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
+
+            <div class="flex items-center gap-6">
+              <!-- MY BALANCE -->
+              <div class="balance-card">
+                <span class="balance-label">Баланс:</span>
+                <span class="balance">0 ₸</span>
+              </div>
+              
+
+              <!-- DROPDOWN -->
+              <div class="relative inline-block text-left" id="lang-dropdown">
+                <!-- Кнопка -->
+                <button
+                  type="button"
+                  id="lang-dropdown-btn"
+                  class="flex items-center justify-between w-[85px] h-[23px] px-2 rounded-md border-gray-300 bg-white"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                  />
-                </svg>
-              </button>
-              <div class="flex items-center space-x-3">
-                <img
-                  id="user-avatar"
-                  src=""
-                  alt="Profile"
-                  class="h-10 w-10 rounded-full"
-                />
-                <div>
-                  <p id="user-name" class="font-bold"></p>
-                  <p id="user-role" class="text-primary text-sm"></p>
+                  <div class="flex items-center gap-2">
+                    <img id="lang-flag" src="https://flagcdn.com/w24/ru.png" class="w-6 h-[17px] object-contain" />
+                    <span id="lang-text" class="text-[12px] font-medium">RU</span>
+                  </div>
+              
+                  <!-- стрелочка -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 10L12.0008 14.58L17 10" stroke="#0A090B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              
+                <!-- Выпадающий список -->
+                <div
+                  id="lang-menu"
+                  class="absolute z-20 mt-1 w-[120px] bg-white border border-gray-200 rounded-md shadow-md hidden"
+                >
+                  <!-- RU -->
+                  <div data-lang="ru"
+                    class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+                    <img src="https://flagcdn.com/w40/ru.png" class="w-6 h-[17px] object-contain" />
+                    <span class="text-sm">RU</span>
+                  </div>
+              
+                  <!-- KZ -->
+                  <div data-lang="kz"
+                    class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+                    <img src="https://flagcdn.com/w40/kz.png" class="w-6 h-[17px] object-contain" />
+                    <span class="text-sm">KZ</span>
+                  </div>
+              
+                  <!-- EN -->
+                  <div data-lang="en"
+                    class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+                    <img src="https://flagcdn.com/w40/gb.png" class="w-6 h-[17px] object-contain" />
+                    <span class="text-sm">EN</span>
+                  </div>
                 </div>
               </div>
-            </div>
+              
+              
+              <div class="flex items-center space-x-4">
+                <button
+                  type="button"
+                  onclick="toggleModal('modalNotification')"
+                  class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                    />
+                  </svg>
+                </button>
+                <div class="flex items-center space-x-3">
+                  <img
+                    id="user-avatar"
+                    src=""
+                    alt="Profile"
+                    class="h-10 w-10 rounded-full"
+                  />
+                  <div>
+                    <p id="user-name" class="font-bold"></p>
+                    <p id="user-role" class="text-primary text-sm"></p>
+                  </div>
+                </div>
+              </div>
+          </div>
           </div>
         </header>
 
@@ -602,5 +661,158 @@
     <script src="/auth.js" defer></script>
     <script src="/src/participant/rate-overall.js" defer></script>
     <script src="/src/participant/notifications.js" defer></script>
+    <script src="/src/participant/settings.js" defer></script>
+    <script>
+      async function loadBalance() {
+  const token = localStorage.getItem('access_token')
+  if (!token) {
+    alert('Токен не найден. Пожалуйста, войдите заново.')
+    return
+  }
+
+  try {
+    const response = await authorizedFetch('https://portal.femo.kz/api/payments/participant/dashboard/balance/', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Ошибка загрузки баланса: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const balanceEl = document.querySelector('.balance')
+    if (balanceEl) {
+      balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
+    }
+  } catch (err) {
+    console.error('Ошибка при загрузке баланса:', err)
+  }
+}
+      document.addEventListener("DOMContentLoaded", () => {
+        const dropdownBtn = document.getElementById("lang-dropdown-btn");
+        const menu = document.getElementById("lang-menu");
+
+        const flagEl = document.getElementById("lang-flag");
+        const textEl = document.getElementById("lang-text");
+
+        const langMap = {
+          ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
+          kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
+          en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
+        };
+
+        // открыть / закрыть меню
+        dropdownBtn.addEventListener("click", () => {
+          menu.classList.toggle("hidden");
+        });
+
+        // Подсветка выбранного языка
+        function highlightSelected(lang) {
+          document.querySelectorAll(".lang-option").forEach(opt => {
+            opt.classList.toggle("active", opt.dataset.lang === lang);
+          });
+        }
+
+        // установить язык при загрузке
+        const current = localStorage.getItem("lang") || "ru";
+        flagEl.src = langMap[current].flag;
+        textEl.textContent = langMap[current].label;
+        highlightSelected(current);
+
+        // Обработчик выбора языка
+        document.querySelectorAll("#lang-menu .lang-option").forEach(opt => {
+          opt.addEventListener("click", async () => {
+            const lang = opt.dataset.lang;
+
+            // обновляем UI
+            flagEl.src = langMap[lang].flag;
+            textEl.textContent = langMap[lang].label;
+            highlightSelected(lang);
+            menu.classList.add("hidden");
+
+            // сохраняем локально
+            localStorage.setItem("lang", lang);
+
+            // --- вот важное место ---
+            if (typeof updateUserSettings === "function") {
+              try {
+                // отправляем PATCH на сервер, как в твоей реализации input[name="lang"]
+                await updateUserSettings({ language: lang });
+
+                // Триггерим событие для i18n (чтобы фронт обновил тексты и имя пользователя)
+                window.dispatchEvent(new Event("i18n:languageChanged"));
+              } catch (err) {
+                console.error("Ошибка при смене языка через API:", err);
+                alert("Не удалось сменить язык. Попробуйте снова.");
+              }
+            } else {
+              console.warn("updateUserSettings не найдена. Язык обновлён только локально");
+              location.reload();
+            }
+          });
+        });
+
+        // закрытие при клике вне dropdown
+        document.addEventListener("click", (e) => {
+          if (!document.getElementById("lang-dropdown").contains(e.target)) {
+            menu.classList.add("hidden");
+          }
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+  // ... весь твой код dropdown
+
+  // Загрузка баланса
+  await loadBalance();
+});
+
+    </script>
+    <style>
+          .lang-option.active {
+      color: var(--color-orange-primary);
+      font-weight: 600;
+    }
+    
+    #lang-menu {
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    
+    #lang-menu.hidden {
+      opacity: 0;
+      transform: translateY(-5px);
+      pointer-events: none;
+    }
+    
+    .balance-card {
+      width: 128px;
+      height: 40px;
+      background-color: #FEF6ED;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-family: 'Proxima Nova', sans-serif;
+      font-weight: 700;
+      font-style: bold;
+      font-size: 14px;
+      line-height: 100%;
+      color: #F4891E;
+    }
+    
+    .balance-label {
+      margin-right: 5px;
+    }
+    
+    .balance {
+      /* Для выравнивания по правому краю */
+      white-space: nowrap;
+    }
+    
+    
+    </style>
   </body>
 </html>

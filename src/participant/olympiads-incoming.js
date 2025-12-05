@@ -296,6 +296,9 @@ async function loadOlympiadCards() {
       const card = document.createElement('div');
       card.className = 'border-default flex flex-col justify-between rounded-xl bg-white p-4 min-h-[220px]';
 
+      card.style.border = '1px solid #EFEFEF';
+      card.style.borderRadius = '16px';
+
       // top block
       const top = document.createElement('div');
 

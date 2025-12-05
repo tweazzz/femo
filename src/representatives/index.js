@@ -241,7 +241,7 @@ async function loadCurrentOlympiad() {
         const arrowWrapper = document.createElement('div');
         arrowWrapper.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-               fill="currentColor" class="size-6">
+               fill="currentColor" class="size-6 rotate-90 sm:rotate-0">
             <path fill-rule="evenodd"
                   d="M16.72 7.72a.75.75 0 0 1 1.06 0l3.75
                      3.75a.75.75 0 0 1 0 1.06l-3.75 3.75a.75.75

@@ -107,6 +107,41 @@
     return null;
   }
 
+  
+function getLevelLabel(lvl) {
+  if (!lvl) return '';
+  const lang = (localStorage.getItem('lang') || 'ru').toLowerCase();
+  const dict = window.i18nDict || {};
+  const key = `levels.${lvl}`;
+
+  // Если есть перевод в словаре — используем его
+  if (dict[key]) return dict[key];
+
+  // Fallback для русского (дефолт)
+  if (lang === 'ru') {
+    if (lvl === 'easy') return 'Лёгкий';
+    if (lvl === 'medium') return 'Средний';
+    if (lvl === 'hard') return 'Сложный';
+  }
+
+  // Fallback для английского
+  if (lang === 'en') {
+    if (lvl === 'easy') return 'Easy';
+    if (lvl === 'medium') return 'Medium';
+    if (lvl === 'hard') return 'Hard';
+  }
+
+  // Fallback для казахского
+  if (lang === 'kk' || lang === 'kz') {
+    if (lvl === 'easy') return 'Оңай';
+    if (lvl === 'medium') return 'Орташа';
+    if (lvl === 'hard') return 'Қиын';
+  }
+
+  return lvl; // если ничего не подошло
+}
+
+
   // ---------- Auth/profile ----------
   async function ensureUserAuthenticated() {
     let userData = localStorage.getItem('user');
@@ -324,7 +359,7 @@
                 <img class="ms-[.125rem] mb-[.125rem] h-4 w-4" src="/src/assets/images/coin.png" alt="coin" />
               </span>
               <span class="${levelClasses[lvl] || 'bg-gray-200'} border-default rounded-xl px-2 py-0.5 text-sm">
-                <span ${levelKey ? `data-i18n="${levelKey}"` : ''}>${escapeHtml(lvl)}</span>
+                <span ${levelKey ? `data-i18n="${levelKey}"` : ''}>${getLevelLabel(lvl)}</span>
               </span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="ms-auto size-5">
                 <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
@@ -466,7 +501,7 @@
                 <img class="ms-[.125rem] mb-[.125rem] h-4 w-4" src="/src/assets/images/coin.png" alt="coin" />
               </span>
               <span class="${levelClasses[lvl] || 'bg-gray-200'} border-default rounded-xl px-2 py-0.5 text-sm">
-                <span ${levelKey ? `data-i18n="${levelKey}"` : ''}>${escapeHtml(lvl)}</span>
+                <span ${levelKey ? `data-i18n="${levelKey}"` : ''}>${getLevelLabel(lvl)}</span>
               </span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="ms-auto size-5">
                 <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>

@@ -286,6 +286,9 @@ async function loadOlympiadCards() {
       const card = document.createElement('div');
       card.className = 'border-default flex flex-col justify-between rounded-xl bg-white p-4 min-h-[220px]';
 
+      card.style.border = '1px solid #EFEFEF';
+      card.style.borderRadius = '16px';
+
       // top block
       const top = document.createElement('div');
 
@@ -358,24 +361,45 @@ async function loadOlympiadCards() {
 
       // If ongoing & not registered -> show register; if ongoing & registered -> show start
       if (statusRaw === 'Идет сейчас') {
+
+        // ----- ЕСЛИ ПОЛЬЗОВАТЕЛЬ УЖЕ ЗАРЕГИСТРИРОВАН -----
         if (olympiad.registered === true) {
-          const startBtn = document.createElement('a');
-          startBtn.href = '/participant/tasks.html';
-          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
-          startBtn.setAttribute('data-i18n', keyStartNow);
-          startBtn.textContent = startText;
-          btns.appendChild(startBtn);
+
+            // Меняем статус на "Вы участвуете"
+            statusEl.className =
+                'bg-green-100 text-green-primary mb-2 w-fit rounded-full px-2 py-1 text-xs flex items-center gap-1';
+            statusEl.innerHTML = `
+                Вы участвуете
+            `;
+
+            // Убираем остальные кнопки → должна быть только одна
+            btns.innerHTML = '';
+
+            // Кнопка "Начать олимпиаду"
+            const startBtn = document.createElement('a');
+            startBtn.href = '/participant/tasks.html';
+            startBtn.textContent = 'Начать олимпиаду';
+            startBtn.style.backgroundColor = '#0DB459';
+            startBtn.style.color = '#fff';
+            startBtn.className =
+                'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap';
+            btns.appendChild(startBtn);
+
+
+        // ----- ЕСЛИ НЕ ЗАРЕГИСТРИРОВАН -----
         } else {
-          const registerBtn = document.createElement('a');
-          registerBtn.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}`;
-          registerBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
-          registerBtn.setAttribute('data-i18n', keyRegister);
-          registerBtn.textContent = registerText;
-          btns.appendChild(registerBtn);
+            const registerBtn = document.createElement('a');
+            registerBtn.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}`;
+            registerBtn.className =
+                'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+            registerBtn.setAttribute('data-i18n', keyRegister);
+            registerBtn.textContent = registerText;
+
+            btns.appendChild(registerBtn);
         }
+
       } else {
-        // for other statuses we may still want a register button if appropriate
-        // here we append no extra button (only detail). If you want register for other statuses — add logic.
+        // для остальных статусов логика остаётся прежней
       }
 
       bottom.appendChild(btns);

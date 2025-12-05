@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function handleRequestAction(id, approve) {
-    const action = approve ? 'accept' : 'decline';
+    const action = approve ? 'approve' : 'decline';
     const url = `https://portal.femo.kz/api/notifications/${id}/${action}/`;
     try {
       const resp = await fetch(url, {

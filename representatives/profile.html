@@ -10,6 +10,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://unpkg.com/@lucide/web@latest"></script>
   <script defer src="src/scripts/showpass.js"></script>
+  <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
 </head>
 
 <body>
@@ -210,8 +211,9 @@
                     <div>
                       <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.country">Страна
                         <span class="text-red-primary">*</span></label>
-                      <input placeholder="Казахстан" type="text" name="country"
-                        class="input-base border-default" required />
+                        <select id="country" name="country" class="input-base border-default" required>
+                          <option value="">Выберите страну</option>
+                        </select>
                     </div>
                     <div>
                       <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="profile.fio_eng">ФИО на английском

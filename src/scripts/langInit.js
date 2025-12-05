@@ -214,36 +214,44 @@ async function initLanguageOnPage({ waitForAppPromises = true, appWaitTimeout = 
  */
 async function changeLanguageAndReload(newLang, { reload = true, waitForApp = true, appWaitTimeout = 5000 } = {}) {
   if (!newLang) return;
+
+  // Получаем текущий язык из localStorage
+  const currentLang = localStorage.getItem('lang');
+
+  // 1) Если новый язык совпадает с текущим, не меняем ничего и не перезагружаем
+  if (newLang === currentLang) {
+    console.log("Язык не изменился, перезагрузка не требуется.");
+    return;
+  }
+
+  // Показать лоадер во время изменения языка
   showLoadingOverlay();
 
-  // 1) очистим только связанные кеши (НЕ трогаем access_token/refresh_token/user)
+  // 2) Очистим только кеши, связанные с языком
   try {
-    // remove frontend/backend lang keys to avoid stale reads
     localStorage.removeItem('lang');
     localStorage.removeItem('backend_lang');
   } catch (e) { /* ignore */ }
 
-  // 2) очистим глобальные кэши в памяти
-  try { window._userSettingsPromise = null; } catch(e){}
-  try { window.i18nDict = {}; } catch(e){}
-  // если у тебя в другом файле объявлен _userSettingsPromise как let в глобале,
-  // он останется, но последующие fetchUserSettingsOnce создаст новый кэш.
+  // 3) Очистим глобальные кэши в памяти, связанные с языком
+  try { window._userSettingsPromise = null; } catch(e){ }
+  try { window.i18nDict = {}; } catch(e){ }
 
-  // 3) установим новый lang и backend header
+  // 4) Установим новый язык в localStorage
   const frontendLang = (newLang === 'kk') ? 'kz' : newLang;
-  try { localStorage.setItem('lang', frontendLang); } catch(e){}
+  try { localStorage.setItem('lang', frontendLang); } catch(e){ }
   const backend = frontendToBackend(frontendLang);
   try {
     if (backend) localStorage.setItem('backend_lang', backend);
     else localStorage.removeItem('backend_lang');
-  } catch(e){}
+  } catch(e){ }
 
-  // 4) дождёмся app promises (опционально), затем применим переводы
+  // 5) Дождемся загрузки данных (если нужно)
   if (waitForApp && Array.isArray(window.appDataLoaders) && window.appDataLoaders.length > 0) {
     await waitForAllWithTimeout(window.appDataLoaders.slice(), appWaitTimeout);
   }
 
-  // 5) применяем перевод (без ошибки)
+  // 6) Применим новый язык
   try {
     const { role, page } = detectRoleAndPage();
     if (typeof window.setLanguage === 'function') {
@@ -255,13 +263,14 @@ async function changeLanguageAndReload(newLang, { reload = true, waitForApp = tr
 
   hideLoadingOverlay();
 
+  // 7) Если изменился язык, то перезагружаем страницу
   if (reload) {
-    // небольшая задержка, чтобы браузер показал обновлённый UI, затем перезагрузка
     setTimeout(() => {
       location.reload();
     }, 120);
   }
 }
+
 
 // Auto-init на DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {

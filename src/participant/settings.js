@@ -240,6 +240,7 @@ async function loadUserSettings() {
 }
 
 
+// Функция для обновления настроек пользователя
 async function updateUserSettings(updatedFields) {
   const token = localStorage.getItem('access_token');
   if (!token) return;
@@ -270,22 +271,43 @@ async function updateUserSettings(updatedFields) {
       if (text.includes('О статусе оплаты')) settings.notify_payments = checkbox.checked;
     });
 
-    const response = await fetch('https://portal.femo.kz/api/users/settings/', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ ...settings, ...updatedFields }),
-    });
+    // Проверим, изменилось ли поле language
+    const currentLang = localStorage.getItem('lang');
+    if (language !== currentLang) {
+      // Если язык изменился, обновляем настройки на сервере и перезагружаем страницу
+      const response = await fetch('https://portal.femo.kz/api/users/settings/', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...settings, ...updatedFields }),
+      });
 
-    if (!response.ok) throw new Error('Ошибка при обновлении настроек');
-    console.log('✅ Настройки успешно обновлены');
-    location.reload();
+      if (!response.ok) throw new Error('Ошибка при обновлении настроек');
+      console.log('✅ Настройки успешно обновлены');
+
+      // Перезагружаем страницу, так как язык изменился
+      location.reload();
+    } else {
+      // Если язык не изменился, обновляем только другие настройки, без перезагрузки
+      const response = await authorizedFetch('https://portal.femo.kz/api/users/settings/', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...settings, ...updatedFields }),
+      });
+
+      if (!response.ok) throw new Error('Ошибка при обновлении настроек');
+      console.log('✅ Настройки успешно обновлены');
+    }
   } catch (error) {
     console.error('❌ Ошибка при обновлении настроек:', error);
   }
 }
+
 
 
 function setupPasswordChangeForm() {

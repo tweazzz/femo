@@ -190,11 +190,22 @@ async function autoSaveUserSettings() {
 
     if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
     console.log('Настройки успешно обновлены');
-    location.reload();
+
+    // Проверяем, изменился ли язык
+    const currentLang = localStorage.getItem('lang') || 'ru'; // Текущий язык в localStorage
+    const newLang = payload.language || 'ru'; // Новый язык из формы
+
+    if (newLang !== currentLang) {
+      // Если язык изменился, обновляем язык в localStorage и перезагружаем страницу
+      localStorage.setItem('lang', newLang);
+      location.reload();
+    }
+
   } catch (err) {
     console.error('Ошибка при автосохранении настроек:', err);
   }
 }
+
 
 // Вешаем слушатели
 function initSettingsListeners() {

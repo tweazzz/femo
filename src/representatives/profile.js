@@ -209,7 +209,11 @@ function fillRepresentativeForm(data) {
   form.elements['email'].value = data.email || '';
   form.elements['fullname'].value = data.full_name_ru || '';
   form.elements['fullname_eng'].value = data.full_name_en || '';
-  form.elements['country'].value = data.country?.name || '';
+  if (data.country?.code) {
+    form.elements['country'].value = data.country.code;
+  } else {
+    form.elements['country'].value = '';
+  }
 }
 
 
@@ -235,8 +239,7 @@ document
     const email  = form.elements['email'].value.trim();
     const fullRu = form.elements['fullname'].value.trim();
     const fullEn = form.elements['fullname_eng'].value.trim();
-    const countryName = form.elements['country'].value.trim();
-    const countryCode = countryMap[countryName] || '';
+    const countryCode = form.elements['country'].value;
 
     // 1) Формируем FormData на основе формы
     const formData = new FormData(form);
@@ -298,7 +301,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ─── 2) дальше уже ваша логика ───
-  await loadCountries()
+  populateCountrySelect();
   renderUserInfo(user)
 
   try {
@@ -308,3 +311,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 })
 
+
+
+function populateCountrySelect() {
+  const select = document.getElementById("country");
+  select.innerHTML = '<option value="">Выберите страну</option>';
+
+  for (const [name, code] of Object.entries(countryMap)) {
+      const option = document.createElement("option");
+      option.value = code;         // отправляется
+      option.textContent = name;   // отображается
+      select.appendChild(option);
+  }
+}
