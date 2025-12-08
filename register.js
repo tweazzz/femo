@@ -160,7 +160,37 @@ document.addEventListener('DOMContentLoaded', () => {
       if (maybePassword) maybePassword.removeAttribute('name');
       return;
     }
-  
+    // --- НОВОЕ: если роль participant — НЕ ОТПРАВЛЯЕМ на сервер, а передаём данные на participant/register.html ---
+    if (roleValue === 'participant') {
+      try {
+        const pending = {
+          email,
+          full_name_ru: fullName,
+          country: countryCode,
+          role: roleValue,
+          __saved_at: Date.now()
+        };
+        sessionStorage.setItem('pending_registration', JSON.stringify(pending));
+
+        // <-- сюда сохраняем пароль временно в sessionStorage чтобы следующая страница могла
+        // автоматически зарегистрировать/логинить пользователя (удаляется после использования).
+        // Если не хочешь хранить пароль в sessionStorage — просто закомментируй следующую строку.
+        sessionStorage.setItem('pending_password', password);
+
+        showSuccessBanner('Данные сохранены локально. Перейдите к заполнению профиля участника...', 900);
+        setTimeout(() => { window.location.href = 'participant/register.html'; }, 900);
+        return;
+      } catch (err) {
+        console.error('Не удалось сохранить pending_registration', err);
+        messageContainer.textContent = 'Ошибка при сохранении данных локально.';
+        messageContainer.classList.add('text-red-500');
+        if (submitButton) submitButton.disabled = false;
+        const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
+        if (maybePassword) maybePassword.removeAttribute('name');
+        return;
+      }
+    }
+  // --- конец нового блока ---
     if (submitButton) submitButton.disabled = true;
   
     const regPayload = {

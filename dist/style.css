@@ -2149,7 +2149,7 @@
 }
 .border-default {
   border-style: var(--tw-border-style);
-  border-width: 0px;
+  border-width: 1px;
   border-color: var(--color-gray-border);
 }
 .input-base {

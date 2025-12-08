@@ -10,7 +10,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
-
+<style>
+  .custom-border {
+  border-width: 1px;
+  border-style: var(--tw-border-style);
+  border-color: var(--color-gray-border);
+}
+</style>
   <body>
     <div id="overlayPopup" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
 
@@ -159,7 +165,7 @@
               <div class="flex items-center space-x-4">
                 <button
                   type="button"
-                  onclick="toggleModal('modalNotification')"
+                  onclick="togglePopupModal('modalNotification')"
                   class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1"
                 >
                   <svg

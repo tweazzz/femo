@@ -476,7 +476,7 @@
                             <span data-i18n="olympiad.stages">Этапы олимпиады</span>
                           </p>
                           <div id="stages-container" class="border-default rounded-2xl p-4">
-                            <div id="stage-template" class="grid grid-cols-1 gap-4 sm:grid-cols-2" style="margin-bottom: 16px;">
+                            <div id="stage-template" class="stage-block grid grid-cols-1 gap-4 sm:grid-cols-2" style="margin-bottom: 16px;">
                               <div>
                                 <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.stages_name">Название этапа</label>
                                 <div class="relative">
@@ -491,9 +491,9 @@
                             
                               <div>
                                 <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiad.dates">Период этапа</label>
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1 border-default">
                                   <input
-                                    class="date-range-add input-base border-default"
+                                    class="date-range-add input-base"
                                     placeholder="Выберите дату"
                                     data-i18n="olympiad.dates_placeholder"
                                     data-i18n-attr="placeholder"
@@ -510,7 +510,17 @@
                                     <path d="M9.99632 13.9167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M6.91185 11.4167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M6.91185 13.9167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                                  </svg>
+                                  <button type="button" class="stage-delete-btn" title="Удалить этап" data-action="delete-stage" style="margin-right: 10px; margin-left: 10px;">
+                                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M17.5 4.98307C14.725 4.70807 11.9333 4.56641 9.15 4.56641C7.5 4.56641 5.85 4.64974 4.2 4.81641L2.5 4.98307" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M7.08301 4.14199L7.26634 3.05033C7.39967 2.25866 7.49967 1.66699 8.90801 1.66699H11.0913C12.4997 1.66699 12.608 2.29199 12.733 3.05866L12.9163 4.14199" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M15.7087 7.61719L15.167 16.0089C15.0753 17.3172 15.0003 18.3339 12.6753 18.3339H7.32533C5.00033 18.3339 4.92533 17.3172 4.83366 16.0089L4.29199 7.61719" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M8.60834 13.75H11.3833" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M7.91699 10.417H12.0837" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                  </svg>
+
+                              </button>
                                 </div>
                               </div>
                             </div>
@@ -1114,6 +1124,14 @@
                                     </svg>
                                     
                                 </div>
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.5 4.98307C14.725 4.70807 11.9333 4.56641 9.15 4.56641C7.5 4.56641 5.85 4.64974 4.2 4.81641L2.5 4.98307" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7.08301 4.14199L7.26634 3.05033C7.39967 2.25866 7.49967 1.66699 8.90801 1.66699H11.0913C12.4997 1.66699 12.608 2.29199 12.733 3.05866L12.9163 4.14199" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15.7087 7.61719L15.167 16.0089C15.0753 17.3172 15.0003 18.3339 12.6753 18.3339H7.32533C5.00033 18.3339 4.92533 17.3172 4.83366 16.0089L4.29199 7.61719" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.60834 13.75H11.3833" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M7.91699 10.417H12.0837" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+
                               </div>
                             </div>
                             
@@ -1809,5 +1827,48 @@
     <script src="/src/admin/notifications.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script>
+// делегированный обработчик удаления этапа
+document.addEventListener('click', function (e) {
+  const del = e.target.closest('.stage-delete-btn');
+  if (!del) return;
+
+  e.preventDefault();
+
+  const stageBlock = del.closest('.stage-block');
+  if (!stageBlock) return;
+
+  // контейнер этапов
+  const container =
+    stageBlock.closest('#stages-container') ||
+    stageBlock.closest('#stages-container-edit') ||
+    stageBlock.parentElement;
+
+  const blocks = Array.from(container.querySelectorAll('.stage-block'));
+
+  // минимум 1 этап
+  if (blocks.length <= 1) {
+    // тихо выходим без алертов
+    return;
+  }
+
+  // уничтожаем flatpickr, если есть
+  try {
+    const dateInput = stageBlock.querySelector('.date-range-add');
+    if (dateInput && dateInput._flatpickr) {
+      dateInput._flatpickr.destroy();
+    }
+  } catch (err) {}
+
+  // удаляем блок
+  stageBlock.remove();
+
+  // обновляем состояние формы (если функция есть)
+  try {
+    if (typeof setSubmitAddState === 'function') setSubmitAddState();
+  } catch (err) {}
+});
+
+    </script>
   </body>
 </html>

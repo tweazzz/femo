@@ -7,8 +7,38 @@
     <script defer src="src/scripts/showpass.js"></script>
     <title>Регистрация</title>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/css/intlTelInput.css">
   </head>
+<style>
+  .iti--fullscreen-popup.iti--container {
+    top: -300px !important;
+    left: 470px !important;
+  }
+/* поместите в <style> (или в ваш css) */
+.iti--container {
+  position: relative !important;
+  display: inline-block !important;
+  width: auto !important;
+  box-sizing: border-box;
+}
 
+.iti__country-list {
+  position: block !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  width: auto !important;
+  min-width: 220px !important;
+  max-width: 380px !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+
+.iti__country-list .iti__country {
+  white-space: nowrap !important;
+}
+</style>
   <body class="bg-gray-background">
     <div class="mx-auto my-8 max-w-lg rounded-3xl bg-white p-5 shadow-md">
 
@@ -60,60 +90,7 @@
               <option value="11">11</option>
             </select>
         </div>
-        <div class="border-default rounded-2xl">
-            <p class="mb-3 text-sm">Язык обучения</p>
-          
-            <div class="flex flex-wrap items-start justify-start gap-4">
-              <label class="switch-btn flex items-center gap-2 cursor-pointer">
-                <img
-                  src="https://flagcdn.com/w40/ru.png"
-                  alt="Флаг России"
-                  class="h-3 w-5 object-contain"
-                />
-                <input
-                  type="radio"
-                  name="lang"
-                  value="ru"
-                  class="hidden"
-                  required
-                  checked
-                />
-                Русский
-              </label>
-          
-              <label class="switch-btn flex items-center gap-2 cursor-pointer">
-                <img
-                  src="https://flagcdn.com/w40/kz.png"
-                  alt="Флаг Казахстана"
-                  class="h-3 w-5 object-contain"
-                />
-                <input
-                  type="radio"
-                  name="lang"
-                  value="kz"
-                  class="hidden"
-                  required
-                />
-                Қазақша
-              </label>
-          
-              <label class="switch-btn flex items-center gap-2 cursor-pointer">
-                <img
-                  src="https://flagcdn.com/w40/gb.png"
-                  alt="Флаг Великобритании"
-                  class="h-3 w-5 object-contain"
-                />
-                <input
-                  type="radio"
-                  name="lang"
-                  value="en"
-                  class="hidden"
-                  required
-                />
-                English
-              </label>
-            </div>
-        </div>
+
                     
         <div>
           <label class="text-gray-primary mb-1 block text-sm">ФИО родителя</label>
@@ -123,15 +100,12 @@
             class="input-base border-default"
           />
         </div>
-        <div>
-            <label class="text-gray-primary mb-1 block text-sm">Телефон родителя</label>
-            <input
-              type="tel"
-              name="parent_phone"
-              placeholder="+7 (___) ___-__-__"
-              class="input-base border-default"
-            />
-        </div>
+      <div>
+          <label class="text-gray-primary mb-1 block text-sm">Телефон родителя</label>
+          <input id="parent_phone" type="tel" name="parent_phone" class="input-base border-default w-full">
+      </div>
+
+        
         <!-- ФИО учителя -->
         <div>
             <label class="text-gray-primary mb-1 block text-sm">ФИО учителя</label>
@@ -145,15 +119,11 @@
         
         <!-- Телефон и Email учителя в одну строку -->
         <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
+        <div class="flex-1">
             <label class="text-gray-primary mb-1 block text-sm">Телефон учителя</label>
-            <input
-                type="tel"
-                name="teacher_phone"
-                placeholder="+7 (___) ___-__-__"
-                class="input-base border-default w-full"
-            />
-            </div>
+            <input id="teacher_phone" type="tel" name="teacher_phone" class="input-base border-default w-full">
+        </div>
+
         
             <div class="flex-1">
             <label class="text-gray-primary mb-1 block text-sm">Email учителя</label>
@@ -177,165 +147,366 @@
       </form>
 
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/intlTelInput.min.js"></script>
+    <script>
+      const input = document.querySelector("#phone");
+      window.intlTelInput(input, {
+        loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/utils.js"),
+      });
+    </script>
+
   </body>
 </html>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.querySelector('form.space-y-6');
-      const submitBtn = form.querySelector('button[type="submit"]');
-    
-      // Конвертер числового класса в словесный (если API ожидает такие строки)
-      const gradeMap = {
-        '1': 'first',
-        '2': 'second',
-        '3': 'third',
-        '4': 'fourth',
-        '5': 'fifth',
-        '6': 'sixth',
-        '7': 'seventh',
-        '8': 'eighth',
-        '9': 'ninth',
-        '10': 'tenth',
-        '11': 'eleventh'
-      };
-    
-      function showError(message) {
-        alert(message);
-      }
-    
-      function getAccessTokenFromLocalStorage() {
-        // 1) прямой ключ access_token
-        let token = localStorage.getItem('access_token') || localStorage.getItem('token');
-        if (token) return token;
-    
-        // 2) попробовать парсить localStorage.user и взять common поля (access, access_token, token)
-        try {
-          const raw = localStorage.getItem('user') || localStorage.getItem('auth') || null;
-          if (!raw) return null;
-          const parsed = JSON.parse(raw);
-          return parsed?.access_token || parsed?.access || parsed?.token || null;
-        } catch (e) {
-          return null;
-        }
-      }
-    
-      async function sendProfile(payload) {
-        const url = 'https://portal.femo.kz/api/users/participant/profile/';
-    
-        const token = getAccessTokenFromLocalStorage();
-        if (!token) {
-          throw new Error('no_token');
-        }
-    
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        };
-    
-        const resp = await fetch(url, {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify(payload),
-          // credentials: 'include' // если используется cookie-based auth — включи
-        });
-    
-        return resp;
-      }
-    
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        submitBtn.disabled = true;
-        const originalText = submitBtn.innerText;
-        submitBtn.innerText = 'Сохраняем...';
-    
-        try {
-          const city = (form.querySelector('input[name="city"]')?.value || '').trim();
-          const school = (form.querySelector('input[name="school"]')?.value || '').trim();
-          const gradeValue = (form.querySelector('select[name="grade"]')?.value || '').trim();
-          const studyLanguage = (form.querySelector('input[name="lang"]:checked')?.value || '').trim();
-    
-          const parentName = (form.querySelector('input[name="full_name"]')?.value || '').trim();
-          const parentPhone = (form.querySelector('input[name="parent_phone"]')?.value || '').trim();
-    
-          const teacherName = (form.querySelector('input[name="teacher_full_name"]')?.value || '').trim();
-          const teacherPhone = (form.querySelector('input[name="teacher_phone"]')?.value || '').trim();
-          // const teacherEmail = (form.querySelector('input[name="teacher_email"]')?.value || '').trim();
-    
-          // Простая валидация
-          if (!city) { showError('Пожалуйста, укажите город.'); throw new Error('validation'); }
-          if (!school) { showError('Пожалуйста, укажите школу.'); throw new Error('validation'); }
-          if (!gradeValue) { showError('Пожалуйста, выберите класс.'); throw new Error('validation'); }
-          if (!studyLanguage) { showError('Пожалуйста, выберите язык обучения.'); throw new Error('validation'); }
-          if (!parentName) { showError('Пожалуйста, укажите ФИО родителя.'); throw new Error('validation'); }
-          if (!parentPhone) { showError('Пожалуйста, укажите телефон родителя.'); throw new Error('validation'); }
-          if (!teacherName) { showError('Пожалуйста, укажите ФИО учителя.'); throw new Error('validation'); }
-          if (!teacherPhone) { showError('Пожалуйста, укажите телефон учителя.'); throw new Error('validation'); }
-    
-          const grade = gradeMap[gradeValue] || gradeValue;
-    
-          const body = {
-            city: city,
-            school: school,
-            grade: grade,
-            study_language: studyLanguage,
-            parent: {
-              name_ru: parentName,
-              phone_number: parentPhone
-            },
-            teacher: {
-              name_ru: teacherName,
-              phone_number: teacherPhone
-            }
-          };
-    
-          let resp;
-          try {
-            resp = await sendProfile(body);
-          } catch (err) {
-            if (err.message === 'no_token') {
-              showError('Токен не найден в localStorage. Нужен access_token для авторизации.');
-              return;
-            }
-            throw err;
-          }
-    
-          if (resp.ok) {
-            window.location.href = '/participant/dashboard.html';
-            return;
-          } else {
-            let errText = `Ошибка сервера: ${resp.status}`;
-            try {
-              const json = await resp.json();
-              if (typeof json === 'object' && json !== null) {
-                const msgs = [];
-                for (const key in json) {
-                  if (Array.isArray(json[key])) msgs.push(`${key}: ${json[key].join(', ')}`);
-                  else if (typeof json[key] === 'object') msgs.push(`${key}: ${JSON.stringify(json[key])}`);
-                  else msgs.push(`${key}: ${String(json[key])}`);
-                }
-                if (msgs.length) errText = msgs.join('\n');
-                else errText = JSON.stringify(json);
-              } else {
-                errText = String(json);
-              }
-            } catch (parseErr) {
-              // оставим базовый errText
-            }
-            showError(errText);
-          }
-        } catch (err) {
-          if (err.message !== 'validation') {
-            console.error(err);
-            showError('Не удалось отправить данные. Проверь консоль для деталей.');
-          }
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.innerText = originalText;
-        }
-      });
+document.addEventListener('DOMContentLoaded', () => {
+  const phoneInputs = [
+    document.querySelector("#parent_phone"),
+    document.querySelector("#teacher_phone")
+  ].filter(Boolean);
+
+  if (!phoneInputs.length) return;
+
+  // карта допустимых длин национальной части (при желании расширим)
+  const nationalLengths = {
+    kz: 10, // Kazakhstan (+7) — 10 цифр национальной части
+    ru: 10, // Russia (+7)
+    kg: 9,  // Kyrgyzstan (+996)
+    uz: 9,  // Uzbekistan (+998) — обычно 9
+    tr: 10  // Turkey (+90)
+  };
+
+  phoneInputs.forEach(input => {
+    // убираем placeholder, чтобы плагин сам установил country-specific placeholder
+    input.removeAttribute('placeholder');
+    input.setAttribute('inputmode', 'tel');
+    input.setAttribute('autocomplete', 'tel');
+
+    const iti = window.intlTelInput(input, {
+      initialCountry: "auto",
+      separateDialCode: true,           // отображать код слева отдельно
+      preferredCountries: ["kz","ru","kg","uz","tr"],
+      geoIpLookup: (success) => {
+        fetch("https://ipapi.co/json/")
+          .then(res => res.json())
+          .then(data => success((data && data.country_code) ? data.country_code.toLowerCase() : 'kz'))
+          .catch(() => success('kz'));
+      },
+
+      /* подгружаем utils как модуль — нужно для placeholder/formatting/validation */
+      loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/utils.js"),
+
+      dropdownContainer: document.wrapper,  // рендерим в body — обязательно, чтобы не ломать layout
+      autoPlaceholder: "aggressive",     // плагин выставит пример номера как placeholder
+      placeholderNumberType: "MOBILE",
+      formatOnDisplay: true,
+      formatAsYouType: true,             // форматирование при наборе (требует utils)
+      strictMode: true,                  // запрещает лишние символы и обрезает до max
+      nationalMode: true,                // показываем национальный формат (placeholder будет как (777) ...)
+      validationNumberTypes: ["MOBILE"], // валидируем как мобильные (по-умолчанию)
+      allowDropdown: true
     });
+
+    // когда utils загружен — можно безопасно вызывать методы валидации
+    if (iti && iti.promise) {
+      iti.promise.then(() => {
+        // обновляем ограничение длины в dataset (используется как fallback)
+        const country = iti.getSelectedCountryData();
+        const iso2 = (country && country.iso2) ? country.iso2.toLowerCase() : '';
+        const maxDigits = nationalLengths[iso2] || 15;
+        input.dataset.maxDigits = String(maxDigits);
+      }).catch(()=>{ /* ignore */ });
+    }
+
+    // при смене страны — обновляем ожидаемую длину (и placeholder обновится автоматически)
+    input.addEventListener('countrychange', () => {
+      const country = iti.getSelectedCountryData();
+      const iso2 = (country && country.iso2) ? country.iso2.toLowerCase() : '';
+      input.dataset.maxDigits = String(nationalLengths[iso2] || 15);
+
+      // если utils загружен, подправим формат (setNumber автоматически применит формат)
+      try {
+        const current = input.value.replace(/\D/g, '');
+        if (current) {
+          // установим заново, чтобы плагин отформатировал по новой стране
+          iti.setNumber(current);
+        }
+      } catch (e) {}
+    });
+
+    // input: оставляем только цифры (плагин форматирует отображение) и не даём сверхдлинных значений
+    input.addEventListener('input', (e) => {
+      // если strictMode + utils подключён — плагин уже ограничит, но на всякий случай
+      const maxDigits = Number(input.dataset.maxDigits || 15);
+      const digits = (input.value || '').replace(/\D/g, '').slice(0, maxDigits);
+      // в режиме separateDialCode значение инпута — национальная часть; установим её отформатированной
+      try {
+        // устанавливаем через плагин, чтобы форматирование применилось
+        iti.setNumber(digits);
+      } catch (err) {
+        // fallback: просто записываем цифры
+        input.value = digits;
+      }
+      input.classList.remove('input-invalid');
+    });
+
+    // blur: проверяем валидность и показываем ошибку
+    input.addEventListener('blur', () => {
+      let valid = false;
+      try {
+        valid = iti.isValidNumber();
+      } catch (err) {
+        // fallback: простая длина
+        const digits = (input.value || '').replace(/\D/g, '');
+        const maxDigits = Number(input.dataset.maxDigits || 15);
+        valid = digits.length === maxDigits || digits.length >= Math.max(6, Math.floor(maxDigits * 0.8));
+      }
+      if (!valid && input.value.trim() !== '') {
+        input.classList.add('input-invalid');
+      } else {
+        input.classList.remove('input-invalid');
+      }
+    });
+
+    // если кто-то кликает по документу — dropdown position может быть пересчитан плагином;
+    // для мобильных — плагин сам переключит fullscreen popup; поэтому не трогаем это.
+  });
+});
 </script>
-    
-    
-    
-    
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form');
+  if (!form) return;
+
+  // --- баннеры успех/ошибка ---
+  const successBanner = document.createElement('div');
+  successBanner.setAttribute('aria-live', 'polite');
+  successBanner.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-md bg-green-100 text-green-800 shadow-md flex items-center gap-3 text-sm font-semibold -translate-y-6 opacity-0 pointer-events-none transition-all duration-300';
+  successBanner.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+    </svg>
+    <span class="success-text"></span>
+  `;
+  document.body.insertBefore(successBanner, document.body.firstChild);
+
+  const errorBanner = document.createElement('div');
+  errorBanner.setAttribute('aria-live', 'polite');
+  errorBanner.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-md bg-red-100 text-red-800 shadow-md flex items-center gap-3 text-sm font-semibold -translate-y-6 opacity-0 pointer-events-none transition-all duration-300';
+  errorBanner.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l5.454 9.69A1.75 1.75 0 0116.996 15H3.004a1.75 1.75 0 01-1.2-2.211l5.453-9.69zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-3V6h0v4z"/>
+    </svg>
+    <span class="error-text"></span>
+  `;
+  document.body.insertBefore(errorBanner, successBanner.nextSibling);
+
+  function showSuccess(text = '', ms = 1700) {
+    successBanner.querySelector('.success-text').textContent = text;
+    successBanner.classList.remove('-translate-y-6','opacity-0','pointer-events-none');
+    successBanner.classList.add('translate-y-0','opacity-100','pointer-events-auto');
+    clearTimeout(successBanner._hideTimeout);
+    successBanner._hideTimeout = setTimeout(() => {
+      successBanner.classList.remove('translate-y-0','opacity-100','pointer-events-auto');
+      successBanner.classList.add('-translate-y-6','opacity-0','pointer-events-none');
+    }, ms);
+  }
+
+  function showError(text = '', ms = 4000) {
+    errorBanner.querySelector('.error-text').textContent = text;
+    errorBanner.classList.remove('-translate-y-6','opacity-0','pointer-events-none');
+    errorBanner.classList.add('translate-y-0','opacity-100','pointer-events-auto');
+    clearTimeout(errorBanner._hideTimeout);
+    errorBanner._hideTimeout = setTimeout(() => {
+      errorBanner.classList.remove('translate-y-0','opacity-100','pointer-events-auto');
+      errorBanner.classList.add('-translate-y-6','opacity-0','pointer-events-none');
+    }, ms);
+  }
+
+  // Простая транслитерация RU -> EN (fallback для name_en)
+  function translitRuToEn(str) {
+    if (!str) return '';
+    const map = {
+      'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'E','Ж':'Zh','З':'Z','И':'I','Й':'Y','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U','Ф':'F','Х':'Kh','Ц':'Ts','Ч':'Ch','Ш':'Sh','Щ':'Shch','Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya',
+      'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
+    };
+    return String(str).split('').map(c => map[c] !== undefined ? map[c] : c).join('');
+  }
+
+  const gradeMap = {
+    '1': 'first','2': 'second','3': 'third','4': 'fourth','5': 'fifth',
+    '6': 'sixth','7': 'seventh','8': 'eighth','9': 'ninth','10': 'tenth','11': 'eleventh'
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    let origText = '';
+    if (submitBtn) {
+      origText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Отправляем...';
+    }
+
+    try {
+      // Получаем значения из формы (по имени полей из твоего HTML)
+      const city = (form.elements['city']?.value || '').trim();
+      const school = (form.elements['school']?.value || '').trim();
+      const gradeValue = (form.elements['grade']?.value || '').trim();
+      const langChecked = form.querySelector('input[name="lang"]:checked');
+      const studyLanguage = (langChecked?.value || 'ru').trim();
+
+      const parent_name_ru = (form.elements['full_name']?.value || '').trim(); // родитель
+      // получаем экземпляр intl-tel-input и вытаскиваем E.164 (с кодом), убираем все нецифровые символы кроме ведущего '+'
+      let parent_phone = '';
+      try {
+        const parentInst = window.intlTelInput && window.intlTelInput.getInstance
+          ? window.intlTelInput.getInstance(document.querySelector('#parent_phone'))
+          : null;
+        parent_phone = parentInst ? (parentInst.getNumber() || '') : (form.elements['parent_phone']?.value || '');
+        // очистка: оставляем только цифры и ведущий '+'
+        parent_phone = parent_phone.replace(/[^\d+]/g, '');
+      } catch (e) {
+        // fallback — если что-то пошло не так, просто оставляем цифры (без +)
+        parent_phone = (form.elements['parent_phone']?.value || '').replace(/\D/g, '');
+      }
+
+      const teacher_name_ru = (form.elements['teacher_full_name']?.value || '').trim();
+      // для учителя то же самое
+      let teacher_phone = '';
+      try {
+        const teacherInst = window.intlTelInput && window.intlTelInput.getInstance
+          ? window.intlTelInput.getInstance(document.querySelector('#teacher_phone'))
+          : null;
+        teacher_phone = teacherInst ? (teacherInst.getNumber() || '') : (form.elements['teacher_phone']?.value || '');
+        teacher_phone = teacher_phone.replace(/[^\d+]/g, '');
+      } catch (e) {
+        teacher_phone = (form.elements['teacher_phone']?.value || '').replace(/\D/g, '');
+      }
+      // teacher_email присутствует в форме, но API не требует его в payload; сохраняем если нужно
+      const teacher_email = (form.elements['teacher_email']?.value || '').trim();
+
+      // Достаём pending данные из sessionStorage (первая страница должна была их положить)
+      let pending = {};
+      try {
+        const raw = sessionStorage.getItem('pending_registration') || localStorage.getItem('pending_participant');
+        pending = raw ? JSON.parse(raw) : {};
+      } catch (err) {
+        console.warn('Ошибка чтения pending_registration:', err);
+        pending = {};
+      }
+
+      const email = (pending.email || '').trim();
+      const password = (sessionStorage.getItem('pending_password') || '').trim();
+      const full_name_ru = (pending.full_name_ru || '').trim();
+      const country = (pending.country || '').trim();
+
+      // Валидация
+      if (!email) { showError('Не найден email из первой страницы (pending_registration).'); throw new Error('validation'); }
+      if (!password) { showError('Не найден пароль (sessionStorage.pending_password).'); throw new Error('validation'); }
+      if (!full_name_ru) { showError('Не найдено ФИО пользователя (pending_registration.full_name_ru).'); throw new Error('validation'); }
+      if (!country) { showError('Не задана страна (pending_registration.country).'); throw new Error('validation'); }
+
+      if (!city) { showError('Укажите город.'); throw new Error('validation'); }
+      if (!school) { showError('Укажите школу.'); throw new Error('validation'); }
+      if (!gradeValue) { showError('Выберите класс.'); throw new Error('validation'); }
+      if (!parent_name_ru) { showError('Укажите ФИО родителя.'); throw new Error('validation'); }
+      if (!parent_phone) { showError('Укажите телефон родителя.'); throw new Error('validation'); }
+      if (!teacher_name_ru) { showError('Укажите ФИО учителя.'); throw new Error('validation'); }
+      if (!teacher_phone) { showError('Укажите телефон учителя.'); throw new Error('validation'); }
+
+      const grade = gradeMap[gradeValue] || gradeValue;
+
+      // payload в формате API
+      const payload = {
+        email,
+        password,
+        full_name_ru,
+        full_name_en: translitRuToEn(full_name_ru),
+        study_language: studyLanguage,
+        country,
+        city,
+        school,
+        grade,
+        parent: {
+          name_ru: parent_name_ru,
+          name_en: translitRuToEn(parent_name_ru),
+          phone_number: parent_phone
+        },
+        teacher: {
+          name_ru: teacher_name_ru,
+          name_en: translitRuToEn(teacher_name_ru),
+          phone_number: teacher_phone
+        }
+      };
+
+      // Отправка POST (без Authorization)
+      const url = 'https://portal.femo.kz/api/users/participant/registration/';
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      let respJson = null;
+      try { respJson = await resp.clone().json(); } catch (e) { respJson = null; }
+
+      if (resp.ok) {
+        // чистим временные данные
+        try {
+          sessionStorage.removeItem('pending_registration');
+          sessionStorage.removeItem('pending_password');
+          localStorage.removeItem('pending_participant');
+        } catch (e) {}
+
+        showSuccess('Профиль участника успешно сохранён. Перенаправляем...', 1500);
+        setTimeout(() => { window.location.href = '/participant/reg_success.html'; }, 1200);
+        return;
+      } else {
+        // формируем читабельное сообщение об ошибке
+        let errText = `Ошибка сервера: ${resp.status}`;
+        if (respJson) {
+          if (respJson.detail) errText = String(respJson.detail);
+          else if (respJson.code) errText = String(respJson.code);
+          else {
+            // перечислим поля ошибки
+            const parts = [];
+            for (const k in respJson) {
+              const v = respJson[k];
+              if (Array.isArray(v)) parts.push(`${k}: ${v.join(', ')}`);
+              else if (typeof v === 'object') parts.push(`${k}: ${JSON.stringify(v)}`);
+              else parts.push(`${k}: ${String(v)}`);
+            }
+            if (parts.length) errText = parts.join('\n');
+            else errText = String(respJson);
+          }
+        }
+        showError(errText);
+        console.error('participant registration failed', resp.status, respJson);
+      }
+
+    } catch (err) {
+      if (err && err.message === 'validation') {
+        // vlaidation — сообщение уже показано пользователю
+      } else {
+        console.error('submit handler error', err);
+        showError('Произошла ошибка. Проверьте консоль для деталей.');
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = origText || 'Начать учиться';
+      }
+    }
+  });
+});
+</script>
+
+
+
+
+
+

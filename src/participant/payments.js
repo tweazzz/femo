@@ -509,8 +509,8 @@ function renderActiveOlympiads(olympiads) {
       : ''
 
     return `
-      <div class="border-default w-full max-w-sm rounded-2xl p-4 mb-4">
-        <div class="card ${statusClass} mb-2">${statusText}</div>
+      <div class="custom-border w-full max-w-sm rounded-2xl p-4 mb-4">
+        <div class="custom-border card ${statusClass} mb-2" style='width: fit-content;'>${statusText}</div>
         <p class="mb-4 font-bold">${olymp.title}</p>
         <div class="mb-6 flex *:flex-1">
           <div>
