@@ -106,40 +106,91 @@
               </button>
               <h1 class="text-xl max-md:hidden"></h1>
             </div>
-            <div class="flex items-center space-x-4">
-              <button
-                type="button"
-                onclick="toggleModal('modalNotification')"
-                class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
+
+            <div class="flex items-center gap-6">
+              <!-- DROPDOWN -->
+              <div class="relative inline-block text-left" id="lang-dropdown">
+                <!-- Кнопка -->
+                <button
+                  type="button"
+                  id="lang-dropdown-btn"
+                  class="flex items-center justify-between w-[85px] h-[23px] px-2 rounded-md border-gray-300 bg-white"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                  />
-                </svg>
-              </button>
-              <div class="flex items-center space-x-3">
-                <img
-                  id="user-avatar"
-                  src=""
-                  alt="Profile"
-                  class="h-10 w-10 rounded-full"
-                />
-                <div>
-                  <p id="user-name" class="font-bold"></p>
-                  <p id="user-role" class="text-primary text-sm"></p>
+                  <div class="flex items-center gap-2">
+                    <img id="lang-flag" src="https://flagcdn.com/w24/ru.png" class="w-6 h-[17px] object-contain" />
+                    <span id="lang-text" class="text-[12px] font-medium">RU</span>
+                  </div>
+              
+                  <!-- стрелочка -->
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 10L12.0008 14.58L17 10" stroke="#0A090B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              
+                <!-- Выпадающий список -->
+                <div
+                  id="lang-menu"
+                  class="absolute z-20 mt-1 w-[120px] bg-white border border-gray-200 rounded-md shadow-md hidden"
+                >
+                  <!-- RU -->
+                  <div data-lang="ru"
+                    class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+                    <img src="https://flagcdn.com/w40/ru.png" class="w-6 h-[17px] object-contain" />
+                    <span class="text-sm">RU</span>
+                  </div>
+              
+                  <!-- KZ -->
+                  <div data-lang="kz"
+                    class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+                    <img src="https://flagcdn.com/w40/kz.png" class="w-6 h-[17px] object-contain" />
+                    <span class="text-sm">KZ</span>
+                  </div>
+              
+                  <!-- EN -->
+                  <div data-lang="en"
+                    class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+                    <img src="https://flagcdn.com/w40/gb.png" class="w-6 h-[17px] object-contain" />
+                    <span class="text-sm">EN</span>
+                  </div>
                 </div>
               </div>
-            </div>
+              
+              
+              <div class="flex items-center space-x-4">
+                <button
+                  type="button"
+                  onclick="toggleModal('modalNotification')"
+                  class="text-orange-primary bg-orange-secondary cursor-pointer rounded-full p-1"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                    />
+                  </svg>
+                </button>
+                <div class="flex items-center space-x-3">
+                  <img
+                    id="user-avatar"
+                    src=""
+                    alt="Profile"
+                    class="h-10 w-10 rounded-full"
+                  />
+                  <div>
+                    <p id="user-name" class="font-bold"></p>
+                    <p id="user-role" class="text-primary text-sm"></p>
+                  </div>
+                </div>
+              </div>
+          </div>
           </div>
         </header>
 
@@ -548,7 +599,50 @@
         </main>
       </div>
     </div>
+    <style>
+      .lang-option.active {
+        color: var(--color-orange-primary);
+        font-weight: 600;
+      }
 
+      #lang-menu {
+        transition: opacity 0.15s ease, transform 0.15s ease;
+      }
+
+      #lang-menu.hidden {
+        opacity: 0;
+        transform: translateY(-5px);
+        pointer-events: none;
+      }
+
+      .balance-card {
+        width: 128px;
+        height: 40px;
+        background-color: #FEF6ED;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        border-radius: 6px;
+        font-family: 'Proxima Nova', sans-serif;
+        font-weight: 700;
+        font-style: bold;
+        font-size: 14px;
+        line-height: 100%;
+        color: #F4891E;
+      }
+
+      .balance-label {
+        margin-right: 5px;
+      }
+
+      .balance {
+        /* Для выравнивания по правому краю */
+        white-space: nowrap;
+      }
+
+
+    </style>
     <script>
       lucide.createIcons()
 
@@ -616,5 +710,169 @@
     <script src="/auth.js" defer></script>
     <script src="/src/admin/index.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
+    <script src="/src/admin/settings.js" defer></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const dropdownBtn = document.getElementById("lang-dropdown-btn");
+        const menu = document.getElementById("lang-menu");
+        const flagEl = document.getElementById("lang-flag");
+        const textEl = document.getElementById("lang-text");
+      
+        if (!dropdownBtn || !menu || !flagEl || !textEl) {
+          console.warn('lang dropdown elements missing');
+          return;
+        }
+      
+        // баннеры
+        const successBanner = document.createElement('div');
+        successBanner.setAttribute('aria-live','polite');
+        successBanner.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-md bg-green-100 text-green-800 shadow-md flex items-center gap-3 text-sm font-semibold -translate-y-6 opacity-0 pointer-events-none transition-all duration-300';
+        successBanner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span class="success-text"></span>';
+        document.body.insertBefore(successBanner, document.body.firstChild);
+      
+        const errorBanner = document.createElement('div');
+        errorBanner.setAttribute('aria-live','polite');
+        errorBanner.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-md bg-red-100 text-red-800 shadow-md flex items-center gap-3 text-sm font-semibold -translate-y-6 opacity-0 pointer-events-none transition-all duration-300';
+        errorBanner.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l5.454 9.69A1.75 1.75 0 0116.996 15H3.004a1.75 1.75 0 01-1.2-2.211l5.453-9.69zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-3V6h0v4z"/></svg><span class="error-text"></span>';
+        document.body.insertBefore(errorBanner, successBanner.nextSibling);
+      
+        const showSuccess = (txt, ms = 1500) => {
+          successBanner.querySelector('.success-text').textContent = txt;
+          successBanner.classList.remove('-translate-y-6','opacity-0','pointer-events-none');
+          successBanner.classList.add('translate-y-0','opacity-100','pointer-events-auto');
+          clearTimeout(successBanner._t);
+          successBanner._t = setTimeout(() => {
+            successBanner.classList.remove('translate-y-0','opacity-100','pointer-events-auto');
+            successBanner.classList.add('-translate-y-6','opacity-0','pointer-events-none');
+          }, ms);
+        };
+        const showError = (txt, ms = 4000) => {
+          errorBanner.querySelector('.error-text').textContent = txt;
+          errorBanner.classList.remove('-translate-y-6','opacity-0','pointer-events-none');
+          errorBanner.classList.add('translate-y-0','opacity-100','pointer-events-auto');
+          clearTimeout(errorBanner._t);
+          errorBanner._t = setTimeout(() => {
+            errorBanner.classList.remove('translate-y-0','opacity-100','pointer-events-auto');
+            errorBanner.classList.add('-translate-y-6','opacity-0','pointer-events-none');
+          }, ms);
+        };
+      
+        const LANG_MAP = {
+          ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
+          kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
+          en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
+        };
+      
+        // UI init (не меняем localStorage здесь)
+        const cur = localStorage.getItem('lang') || 'ru';
+        if (LANG_MAP[cur]) {
+          flagEl.src = LANG_MAP[cur].flag;
+          textEl.textContent = LANG_MAP[cur].label;
+        }
+        function highlightSelected(lang) {
+          menu.querySelectorAll('.lang-option').forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
+        }
+        highlightSelected(cur);
+      
+        // Если updateUserSettings отсутствует — наш PATCH
+        async function sendSettingsPatch(bodyObj) {
+          const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+          if (!token) throw new Error('Токен не найден в localStorage');
+          const resp = await fetch('https://portal.femo.kz/api/users/settings/', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(bodyObj)
+          });
+          if (!resp.ok) {
+            let json = null;
+            try { json = await resp.json(); } catch(e){/*ignore*/}
+            const msg = (json && (json.detail || JSON.stringify(json))) || `status ${resp.status}`;
+            throw new Error(msg);
+          }
+          return resp.json().catch(()=>null);
+        }
+      
+        // НОВАЯ: более надёжная логика смены языка
+        async function setLanguage(lang) {
+          if (!LANG_MAP[lang]) throw new Error('Unknown language: ' + String(lang));
+      
+          // Сохраним предыдущее значение до любых записей
+          const prevLang = localStorage.getItem('lang') || 'ru';
+      
+          // Обновим UI немедленно, чтобы не ждать сетевого запроса
+          flagEl.src = LANG_MAP[lang].flag;
+          textEl.textContent = LANG_MAP[lang].label;
+          highlightSelected(lang);
+          menu.classList.add('hidden');
+      
+          const payloadLang = (lang === 'kz') ? 'kz' : (lang === 'en' ? 'en' : 'ru');
+      
+          try {
+            // Попробуем использовать готовую функцию, если есть
+            if (typeof updateUserSettings === 'function') {
+              await updateUserSettings({ language: payloadLang });
+            } else {
+              await sendSettingsPatch({ language: payloadLang });
+            }
+      
+            // Успешно обновлено на сервере (или успешно выполнился PATCH)
+            // Записываем факт в localStorage ТОЛЬКО после успеха
+            localStorage.setItem('lang', payloadLang);
+            showSuccess('Язык изменён');
+      
+            // Если произошла реальная смена (payload != prev) — форсим перезагрузку/обновление i18n
+            if (payloadLang !== prevLang) {
+              if (typeof changeLanguageAndReload === 'function') {
+                try {
+                  await changeLanguageAndReload(payloadLang, { reload: true });
+                  return;
+                } catch (err) {
+                  console.warn('changeLanguageAndReload failed, fallback to reload', err);
+                }
+              }
+              // fallback — перезагрузим страницу, чтобы все тексты обновились
+              setTimeout(() => location.reload(), 700);
+            } else {
+              // Если prev == payload — возможно сервер уже хранил такой язык,
+              // но UI всё равно уже показал новый флаг/метку (если локально различие было).
+              // Мы не делаем reload, чтобы не перезагружать зря.
+              console.log('Язык не изменился на сервере (prev == payload). Перезагрузка не требуется.');
+            }
+          } catch (err) {
+            console.error('Ошибка при установке языка:', err);
+            showError(String(err.message || err));
+            // В случае ошибки откатим UI к prev
+            const fallback = prevLang || 'ru';
+            if (LANG_MAP[fallback]) {
+              flagEl.src = LANG_MAP[fallback].flag;
+              textEl.textContent = LANG_MAP[fallback].label;
+              highlightSelected(fallback);
+            }
+          }
+        }
+      
+        // обработчики
+        dropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          menu.classList.toggle('hidden');
+        });
+      
+        menu.querySelectorAll('.lang-option').forEach(el => {
+          el.addEventListener('click', async (e) => {
+            const lang = el.dataset.lang;
+            await setLanguage(lang);
+          });
+        });
+      
+        document.addEventListener('click', (e) => {
+          const dropdownRoot = document.getElementById('lang-dropdown');
+          if (!dropdownRoot) return;
+          if (!dropdownRoot.contains(e.target)) menu.classList.add('hidden');
+        });
+      
+      });
+      </script>
+      
+      
   </body>
 </html>

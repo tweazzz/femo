@@ -18,6 +18,8 @@
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
 
+    
+    
   <body>
     <div class="flex h-screen">
       <!-- Sidebar -->
@@ -237,6 +239,16 @@
                             required
                           />
                         </label>
+                        <label class="btn-option" data-i18n="tasks.add_olymp_type_daily">
+                          Задача олимпиады
+                          <input
+                            type="radio"
+                            name="role"
+                            value="olym"
+                            class="hidden"
+                            required
+                          />
+                        </label>
                       </div>
 
                       <!-- Participant Form (shown by default) -->
@@ -249,22 +261,7 @@
                             <div
                               class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4 sm:grid-cols-2"
                             >
-                              <div>
-                                <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
-                                  data-i18n="tasks.add_task_name"
-                                  >Название задачи
-                                  <span class="text-red-primary">*</span></label
-                                >
-                                <input
-                                  id="title-add-participant"
-                                  placeholder="Комбинаторика"
-                                  type="text"
-                                  class="input-base border-default"
-                                  value="Комбинаторика"
-                                  required
-                                />
-                              </div>
+
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
@@ -429,6 +426,56 @@
                             data-i18n="tasks.add_task_soderjanie">
                               Содержание задачи
                             </p>
+                            
+                            <div class="flex flex-wrap items-center gap-4">
+                              <label class="switch-btn flex items-center gap-2">
+                                <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="ru" class="hidden" required="">
+                                Русский
+                              </label>
+            
+                              <label class="switch-btn flex items-center gap-2">
+                                <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="kz" class="hidden" required="">
+                                Қазақша
+                              </label>
+            
+                              <label class="switch-btn flex items-center gap-2">
+                                <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="en" class="hidden" required="">
+                                English
+                              </label>
+                              <!-- Azerbaijani -->
+                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="az">
+                                <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="az" class="hidden" required>
+                                <span class="lang-label">Азербайджанский</span>
+                              </label>
+
+                              <!-- Georgian -->
+                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="ka">
+                                <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="ka" class="hidden" required>
+                                <span class="lang-label">Грузинский</span>
+                              </label>
+                            </div>
+                            
+                            <div style="margin-top:40px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
+                              <label
+                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="tasks.add_task_name"
+                                >Название задачи
+                                <span class="text-red-primary">*</span></label
+                              >
+                              <input
+                                id="title-add-participant"
+                                placeholder="Комбинаторика"
+                                type="text"
+                                class="input-base border-default"
+                                required
+                              />
+                            </div>
+
                             <div
                               class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4"
                             >
@@ -447,7 +494,7 @@
                                     placeholder="Введите ваше сообщение..."
                                     class="textarea input-base border-default px-4"
                                     required
-                                  >...</textarea
+                                  ></textarea
                                   >
                                 </div>
                               </div>
