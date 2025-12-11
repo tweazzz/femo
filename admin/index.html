@@ -708,6 +708,30 @@
     <script src="/src/scripts/i18n.js"></script>
     <script src="/src/scripts/langInit.js"></script>
     <script src="/auth.js" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+  
+        const lang = localStorage.getItem("lang") || "ru";
+        const backendLang = (lang === "kz") ? "kz" : lang;
+  
+        try {
+          await fetch("https://portal.femo.kz/api/users/settings/", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ language: backendLang }),
+          });
+          console.log("Язык синхронизирован с сервером:", backendLang);
+        } catch (e) {
+          console.warn("Не удалось синхронизировать язык на дашборде:", e);
+        }
+      });
+  
+      </script>
     <script src="/src/admin/index.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
     <script src="/src/admin/settings.js" defer></script>

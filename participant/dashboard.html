@@ -715,6 +715,30 @@
         </main>
       </div>
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+
+      const lang = localStorage.getItem("lang") || "ru";
+      const backendLang = (lang === "kz") ? "kz" : lang;
+
+      try {
+        await fetch("https://portal.femo.kz/api/users/settings/", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({ language: backendLang }),
+        });
+        console.log("Язык синхронизирован с сервером:", backendLang);
+      } catch (e) {
+        console.warn("Не удалось синхронизировать язык на дашборде:", e);
+      }
+    });
+
+    </script>
     <style>
       .lang-option.active {
   color: var(--color-orange-primary);
@@ -904,21 +928,10 @@
             // сохраняем локально
             localStorage.setItem("lang", lang);
 
-            // --- вот важное место ---
+            // синхронизация с бэкендом
             if (typeof updateUserSettings === "function") {
-              try {
-                // отправляем PATCH на сервер, как в твоей реализации input[name="lang"]
-                await updateUserSettings({ language: lang });
-
-                // Триггерим событие для i18n (чтобы фронт обновил тексты и имя пользователя)
-                window.dispatchEvent(new Event("i18n:languageChanged"));
-              } catch (err) {
-                console.error("Ошибка при смене языка через API:", err);
-                alert("Не удалось сменить язык. Попробуйте снова.");
-              }
-            } else {
-              console.warn("updateUserSettings не найдена. Язык обновлён только локально");
-              location.reload();
+              await updateUserSettings({ language: lang });
+              window.dispatchEvent(new Event("i18n:languageChanged"));
             }
           });
         });
@@ -939,6 +952,7 @@
 });
 
     </script>
-
+    <script>
+    </script>
   </body>
 </html>

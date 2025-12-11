@@ -380,12 +380,19 @@ async function loadTaskMock() {
     levelEl.textContent = levelText;
     levelEl.className = `${levelClass} border-default rounded-xl px-2 py-0.5 text-sm`;
 
+    // Универсальное вычисление XP (работает для daily и general)
+    const xp = (task.points ?? task.awarded_points ?? task.base_points ?? 0);
+
     const pointsEl = document.getElementById('task-points');
-    pointsEl.innerHTML = `<span class="font-bold">${task.points} XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
+    pointsEl.innerHTML = `
+      <span class="font-bold">${xp} XP</span>
+      <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">
+    `;
     pointsEl.className = 'text-orange-primary bg-orange-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
 
+
     const bonusEl = document.getElementById('task-bonus');
-    bonusEl.innerHTML = `<span class="font-bold">${task.points} XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
+    bonusEl.innerHTML = `<span class="font-bold">15 XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
     bonusEl.className = 'text-blue-primary bg-blue-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
 
     const statusText = task.status
@@ -460,6 +467,8 @@ async function loadTaskMock() {
 
 function renderAttachments(task) {
   const attachmentsContainer = document.getElementById('task-attachments');
+  if (!attachmentsContainer) return;
+
   attachmentsContainer.innerHTML = '';
 
   // SVG как строка
@@ -482,13 +491,21 @@ function renderAttachments(task) {
             stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M7.5 10.8335L10 13.3335L12.5 10.8335"
             stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
+    </svg>
+  `;
 
-  task.attachments.forEach(file => {
-    // берём URL
-    const url = file.file_url;
-    // выдираем из него имя (после последнего '/'), decodeURIComponent на всякий случай
-    const fileName = decodeURIComponent(url.split('/').pop());
+  // НОРМАЛИЗАЦИЯ
+  const files = Array.isArray(task?.attachments) ? task.attachments : [];
+
+  // Если вложений нет — просто выходим
+  if (files.length === 0) return;
+
+  files.forEach(file => {
+    // безопасная обработка URL
+    const url = file?.file_url || file?.url;
+    if (!url) return;
+
+    const fileName = decodeURIComponent(url.split('/').pop() || 'Файл');
 
     const link = document.createElement('a');
     link.href = url;
@@ -503,6 +520,7 @@ function renderAttachments(task) {
     attachmentsContainer.appendChild(link);
   });
 }
+
 
 
 // Показывать/скрывать кнопку очистки при вводе

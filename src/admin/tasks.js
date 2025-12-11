@@ -247,6 +247,7 @@ function getTaskTypeLabel(type) {
   const map = {
     daily: 'Задача дня',
     preparatory: 'Подготовительная',
+    olympiad: 'Олимпиада',
   };
   return map[type] || type;
 }

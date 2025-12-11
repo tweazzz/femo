@@ -152,8 +152,15 @@ async function waitForAllWithTimeout(promises = [], timeoutMs = 5000) {
 
 /* ----------------- Основная логика ----------------- */
 async function initLanguageOnPage({ waitForAppPromises = true, appWaitTimeout = 5000, showLoader = true } = {}) {
-  const { role, page } = detectRoleAndPage();
+  let { role, page } = detectRoleAndPage();
+  const isPublic = document.body.dataset.publicPage === "true";
 
+  const isPublicPage = document.body.dataset.publicPage === "true";
+  if (isPublicPage) {
+    role = "public";          // теперь можно менять
+    try { localStorage.removeItem("access_token"); } catch(e){}
+  }
+  
   // Показать лоадер
   if (showLoader) showLoadingOverlay();
 
@@ -162,17 +169,22 @@ async function initLanguageOnPage({ waitForAppPromises = true, appWaitTimeout = 
 
   // Попытка получить настройки с сервера (но не дольше appWaitTimeout)
   let settings = null;
-  try {
-    settings = await fetchUserSettingsOnce();
-  } catch (e) {
-    console.warn('langInit: fetchUserSettingsOnce failed', e);
+  if (!isPublic) {
+    try {
+      settings = await fetchUserSettingsOnce();
+    } catch (e) {
+      console.warn('langInit: fetchUserSettingsOnce failed', e);
+    }
   }
 
   // Авторитетный язык от сервера (если есть)
   const serverLang = settings && settings.language ? (settings.language === 'kk' ? 'kz' : settings.language) : null;
 
   // Решаем какой frontendLang использовать: серверный > cached > ru
-  const frontendLangToApply = serverLang || cached || 'ru';
+  const frontendLangToApply = cached || 
+  (settings?.language ? (settings.language === 'kk' ? 'kz' : settings.language) : null) 
+  || 'ru';
+
 
   // Установим localStorage(lang, backend_lang) в соответствии с выбранным
   try { localStorage.setItem('lang', frontendLangToApply); } catch(e){}
