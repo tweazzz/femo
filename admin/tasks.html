@@ -244,7 +244,7 @@
                           <input
                             type="radio"
                             name="role"
-                            value="olym"
+                            value="olympiad"
                             class="hidden"
                             required
                           />
@@ -430,97 +430,130 @@
                             <div class="flex flex-wrap items-center gap-4">
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="ru" class="hidden" required="">
+                                <input type="radio" name="lang" value="ru" class="hidden" checked>
                                 Русский
                               </label>
             
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="kz" class="hidden" required="">
+                                <input type="radio" name="lang" value="kz" class="hidden">
                                 Қазақша
                               </label>
             
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="en" class="hidden" required="">
+                                <input type="radio" name="lang" value="en" class="hidden">
                                 English
                               </label>
                               <!-- Azerbaijani -->
                               <label class="switch-btn lang-option flex items-center gap-2" data-lang="az">
                                 <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="az" class="hidden" required>
+                                <input type="radio" name="lang" value="az" class="hidden">
                                 <span class="lang-label">Азербайджанский</span>
                               </label>
 
                               <!-- Georgian -->
                               <label class="switch-btn lang-option flex items-center gap-2" data-lang="ka">
                                 <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="ka" class="hidden" required>
+                                <input type="radio" name="lang" value="ge" class="hidden">
                                 <span class="lang-label">Грузинский</span>
                               </label>
                             </div>
                             
                             <div style="margin-top:40px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
                               <label
+                                id="task-title-label"
                                 class="text-gray-primary mb-1 block text-sm font-medium"
                                 data-i18n="tasks.add_task_name"
-                                >Название задачи
-                                <span class="text-red-primary">*</span></label
                               >
-                              <input
-                                id="title-add-participant"
-                                placeholder="Комбинаторика"
-                                type="text"
-                                class="input-base border-default"
-                                required
-                              />
+                                Название задачи <span class="text-red-primary">*</span>
+                              </label>
+
+                              <!-- Инпуты для каждого языка -->
+                              <div id="title-add-participant">
+                                <input id="title-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
+                                <input id="title-kz" class="lang-input input-base border-default" data-lang="kz" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="title-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="title-ge" class="lang-input input-base border-default" data-lang="ge" placeholder="Комбинаторика (GE)" style="display:none">
+                              </div>
                             </div>
 
-                            <div
-                              class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4"
-                            >
-                              <div>
+                            <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
                                 <label
+                                  id="task-textarea-label"
                                   class="text-gray-primary mb-1 block text-sm font-medium"
                                   data-i18n="tasks.add_task_uslovie"
                                   >Условие задачи
-                                  <span class="text-red-primary">*</span></label
-                                >
-                                <div class="relative">
-                                  <textarea
-                                    id="desc-add-participant"
-                                    oninput="auto_grow(this)"
-                                    rows="2"
-                                    placeholder="Введите ваше сообщение..."
-                                    class="textarea input-base border-default px-4"
-                                    required
-                                  ></textarea
-                                  >
+                                  <span class="text-red-primary">*</span></label>
+                                  <div id="desc-add-participant">
+                                    <textarea id="desc-ru"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="ru"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(RU)"
+                                    ></textarea>
+
+                                    <textarea id="desc-kz"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="kz"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(KZ)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="desc-en"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="en"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(EN)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="desc-az"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="az"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(AZ)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="desc-ge"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="ge"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(GE)"
+                                      style="display:none"
+                                    ></textarea>
                                 </div>
-                              </div>
 
                               <div>
-                                <label class="text-gray-primary mb-1 block text-sm font-medium" for="files-add-participant"
+                                <label
+                                id="file-label"
+                                class="text-gray-primary mb-1 block text-sm font-medium cursor-pointer" for="files-add-participant"
                                 data-i18n="tasks.upload_file">
                                   Прикрепите файл
+                                  <span class="text-red-primary">*</span>
                                 </label>
-                                <input
-                                  id="files-add-participant"
-                                  type="file"
-                                  multiple
-                                  class="hidden"
-                                  onchange="handleFilesChange(this, 'add-participant')"
-                                />
-                                <div id="files-list-add-participant" class="space-y-2">
-                                  <!-- Здесь JS будет рендерить <a> с классом text-orange-primary -->
+                                <!-- Файлы для каждого языка -->
+                                <div id="files-add-participant">
+                                  <input id="files-ru" type="file" data-lang="ru" multiple class="hidden file-input" />
+                                  <input id="files-kz" type="file" data-lang="kz" multiple class="hidden file-input" />
+                                  <input id="files-en" type="file" data-lang="en" multiple class="hidden file-input" />
+                                  <input id="files-az" type="file" data-lang="az" multiple class="hidden file-input" />
+                                  <input id="files-ge" type="file" data-lang="ge" multiple class="hidden file-input" />
                                 </div>
+                                <!-- Список выбранных файлов -->
+                                <div id="files-list-add-participant" class="space-y-2"></div>
                               </div>
 
                             </div>
                           </div>
 
                           <div>
-                            <p class="mb-3 text-lg font-semibold text-gray-900" data-i18n="tasks.correct_answer">
+                            <p
+                              id="correct-answer-label"
+                              class="mb-3 text-lg font-semibold text-gray-900" data-i18n="tasks.correct_answer">
                               Правильный ответ
                             </p>
                             <div
@@ -528,6 +561,7 @@
                             >
                               <div>
                                 <label
+                                  id="type-correct-answer-label"
                                   class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="tasks.correct_answer_type"
                                   >Выбрать тип правильного ответа
                                   <span class="text-red-primary mb-1"
@@ -538,7 +572,7 @@
                                   <label
                                     class="btn-option flex items-center gap-2"
                                   >
-                                    <span data-i18n="tasks.correct_answer_type_number">Число</span>
+                                    <span id="number-label" data-i18n="tasks.correct_answer_type_number">Число</span>
                                     <input
                                       id="answer1-type-add-participant"
                                       type="radio"
@@ -553,7 +587,7 @@
                                   <label
                                     class="btn-option flex items-center gap-2"
                                   >
-                                    <span data-i18n="tasks.correct_answer_type_text">Текст</span>
+                                    <span id="text-label" data-i18n="tasks.correct_answer_type_text">Текст</span>
                                     <input
                                       id="answer2-type-add-participant"
                                       type="radio"
@@ -568,6 +602,7 @@
 
                               <div>
                                 <label
+                                  id="correct-answer-label2"
                                   class="text-gray-primary mb-1 block text-sm font-medium"
                                   data-i18n="tasks.correct_answer"
                                   >Правильный ответ
@@ -575,15 +610,58 @@
                                     >*</span
                                   ></label
                                 >
-                                <input
-                                  id="answer-add-participant"
-                                  placeholder="15"
-                                  value="15"
-                                  type="text"
-                                  name="answer"
-                                  class="input-base border-default"
-                                  required
-                                />
+                                <div id="answer-add-participant">
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="ru"
+                                    placeholder="RU"
+                                    type="text"
+                                    name="answer-ru"
+                                    value="15"
+                                    style="display: block;"
+                                    required
+                                  />
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="kz"
+                                    placeholder="KZ"
+                                    type="text"
+                                    name="answer-kz"
+                                    value="15"
+                                    style="display: none;"
+                                    required
+                                  />
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="en"
+                                    placeholder="EN"
+                                    type="text"
+                                    name="answer-en"
+                                    value="15"
+                                    style="display: none;"
+                                    required
+                                  />
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="az"
+                                    placeholder="AZ"
+                                    type="text"
+                                    name="answer-az"
+                                    value="15"
+                                    style="display: none;"
+                                    required
+                                  />
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="ge"
+                                    placeholder="GE"
+                                    type="text"
+                                    name="answer-ge"
+                                    value="15"
+                                    style="display: none;"
+                                    required
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1880,67 +1958,6 @@
 function auto_grow(el) {
   el.style.height = 'auto';
   el.style.height = (el.scrollHeight) + 'px';
-}
-
-// Объект для хранения выбранных файлов по формам
-// const attachments = {
-//   'add-participant': [],
-//   'edit-participant': []
-// };
-
-function handleFilesChange(inputEl, formKey) {
-  // 1) Собираем новые файлы
-  const newFiles = Array.from(inputEl.files);
-
-  // 2) Добавляем их к уже существующим, фильтруя повторные
-  const existing = attachments[formKey] || [];
-  newFiles.forEach(f => {
-    const duplicate = existing.some(e => e.name === f.name && e.size === f.size);
-    if (!duplicate) existing.push(f);
-  });
-  attachments[formKey] = existing;
-
-  // 3) Сбрасываем input, чтобы onchange срабатывал всегда
-  inputEl.value = '';
-
-  // 4) Рендерим список
-  const listEl = document.getElementById(`files-list-${formKey}`);
-  listEl.innerHTML = '';
-  existing.forEach((file, idx) => {
-    const row = document.createElement('div');
-    row.className = 'flex items-center justify-between';
-
-    // имя файла как <a> оранжевого цвета
-    const link = document.createElement('a');
-    link.textContent = file.name;
-    link.href = '#';
-    link.className = 'text-orange-primary hover:underline';
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = '×';
-    btn.className = 'ml-2 text-red-500 hover:text-red-700';
-    btn.onclick = () => {
-      attachments[formKey].splice(idx, 1);
-      handleFilesChange(inputEl, formKey);
-    };
-
-    row.append(link, btn);
-    listEl.appendChild(row);
-  });
-}
-
-function renderFiles(formKey) {
-  const fileListEl = document.getElementById(`files-list-${formKey}`);
-  fileListEl.innerHTML = ''; // очистить список
-  attachments[formKey].forEach((file, idx) => {
-    const a = document.createElement('a');
-    a.href = '#';
-    a.className = 'text-orange-primary flex items-center gap-1';
-    a.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
-    // (По желанию можно добавить кнопку удаления файла)
-    fileListEl.appendChild(a);
-  });
 }
 
    </script>
