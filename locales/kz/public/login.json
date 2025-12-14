@@ -6,7 +6,7 @@
     "registration.reset_pass": "Аккаунтқа кіруді қалпына келтіру",
     "registration.password": "Құпия сөз",
     "registration.password_placeholder": "",
-    "" : "",
-    "" : ""
+    "login_btn" : "Кіру",
+    "no_account?" : "Аккаунтыныз жок па?"
 
 }

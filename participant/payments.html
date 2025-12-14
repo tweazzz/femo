@@ -110,9 +110,9 @@
               <!-- MY BALANCE -->
               <div class="balance-card">
                 <span class="balance-label">Баланс:</span>
-                <span class="balance">0 ₸</span>
+                <span class="balance" id="balance_2">0 <span id="balance_currency_2"></span></span>
               </div>
-              
+
 
               <!-- DROPDOWN -->
               <div class="relative inline-block text-left" id="lang-dropdown">
@@ -230,9 +230,12 @@
               class="bg-orange-secondary relative w-full max-w overflow-hidden rounded-2xl p-5"
             >
               <p class="text-sm" data-i18n="my_way.my_balance">Мой баланс</p>
-              <p class="balance text-orange-primary mb-6 text-4xl font-bold">
-                0 ₸
-              </p>
+              <div>
+                <p id='balance'class="balance text-orange-primary mb-6 text-4xl font-bold">
+                  0
+                  <span id="balance_currency"></span>
+                </p>
+              </div>
 
               <button
               type="button"
@@ -727,85 +730,115 @@
 </script>
     <script src="/src/participant/settings.js" defer></script>
     <script>
-      async function loadBalance() {
-    const token = localStorage.getItem('access_token')
-    if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.')
-    return
-    }
-
-    try {
-    const response = await authorizedFetch('https://portal.femo.kz/api/payments/participant/dashboard/balance/', {
-      headers: {
-        Authorization: `Bearer ${token}`
+     async function loadBalance() {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Токен не найден. Пожалуйста, войдите заново.');
+        return;
       }
-    })
 
-    if (!response.ok) {
-      throw new Error(`Ошибка загрузки баланса: ${response.status}`)
-    }
+      try {
+        const response = await authorizedFetch(
+          'https://portal.femo.kz/api/payments/participant/dashboard/balance/',
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
 
-    const data = await response.json()
-    const balanceEl = document.querySelector('.balance')
-    if (balanceEl) {
-      balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
-    }
-    } catch (err) {
-    console.error('Ошибка при загрузке баланса:', err)
-    }
-    }
+        if (!response.ok) {
+          throw new Error(`Ошибка загрузки баланса: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('BALANCE RESPONSE:', data);
+
+        // Безопасно парсим баланс
+        const rawBalance = Number(data?.balance ?? 0);
+        const balanceNumber = Number.isFinite(rawBalance) ? rawBalance : 0;
+
+        // Символ валюты (fallback на код)
+        const currencyMap = {
+          'KZT': '₸',
+          'RUB': '₽',
+          'USD': '$',
+          'EUR': '€'
+        };
+        const currencyCode = String((data?.currency || '')).toUpperCase();
+        const currencySymbol = currencyMap[currencyCode] || currencyCode || 'T';
+
+        // Форматирование числа (разделители тысяч)
+        const formatted = balanceNumber.toLocaleString('ru-RU');
+
+        // Вставка в #balance_2 (твой карточный вариант)
+        const balance2 = document.getElementById('balance_2');
+        if (balance2) {
+          // используем innerHTML чтобы точно гарантировать пробел и вложенный span
+          balance2.innerHTML = `${formatted} <span id="balance_currency_2">${currencySymbol}</span>`;
+          // для доступности
+          balance2.setAttribute('aria-label', `Баланс ${formatted} ${currencySymbol}`);
+        }
+
+        // Также поддерживаем основной #balance (если есть на странице)
+        const balanceMain = document.getElementById('balance');
+        if (balanceMain) {
+          // если у тебя уже есть span внутри с id balance_currency — перезапишем его
+          balanceMain.innerHTML = `${formatted} <span id="balance_currency">${currencySymbol}</span>`;
+          balanceMain.setAttribute('aria-label', `Баланс ${formatted} ${currencySymbol}`);
+        }
+
+        // Если нужно обновить дополнительные места с другим id
+        const balanceCurrency2 = document.getElementById('balance_currency_2');
+        if (balanceCurrency2) balanceCurrency2.textContent = currencySymbol;
+
+        const balanceCurrency = document.getElementById('balance_currency');
+        if (balanceCurrency) balanceCurrency.textContent = currencySymbol;
+
+      } catch (err) {
+        console.error('Ошибка при загрузке баланса:', err);
+      }
+    }     
       document.addEventListener("DOMContentLoaded", () => {
         const dropdownBtn = document.getElementById("lang-dropdown-btn");
         const menu = document.getElementById("lang-menu");
-
+      
         const flagEl = document.getElementById("lang-flag");
         const textEl = document.getElementById("lang-text");
-
+      
         const langMap = {
           ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
           kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
           en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
         };
-
-        // открыть / закрыть меню
+      
         dropdownBtn.addEventListener("click", () => {
           menu.classList.toggle("hidden");
         });
-
-        // Подсветка выбранного языка
+      
         function highlightSelected(lang) {
           document.querySelectorAll(".lang-option").forEach(opt => {
             opt.classList.toggle("active", opt.dataset.lang === lang);
           });
         }
-
-        // установить язык при загрузке
+      
         const current = localStorage.getItem("lang") || "ru";
         flagEl.src = langMap[current].flag;
         textEl.textContent = langMap[current].label;
         highlightSelected(current);
-
-        // Обработчик выбора языка
+      
         document.querySelectorAll("#lang-menu .lang-option").forEach(opt => {
           opt.addEventListener("click", async () => {
             const lang = opt.dataset.lang;
-
-            // обновляем UI
+      
             flagEl.src = langMap[lang].flag;
             textEl.textContent = langMap[lang].label;
             highlightSelected(lang);
             menu.classList.add("hidden");
-
-            // сохраняем локально
+      
             localStorage.setItem("lang", lang);
-
-            // --- вот важное место ---
+      
             if (typeof updateUserSettings === "function") {
               try {
-                // отправляем PATCH на сервер, как в твоей реализации input[name="lang"]
                 await updateUserSettings({ language: lang });
-
-                // Триггерим событие для i18n (чтобы фронт обновил тексты и имя пользователя)
                 window.dispatchEvent(new Event("i18n:languageChanged"));
               } catch (err) {
                 console.error("Ошибка при смене языка через API:", err);
@@ -817,23 +850,18 @@
             }
           });
         });
-
-        // закрытие при клике вне dropdown
+      
         document.addEventListener("click", (e) => {
           if (!document.getElementById("lang-dropdown").contains(e.target)) {
             menu.classList.add("hidden");
           }
         });
+      
+        // Загрузка баланса сразу после DOMContentLoaded
+        loadBalance();
       });
-
-      document.addEventListener("DOMContentLoaded", async () => {
-    // ... весь твой код dropdown
-
-    // Загрузка баланса
-    await loadBalance();
-    });
-
     </script>
+      
     <style>
           .lang-option.active {
       color: var(--color-orange-primary);

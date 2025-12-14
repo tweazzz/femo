@@ -439,25 +439,52 @@ async function loadBalance() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.femo.kz/api/payments/participant/dashboard/balance/', {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const response = await authorizedFetch(
+      'https://portal.femo.kz/api/payments/participant/dashboard/balance/',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
 
     if (!response.ok) {
       throw new Error(`Ошибка загрузки баланса: ${response.status}`)
     }
 
     const data = await response.json()
-    const balanceEl = document.querySelector('.balance')
-    if (balanceEl) {
-      balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
+    console.log('BALANCE RESPONSE:', data)
+
+    const balanceEl = document.getElementById('balance')
+    const currencyEl = document.getElementById('balance_currency')
+
+    if (balanceEl && currencyEl) {
+      // безопасно парсим баланс
+      const rawBalance = Number(data.balance ?? 0)
+      const balanceNumber = Number.isFinite(rawBalance) ? rawBalance : 0
+
+      // мапа символов для известных валют
+      const currencyMap = {
+        'KZT': '₸',
+        'RUB': '₽',
+        'USD': '$',
+        'EUR': '€'
+      }
+      const currencyCode = (data.currency || '').toUpperCase()
+      const currencySymbol = currencyMap[currencyCode] || currencyCode || 'T'
+
+      // вставляем в DOM с пробелом между числом и валютой
+      balanceEl.childNodes[0].textContent = balanceNumber.toLocaleString('ru-RU') + ' '
+      currencyEl.textContent = currencySymbol
+    } else {
+      console.warn('Элементы #balance или #balance_currency не найдены')
     }
   } catch (err) {
     console.error('Ошибка при загрузке баланса:', err)
   }
 }
+
+
 
 
 async function loadActiveOlympiads() {
