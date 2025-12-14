@@ -339,6 +339,84 @@
     </div>
     </div>
 
+    <!-- Start Olympiad Modal -->
+    <div
+      id="startOlympiadModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50"
+    >
+      <div class="bg-white rounded-xl p-6 w-full max-w-sm text-center">
+
+        <!-- LOGO -->
+       <img
+        src="/src/assets/images/loginImg.png"
+        alt="Logo"
+        class="mx-auto mb-4 h-40 object-contain"
+      />
+
+        <h3 class="text-xl font-semibold mb-4">
+          Ты готов к олимпиаде?
+        </h3>
+
+        <p class="text-sm text-gray-600">
+          Перед тем как начать, выберите язык задач.
+        </p>
+        <p class="text-sm text-gray-600 mb-4">
+          На выполнение у тебя 60 минут.
+        </p>
+
+         <div class="flex flex-wrap items-center mb-6 gap-1">
+          <label class="switch-btn flex items-center gap-1">
+            <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
+            <input type="radio" name="lan" value="ru" class="hidden" checked>
+             Русский
+          </label>
+
+          <label class="switch-btn flex items-center gap-1">
+            <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
+            <input type="radio" name="lan" value="kk" class="hidden">
+             Қазақша
+          </label>
+
+          <label class="switch-btn flex items-center gap-1">
+            <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
+            <input type="radio" name="lan" value="en" class="hidden">
+             English
+          </label>
+          <!-- Azerbaijani -->
+          <label class="switch-btn lang-option flex items-center gap-1" data-lang="az">
+            <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
+            <input type="radio" name="lan" value="az" class="hidden">
+            <span class="lang-label"> Азербайджанский</span>
+          </label>
+
+          <!-- Georgian -->
+          <label class="switch-btn lang-option flex items-center gap-1" data-lang="ka">
+            <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
+            <input type="radio" name="lan" value="ka" class="hidden">
+            <span class="lang-label"> Грузинский</span>
+          </label>
+        </div>
+
+        <div class="flex justify-center gap-2">
+          <button
+            id="cancelStartOlympiad"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium
+            border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap
+            cursor-pointer"
+          >
+            Отменить
+          </button>
+
+          <button
+            id="confirmStartOlympiad"
+            class="bg-orange-primary text-white border-orange-primary min-w-[120px] cursor-pointer rounded-xl border-1 px-4 py-2"
+          >
+            Да, начать
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       lucide.createIcons()
 

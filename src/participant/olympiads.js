@@ -394,7 +394,9 @@ async function loadOlympiadCards() {
 
             // Кнопка "Начать олимпиаду"
             const startBtn = document.createElement('a');
-            startBtn.href = '/participant/tasks.html';
+            startBtn.addEventListener('click', () => {
+              openStartOlympiadModal('/participant/task_olympiad.html');
+            });
             startBtn.textContent = 'Начать олимпиаду';
             startBtn.style.backgroundColor = '#0DB459';
             startBtn.style.color = '#fff';
@@ -435,5 +437,41 @@ async function loadOlympiadCards() {
   }
 }
 
+let startOlympiadUrl = null;
 
+function openStartOlympiadModal(url) {
+  startOlympiadUrl = url;
+  const modal = document.getElementById('startOlympiadModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeStartOlympiadModal() {
+  startOlympiadUrl = null;
+  const modal = document.getElementById('startOlympiadModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+// Отменить
+document
+  .getElementById('cancelStartOlympiad')
+  .addEventListener('click', closeStartOlympiadModal);
+
+// Да, начать
+document
+  .getElementById('confirmStartOlympiad')
+  .addEventListener('click', () => {
+    if (startOlympiadUrl) {
+      window.location.href = startOlympiadUrl;
+    }
+  });
+
+// 🔥 Клик по пустому месту
+const startOlympiadModal = document.getElementById('startOlympiadModal');
+startOlympiadModal.addEventListener('click', (e) => {
+  if (e.target === startOlympiadModal) {
+    closeStartOlympiadModal();
+  }
+});
 
