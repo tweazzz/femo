@@ -18,8 +18,8 @@
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
 
-    
-    
+
+
   <body>
     <div class="flex h-screen">
       <!-- Sidebar -->
@@ -161,7 +161,7 @@
             <h1 class="text-2xl font-semibold" data-i18n="tasks.control">Управление задачами</h1>
             <div class="flex items-center gap-4">
               <!-- <button
-                
+
                 class="text-orange-primary border-orange-primary flex cursor-pointer items-center gap-2 rounded-xl border-1 bg-white px-4 py-2"
               >
                 <svg
@@ -191,6 +191,7 @@
                 </svg>
                 <span data-i18n="tasks.add_task_btn">Создать задачу</span>
               </button>
+
               <div
                 id="overlayModal"
                 class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"
@@ -249,6 +250,43 @@
                             required
                           />
                         </label>
+                      </div>
+
+                      <div id="olympiad-select-wrapper" class="hidden">
+                        <label
+                          style="margin-top:10px;"
+                          class="text-gray-primary mb-1 block text-sm font-medium"
+                          data-i18n="tasks.add_task_class"
+                          >Выберите название олимпиады
+                          <span class="text-red-primary">*</span></label
+                        >
+                        <div class="relative">
+                          <select
+                            id="olympiad-add-participant"
+                            name="add-olympiades"
+                            class="multi-select input-base border-default appearance-none"
+                            required
+                          >
+                          </select>
+                          <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="size-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                              />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
 
                       <!-- Participant Form (shown by default) -->
@@ -426,20 +464,20 @@
                             data-i18n="tasks.add_task_soderjanie">
                               Содержание задачи
                             </p>
-                            
+
                             <div class="flex flex-wrap items-center gap-4">
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="ru" class="hidden" checked>
                                 Русский
                               </label>
-            
+
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="kz" class="hidden">
+                                <input type="radio" name="lang" value="kk" class="hidden">
                                 Қазақша
                               </label>
-            
+
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="en" class="hidden">
@@ -455,11 +493,11 @@
                               <!-- Georgian -->
                               <label class="switch-btn lang-option flex items-center gap-2" data-lang="ka">
                                 <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="ge" class="hidden">
+                                <input type="radio" name="lang" value="ka" class="hidden">
                                 <span class="lang-label">Грузинский</span>
                               </label>
                             </div>
-                            
+
                             <div style="margin-top:40px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
                               <label
                                 id="task-title-label"
@@ -472,10 +510,10 @@
                               <!-- Инпуты для каждого языка -->
                               <div id="title-add-participant">
                                 <input id="title-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
-                                <input id="title-kz" class="lang-input input-base border-default" data-lang="kz" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="title-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
                                 <input id="title-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
                                 <input id="title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
-                                <input id="title-ge" class="lang-input input-base border-default" data-lang="ge" placeholder="Комбинаторика (GE)" style="display:none">
+                                <input id="title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
 
@@ -494,9 +532,9 @@
                                       placeholder="Введите ваше сообщение...(RU)"
                                     ></textarea>
 
-                                    <textarea id="desc-kz"
+                                    <textarea id="desc-kk"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="kz"
+                                      data-lang="kk"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(KZ)"
                                       style="display:none"
@@ -518,9 +556,9 @@
                                       style="display:none"
                                     ></textarea>
 
-                                    <textarea id="desc-ge"
+                                    <textarea id="desc-ka"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="ge"
+                                      data-lang="ka"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(GE)"
                                       style="display:none"
@@ -538,10 +576,10 @@
                                 <!-- Файлы для каждого языка -->
                                 <div id="files-add-participant">
                                   <input id="files-ru" type="file" data-lang="ru" multiple class="hidden file-input" />
-                                  <input id="files-kz" type="file" data-lang="kz" multiple class="hidden file-input" />
+                                  <input id="files-kk" type="file" data-lang="kk" multiple class="hidden file-input" />
                                   <input id="files-en" type="file" data-lang="en" multiple class="hidden file-input" />
                                   <input id="files-az" type="file" data-lang="az" multiple class="hidden file-input" />
-                                  <input id="files-ge" type="file" data-lang="ge" multiple class="hidden file-input" />
+                                  <input id="files-ka" type="file" data-lang="ka" multiple class="hidden file-input" />
                                 </div>
                                 <!-- Список выбранных файлов -->
                                 <div id="files-list-add-participant" class="space-y-2"></div>
@@ -623,10 +661,10 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="kz"
+                                    data-lang="kk"
                                     placeholder="KZ"
                                     type="text"
-                                    name="answer-kz"
+                                    name="answer-kk"
                                     value="15"
                                     style="display: none;"
                                     required
@@ -653,10 +691,10 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="ge"
+                                    data-lang="ka"
                                     placeholder="GE"
                                     type="text"
-                                    name="answer-ge"
+                                    name="answer-ka"
                                     value="15"
                                     style="display: none;"
                                     required
@@ -1354,10 +1392,6 @@
           </div>
         </main>
       </div>
-      <div
-        id="overlayModal"
-        class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"
-      ></div>
 
       <div
         id="modalNotification"
@@ -1898,27 +1932,46 @@
       }
 
       function toggleModal(modalId, show = null) {
-        const modal = document.getElementById(modalId)
-        const overlay = document.getElementById('overlayModal')
+        const modal = document.getElementById(modalId);
+        const overlay = document.getElementById('overlayModal');
 
-        // Determine visibility
-        const shouldShow =
-          show !== null ? show : modal.classList.contains('hidden')
+        if (!modal || !overlay) {
+          console.warn('Modal or overlay not found', { modalId });
+          return;
+        }
 
-        // Manage overlay
-        overlay.classList.toggle('hidden', !shouldShow)
+        const isHidden = modal.classList.contains('hidden');
+        const shouldShow = show !== null ? show : isHidden;
 
-        // Toggle modal
-        modal.classList.toggle('hidden', !shouldShow)
+        overlay.classList.toggle('hidden', !shouldShow);
+        modal.classList.toggle('hidden', !shouldShow);
 
-        // Close other modals
-        document.querySelectorAll('.modal').forEach((m) => {
-          if (m.id !== modalId) m.classList.add('hidden')
-        })
+        document.querySelectorAll('.modal').forEach(m => {
+          if (m !== modal) m.classList.add('hidden');
+        });
 
-        // Body scroll control
-        document.body.style.overflow = shouldShow ? 'hidden' : 'auto'
+        document.body.style.overflow = shouldShow ? 'hidden' : '';
       }
+
+
+     document.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('overlayModal');
+        if (!overlay) return;
+
+        overlay.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          setTimeout(() => {
+            document.querySelectorAll('.modal').forEach(m => {
+              m.classList.add('hidden');
+            });
+
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+          }, 0);
+        });
+      });
 
       // Tabs functionality
       document.addEventListener('DOMContentLoaded', function () {
