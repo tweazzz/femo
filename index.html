@@ -286,5 +286,77 @@ fetch("https://portal.femo.kz/api/users/settings/", {
 </script>
 <script src="/src/scripts/i18n.js" defer></script>
 <script src="/src/scripts/langInit.js" defer></script>
-
+<script>
+  (function() {
+    // список региональных кодов СНГ (в верхнем регистре)
+    const CIS_REGIONS = new Set(['RU','BY','AM','AZ','KG','MD','TJ','TM','UZ','UA']);
+    const SUPPORTED = ['ru','kz','en'];
+  
+    // возвращает frontend-код: 'kz'|'ru'|'en'
+    function decideLangByRegion() {
+      // получим массив языков из браузера
+      const navs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || navigator.userLanguage || 'en'];
+  
+      for (const raw of navs) {
+        if (!raw) continue;
+        // normalise: ru-RU or ru_RU -> ['ru','RU']
+        const tag = String(raw).replace('_','-');
+        const parts = tag.split('-');
+        const lang = parts[0].toLowerCase();            // ru, en, kk ...
+        const region = (parts[1] ? parts[1].toUpperCase() : null); // RU, KZ, US ...
+  
+        // 1) если регион явно KZ -> kazakhstan
+        if (region === 'KZ' || lang === 'kk') return 'kz';
+  
+        // 2) если регион в СНГ (и не KZ) -> русский
+        if (region && CIS_REGIONS.has(region)) return 'ru';
+      }
+  
+      // Если не нашли регион в навигационных тегах — fallback по первому языку:
+      const first = String(navs[0] || '').replace('_','-').split('-')[0].toLowerCase();
+      if (first === 'kk' || first === 'kz') return 'kz';
+      if (first === 'ru') return 'ru';
+  
+      // иначе — английский
+      return 'en';
+    }
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      const autoLang = decideLangByRegion(); // 'ru'|'kz'|'en'
+      const saved = localStorage.getItem('lang');
+  
+      // Не перезаписываем выбор пользователя — только если он ранее не выбирал
+      const chosen = saved || autoLang;
+      if (!saved) {
+        localStorage.setItem('lang', autoLang);
+        console.log('Auto-detected language (by region) ->', autoLang);
+      } else {
+        console.log('Language already chosen by user ->', saved);
+      }
+  
+      // Обновим UI (флаг + текст + подсветка)
+      const langMap = {
+        ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
+        kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
+        en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
+      };
+      const flagEl = document.getElementById("lang-flag");
+      const textEl = document.getElementById("lang-text");
+      if (flagEl && textEl && langMap[chosen]) {
+        flagEl.src = langMap[chosen].flag;
+        textEl.textContent = langMap[chosen].label;
+      }
+      document.querySelectorAll(".lang-option").forEach(opt => {
+        opt.classList.toggle("active", opt.dataset.lang === chosen);
+      });
+  
+      // Если нужно — можно автоматически вызвать смену языка в приложении.
+      // У тебя есть функция changeLanguageAndReload — если хочешь, можно её вызвать:
+      // if (typeof changeLanguageAndReload === 'function' && !saved) {
+      //   changeLanguageAndReload(chosen, { reload: false, waitForApp: false });
+      // }
+    });
+  })();
+</script>
+  
   
