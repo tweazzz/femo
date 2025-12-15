@@ -101,7 +101,7 @@
             <div class="flex items-center gap-6">
               <!-- MY BALANCE -->
               <div class="balance-card">
-                <span class="balance-label">Баланс:</span>
+                <span class="balance-label" data-i18n="dashboard.balance">Баланс:</span>
                 <span class="balance">0 ₸</span>
               </div>
               
@@ -818,9 +818,9 @@
                   >
                     <p class="text-xl font-bold" data-i18n="notification.nots-popup">Уведомление</p>
 
-                    <div class="tabs !mb-4 justify-between overflow-x-auto">
+                    <div class="tabs !mb-4 justify-between overflow-x-auto gap-2">
                       <div
-                        class="tabs-link active flex cursor-pointer items-center gap-1"
+                        class="tabs-link active flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="all"
                       >
                         <span>
@@ -843,7 +843,7 @@
                         <span class="count-msg">4</span>
                       </div>
                       <div
-                        class="tabs-link flex cursor-pointer items-center gap-1"
+                        class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="olympiads"
                       >
                         <span>
@@ -865,7 +865,7 @@
                         <span class="count-msg">0</span>
                       </div>
                       <div
-                        class="tabs-link flex cursor-pointer items-center gap-1"
+                        class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="tasks"
                       >
                         <span>
@@ -882,7 +882,7 @@
                         <span class="count-msg">1</span>
                       </div>
                       <div
-                        class="tabs-link flex cursor-pointer items-center gap-1"
+                        class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="profile"
                       >
                         <span>
@@ -896,6 +896,22 @@
                         <span data-i18n="notification.profile">Профиль</span>
                         <span class="count-msg">2</span>
                       </div>
+                      <div
+                      class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
+                      data-tab="payments"
+                    >
+                      <span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M1.66699 7.0874H18.3337" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M5 13.7541H6.66667" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M8.75 13.7541H12.0833" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M5.36699 2.9209H14.6253C17.592 2.9209 18.3337 3.65423 18.3337 6.57923V13.4209C18.3337 16.3459 17.592 17.0792 14.6337 17.0792H5.36699C2.40866 17.0876 1.66699 16.3542 1.66699 13.4292V6.57923C1.66699 3.65423 2.40866 2.9209 5.36699 2.9209Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                          
+                      </span>
+                      <span data-i18n="notification.payments">Оплата</span>
+                      <span class="count-msg">2</span>
+                    </div>
                     </div>
 
                     <div

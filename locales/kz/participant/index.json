@@ -9,6 +9,10 @@
     "dashboard.logout": "Аккаунттан шығу",
     "dashboard.profile": "Профиль",
 
+    "dashboard.balance": "Баланс:",
+    "dashboard.registration_for": "Регистрация ",
+    "dashboard.registration_opened": " олимпиадасына ашық!",
+    "dashboard.registration_btn": "Тіркелу",
     "dashboard.summary-olympiads_count": "Олимпиада саны",
     "dashboard.summary-total_points": "Жалпы ұпай",
     "dashboard.summary-best_rank": "Ең жоғары рейтинг",
@@ -35,6 +39,7 @@
     "notification.olympiads": "Олимпиадалар",
     "notification.tasks": "Тапсырмалар",
     "notification.profile": "Профиль",
+    "notification.payments": "Төлемдер",
 
     "olympiads.olympiads_page": "Барлық олимпиадалар",
     "olympiads.olympiads-active": "Активті",

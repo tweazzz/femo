@@ -298,7 +298,7 @@
             <div class="flex items-center gap-6">
               <!-- MY BALANCE -->
               <div class="balance-card">
-                <span class="balance-label">Баланс:</span>
+                <span class="balance-label" data-i18n="dashboard.balance">Баланс:</span>
                 <span class="balance">0 ₸</span>
               </div>
               
@@ -391,6 +391,53 @@
 
         <!-- Dashboard Content -->
         <main class="flex-1 overflow-y-auto p-6">
+
+        <!-- Блок предупреждения / регистрация -->
+        <div id="registrationBanner"
+          class="bg-orange-secondary border-default rounded-2xl flex items-center justify-between"
+          style="margin-top:20px; margin-bottom: 24px; padding:16px; height:77px;"
+        >
+          <!-- Левый блок: заголовок + дата -->
+          <div class="flex flex-col justify-center min-w-0">
+            <!-- Заголовок (20px) -->
+            <span class="text-xl font-bold truncate">
+              <span data-i18n="dashboard.registration_for">Регистрация на </span><span id="banner_title"></span><span data-i18n="dashboard.registration_opened"> открыта!</span>
+            </span>
+
+            <!-- Нижняя строка: иконка + дата (8px ниже заголовка, 4px между иконкой и текстом) -->
+            <div class="flex items-center gap-1 text-sm text-black" style="margin-top:8px;">
+              <!-- Иконка -->
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M5.3335 1.3334V3.3334" stroke="#222222" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10.6665 1.3334V3.3334" stroke="#222222" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2.3335 6.05997H13.6668" stroke="#222222" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 5.66666V11.3333C14 13.3333 13 14.6667 10.6667 14.6667H5.33333C3 14.6667 2 13.3333 2 11.3333V5.66666C2 3.66666 3 2.33333 5.33333 2.33333H10.6667C13 2.33333 14 3.66666 14 5.66666Z" stroke="#222222" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10.463 9.13334H10.469" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10.463 11.1333H10.469" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7.99715 9.13334H8.00314" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7.99715 11.1333H8.00314" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5.52938 9.13334H5.53537" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5.52938 11.1333H5.53537" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+
+              <!-- Отступ между иконкой и текстом = 4px (gap-1) -->
+              <span class="text-sm leading-none" id="banner_date">7 декабря 2025</span>
+            </div>
+          </div>
+
+          <!-- Правая кнопка: белая, радиус 12px, фиксированная ширина 183px, высота 32px -->
+          <a
+            href="/participant/olympiads.html"
+            role="button"
+            class="inline-flex items-center justify-center h-8 rounded-xl text-black text-sm font-normal shadow-sm"
+            style="width:183px; height:32px; color: white; background: #F4891E;"
+          >
+            <span data-i18n="dashboard.registration_btn">Зарегистрироваться</span>
+          </a>
+        </div>
+
+        
+          
           <!-- Summary Cards -->
           <div
             class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-4"
@@ -532,9 +579,9 @@
                   >
                     <p class="text-xl font-bold" data-i18n="notification.nots-popup">Уведомление</p>
 
-                    <div class="tabs !mb-4 justify-between overflow-x-auto">
+                    <div class="tabs !mb-4 justify-between overflow-x-auto gap-2">
                       <div
-                        class="tabs-link active flex cursor-pointer items-center gap-1"
+                        class="tabs-link active flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="all"
                       >
                         <span>
@@ -557,7 +604,7 @@
                         <span class="count-msg">4</span>
                       </div>
                       <div
-                        class="tabs-link flex cursor-pointer items-center gap-1"
+                        class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="olympiads"
                       >
                         <span>
@@ -579,7 +626,7 @@
                         <span class="count-msg">0</span>
                       </div>
                       <div
-                        class="tabs-link flex cursor-pointer items-center gap-1"
+                        class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="tasks"
                       >
                         <span>
@@ -596,7 +643,7 @@
                         <span class="count-msg">1</span>
                       </div>
                       <div
-                        class="tabs-link flex cursor-pointer items-center gap-1"
+                        class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
                         data-tab="profile"
                       >
                         <span>
@@ -610,6 +657,22 @@
                         <span data-i18n="notification.profile">Профиль</span>
                         <span class="count-msg">2</span>
                       </div>
+                      <div
+                      class="tabs-link flex cursor-pointer items-center gap-1 px-4 py-4"
+                      data-tab="payments"
+                    >
+                      <span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M1.66699 7.0874H18.3337" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M5 13.7541H6.66667" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M8.75 13.7541H12.0833" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M5.36699 2.9209H14.6253C17.592 2.9209 18.3337 3.65423 18.3337 6.57923V13.4209C18.3337 16.3459 17.592 17.0792 14.6337 17.0792H5.36699C2.40866 17.0876 1.66699 16.3542 1.66699 13.4292V6.57923C1.66699 3.65423 2.40866 2.9209 5.36699 2.9209Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                          
+                      </span>
+                      <span data-i18n="notification.payments">Оплата</span>
+                      <span class="count-msg">2</span>
+                    </div>
                     </div>
 
                     <div
@@ -952,7 +1015,99 @@
 });
 
     </script>
-    <script>
-    </script>
+
+<script>
+  /**
+   * Простая логика для баннера регистрации:
+   * - фильтр: status === "Идет сейчас" (строго) && registered === false
+   * - выбираем запись с максимальным first_start_date (новейшая)
+   * - подставляем pick.title -> #banner_title и pick.first_start_date -> #banner_date
+   * - если подходящих записей нет — скрываем #registrationBanner
+   */
+  async function loadRegistrationBannerSimple_v4() {
+    const banner = document.getElementById('registrationBanner');
+    const titleEl = document.getElementById('banner_title');
+    const dateEl  = document.getElementById('banner_date');
+  
+    // если блока нет — ничего не делаем
+    if (!banner || !titleEl || !dateEl) return;
+  
+    // helper: fetch with authorization helper if exists
+    async function authFetch(url, opts = {}) {
+      if (typeof authorizedFetch === 'function') {
+        return authorizedFetch(url, opts);
+      }
+      const headers = Object.assign({}, opts.headers || {});
+      const token = localStorage.getItem('access_token');
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      return fetch(url, Object.assign({}, opts, { headers }));
+    }
+  
+    try {
+      const resp = await authFetch('https://portal.femo.kz/api/olympiads/participant/dashboard/');
+      if (!resp || !resp.ok) {
+        // если запрос упал — скрываем баннер (чтобы не показывать пустой)
+        banner.style.display = 'none';
+        console.warn('loadRegistrationBannerSimple_v4: fetch failed or returned non-ok', resp && resp.status);
+        return;
+      }
+  
+      const payload = await resp.json();
+      const items = Array.isArray(payload.results) ? payload.results : [];
+  
+      // Фильтрация: status === "Идет сейчас" && registered === false
+      const candidates = items.filter(o => {
+        try {
+          return o && String(o.status || '').trim() === 'Идет сейчас' && o.registered === false;
+        } catch (e) {
+          return false;
+        }
+      });
+  
+      if (!candidates.length) {
+        // нет подходящих — скрываем баннер
+        banner.style.display = 'none';
+        console.info('loadRegistrationBannerSimple_v4: no candidates with status "Идет сейчас" && registered === false');
+        return;
+      }
+  
+      // Оставляем только те, у кого валидный first_start_date
+      const withDates = candidates.filter(o => {
+        return !!o.first_start_date && !isNaN(new Date(o.first_start_date).getTime());
+      });
+  
+      if (!withDates.length) {
+        // нет дат — скрываем баннер
+        banner.style.display = 'none';
+        console.info('loadRegistrationBannerSimple_v4: candidates exist but none have valid first_start_date');
+        return;
+      }
+  
+      // Выбираем запись с максимальной датой (новейшую)
+      withDates.sort((a, b) => new Date(b.first_start_date).getTime() - new Date(a.first_start_date).getTime());
+      const pick = withDates[0];
+  
+      // Подставляем title и first_start_date (как пришло)
+      titleEl.textContent = pick.title || '';
+      dateEl.textContent  = pick.first_start_date || '';
+  
+      // Показываем баннер (на случай, если он был скрыт ранее)
+      banner.style.display = '';
+  
+      console.info('loadRegistrationBannerSimple_v4: banner filled with', pick.title, pick.first_start_date);
+    } catch (err) {
+      console.error('loadRegistrationBannerSimple_v4 error:', err);
+      // при ошибке скрываем баннер — чтобы не отображать пустой/старый контент
+      const bannerEl = document.getElementById('registrationBanner');
+      if (bannerEl) bannerEl.style.display = 'none';
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadRegistrationBannerSimple_v4);
+  </script>
+  
+  
+  
+  
   </body>
 </html>

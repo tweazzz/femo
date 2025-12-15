@@ -131,14 +131,15 @@ function updatePopupNotifications(nots) {
     all: [...nots],
     olympiads: [],
     tasks: [],
-    profile: []
+    profile: [],
+    payments: []
   };
   nots.forEach(n => {
     const t = n.type_display;
     if (t === 'Olympiads') buckets.olympiads.push(n);
     else if (t === 'Tasks') buckets.tasks.push(n);
-    else if (t === 'Users' || t === 'Payments') buckets.profile.push(n);
-    else buckets.tasks.push(n);
+    else if (t === 'Users') buckets.profile.push(n);
+    else if (t === 'Payments') buckets.payments.push(n);
   });
 
   // Обновляем счётчики в вкладках
@@ -151,6 +152,7 @@ function updatePopupNotifications(nots) {
     else if (ct === 'olympiads') count = buckets.olympiads.length;
     else if (ct === 'tasks') count = buckets.tasks.length;
     else if (ct === 'profile') count = buckets.profile.length;
+    else if (ct === 'payments') count = buckets.payments.length;
     span.textContent = count;
   });
 
@@ -168,7 +170,7 @@ function updatePopupNotifications(nots) {
     Tasks: 'notification.tasks'
   };
 
-  ['all','olympiads','tasks','profile'].forEach(tabKey => {
+  ['all','olympiads','tasks','profile','payments'].forEach(tabKey => {
     const panel = document.createElement('div');
     panel.className = 'tabs-notification';
     panel.dataset.tab = tabKey;
@@ -282,7 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = (item.dataset.type || '').toLowerCase();
         let href = '#';
         if (type === 'olympiads') href = '/participant/olympiads.html';
-        else if (type === 'users' || type === 'payments') href = '/participant/my-way.html';
+        else if (type === 'users') href = '/participant/my-way.html';
+        else if (type === 'payments') href = '/participant/payments.html';
         else if (type === 'tasks') href = '/participant/tasks.html';
         if (href !== '#') window.location.href = href;
       }

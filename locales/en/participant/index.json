@@ -9,6 +9,10 @@
     "dashboard.logout": "Log out",
     "dashboard.profile": "Profile",
 
+    "dashboard.balance": "Balance:",
+    "dashboard.registration_for": "Registration for ",
+    "dashboard.registration_opened": " opened!",
+    "dashboard.registration_btn": "Registration",
     "dashboard.summary-olympiads_count": "Number of olympiads",
     "dashboard.summary-total_points": "Total score",
     "dashboard.summary-best_rank": "Best ranking",
@@ -35,6 +39,7 @@
     "notification.olympiads": "Olympiads",
     "notification.tasks": "Tasks",
     "notification.profile": "Profile",
+    "notification.payments": "Payments",
 
     "olympiads.olympiads_page": "All olympiads",
     "olympiads.olympiads-active": "Active",
