@@ -7,6 +7,24 @@
     "registration.password": "Құпия сөз",
     "registration.password_placeholder": "",
     "login_btn" : "Кіру",
-    "no_account?" : "Аккаунтыныз жок па?"
+    "no_account?" : "Аккаунтыңыз жоқ па?",
+    "register": "Тіркелу",
 
+    "register.welcome": "FEMO-ға қош келдіңіз!",
+    "register.welcome_2": "Тіркел де, өз сапарыңды баста",
+    "register.welcome_text" : "Егер сізге 14 жасқа толмаған болса, ата-анаңыздың немесе қамқоршыңыздың рұқсаты қажет болады.",
+    "register.who_are_you" : "Сіз кімсіз?",
+    "register.participant" : "Қатысушы",
+    "register.representative" : "Өкіл",
+    "register.country": "Сіздің еліңіз",
+    "register.fio" : "Аты-жөніңіз",
+    "register.pass_1": "Құпия сөз ойлаңыз",
+    "register.pass_info": "8 немесе одан көп символ, әріптерді, сандарды және таңбаларды қамтуы керек",
+    "register.btn": "Тіркеліп бастаңыз",
+    "register.conf1": "Оқушыны тіркегенде, сіз ",
+    "register.conf2": "Пайдалану шарттарымен және ",
+    "register.conf3": "Құпиялық саясатымен келісесіз",
+    "register.already_have_acc?": "Аккаунтыңыз бар ма?",
+    "register.login": "Кіру"
+    
 }

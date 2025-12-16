@@ -9,7 +9,10 @@
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
 
-  <body class="bg-gray-background">
+  <body class="bg-gray-background"   
+  data-role="public"
+  data-page="login"
+  data-public-page="true">
     <div class="flex justify-between mx-auto my-8 max-w-lg rounded-3xl p-5" style="margin-bottom:80px;">
       <div>
         <svg width="107" height="24" viewBox="0 0 107 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -65,26 +68,27 @@
       </div>
 
       <div class="mb-2 text-center text-2xl font-bold">
-        <p>Добро пожаловать в FEMO!</p>
-        <p>Зарегистрируйся и начни свои приключения</p>
+        <p data-i18n="register.welcome">Добро пожаловать в FEMO!</p>
+        <p data-i18n="register.welcome_2">Зарегистрируйся и начни свои приключения</p>
       </div>
 
-      <div class="text-primary mb-6 rounded-lg text-center text-sm">
+      <div class="text-primary mb-6 rounded-lg text-center text-sm" 
+      data-i18n="register.welcome_text">
         Если вам меньше 14 лет, вам потребуется подтверждение от родителя или
         опекуна.
       </div>
 
       <form class="space-y-6">
         <div>
-          <label for="role" class="text-gray-primary mb-1 block text-sm">Кто вы?</label>
+          <label for="role" class="text-gray-primary mb-1 block text-sm" data-i18n="register.who_are_you">Кто вы?</label>
           <select id="role" name="role" class="input-base border-default custom-select">
-            <option value="participant">Участник</option>
-            <option value="representative">Представитель страны</option>
+            <option value="participant" data-i18n="register.participant">Участник</option>
+            <option value="representative" data-i18n="register.representative">Представитель страны</option>
           </select>
         </div>
         
         <div>
-          <label for="country" class="text-gray-primary mb-1 block text-sm">Ваша Страна</label>
+          <label for="country" class="text-gray-primary mb-1 block text-sm" data-i18n="register.country">Ваша Страна</label>
           <select id="country" name="country" class="input-base border-default custom-select">
             <!-- JS заполнит -->
           </select>
@@ -99,7 +103,7 @@
         </div>
 
         <div>
-          <label class="text-gray-primary mb-1 block text-sm">ФИО</label>
+          <label class="text-gray-primary mb-1 block text-sm" data-i18n="register.fio">ФИО</label>
           <input
             type="text" name="full_name"
             placeholder="Айжан Ахметова"
@@ -109,6 +113,7 @@
 
         <div class="relative">
           <label class="text-primary mb-1 block text-sm"
+          data-i18n="register.pass_1"
             >Придумайте пароль</label
           >
           <input
@@ -137,7 +142,7 @@
               />
             </svg>
           </button>
-          <p class="text-gray-primary mt-1 text-xs">
+          <p class="text-gray-primary mt-1 text-xs" data-i18n="register.pass_info">
             8 или более символов, включающие буквы, цифры и символы
           </p>
         </div>
@@ -146,17 +151,17 @@
           type="submit"
           class="bg-orange-primary w-full cursor-pointer rounded-xl py-2 text-white transition"
         >
-          Зарегистрироваться и начать
+          <span data-i18n="register.btn">Зарегистрироваться и начать</span>
         </button>
 
         <p class="text-gray-primary text-center text-sm">
-          Создавая ученику о запись, вы соглашаетесь с
-          <a href="#" class="underline underline-offset-2"
+          <span data-i18n="register.conf1">Создавая ученику о запись, вы соглашаетесь с</span>
+          <a href="#" class="underline underline-offset-2" data-i18n="register.conf2"
             >Условиями использования</a
           >
           и
           <a href="#" class="underline underline-offset-2"
-            >Практикой конфиденциальности</a
+          data-i18n="register.conf3">Практикой конфиденциальности</a
           >.
         </p>
       </form>
@@ -164,11 +169,11 @@
       <!-- Ссылка на вход -->
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">
-          Уже есть аккаунт?
+          <span data-i18n="register.already_have_acc?">Уже есть аккаунт?</span>
           <a
             href="index.html"
             class="text-orange-primary font-bold underline underline-offset-2"
-            >Войти</a
+            data-i18n="register.login">Войти</a
           >
         </p>
       </div>

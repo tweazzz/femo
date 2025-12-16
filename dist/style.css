@@ -2173,6 +2173,7 @@
   cursor: pointer;
 }
 .sidebar {
+  overflow-y: auto;
   position: fixed;
   z-index: 20;
   display: flex;
