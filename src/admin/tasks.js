@@ -762,7 +762,7 @@ async function submitNewTask() {
 
     try {
       const response = await authorizedFetch(
-        `https://portal.femo.kz/api/olympiads/dashboard/${olympiad_id}/assigments/`,
+        `https://portal.femo.kz/api/olympiads/dashboard/${olympiad_id}/assignments/`,
         { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd }
       );
       if (!response.ok) {

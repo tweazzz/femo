@@ -217,7 +217,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderUserInfo(profile)
 
   try {
-      await loadTaskMock()
       document.querySelectorAll('.preload-hidden').forEach(el => el.classList.remove('preload-hidden'));
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
@@ -242,228 +241,170 @@ const winInfo = document.getElementById('win-info');
 const loseInfo = document.getElementById('lose-info');
 
 
+
+let currentTaskIndex = 0; // текущая задача
+let tasks = []; // массив задач из API
+
 async function loadTaskDetails() {
-  const urlParams = new URLSearchParams(window.location.search)
-  const taskId = urlParams.get('id')
-  const source = urlParams.get('source') // 'daily' или 'general'
-
-  if (!taskId || !source) {
-    console.error('Не указан id или source задачи в URL')
-    return
-  }
-
-  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/41/${source}`
-
-  try {
-    const token = JSON.parse(localStorage.getItem('user'))?.tokens?.access
-    const response = await fetch(endpoint, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (!response.ok) throw new Error('Ошибка при получении задачи')
-
-    const task = await response.json()
-    console.log(task)
-    renderTask(task)
-  } catch (err) {
-    console.error('Ошибка загрузки задачи:', err)
-  }
-}
-
-function renderTask(task) {
-  document.querySelector('h2.text-2xl').textContent = task.title
-  document.querySelector('p.text-gray-600').textContent = `${task.grade} класс`
-  const descriptionEl = document.querySelector('.text.border-gray-border')
-  descriptionEl.innerHTML = `<p>${task.description}</p>`
-
-  const deadlineEl = document.querySelector('.text-primary')
-  const deadlineDate = new Date(task.deadline)
-  deadlineEl.textContent = deadlineDate.toLocaleString('ru-RU', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
-  const timeLeftEl = document.querySelector('.timer')
-  timeLeftEl.innerHTML = `<span class="border-default bg-orange-secondary rounded-sm p-2.5">${task.time_left}</span>`
-
-  const levelMap = {
-    easy: 'Лёгкий',
-    medium: 'Средний',
-    hard: 'Сложный',
-  }
-  document.querySelector('.d-level').textContent = levelMap[task.level] || task.level
-
-  document.querySelectorAll('.text-gray-primary + span')[0].textContent = `${task.base_points} XP 🟢`
-  document.querySelectorAll('.text-gray-primary + span')[1].textContent = `${task.bonus_points} XP 🔵`
-
-  const statusEl = document.querySelector('.card.archive')
-  if (statusEl) statusEl.textContent = task.status
-
-  const attachmentsContainer = document.querySelector('.space-y-3')
-  attachmentsContainer.innerHTML = ''
-  task.attachments.forEach(file => {
-    const link = document.createElement('a')
-    link.href = file.url
-    link.className = 'text-orange-primary flex items-center gap-2'
-    link.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-      </svg>
-      ${file.name}
-    `
-    attachmentsContainer.appendChild(link)
-  })
-}
-
-
-async function loadTaskMock() {
-
   const urlParams = new URLSearchParams(window.location.search);
-  const taskId = urlParams.get('id');
-  const source = urlParams.get('source'); // 'daily' или 'general'
+  const olympiadId = urlParams.get('olympiadId');
+  const datalang = urlParams.get('lang');
 
-  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/${taskId}/${source}`;
-
-  const token = localStorage.getItem('access_token');
-  if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.');
+  if (!olympiadId || !datalang) {
+    console.error('Не указан id или lang задачи в URL');
     return;
   }
 
+  const endpoint = `https://portal.femo.kz/api/olympiads/participant/dashboard/${olympiadId}/assignments/?language=${datalang}`;
+
   try {
+    const token = JSON.parse(localStorage.getItem('user'))?.tokens?.access;
+
     const response = await authorizedFetch(endpoint, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (!response.ok) throw new Error('Ошибка при получении задачи');
-
-    const task = await response.json();
-    console.log(task)
-
-    // Проставляем данные в DOM
-    document.getElementById('task-title').textContent = task.title;
-    document.getElementById('task-title2').textContent = task.title;
-    document.getElementById('task-grade').textContent = `${task.grade} класс`;
-    document.getElementById('task-description').textContent = task.description;
-
-    renderAttachments(task);
-
-    const levelMap = {
-      easy: 'Лёгкий',
-      medium: 'Средний',
-      hard: 'Сложный',
-    };
-
-    const levelClassMap = {
-      easy: 'text-green-primary bg-green-secondary',
-      medium: 'text-orange-primary bg-orange-secondary',
-      hard: 'text-red-primary bg-red-secondary',
+    if (!response.ok) {
+      throw new Error('Ошибка при получении задачи');
     }
 
-    const StatusClassMap = {
-      'Не отправлено': 'text-gray-primary bg-gray-secondary',
-      'Завершено': 'text-green-primary bg-green-secondary',
-    }
+    const data = await response.json();
+    console.log('Задачи с API:', data);
 
-    const levelText = levelMap[task.level] || task.level;
-    const levelClass = levelClassMap[task.level] || 'text-gray-500 bg-gray-100';
+    // Сохраняем массив задач в глобальную переменную
+    tasks = Array.isArray(data) ? data : [];
 
-    const levelEl = document.getElementById('task-level');
-    levelEl.textContent = levelText;
-    levelEl.className = `${levelClass} border-default rounded-xl px-2 py-0.5 text-sm`;
-
-    // Универсальное вычисление XP (работает для daily и general)
-    const xp = (task.points ?? task.awarded_points ?? task.base_points ?? 0);
-
-    const pointsEl = document.getElementById('task-points');
-    pointsEl.innerHTML = `
-      <span class="font-bold">${xp} XP</span>
-      <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">
-    `;
-    pointsEl.className = 'text-orange-primary bg-orange-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
-
-
-    const bonusEl = document.getElementById('task-bonus');
-    bonusEl.innerHTML = `<span class="font-bold">15 XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
-    bonusEl.className = 'text-blue-primary bg-blue-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
-
-    const statusText = task.status
-    const statusClass = levelClassMap[task.status]
-    const statusEl = document.getElementById('task-status');
-    statusEl.textContent = statusText;
-    statusEl.className = `${statusClass} border-default rounded-xl px-2 py-0.5 text-sm`;
-
-    // Сначала скрываем оба баннера
-    winInfo.style.display = 'none';
-    loseInfo.style.display = 'none';
-
-    // Скрываем/показываем элементы формы в зависимости от solved
-    if (task.solved) {
-      // если уже решено — прячем форму и показываем результат (win/lose) по данным backend
-      const answerLabel = document.querySelector('#answer-input')?.closest('label');
-      const submit2Button = document.getElementById('submit-button2');
-      const nextTaskLink  = document.getElementById('next-task-button2');
-
-      if (answerLabel) answerLabel.style.display = 'none';
-      if (submit2Button) submit2Button.style.display = 'none';
-      if (nextTaskLink) nextTaskLink.style.display = 'flex';
-
-      // прячем кнопки ввода
-      if (submitBtn1) submitBtn1.style.display = 'none';
-      if (submitBtn2) submitBtn2.style.display = 'none';
-      if (clearButton) clearButton.style.display = 'none';
-
-      // Покажем баннер по данным task (points, correct и т.д.)
-      updateResultBanners(task);
-    } else {
-      // не решено — показываем форму, скрываем ссылку "следующая задача"
-      const answerLabel = document.querySelector('#answer-input')?.closest('label');
-      const submit2Button = document.getElementById('submit-button2');
-      const nextTaskLink  = document.getElementById('next-task-button2');
-
-      if (answerLabel) answerLabel.style.display = '';
-      if (submit2Button) submit2Button.style.display = 'flex';
-      if (nextTaskLink) nextTaskLink.style.display = 'none';
-
-      // прячем оба баннера
-      winInfo.style.display = 'none';
-      loseInfo.style.display = 'none';
-    }
-
-
-
-    window.taskPoints = task.points;
-
-        // Селекторы элементов
-    const answerLabel   = document.querySelector('#answer-input').closest('label');
-    const submit2Button = document.getElementById('submit-button2');
-    const nextTaskLink  = document.getElementById('next-task-button2');
-
-    if (task.solved) {
-      // если уже решено — прячем форму и вторую кнопку и показываем ссылку «Перейти к следующей задаче»
-      loseInfo.style.display      = 'none';
-      answerLabel.style.display   = 'none';
-      submit2Button.style.display = 'none';
-      nextTaskLink.style.display  = 'flex';
-    } else {
-      // иначе — показываем форму и кнопку, прячем ссылку
-      answerLabel.style.display   = '';
-      submit2Button.style.display = 'flex';
-      nextTaskLink.style.display  = 'none';
+    // Отображаем первую задачу
+    if (tasks.length > 0) {
+      currentTaskIndex = 0;
+      renderTaskByIndex(currentTaskIndex);
     }
 
   } catch (err) {
     console.error('Ошибка загрузки задачи:', err);
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadTaskDetails();
+});
+
+
+// Рендер задачи по индексу
+function renderTaskByIndex(index) {
+  if (!tasks || tasks.length === 0 || index < 0 || index >= tasks.length) return;
+
+  const task = tasks[index];
+
+  // Название с ID
+  const taskTitleEl = document.getElementById('task-title');
+  const taskTitle2El = document.getElementById('task-title2');
+  if (taskTitleEl) taskTitleEl.textContent = `#${task.id} ${task.title}`;
+  if (taskTitle2El) taskTitle2El.textContent = `#${task.id} ${task.title}`;
+
+  // Класс и описание
+  const taskGradeEl = document.getElementById('task-grade');
+  const taskDescEl = document.getElementById('task-description');
+  if (taskGradeEl) taskGradeEl.textContent = task.grade ? `${task.grade} класс` : '';
+  if (taskDescEl) taskDescEl.textContent = task.description || '';
+
+  // Вложения
+  if (typeof renderAttachments === 'function') renderAttachments(task);
+
+  // Уровень сложности
+  const levelMap = { easy: 'Лёгкий', medium: 'Средний', hard: 'Сложный' };
+  const levelClassMap = {
+    easy: 'text-green-primary bg-green-secondary',
+    medium: 'text-orange-primary bg-orange-secondary',
+    hard: 'text-red-primary bg-red-secondary'
+  };
+
+  const levelEl = document.getElementById('task-level');
+  if (levelEl) {
+    levelEl.textContent = levelMap[task.level] || task.level || '';
+    levelEl.className = `${levelClassMap[task.level] || 'text-gray-500 bg-gray-100'} border-default rounded-xl px-2 py-0.5 text-sm`;
+  }
+
+  // Очки и бонусы
+  const pointsEl = document.getElementById('task-points');
+  const xp = task.points ?? task.awarded_points ?? task.base_points ?? 0;
+  if (pointsEl) {
+    pointsEl.innerHTML = `
+      <span class="font-bold">${xp} XP</span>
+      <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">
+    `;
+    pointsEl.className = 'text-orange-primary bg-orange-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
+  }
+
+  const bonusEl = document.getElementById('task-bonus');
+  if (bonusEl) {
+    bonusEl.innerHTML = `<span class="font-bold">15 XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
+    bonusEl.className = 'text-blue-primary bg-blue-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
+  }
+
+  // Статус
+  const statusEl = document.getElementById('task-status');
+  if (statusEl) {
+    statusEl.textContent = task.status || '';
+    statusEl.className = `${levelClassMap[task.status] || 'text-gray-primary bg-gray-secondary'} border-default rounded-xl px-2 py-0.5 text-sm`;
+  }
+
+  // Форма и кнопки
+  const answerLabel = document.querySelector('#answer-input')?.closest('label');
+  const submitBtn1 = document.getElementById('submit-button1');
+  const submitBtn2 = document.getElementById('submit-button2');
+  const clearButton = document.getElementById('clear-button');
+  const nextTaskLink = document.getElementById('next-task-button2');
+  const winInfo = document.getElementById('win-info');
+  const loseInfo = document.getElementById('lose-info');
+
+  // Сначала скрываем баннеры
+  if (winInfo) winInfo.style.display = 'none';
+  if (loseInfo) loseInfo.style.display = 'none';
+
+  if (task.solved) {
+    if (answerLabel) answerLabel.style.display = 'none';
+    if (submitBtn1) submitBtn1.style.display = 'none';
+    if (submitBtn2) submitBtn2.style.display = 'none';
+    if (clearButton) clearButton.style.display = 'none';
+    if (nextTaskLink) nextTaskLink.style.display = 'flex';
+    if (typeof updateResultBanners === 'function') updateResultBanners(task);
+  } else {
+    if (answerLabel) answerLabel.style.display = '';
+    if (submitBtn1) submitBtn1.style.display = 'flex';
+    if (submitBtn2) submitBtn2.style.display = 'flex';
+    if (clearButton) clearButton.style.display = 'flex';
+    if (nextTaskLink) nextTaskLink.style.display = 'none';
+  }
+}
+
+// Пагинация
+function showNextTask() {
+  if (currentTaskIndex < tasks.length - 1) {
+    currentTaskIndex++;
+    renderTaskByIndex(currentTaskIndex);
+  }
+}
+
+function showPrevTask() {
+  if (currentTaskIndex > 0) {
+    currentTaskIndex--;
+    renderTaskByIndex(currentTaskIndex);
+  }
+}
+
+// Инициализация с данными
+async function loadTasks(data) {
+  tasks = Array.isArray(data) ? data : [];
+  currentTaskIndex = 0;
+  renderTaskByIndex(currentTaskIndex);
+}
+
+document.getElementById('nextTaskBtn')?.addEventListener('click', showNextTask);
+document.getElementById('prevTaskBtn')?.addEventListener('click', showPrevTask);
+
 
 function renderAttachments(task) {
   const attachmentsContainer = document.getElementById('task-attachments');

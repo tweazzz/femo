@@ -393,14 +393,26 @@ async function loadOlympiadCards() {
       detailBtn.rel = 'noopener noreferrer';
       btns.appendChild(detailBtn);
 
+      function getSelectedLanguage() {
+          const checked = document.querySelector('input[name="lan"]:checked');
+          return checked ? checked.value : 'ru';
+      }
+
       // если ongoing — показываем старт/регистрацию в зависимости от registered
       if (isOngoing) {
         btns.innerHTML = ''; // оставляем только кнопку старта/регистрации
         if (isRegistered) {
           const startBtn = document.createElement('a');
           startBtn.addEventListener('click', () => {
-            openStartOlympiadModal('/participant/task_olympiad.html');
+            openStartOlympiadModal(olympiad.id);
           });
+          document
+              .getElementById('confirmStartOlympiad')
+              .addEventListener('click', () => {
+                const lang = getSelectedLanguage();
+                const url = `/participant/task_olympiad.html?olympiadId=${encodeURIComponent(olympiad.id)}&lang=${encodeURIComponent(lang)}`;
+                window.location.href = url;
+              });
           startBtn.textContent = (window.i18nDict && window.i18nDict[keyStartNow]) || startText;
           startBtn.style.backgroundColor = '#0DB459';
           startBtn.style.color = '#fff';
