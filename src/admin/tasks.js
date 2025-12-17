@@ -247,6 +247,7 @@ function getTaskTypeLabel(type) {
   const map = {
     daily: 'Задача дня',
     preparatory: 'Подготовительная',
+    olympiad: 'Задача по олимпиаде'
   };
   return map[type] || type;
 }
@@ -405,51 +406,159 @@ async function deleteTask() {
 }
 
 // 10. Редактирование задачи
-function openEditModal(task) {
-  // сохраняем ID задачи
-  taskBeingEditedId = task.id;
 
-  // показываем модалку редактирования
+function fillTranslations(task) {
+  if (!Array.isArray(task.translations)) return;
+
+  task.translations.forEach(tr => {
+    const lang = tr.language;
+
+    const titleInput = document.getElementById(`edit-title-${lang}`);
+    if (titleInput) titleInput.value = tr.title || '';
+
+    const descInput = document.getElementById(`edit-desc-${lang}`);
+    if (descInput) descInput.value = tr.description || '';
+  });
+}
+
+
+function fillCorrectAnswers(task) {
+  if (!Array.isArray(task.translations)) return;
+
+  task.translations.forEach(tr => {
+    const input = document.getElementById(`answer-${tr.language}-edit`);
+    if (input) {
+      input.value = tr.correct_answer ?? '';
+    }
+  });
+}
+
+function setTaskType(taskType) {
+  const radios = document.querySelectorAll('input[name="role"]');
+
+  radios.forEach(radio => {
+    radio.checked = radio.value === taskType;
+  });
+}
+
+
+function openEditModal(task) {
+  taskBeingEditedId = task.id;
   toggleModal('modalEdit');
 
-  // заполняем поля формы participant-form2 по жёстко прописанным id
-  document.getElementById('title-edit-participant').value       = task.title || '';
-  document.getElementById('grade-edit-participant').value       = task.grade  || '';
-  document.getElementById('level-edit-participant').value       = task.level  || '';
-  document.getElementById('points-edit-participant').value      = task.points || '';
-  document.getElementById('status-edit-participant').value      = task.status || '';
-  document.getElementById('desc-edit-participant').value        = task.description || '';
-  document.getElementById('answer-edit-participant').value      = task.correct_answer || '';
+  // Общие поля
+  document.getElementById('grade-edit-participant').value  = task.grade;
+  document.getElementById('level-edit-participant').value  = task.level;
+  document.getElementById('points-edit-participant').value = task.points;
+  document.getElementById('status-edit-participant').value = task.status;
 
-  // radios: number/text
+  // Тип ответа
   const isText = task.answer_type === 'text';
   document.getElementById('answer1-type-edit-participant').checked = !isText;
   document.getElementById('answer2-type-edit-participant').checked = isText;
 
-  // Очистим текущие вложения
-  const formKey = 'edit-participant';
-  attachments[formKey] = [];
-  const listEl = document.getElementById(`files-list-${formKey}`);
-  listEl.innerHTML = '';
+  // Переводы
+  fillTranslations(task);
 
-  // Отрисуем уже загруженные с сервера файлы
-  if (task.attachments?.length) {
-    task.attachments.forEach(att => {
-      const row = document.createElement('div');
-      row.className = 'flex items-center justify-between';
+   // Правильные ответы
+  fillCorrectAnswers(task);
 
-      const link = document.createElement('a');
-      link.href = `https://portal.femo.kz${att.file}`;
-      link.textContent = att.file.split('/').pop();
-      link.target = '_blank';
-      link.className = 'text-orange-primary hover:underline';
+  // 🔥 тип задачи
+  setTaskType(task.type);
 
-      row.appendChild(link);
-      listEl.appendChild(row);
-    });
-  }
+  // Вложения
+  renderAttachments(task);
+
+//  setTaskType(task.type);
+//
+//  const olympiadWrapperEdit =
+//    document.getElementById('olympiad-edit-select-wrapper');
+//
+//  toggleOlympiadSelect(
+//    olympiadWrapperEdit,
+//    task.type
+//  );
+//
+//  // 🔥 выставляем выбранную олимпиаду
+//  if (task.type === 'olympiad') {
+//    renderOlympiadSelect(olympiadSelectEdit);
+//    olympiadSelectEdit.value = task.olympiad?.id ?? '';
+//  }
 }
 
+const EDIT_FORM_KEY = 'edit-participant';
+
+function renderAttachments(task) {
+  attachments[EDIT_FORM_KEY] = {
+    ru: [], kk: [], en: [], es: [], de: [], az: [], ka: []
+  };
+
+  task.translations.forEach(tr => {
+    const lang = tr.language;
+
+    tr.attachments.forEach(att => {
+      attachments[EDIT_FORM_KEY][lang].push({
+        type: 'server',
+        id: att.id,
+        title: tr.title,
+        url: `https://portal.femo.kz${att.file_url}`,
+        removed: false
+      });
+    });
+  });
+
+  renderFiles(EDIT_FORM_KEY, currentLang);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const radios = document.querySelectorAll('input[name="lang"]');
+
+  radios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      currentLang = radio.value;
+      renderFiles('edit-participant', currentLang);
+    });
+  });
+});
+
+const editFileInputs = document.querySelectorAll('#files-edit-participant .file-input');
+const editLabelFile = document.getElementById('edit-file-label');
+
+editFileInputs.forEach(inp => {
+  inp.addEventListener('change', () =>
+    handleEditFilesChange(inp, inp.dataset.lang)
+  );
+});
+
+editLabelFile.addEventListener('click', () => {
+  const activeInput = document.querySelector(
+    `#files-edit-participant .file-input[data-lang="${currentLang}"]`
+  );
+  activeInput?.click();
+});
+
+
+// ОБРАБОТКА ВЫБОРА ФАЙЛОВ
+// ----------------------
+function handleEditFilesChange(inputEl, lang) {
+  const file = inputEl.files[0];
+  if (!file) return;
+
+  // помечаем server-файл как удалённый
+  attachments[EDIT_FORM_KEY][lang].forEach(item => {
+    if (item.type === 'server') item.removed = true;
+  });
+
+  // добавляем новый файл
+  attachments[EDIT_FORM_KEY][lang].push({
+    type: 'local',
+    name: file.name,
+    file
+  });
+
+  inputEl.value = '';
+  renderFiles(EDIT_FORM_KEY, lang);
+}
 
 async function handleEditClick(button) {
   const raw = button.getAttribute('data-task');
@@ -482,83 +591,102 @@ async function handleEditClick(button) {
 
 async function submitEditTask() {
   const token = localStorage.getItem('access_token');
-  if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.');
-    return;
-  }
-  if (!taskBeingEditedId) {
-    alert('ID редактируемой задачи не определён.');
-    return;
-  }
+  if (!token) return alert('Токен не найден');
+  if (!taskBeingEditedId) return alert('ID задачи не найден');
 
-  const form = document.getElementById('participant-form2'); // или ваш селектор
-
-    // 1) Считываем role
   const roleValue = document.querySelector(
     '#modalEdit input[name="role"]:checked'
-  ).value; // "participant" или "representative"
+  )?.value;
 
-  // 2) Мапим в то, что ждёт бэк
   const typeMap = {
-    participant:   'preparatory',
-    representative: 'daily'
+    participant: 'preparatory',
+    representative: 'daily',
+    olympiad: 'olympiad'
   };
   const type = typeMap[roleValue];
-  // Сбор полей из формы редактирования
-  const title = form.querySelector('#title-edit-participant').value.trim();
-  const grade = form.querySelector('select[id^="grade"]')?.value;
-  const level = form.querySelector('select[id^="level"]')?.value;
-  const points = form.querySelector('select[id^="points"]')?.value;
-  const status = form.querySelector('select[id^="status"]')?.value;
-  const description = form.querySelector('textarea')?.value.trim();
-  const answerType = form.querySelector('input[name="answer-type"]:checked')?.value || 'number';
-  const correctAnswer = form.querySelector('input[name="answer"]')?.value.trim();
 
-  // Валидация
-  if (!title || !grade || !level || !points || !status || !description || !correctAnswer) {
-    alert('Пожалуйста, заполните все обязательные поля.');
-    return;
+  const grade  = document.getElementById('grade-edit-participant')?.value;
+  const level  = document.getElementById('level-edit-participant')?.value;
+  const points = document.getElementById('points-edit-participant')?.value;
+  const status = document.getElementById('status-edit-participant')?.value;
+  const answerType =
+    document.querySelector('#modalEdit input[name="answer-type"]:checked')?.value;
+
+  // ----------------------
+  // Собираем переводы
+  // ----------------------
+  const translations = [];
+
+  for (let lang of languages) {
+    const title = document.getElementById(`edit-title-${lang}`)?.value.trim();
+    const description = document.getElementById(`edit-desc-${lang}`)?.value.trim();
+    const correctAnswer =
+      document.getElementById(`answer-${lang}-edit`)?.value.trim();
+
+    const files = attachments['edit-participant'][lang];
+
+    if (!title || !description || !correctAnswer) {
+      return alert(`Заполните все поля для языка ${languageLabels[lang]}`);
+    }
+
+    translations.push({
+      language: lang,
+      title,
+      description,
+      correct_answer: correctAnswer,
+      files
+    });
   }
 
-  // Формируем FormData
+  // ----------------------
+  // FormData
+  // ----------------------
   const fd = new FormData();
   fd.append('type', type);
-  fd.append('title', title);
   fd.append('grade', grade);
   fd.append('level', level);
   fd.append('points', points);
   fd.append('status', status);
-  fd.append('description', description);
   fd.append('answer_type', answerType);
-  fd.append('correct_answer', correctAnswer);
 
-  // И — самое главное — прикрепляем все файлы из attachments['edit-participant']
-  attachments['edit-participant'].forEach((file, idx) => {
-    fd.append(`attachments[${idx}]`, file);
+  translations.forEach((tr, idx) => {
+    fd.append(`translations[${idx}]language`, tr.language);
+    fd.append(`translations[${idx}]title`, tr.title);
+    fd.append(`translations[${idx}]description`, tr.description);
+    fd.append(`translations[${idx}]correct_answer`, tr.correct_answer);
+
+    tr.files.forEach(fileObj => {
+      if (fileObj.type === 'local') {
+        fd.append(`translations[${idx}]files`, fileObj.file);
+      }
+      // server-файлы НЕ отправляем — они уже есть
+    });
   });
 
+  // ----------------------
+  // Отправка
+  // ----------------------
   try {
-    console.log('Кидаем на сервер файлы:', attachments['edit-participant']);
     const res = await authorizedFetch(
       `https://portal.femo.kz/api/assignments/dashboard/${taskBeingEditedId}/`,
       {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // НЕ указываем Content-Type — браузер автоматически поставит multipart/form-data
-        },
-        body: fd,
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd
       }
     );
+
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.detail || JSON.stringify(err));
     }
+
     toggleModal('modalEdit');
     await loadAssignments(currentAssignmentPage);
+
   } catch (err) {
-    console.error('Ошибка при редактировании задачи:', err);
-    alert(`Не удалось обновить задачу: ${err.message}`);
+    console.error(err);
+    alert(`Ошибка сохранения: ${err.message}`);
   }
 }
 
@@ -668,176 +796,56 @@ radios.forEach(radio => {
   });
 });
 
-const languages = ["ru", "kk", "en", "az", "ka"];
+const languages = ["ru", "kk", "en", "es", "de", "az", "ka"];
 const languageLabels = {
   ru: 'Русский',
   kk: 'Казахский',
   en: 'Английский',
+  es: 'Испанский',
+  de: 'Немецкий',
   az: 'Азербайджанский',
   ka: 'Грузинский'
 };
-
-async function submitNewTask() {
-  const token = localStorage.getItem('access_token');
-  if (!token) {
-    alert('Токен не найден. Пожалуйста, войдите заново.');
-    return;
-  }
-
-  const activeForm = document.getElementById('participant-form');
-  if (!activeForm) {
-    alert('Форма не выбрана.');
-    return;
-  }
-
-  const role = document.querySelector('input[name="role"]:checked')?.value;
-  const typeMap = {
-    representative: 'daily',
-    participant: 'preparatory',
-    olympiad: 'olympiad'
-  };
-  const type = typeMap[role] ?? null;
-
-  const grade = activeForm.querySelector('select[id^="grade"]')?.value;
-  const level = activeForm.querySelector('select[id^="level"]')?.value;
-  const points = activeForm.querySelector('select[id^="points"]')?.value;
-  const status = activeForm.querySelector('select[id^="status"]')?.value;
-
-  const selectedAnswerTypeInput = document.querySelector('input[name="answer-type"]:checked');
-  const answerTypeValue = selectedAnswerTypeInput ? selectedAnswerTypeInput.value : null;
-
-  let translations = [];
-  const formKey = 'add-participant'; // ключ для attachments
-
-  // собираем переводы для всех языков
-  for (let lang of languages) {
-    const title = activeForm.querySelector(`input[data-lang="${lang}"]`)?.value.trim() || "";
-    const description = activeForm.querySelector(`textarea[data-lang="${lang}"]`)?.value.trim() || "";
-    const correctAnswer = activeForm.querySelector(`#answer-add-participant input[data-lang="${lang}"]`)?.value.trim() || "";
-    const files = attachments[formKey]?.[lang];
-
-    // обязательные поля
-    if (!title || !description || !correctAnswer) {
-      alert(`Пожалуйста, заполните все поля для языка ${languageLabels[lang]}`);
-      return;
-    }
-    if (!files || files.length === 0) {
-      alert(`Пожалуйста, прикрепите хотя бы один файл для языка ${languageLabels[lang]}`);
-      return;
-    }
-
-    translations.push({ language: lang, title, description, correct_answer: correctAnswer, files });
-  }
-
-  // создаём FormData
-  const fd = new FormData();
-  fd.append('type', type);
-  fd.append('grade', grade);
-  fd.append('level', level);
-  fd.append('points', points);
-  fd.append('status', status);
-  fd.append('answer_type', answerTypeValue);
-
-  translations.forEach((trans, idx) => {
-    fd.append(`translations[${idx}]language`, trans.language);
-    fd.append(`translations[${idx}]title`, trans.title);
-    fd.append(`translations[${idx}]description`, trans.description);
-    fd.append(`translations[${idx}]correct_answer`, trans.correct_answer);
-    trans.files.forEach((file, f) => {
-      fd.append(`translations[${idx}][files][${f}]`, file);
-    });
-  });
-
-  if (type === 'olympiad') {
-    // -------------------------------
-    //   Олимпиада: fetch с olympiad_id
-    // -------------------------------
-    const olympiadSelect = document.getElementById('olympiad-add-participant');
-    const olympiad_id = olympiadSelect?.value;
-
-    if (!olympiad_id) {
-      alert('Пожалуйста, выберите олимпиаду');
-      return;
-    }
-
-    try {
-      const response = await authorizedFetch(
-        `https://portal.femo.kz/api/olympiads/dashboard/${olympiad_id}/assignments/`,
-        { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd }
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || `Ошибка ${response.status}`);
-      }
-      toggleModal('modalAdd');
-      await loadAssignments(1);
-    } catch (err) {
-      console.error('Ошибка при добавлении задачи (олимпиада):', err);
-      alert(`Не удалось добавить задачу: ${err.message}`);
-    }
-
-  } else {
-    // -------------------------------
-    //   Daily/Preparatory: fetch без olympiad_id
-    // -------------------------------
-    try {
-      const response = await authorizedFetch(
-        'https://portal.femo.kz/api/assignments/', // URL для daily/preparatory
-        { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd }
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || `Ошибка ${response.status}`);
-      }
-      toggleModal('modalAdd');
-      await loadAssignments(1);
-    } catch (err) {
-      console.error('Ошибка при добавлении задачи (daily/preparatory):', err);
-      alert(`Не удалось добавить задачу: ${err.message}`);
-    }
-  }
-}
 
 // ----------------------
 // ХРАНЕНИЕ ФАЙЛОВ
 // ----------------------
 const attachments = {
   'add-participant': {
-    ru: [],
-    kk: [],
-    en: [],
-    az: [],
-    ka: []
+    ru: [], kk: [], en: [], es: [], de: [], az: [], ka: []
+  },
+  'edit-participant': {
+    ru: [], kk: [], en: [], es: [], de: [], az: [], ka: []
   }
 };
 
 // Текущий язык
 let currentLang = 'ru';
 
-// Форма
+// Ключ формы
 const formKey = 'add-participant';
 
 // Все input[type=file]
 const fileInputs = document.querySelectorAll('#files-add-participant .file-input');
 
-// Label (для клика)
+// Label для клика
 const labelFile = document.getElementById('file-label');
-
 
 // ----------------------
 // ОБРАБОТКА ВЫБОРА ФАЙЛОВ
 // ----------------------
 function handleFilesChange(inputEl, formKey, lang) {
-  const newFiles = Array.from(inputEl.files);
-  const existing = attachments[formKey][lang];
+  const file = inputEl.files[0];
+  if (!file) return;
 
-  newFiles.forEach(f => {
-    const duplicate = existing.some(e => e.name === f.name && e.size === f.size);
-    if (!duplicate) existing.push(f);
-  });
+  // ❗ перезаписываем массив (1 файл на язык)
+  attachments[formKey][lang] = [{
+    type: 'local',
+    name: file.name,
+    file
+  }];
 
   inputEl.value = '';
-
   renderFiles(formKey, lang);
 }
 
@@ -849,38 +857,143 @@ function renderFiles(formKey, lang) {
   const listEl = document.getElementById(`files-list-${formKey}`);
   listEl.innerHTML = '';
 
-  attachments[formKey][lang].forEach((file, idx) => {
-    const row = document.createElement('div');
-    row.className = 'flex items-center justify-between';
+  attachments[formKey][lang]
+    .filter(item => !item.removed)
+    .forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'flex items-center justify-between';
 
-    const link = document.createElement('a');
-    link.href = '#';
-    link.className = 'text-orange-primary hover:underline';
-    link.textContent = file.name;
+      const link = document.createElement('a');
+      link.textContent = item.title || item.name;
+      link.className = 'text-orange-primary hover:underline';
+      link.href = item.type === 'server' ? item.url : '#';
+      link.target = '_blank';
 
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = '×';
-    btn.className = 'ml-2 text-red-500 hover:text-red-700';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = '×';
+      btn.className = 'ml-2 text-red-500';
 
-    btn.onclick = () => {
-      attachments[formKey][lang].splice(idx, 1);
-      renderFiles(formKey, lang);
-    };
+      btn.onclick = () => {
+        if (item.type === 'server') {
+          item.removed = true;
+        } else {
+          attachments[formKey][lang].splice(idx, 1);
+        }
+        renderFiles(formKey, lang);
+      };
 
-    row.append(link, btn);
-    listEl.appendChild(row);
-  });
+      row.append(link, btn);
+      listEl.appendChild(row);
+    });
 }
 
 
+
 // ----------------------
-// ПОДПИСЫВАЕМСЯ НА onchange для всех файловых инпутов
+// ПОДПИСЫВАЕМСЯ НА onchange для input[type=file]
 // ----------------------
 fileInputs.forEach(inp => {
   const lang = inp.dataset.lang;
   inp.addEventListener('change', () => handleFilesChange(inp, formKey, lang));
 });
+
+// ----------------------
+// КЛИК ПО LABEL → открыть активный input
+// ----------------------
+labelFile.addEventListener('click', () => {
+  const activeInput = document.querySelector(`.file-input[data-lang="${currentLang}"]`);
+  activeInput.click();
+});
+
+// ----------------------
+// ОТПРАВКА НОВОЙ ЗАДАЧИ
+// ----------------------
+async function submitNewTask() {
+  const token = localStorage.getItem('access_token');
+  if (!token) return alert('Токен не найден. Пожалуйста, войдите заново.');
+
+  const activeForm = document.getElementById('participant-form');
+  if (!activeForm) return alert('Форма не выбрана.');
+
+  const role = document.querySelector('input[name="role"]:checked')?.value;
+  const typeMap = { representative: 'daily', participant: 'preparatory', olympiad: 'olympiad' };
+  const type = typeMap[role] ?? null;
+
+  const grade = activeForm.querySelector('select[id^="grade"]')?.value;
+  const level = activeForm.querySelector('select[id^="level"]')?.value;
+  const points = activeForm.querySelector('select[id^="points"]')?.value;
+  const status = activeForm.querySelector('select[id^="status"]')?.value;
+
+  const answerTypeValue = document.querySelector('input[name="answer-type"]:checked')?.value;
+
+  // ----------------------
+  // Собираем переводы
+  // ----------------------
+  let translations = [];
+  for (let lang of languages) {
+    const title = activeForm.querySelector(`input[data-lang="${lang}"]`)?.value.trim() || "";
+    const description = activeForm.querySelector(`textarea[data-lang="${lang}"]`)?.value.trim() || "";
+    const correctAnswer = activeForm.querySelector(`#answer-add-participant input[data-lang="${lang}"]`)?.value.trim() || "";
+    const files = attachments[formKey]?.[lang];
+
+    if (!title || !description || !correctAnswer) {
+      return alert(`Пожалуйста, заполните все поля для языка ${languageLabels[lang]}`);
+    }
+
+    translations.push({ language: lang, title, description, correct_answer: correctAnswer, files });
+  }
+
+  // ----------------------
+  // Формируем FormData
+  // ----------------------
+  const fd = new FormData();
+  fd.append('type', type);
+  fd.append('grade', grade);
+  fd.append('level', level);
+  fd.append('points', points);
+  fd.append('status', status);
+  fd.append('answer_type', answerTypeValue);
+
+  translations.forEach((trans, idx) => {
+      fd.append(`translations[${idx}]language`, trans.language);
+      fd.append(`translations[${idx}]title`, trans.title);
+      fd.append(`translations[${idx}]description`, trans.description);
+      fd.append(`translations[${idx}]correct_answer`, trans.correct_answer);
+
+      trans.files.forEach(fileObj => {
+        fd.append(`translations[${idx}]files`, fileObj.file); // <-- именно так
+      });
+  });
+
+  // ----------------------
+  // Отправка
+  // ----------------------
+  let url = 'https://portal.femo.kz/api/assignments/';
+  if (type === 'olympiad') {
+    const olympiad_id = document.getElementById('olympiad-add-participant')?.value;
+    if (!olympiad_id) return alert('Пожалуйста, выберите олимпиаду');
+    url = `https://portal.femo.kz/api/olympiads/dashboard/${olympiad_id}/assignments/`;
+  }
+
+  try {
+    const response = await authorizedFetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }, // НЕ ставим Content-Type
+      body: fd
+    });
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.detail || `Ошибка ${response.status}`);
+    }
+    toggleModal('modalAdd');
+    await loadAssignments(1);
+  } catch (err) {
+    console.error('Ошибка при добавлении задачи:', err);
+    alert(`Не удалось добавить задачу: ${err.message}`);
+  }
+}
+
 
 
 // ----------------------
@@ -903,74 +1016,88 @@ radios.forEach(radio => {
 });
 
 
-// ----------------------
-// КЛИК ПО LABEL → открыть активный input
-// ----------------------
-labelFile.addEventListener('click', () => {
-  const activeInput = document.querySelector(`.file-input[data-lang="${currentLang}"]`);
-  activeInput.click();
-});
-
 
 const olympiadSelect = document.getElementById('olympiad-add-participant');
+//const olympiadSelectEdit = document.getElementById('olympiad-edit-participant');
+const roleInputs = document.querySelectorAll('input[name="role"]');
 let olympiadsData = []; // сюда сохраняем данные
-let olympiadsRendered = false;
 
-// 1️⃣ Загружаем данные заранее
-async function preloadOlympiads() {
-  try {
-    const res = await authorizedFetch('https://portal.femo.kz/api/olympiads/dashboard/');
-    const data = await res.json();
-    olympiadsData = data.results; // сохраняем
-  } catch (err) {
-    console.error('Ошибка предзагрузки олимпиад:', err);
-  }
-}
+function renderOlympiadSelect(selectEl) {
+  if (!selectEl || selectEl.dataset.rendered === '1') return;
 
-// 2️⃣ Отображаем данные при раскрытии select
-olympiadSelect.addEventListener('focus', () => {
-  if (olympiadsRendered || olympiadsData.length === 0) return;
-
-  olympiadSelect.innerHTML = ''; // очистка на всякий случай
+  selectEl.innerHTML = '';
 
   olympiadsData.forEach(item => {
-    olympiadSelect.insertAdjacentHTML(
+    selectEl.insertAdjacentHTML(
       'beforeend',
       `<option value="${item.id}">${item.title}</option>`
     );
   });
 
-  olympiadsRendered = true;
+  selectEl.dataset.rendered = '1'; // локальный флаг
+}
+
+olympiadSelect.addEventListener('focus', () => {
+  renderOlympiadSelect(olympiadSelect);
 });
 
-// 3️⃣ Запускаем предзагрузку при старте страницы
+//olympiadSelectEdit.addEventListener('focus', () => {
+//  renderOlympiadSelect(olympiadSelectEdit);
+//});
+
+
+async function preloadOlympiads() {
+  try {
+    const res = await authorizedFetch(
+      'https://portal.femo.kz/api/olympiads/dashboard/'
+    );
+    const data = await res.json();
+    olympiadsData = data.results || [];
+  } catch (err) {
+    console.error('Ошибка предзагрузки олимпиад:', err);
+  }
+}
+
 preloadOlympiads();
 
-
-const olympiadWrapper = document.getElementById('olympiad-select-wrapper');
-const roleInputs = document.querySelectorAll('input[name="role"]');
-
-// Функция для переключения видимости списка олимпиад
-function toggleOlympiadSelect() {
-  const role = document.querySelector('input[name="role"]:checked')?.value;
+function toggleOlympiadSelect(wrapperEl, role) {
+  if (!wrapperEl) return;
 
   if (role === 'olympiad') {
-    olympiadWrapper.classList.remove('hidden');
+    wrapperEl.classList.remove('hidden');
   } else {
-    olympiadWrapper.classList.add('hidden');
+    wrapperEl.classList.add('hidden');
   }
 }
 
 // Ставим Подготовительную задачу по умолчанию при загрузке
 window.addEventListener('DOMContentLoaded', () => {
-  const defaultRole = document.querySelector('input[name="role"][value="participant"]');
+  const defaultRole =
+    document.querySelector('input[name="role"][value="participant"]');
+
   if (defaultRole) defaultRole.checked = true;
 
-  // Обновляем отображение списка олимпиад
-  toggleOlympiadSelect();
+  toggleOlympiadSelect(
+    olympiadWrapperAdd,
+    'participant'
+  );
 });
 
-// Навешиваем обработчики на радио-кнопки
-roleInputs.forEach(input => {
-  input.addEventListener('change', toggleOlympiadSelect);
+
+const olympiadWrapperAdd =
+  document.getElementById('olympiad-select-wrapper');
+
+roleInputs.forEach(radio => {
+  radio.addEventListener('change', () => {
+    toggleOlympiadSelect(
+      olympiadWrapperAdd,
+      radio.value
+    );
+
+    // 🔥 если выбрали олимпиаду — рендерим список
+    if (radio.value === 'olympiad') {
+      renderOlympiadSelect(olympiadSelect);
+    }
+  });
 });
+
