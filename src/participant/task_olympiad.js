@@ -250,6 +250,16 @@ const loseInfo = document.getElementById('lose-info');
 let currentTaskIndex = 0; // текущая задача
 let tasks = []; // массив задач из API
 
+const languageMap = {
+  ru: 'Русский',
+  kk: 'Казахский',
+  en: 'Английский',
+  es: 'Испанский',
+  de: 'Немецкий',
+  az: 'Азербайджанский',
+  ka: 'Грузинский'
+};
+
 async function loadTaskDetails() {
   const urlParams = new URLSearchParams(window.location.search);
   const olympiadId = urlParams.get('olympiadId');
@@ -284,9 +294,16 @@ async function loadTaskDetails() {
     // Отображаем первую задачу
     if (tasks.length > 0) {
       currentTaskIndex = 0;
-      renderTaskByIndex(currentTaskIndex);
+      renderTaskByIndex(0);
+      renderPagination();
+      updateNavButtons(); // ← ОБЯЗАТЕЛЬНО
     }
 
+    // Отображаем язык
+    const langEl = document.getElementById('task-language');
+    if (langEl) {
+      langEl.textContent = languageMap[datalang] || datalang;
+    }
   } catch (err) {
     console.error('Ошибка загрузки задачи:', err);
   }
@@ -386,10 +403,48 @@ function renderTaskByIndex(index) {
 }
 
 // Пагинация
+function renderPagination() {
+  const pagination = document.getElementById('pagination');
+  if (!pagination || tasks.length === 0) return;
+
+  pagination.innerHTML = '';
+
+  const totalPages = tasks.length;
+  const maxPagesToShow = 5;
+
+  let start = Math.max(0, currentTaskIndex - 2);
+  let end = Math.min(totalPages, start + maxPagesToShow);
+
+  if (end - start < maxPagesToShow) {
+    start = Math.max(0, end - maxPagesToShow);
+  }
+
+  for (let i = start; i < end; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i + 1;
+
+    btn.className =
+      i === currentTaskIndex
+        ? 'px-3 py-1 bg-orange-500 text-white rounded'
+        : 'px-3 py-1 bg-gray-200 rounded hover:bg-gray-300';
+
+    btn.onclick = () => {
+      currentTaskIndex = i;
+      renderTaskByIndex(i);
+      renderPagination();
+      updateNavButtons(); // ← ВАЖНО
+    };
+
+    pagination.appendChild(btn);
+  }
+}
+
 function showNextTask() {
   if (currentTaskIndex < tasks.length - 1) {
     currentTaskIndex++;
     renderTaskByIndex(currentTaskIndex);
+    renderPagination();
+    updateNavButtons();
   }
 }
 
@@ -397,18 +452,45 @@ function showPrevTask() {
   if (currentTaskIndex > 0) {
     currentTaskIndex--;
     renderTaskByIndex(currentTaskIndex);
+    renderPagination();
+    updateNavButtons();
   }
 }
 
-// Инициализация с данными
-async function loadTasks(data) {
-  tasks = Array.isArray(data) ? data : [];
-  currentTaskIndex = 0;
-  renderTaskByIndex(currentTaskIndex);
+function updateNavButtons() {
+  const prevBtn = document.getElementById('prevTaskBtn');
+  const nextBtn = document.getElementById('nextTaskBtn');
+
+  if (!prevBtn || !nextBtn) return;
+
+  // Предыдущая
+  if (currentTaskIndex === 0) {
+    prevBtn.disabled = true;
+    prevBtn.className =
+      'px-4 py-2 bg-gray-200 text-gray-400 rounded cursor-not-allowed';
+  } else {
+    prevBtn.disabled = false;
+    prevBtn.className =
+      'px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600';
+  }
+
+  // Следующая
+  if (currentTaskIndex === tasks.length - 1) {
+    nextBtn.disabled = true;
+    nextBtn.className =
+      'px-4 py-2 bg-gray-200 text-gray-400 rounded cursor-not-allowed';
+  } else {
+    nextBtn.disabled = false;
+    nextBtn.className =
+      'px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600';
+  }
 }
 
-document.getElementById('nextTaskBtn')?.addEventListener('click', showNextTask);
-document.getElementById('prevTaskBtn')?.addEventListener('click', showPrevTask);
+document.getElementById('nextTaskBtn')
+  ?.addEventListener('click', showNextTask);
+
+document.getElementById('prevTaskBtn')
+  ?.addEventListener('click', showPrevTask);
 
 
 function renderAttachments(task) {
