@@ -465,24 +465,39 @@
                               Содержание задачи
                             </p>
 
-                            <div class="flex flex-wrap items-center gap-4">
+                            <div class="flex flex-wrap items-center gap-4" data-lang="ru">
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="ru" class="hidden" checked>
                                 Русский
                               </label>
 
-                              <label class="switch-btn flex items-center gap-2">
+                              <label class="switch-btn flex items-center gap-2" data-lang="kk">
                                 <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="kk" class="hidden">
                                 Қазақша
                               </label>
 
-                              <label class="switch-btn flex items-center gap-2">
+                              <label class="switch-btn flex items-center gap-2" data-lang="en">
                                 <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="en" class="hidden">
                                 English
                               </label>
+
+                              <!-- Spanish -->
+                              <label class="switch-btn flex items-center gap-2" data-lang="es">
+                                <img src="https://flagcdn.com/w40/es.png" alt="Флаг Испании" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="es" class="hidden">
+                                Spanish
+                              </label>
+
+                              <!-- German -->
+                              <label class="switch-btn flex items-center gap-2" data-lang="de">
+                                <img src="https://flagcdn.com/w40/de.png" alt="Флаг Германии" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="de" class="hidden">
+                                German
+                              </label>
+
                               <!-- Azerbaijani -->
                               <label class="switch-btn lang-option flex items-center gap-2" data-lang="az">
                                 <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
@@ -512,6 +527,8 @@
                                 <input id="title-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
                                 <input id="title-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
                                 <input id="title-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="title-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="title-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
                                 <input id="title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
                                 <input id="title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
@@ -548,6 +565,22 @@
                                       style="display:none"
                                     ></textarea>
 
+                                    <textarea id="desc-es"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="es"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(ES)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="desc-de"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="de"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(DE)"
+                                      style="display:none"
+                                    ></textarea>
+
                                     <textarea id="desc-az"
                                       class="lang-textarea textarea input-base border-default px-4"
                                       data-lang="az"
@@ -575,11 +608,13 @@
                                 </label>
                                 <!-- Файлы для каждого языка -->
                                 <div id="files-add-participant">
-                                  <input id="files-ru" type="file" data-lang="ru" multiple class="hidden file-input" />
-                                  <input id="files-kk" type="file" data-lang="kk" multiple class="hidden file-input" />
-                                  <input id="files-en" type="file" data-lang="en" multiple class="hidden file-input" />
-                                  <input id="files-az" type="file" data-lang="az" multiple class="hidden file-input" />
-                                  <input id="files-ka" type="file" data-lang="ka" multiple class="hidden file-input" />
+                                  <input id="files-ru" type="file" data-lang="ru" class="hidden file-input" />
+                                  <input id="files-kk" type="file" data-lang="kk" class="hidden file-input" />
+                                  <input id="files-en" type="file" data-lang="en" class="hidden file-input" />
+                                  <input id="files-es" type="file" data-lang="es" class="hidden file-input" />
+                                  <input id="files-de" type="file" data-lang="de" class="hidden file-input" />
+                                  <input id="files-az" type="file" data-lang="az" class="hidden file-input" />
+                                  <input id="files-ka" type="file" data-lang="ka" class="hidden file-input" />
                                 </div>
                                 <!-- Список выбранных файлов -->
                                 <div id="files-list-add-participant" class="space-y-2"></div>
@@ -675,6 +710,26 @@
                                     placeholder="EN"
                                     type="text"
                                     name="answer-en"
+                                    value="15"
+                                    style="display: none;"
+                                    required
+                                  />
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="es"
+                                    placeholder="ES"
+                                    type="text"
+                                    name="answer-es"
+                                    value="15"
+                                    style="display: none;"
+                                    required
+                                  />
+                                  <input
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="de"
+                                    placeholder="DE"
+                                    type="text"
+                                    name="answer-de"
                                     value="15"
                                     style="display: none;"
                                     required
@@ -799,7 +854,54 @@
                             required
                           />
                         </label>
+                      <label class="btn-option" data-i18n="tasks.add_olymp_type_daily">
+                          Задача олимпиады
+                          <input
+                            type="radio"
+                            name="role"
+                            value="olympiad"
+                            class="hidden"
+                            required
+                          />
+                        </label>
                       </div>
+
+<!--                      <div id="olympiad-edit-select-wrapper" class="hidden">-->
+<!--                        <label-->
+<!--                          style="margin-top:10px;"-->
+<!--                          class="text-gray-primary mb-1 block text-sm font-medium"-->
+<!--                          data-i18n="tasks.add_task_class"-->
+<!--                          >Выберите название олимпиады-->
+<!--                          <span class="text-red-primary">*</span></label-->
+<!--                        >-->
+<!--                        <div class="relative">-->
+<!--                          <select-->
+<!--                            id="olympiad-edit-participant"-->
+<!--                            name="edit-olympiades"-->
+<!--                            class="multi-select input-base border-default appearance-none"-->
+<!--                            required-->
+<!--                          >-->
+<!--                          </select>-->
+<!--                          <div-->
+<!--                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2"-->
+<!--                          >-->
+<!--                            <svg-->
+<!--                              xmlns="http://www.w3.org/2000/svg"-->
+<!--                              fill="none"-->
+<!--                              viewBox="0 0 24 24"-->
+<!--                              stroke-width="1.5"-->
+<!--                              stroke="currentColor"-->
+<!--                              class="size-4"-->
+<!--                            >-->
+<!--                              <path-->
+<!--                                stroke-linecap="round"-->
+<!--                                stroke-linejoin="round"-->
+<!--                                d="m19.5 8.25-7.5 7.5-7.5-7.5"-->
+<!--                              />-->
+<!--                            </svg>-->
+<!--                          </div>-->
+<!--                        </div>-->
+<!--                      </div>-->
 
                       <!-- Participant Form (shown by default) -->
                       <form id="participant-form2" class="role-form">
@@ -811,22 +913,6 @@
                             <div
                               class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4 sm:grid-cols-2"
                             >
-                              <div>
-                                <label
-                                  class="text-gray-primary mb-1 block text-sm font-medium"
-                                  data-i18n="tasks.add_task_name"
-                                  >Название задачи
-                                  <span class="text-red-primary">*</span></label
-                                >
-                                <input
-                                  id="title-edit-participant"
-                                  placeholder="Комбинаторика"
-                                  type="text"
-                                  class="input-base border-default"
-                                  value="Комбинаторика"
-                                  required
-                                />
-                              </div>
                               <div>
                                 <label
                                   class="text-gray-primary mb-1 block text-sm font-medium"
@@ -989,48 +1075,161 @@
                             <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="tasks.add_task_soderjanie">
                               Содержание задачи
                             </p>
-                            <div
-                              class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4"
-                            >
-                              <div>
+
+                            <div class="flex flex-wrap items-center gap-4" data-lang="ru">
+                              <label class="switch-btn flex items-center gap-2">
+                                <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="ru" class="hidden" checked>
+                                Русский
+                              </label>
+
+                              <label class="switch-btn flex items-center gap-2" data-lang="kk">
+                                <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="kk" class="hidden">
+                                Қазақша
+                              </label>
+
+                              <label class="switch-btn flex items-center gap-2" data-lang="en">
+                                <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="en" class="hidden">
+                                English
+                              </label>
+
+                              <!-- Spanish -->
+                              <label class="switch-btn flex items-center gap-2" data-lang="es">
+                                <img src="https://flagcdn.com/w40/es.png" alt="Флаг Испании" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="es" class="hidden">
+                                Spanish
+                              </label>
+
+                              <!-- German -->
+                              <label class="switch-btn flex items-center gap-2" data-lang="de">
+                                <img src="https://flagcdn.com/w40/de.png" alt="Флаг Германии" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="de" class="hidden">
+                                German
+                              </label>
+
+                              <!-- Azerbaijani -->
+                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="az">
+                                <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="az" class="hidden">
+                                <span class="lang-label">Азербайджанский</span>
+                              </label>
+
+                              <!-- Georgian -->
+                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="ka">
+                                <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
+                                <input type="radio" name="lang" value="ka" class="hidden">
+                                <span class="lang-label">Грузинский</span>
+                              </label>
+                            </div>
+
+                            <div style="margin-top:40px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
+                              <label
+                                id="edit-task-title-label"
+                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="tasks.add_task_name"
+                              >
+                                Название задачи <span class="text-red-primary">*</span>
+                              </label>
+
+                              <!-- Инпуты для каждого языка -->
+                              <div id="title-edit-participant">
+                                <input id="edit-title-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
+                                <input id="edit-title-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="edit-title-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="edit-title-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="edit-title-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="edit-title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="edit-title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                              </div>
+                            </div>
+                            <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
                                 <label
+                                  id="edit-task-textarea-label"
                                   class="text-gray-primary mb-1 block text-sm font-medium"
                                   data-i18n="tasks.add_task_uslovie"
                                   >Условие задачи
-                                  <span class="text-red-primary">*</span></label
-                                >
-                                <div class="relative">
-                                  <textarea
-                                    id="desc-edit-participant"
-                                    oninput="auto_grow(this)"
-                                    rows="2"
-                                    placeholder="Введите ваше сообщение..."
-                                    class="textarea input-base border-default px-4"
-                                    required
-                                  ></textarea
-                                  >
+                                  <span class="text-red-primary">*</span></label>
+                                  <div id="desc-edit-participant">
+                                    <textarea id="edit-desc-ru"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="ru"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(RU)"
+                                    ></textarea>
+
+                                    <textarea id="edit-desc-kk"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="kk"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(KZ)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="edit-desc-en"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="en"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(EN)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="edit-desc-es"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="es"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(ES)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="edit-desc-de"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="de"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(DE)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="edit-desc-az"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="az"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(AZ)"
+                                      style="display:none"
+                                    ></textarea>
+
+                                    <textarea id="edit-desc-ka"
+                                      class="lang-textarea textarea input-base border-default px-4"
+                                      data-lang="ka"
+                                      rows="2"
+                                      placeholder="Введите ваше сообщение...(GE)"
+                                      style="display:none"
+                                    ></textarea>
                                 </div>
+
+                              <div>
+                                <label
+                                id="edit-file-label"
+                                class="text-gray-primary mb-1 block text-sm font-medium cursor-pointer" for="files-add-participant"
+                                data-i18n="tasks.upload_file">
+                                  Прикрепите файл
+                                  <span class="text-red-primary">*</span>
+                                </label>
+                                <!-- Файлы для каждого языка -->
+                                <div id="files-edit-participant">
+                                  <input id="edit-files-ru" type="file" data-lang="ru" class="hidden file-input" />
+                                  <input id="edit-files-kk" type="file" data-lang="kk" class="hidden file-input" />
+                                  <input id="edit-files-en" type="file" data-lang="en" class="hidden file-input" />
+                                  <input id="edit-files-es" type="file" data-lang="es" class="hidden file-input" />
+                                  <input id="edit-files-de" type="file" data-lang="de" class="hidden file-input" />
+                                  <input id="edit-files-az" type="file" data-lang="az" class="hidden file-input" />
+                                  <input id="edit-files-ka" type="file" data-lang="ka" class="hidden file-input" />
+                                </div>
+                                <!-- Список выбранных файлов -->
+                                <div id="files-list-edit-participant" class="space-y-2"></div>
                               </div>
 
-                            </div>
-                          </div>
-                          <div>
-                            <label
-                              for="files-edit-participant"
-                              class="text-gray-primary mb-1 block text-sm font-medium"
-                              data-i18n="tasks.upload_file"
-                            >
-                              Прикреплённые файлы
-                            </label>
-                            <input
-                              id="files-edit-participant"
-                              type="file"
-                              multiple
-                              class="hidden"
-                              onchange="handleFilesChange(this, 'edit-participant')"
-                            />
-                            <div id="files-list-edit-participant" class="space-y-2">
-                              <!-- JS будет тут рендерить ссылки на файлы -->
                             </div>
                           </div>
 
@@ -1090,15 +1289,69 @@
                                     >*</span
                                   ></label
                                 >
-                                <input
-                                  id="answer-edit-participant"
-                                  placeholder="15"
-                                  value="15"
-                                  type="text"
-                                  name="answer"
-                                  class="input-base border-default"
-                                  required
-                                />
+                                <div id="answer-edit-participant">
+                                  <input
+                                    id="answer-ru-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="ru"
+                                    type="text"
+                                    placeholder="RU"
+                                  />
+
+                                  <input
+                                    id="answer-kk-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="kk"
+                                    type="text"
+                                    placeholder="KZ"
+                                    style="display:none"
+                                  />
+
+                                  <input
+                                    id="answer-en-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="en"
+                                    type="text"
+                                    placeholder="EN"
+                                    style="display:none"
+                                  />
+
+                                  <input
+                                    id="answer-es-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="es"
+                                    type="text"
+                                    placeholder="ES"
+                                    style="display:none"
+                                  />
+
+                                  <input
+                                    id="answer-de-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="de"
+                                    type="text"
+                                    placeholder="DE"
+                                    style="display:none"
+                                  />
+
+                                  <input
+                                    id="answer-az-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="az"
+                                    type="text"
+                                    placeholder="AZ"
+                                    style="display:none"
+                                  />
+
+                                  <input
+                                    id="answer-ka-edit"
+                                    class="lang-input-answer input-base border-default"
+                                    data-lang="ka"
+                                    type="text"
+                                    placeholder="GE"
+                                    style="display:none"
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
