@@ -25,5 +25,6 @@
     "register.conf2": "Terms of Use and ",
     "register.conf3": "Privacy Policy",
     "register.already_have_acc?": "Already have an account?",
-    "register.login": "Log In"
+    "register.login": "Log In",
+    "choose_country": "Choose your country"
 }

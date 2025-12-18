@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     placeholder.textContent = 'Выберите страну';
     placeholder.disabled = true;
     placeholder.selected = true;
+    placeholder.setAttribute('data-i18n', 'choose_country'); 
     countrySelect.appendChild(placeholder);
 
     const items = Object.keys(mapping).map(code => ({ code, name: mapping[code] || code }));
@@ -130,9 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = form.querySelector('input[name="email"], input#email, input[type="email"], input[placeholder*="@"]');
     const nameInput = form.querySelector('input[name="full_name_ru"], input[name="full_name"], input[id="full_name"], input[id="name"], input[placeholder*="ФИО"], input[type="text"]');
     const passwordInput = form.querySelector('input[name="password"], input#password, input[type="password"]');
-    return { emailInput, nameInput, passwordInput };
+    const password2Input = form.querySelector('input[name="password2"], input#password2'); // input для подтверждения пароля
+    return { emailInput, nameInput, passwordInput, password2Input };
   };
-
+  
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     await ensureValuesCommitted();
@@ -141,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     messageContainer.textContent = '';
     messageContainer.classList.remove('text-red-500', 'text-green-600');
   
-    const { emailInput, nameInput, passwordInput } = findInputs(form);
+    const { emailInput, nameInput, passwordInput, password2Input } = findInputs(form);
   
     if (passwordInput && !passwordInput.name) {
       passwordInput.name = 'password_temp_for_read';
@@ -151,7 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput ? emailInput.value.trim() : '';
     const fullName = nameInput ? nameInput.value.trim() : '';
     const password = passwordInput ? passwordInput.value : '';
+    const confirmPassword = password2Input ? password2Input.value : '';
     const countryCode = countrySelect ? countrySelect.value : '';
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');  // Показываем ошибку при несовпадении паролей
+      return;  // Останавливаем выполнение, форма не отправляется
+    }
   
     if (!isSelectChosen(roleSelect) || !email || !fullName || !password || !isSelectChosen(countrySelect)) {
       messageContainer.textContent = 'Пожалуйста, заполните все поля корректно (включая страну).';

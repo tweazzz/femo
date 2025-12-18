@@ -25,6 +25,17 @@
     "register.conf2": "Пайдалану шарттарымен және ",
     "register.conf3": "Құпиялық саясатымен келісесіз",
     "register.already_have_acc?": "Аккаунтыңыз бар ма?",
-    "register.login": "Кіру"
+    "register.login": "Кіру",
+    "choose_country": "Еліңізді таңдаңыз",
+    "register.confirm_pass": "Құпия сөз қайталаңыз",
     
+    "participant_register.info": "Өзіңіз туралы қысқаша айтып беріңіз 👋",
+    "participant_register.info_text" : "Бұл сенің деңгейіңе сәйкес тапсырмаларды таңдауға көмектеседі.",
+    "participant_register.choose_city" : "Қала атауы",
+    "participant_register.school" : "Мектеп атауы",
+    "participant_register.choose_class" : "Сыныпты таңдаңыз",
+    "participant_register.fio_parent" : "Ата-ананың толық аты-жөні",
+    "participant_register.parent_phone" : "participant_register.parent_email",
+    "participant_register.fio_teacher" : "",
+    "" : ""
 }
