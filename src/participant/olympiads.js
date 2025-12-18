@@ -416,7 +416,7 @@ async function loadOlympiadCards() {
           startBtn.textContent = (window.i18nDict && window.i18nDict[keyStartNow]) || startText;
           startBtn.style.backgroundColor = '#0DB459';
           startBtn.style.color = '#fff';
-          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap';
+          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer';
           btns.appendChild(startBtn);
         } else {
           const registerBtn = document.createElement('a');
