@@ -433,14 +433,108 @@ function fillCorrectAnswers(task) {
   });
 }
 
-function setTaskType(taskType) {
-  const radios = document.querySelectorAll('input[name="role"]');
 
-  radios.forEach(radio => {
-    radio.checked = radio.value === taskType;
-  });
+function setTaskType(rawType) {
+  const modal = document.getElementById('modalEdit');
+  if (!modal) return;
+
+  // 1) СБРОС перед установкой нового типа
+  showAllRoles(); // <-- ваша функция сброса
+
+  // нормализуем строку
+  const key = String(rawType || '').trim().toLowerCase();
+
+  // явное сопоставление алиасов -> значение value у radio
+  const typeMap = {
+    // подготовительная задача
+    'podg': 'participant',
+    'prep': 'participant',
+    'participant': 'participant',
+    'подготовительная задача': 'participant',
+
+    // задача дня
+    'daily': 'representative',
+    'day': 'representative',
+    'representative': 'representative',
+    'задача дня': 'representative',
+
+    // олимпиада
+    'olymp': 'olympiad',
+    'olympiad': 'olympiad',
+    'задача олимпиады': 'olympiad',
+  };
+
+  const taskType = typeMap[key] || key;
+
+  // соберём все радио для name="role"
+  const radios = modal.querySelectorAll('input[name="role"]');
+
+  // снять активный визуальный класс у всех (если используется)
+  radios.forEach(r => r.closest('label')?.classList.remove('btn-option--active'));
+
+  // найти нужный инпут по value
+  const target = modal.querySelector(`input[name="role"][value="${taskType}"]`);
+  if (target) {
+    // кликнуть по нужному радио (надёжно триггерит change)
+    target.click();
+
+    const targetLabel = target.closest('label');
+    targetLabel?.classList.add('btn-option--active');
+
+    // скрыть все остальные лейблы, оставив видимым только выбранный
+    radios.forEach(r => {
+      const label = r.closest('label');
+      if (!label) return;
+      const isSelected = r === target;
+
+      // Ваш фрагмент: скрываем через inline-стиль
+      label.style.display = isSelected ? '' : 'none';
+
+      // Для доступности:
+      label.setAttribute('aria-hidden', (!isSelected).toString());
+      r.tabIndex = isSelected ? 0 : -1;
+
+      // По желанию: убрать/вернуть disabled
+      r.disabled = !isSelected ? true : false;
+    });
+
+    // Сфокусируем выбранный радио, чтобы не терять контекст
+    target.focus({ preventScroll: true });
+
+  } else {
+    console.warn('Не найден радио для типа:', rawType, '->', taskType);
+    // Если нужный тип не найден — НЕ скрываем варианты,
+    // чтобы пользователь мог выбрать вручную.
+  }
 }
 
+/**
+ * Вспомогательная функция для сброса:
+ * заново показывает все варианты ролей.
+ */
+function showAllRoles() {
+  const modal = document.getElementById('modalEdit');
+  if (!modal) return;
+
+  const radios = modal.querySelectorAll('input[name="role"]');
+  radios.forEach(r => {
+    const label = r.closest('label');
+    if (!label) return;
+
+    // Вернуть видимость
+    label.style.display = '';
+    label.removeAttribute('aria-hidden');
+
+    // Вернуть навигацию по табу
+    r.tabIndex = 0;
+
+    // Вернуть активность
+    r.disabled = false;
+
+    // Снять визуальные классы активного состояния, если они остались
+    label.classList.remove('btn-option--active');
+  });
+}
 
 function openEditModal(task) {
   taskBeingEditedId = task.id;
@@ -969,7 +1063,8 @@ async function submitNewTask() {
   // ----------------------
   // Отправка
   // ----------------------
-  let url = 'https://portal.femo.kz/api/assignments/';
+  let url = 'https://portal.femo.kz/api/assignments/dashboard/';
+
   if (type === 'olympiad') {
     const olympiad_id = document.getElementById('olympiad-add-participant')?.value;
     if (!olympiad_id) return alert('Пожалуйста, выберите олимпиаду');
@@ -1082,7 +1177,6 @@ window.addEventListener('DOMContentLoaded', () => {
     'participant'
   );
 });
-
 
 const olympiadWrapperAdd =
   document.getElementById('olympiad-select-wrapper');

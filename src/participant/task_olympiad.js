@@ -202,36 +202,42 @@ function updateResultBanners(obj = {}) {
   console.debug('updateResultBanners: cannot determine correctness', { solved, correct, obj });
 }
 
+
 document.addEventListener('DOMContentLoaded', async () => {
-  const user = await ensureUserAuthenticated()
-  if (!user) return
+  const user = await ensureUserAuthenticated();
+  if (!user) return;
 
-  // сначала загрузим детали профиля
-  let profile
+  let profile;
   try {
-    profile = await loadUserProfile()
+    profile = await loadUserProfile();
   } catch (e) {
-    console.error(e)
-    return
+    console.error(e);
+    return;
   }
-  renderUserInfo(profile)
+  renderUserInfo(profile);
 
-  try {
-      document.querySelectorAll('.preload-hidden').forEach(el => el.classList.remove('preload-hidden'));
-  } catch (err) {
-    console.error('Ошибка при загрузке данных:', err)
-  }
-
-
-  // Скрыть кнопку очистки при загрузке
+  const answerInput = document.getElementById('answer-input');
+  const submitBtn1  = document.getElementById('submit-button1');
+  const submitBtn2  = document.getElementById('submit-button2');
   const clearButton = document.getElementById('clear-button');
-  if (clearButton) clearButton.style.display = 'none';
 
+  if (!answerInput || !submitBtn1 || !submitBtn2 || !clearButton) {
+    console.error('Не найдены необходимые элементы: input/кнопки.');
+    return;
+  }
 
   const hasValue = answerInput.value.trim() !== '';
-  submitBtn1.style.display = hasValue ? 'flex' : 'none';
-  submitBtn2.style.display = hasValue ? 'none' : 'flex';
-})
+  submitBtn1.hidden  = !hasValue;   // показываем если есть текст
+  submitBtn2.hidden  = hasValue;    // показываем если пусто
+  clearButton.hidden = !hasValue;   // показываем при наличии текста
+
+  answerInput.addEventListener('input', () => {
+    const filled = answerInput.value.trim() !== '';
+    submitBtn1.hidden  = !filled;
+    submitBtn2.hidden  = filled;
+    clearButton.hidden = !filled;
+  });
+});
 
 const answerInput = document.getElementById('answer-input');
 const clearButton = document.getElementById('clear-button');
@@ -239,7 +245,6 @@ const submitBtn1 = document.getElementById('submit-button1');
 const submitBtn2 = document.getElementById('submit-button2');
 const winInfo = document.getElementById('win-info');
 const loseInfo = document.getElementById('lose-info');
-
 
 
 let currentTaskIndex = 0; // текущая задача
@@ -308,7 +313,7 @@ function renderTaskByIndex(index) {
   const taskGradeEl = document.getElementById('task-grade');
   const taskDescEl = document.getElementById('task-description');
   if (taskGradeEl) taskGradeEl.textContent = task.grade ? `${task.grade} класс` : '';
-  if (taskDescEl) taskDescEl.textContent = task.description || '';
+  if (taskDescEl) taskDescEl.textContent = task.description || `#${task.id} ${task.title}`;
 
   // Вложения
   if (typeof renderAttachments === 'function') renderAttachments(task);

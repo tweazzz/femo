@@ -216,6 +216,21 @@
                 />
               </svg>
 
+              <a href="/participant/tasks.html" class="text-gray-primary hover:underline" data-i18n="dashboard.nav_olympiads">Задачи</a>
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="size-5"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+
               <span class="text-orange-primary font-medium" id="task-title"
                 ></span
               >
@@ -280,6 +295,7 @@
 
               <div class="flex justify-between mt-10">
                   <button id="prevTaskBtn" class="px-4 py-2 bg-gray-200 rounded">Предыдущая</button>
+                  <div id="pagination" class="flex gap-2 mt-4"></div>
                   <button id="nextTaskBtn" class="px-4 py-2 bg-orange-500 text-white rounded">Следующая</button>
                 </div>
 
@@ -347,8 +363,8 @@
               <div class="space-y-4">
                 <button
                   id="submit-button1"
-                  class="bg-orange-primary hover:bg-orange-primary/90 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 text-white transition-colors preload-hidden"
-                >
+                  class="bg-orange-primary hover:bg-orange-primary/90 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 text-white transition-colors"
+                  hidden>
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -370,15 +386,15 @@
 
                 <button
                   id="clear-button"
-                  class="text-orange-primary border-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg border-1 px-4 py-2 transition-colors preload-hidden"
-                >
+                  class="text-orange-primary border-orange-primary flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg border-1 px-4 py-2 transition-colors"
+                  hidden>
                   <span data-i18n="task.answer_clear">Очистить ответ</span>
                 </button>
 
                 <button
                   id="submit-button2"
-                  class="bg-gray-background text-gray-primary hover:bg-gray-primary/5 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 transition-colors preload-hidden"
-                >
+                  class="bg-gray-background text-gray-primary hover:bg-gray-primary/5 flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg px-4 py-2 transition-colors"
+                  hidden>
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -595,9 +611,7 @@
               </div>
             </div>
           </div>
-
         </main>
-      </div>
 
       <div
         id="overlayModal"
