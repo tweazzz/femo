@@ -393,18 +393,23 @@ async function loadOlympiadCards() {
       detailBtn.rel = 'noopener noreferrer';
       btns.appendChild(detailBtn);
 
+      function getSelectedLanguage() {
+          const checked = document.querySelector('input[name="lan"]:checked');
+          return checked ? checked.value : 'ru';
+      }
+
       // если ongoing — показываем старт/регистрацию в зависимости от registered
       if (isOngoing) {
         btns.innerHTML = ''; // оставляем только кнопку старта/регистрации
         if (isRegistered) {
-          const startBtn = document.createElement('a');
+          const startBtn = document.createElement('button'); // лучше button, не <a>
           startBtn.addEventListener('click', () => {
-            openStartOlympiadModal('/participant/task_olympiad.html');
+            openStartOlympiadModal(olympiad.id);
           });
           startBtn.textContent = (window.i18nDict && window.i18nDict[keyStartNow]) || startText;
           startBtn.style.backgroundColor = '#0DB459';
           startBtn.style.color = '#fff';
-          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap';
+          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer';
           btns.appendChild(startBtn);
         } else {
           const registerBtn = document.createElement('a');
@@ -434,34 +439,40 @@ async function loadOlympiadCards() {
 }
 
 
-let startOlympiadUrl = null;
+let startOlympiadId = null;
 
-function openStartOlympiadModal(url) {
-  startOlympiadUrl = url;
+function openStartOlympiadModal(olympiadId) {
+  startOlympiadId = olympiadId;
   const modal = document.getElementById('startOlympiadModal');
   modal.classList.remove('hidden');
   modal.classList.add('flex');
 }
 
+
 function closeStartOlympiadModal() {
-  startOlympiadUrl = null;
+  startOlympiadId = null;
   const modal = document.getElementById('startOlympiadModal');
   modal.classList.add('hidden');
   modal.classList.remove('flex');
 }
-
 // Отменить
 document
   .getElementById('cancelStartOlympiad')
   .addEventListener('click', closeStartOlympiadModal);
 
-// Да, начать
+// Да, начать — глобальный (только один обработчик)
 document
   .getElementById('confirmStartOlympiad')
   .addEventListener('click', () => {
-    if (startOlympiadUrl) {
-      window.location.href = startOlympiadUrl;
+    if (!startOlympiadId) {
+      console.warn('startOlympiadId не задан — откройте модалку через кнопку "Начать сейчас".');
+      return;
     }
+    const lang = (document.querySelector('input[name="lan"]:checked') || { value: 'ru' }).value;
+    const url = `/participant/list_tasks_olympiad.html?olympiadId=${encodeURIComponent(startOlympiadId)}&lang=${encodeURIComponent(lang)}`;
+    // перед редиректом можно закрыть модалку
+    closeStartOlympiadModal();
+    window.location.href = url;
   });
 
 // 🔥 Клик по пустому месту

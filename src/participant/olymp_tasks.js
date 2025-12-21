@@ -306,6 +306,7 @@ function getLevelLabel(lvl) {
     // читаем lang из URL — если нет, оставляем пустую строку
     const urlParams = new URLSearchParams(window.location.search);
     const datalang = urlParams.get('lang');
+    const olymp_id = urlParams.get('olympiadId');
 
     container.innerHTML = '';
 
@@ -319,7 +320,7 @@ function getLevelLabel(lvl) {
       const solvedKey = task.solved ? 'tasks.solved' : 'tasks.not_solved';
 
       const taskHTML = `
-        <a href="/participant/task_olympiad.html?id=${task.id}&lang=${datalang}" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
+        <a href="/participant/task_olympiad.html?id=${task.id}&lang=${datalang}&olymp_id=${olymp_id}" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
           <div class="bg-violet-secondary rounded-xl p-2"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_4387_36066)">
           <path d="M0.935677 8.93784L13.7313 3.54208C14.7224 3.12363 15.7905 2.94744 16.8587 3.01351L30.8106 3.9385C31.4713 3.98255 31.9888 4.53314 31.9888 5.19384V20.8195C31.9888 21.293 31.7686 21.7445 31.3942 22.0308L22.4306 28.9462C22.1443 29.1664 21.7809 29.2766 21.4175 29.2655L5.13116 28.4837C4.43741 28.4507 3.85379 27.9551 3.71064 27.2834L0.0437238 10.6777C-0.121453 9.96193 0.26396 9.22414 0.935677 8.93784Z" fill="#F4891E"/>
