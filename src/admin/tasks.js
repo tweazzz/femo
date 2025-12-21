@@ -764,7 +764,7 @@ async function submitEditTask() {
     const res = await authorizedFetch(
       `https://portal.femo.kz/api/assignments/dashboard/${taskBeingEditedId}/`,
       {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
         body: fd
       }

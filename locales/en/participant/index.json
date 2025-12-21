@@ -76,7 +76,8 @@
     "tasks.solved": "Submitted", 
     "tasks.not_solved": "Not Submitted",
     "tasks.show_only_completed_tasks":"Show completed only",
-
+    "task.grade": " grade",
+    "tasks.olympiad": "Olympiad: ",
     "task.correct_answer":"You won! The answer is correct and on time - you get ",
     "task.incorrect_answer":"Unfortunately, the answer is incorrect. Try again.",
     "task.form":"Task description",

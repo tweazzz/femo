@@ -231,7 +231,24 @@
 
           <div class="grid gap-4 xl:grid-cols-3">
             <div class="xl:col-span-2">
+<!-- WIN (по умолчанию скрыт) -->
+<div id="win-info" class="card border-default text-green-primary bg-green-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3 preload-hidden" role="status" aria-live="polite">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10.0003 18.3334C14.5837 18.3334 18.3337 14.5834 18.3337 10.0001C18.3337 5.41675 14.5837 1.66675 10.0003 1.66675C5.41699 1.66675 1.66699 5.41675 1.66699 10.0001C1.66699 14.5834 5.41699 18.3334 10.0003 18.3334Z" stroke="#0DB459" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M6.45801 9.99993L8.81634 12.3583L13.5413 7.6416" stroke="#0DB459" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <span id="win-info-text" style="font-size: 16px; padding: 12px;"><span data-i18n="task.correct_answer">Ты победил(а)! Ответ верный и вовремя — ты получаешь  </span><strong id="win-info-xp"></strong></span>
+</div>
 
+<!-- LOSE (по умолчанию скрыт) -->
+<div id="lose-info" class="card border-default text-red-primary bg-red-secondary mb-4 flex items-center gap-2 rounded-2xl px-4 py-3 preload-hidden" role="status" aria-live="polite">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10.0003 18.3334C14.5837 18.3334 18.3337 14.5834 18.3337 10.0001C18.3337 5.41675 14.5837 1.66675 10.0003 1.66675C5.41699 1.66675 1.66699 5.41675 1.66699 10.0001C1.66699 14.5834 5.41699 18.3334 10.0003 18.3334Z" stroke="#E81C2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M7.64172 12.3584L12.3584 7.64172" stroke="#E81C2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M12.3584 12.3584L7.64172 7.64172" stroke="#E81C2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <span id="lose-info-text" data-i18n="task.incorrect_answer" style="font-size: 16px; padding: 12px;">Увы, ответ неверный. Попробуйте снова</span>
+</div>
                <div class="border-default text-primary mb-6 rounded-lg p-6">
                 <h3 class="mb-4 flex items-center gap-2"   style="
     width: 100%;

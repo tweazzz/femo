@@ -143,62 +143,100 @@ function renderUserInfo(profile) {
     // ignore
   }
 }
+// безопасный геттер элементов (используй везде при необходимости)
+function getWinLoseElements() {
+  return {
+    winInfo: document.getElementById('win-info'),
+    loseInfo: document.getElementById('lose-info'),
+    winTextContainer: document.getElementById('win-info-text'),
+    loseTextContainer: document.getElementById('lose-info-text')
+  };
+}
+function getLevelLabel(level) {
+  const langRaw = localStorage.getItem('lang') || 'ru';
+  const lang = langRaw === 'kk' ? 'kz' : langRaw;
 
+  const LEVEL_MAP = {
+    ru: {
+      easy: 'Лёгкий',
+      medium: 'Средний',
+      hard: 'Сложный',
+    },
+    kz: {
+      easy: 'Оңай',
+      medium: 'Орташа',
+      hard: 'Қиын',
+    },
+    en: {
+      easy: 'Easy',
+      medium: 'Medium',
+      hard: 'Hard',
+    },
+  };
+
+  return LEVEL_MAP[lang]?.[level] || level;
+}
 /**
  * Показывает/скрывает win/lose баннеры и подставляет реальные очки.
  * Принимает либо объект task (с полями solved, points, status, correct)
  * либо результат отправки (с поля correct, points).
  */
+// Новая, безопасная версия
 function updateResultBanners(obj = {}) {
-  // guard: элементы должны быть в DOM
-  if (!winInfo || !loseInfo) return;
+  const { winInfo, loseInfo, winTextContainer } = getWinLoseElements();
 
-  // Скрываем по умолчанию
+  // если элементов нет — не падаем, просто логируем
+  if (!winInfo || !loseInfo) {
+    console.warn('updateResultBanners: win/lose elements not found in DOM');
+    return;
+  }
+
+  // сначала обязательно удалим preload-hidden (если он есть),
+  // чтобы CSS не мешал отображению
+  winInfo.classList.remove('preload-hidden');
+  loseInfo.classList.remove('preload-hidden');
+
+  // скрываем по умолчанию
   winInfo.style.display = 'none';
   loseInfo.style.display = 'none';
 
-  // Нормализуем solved: если явного поля нет, считаем решённым по correct:true либо по тому что obj.points > 0
-  const solved = Boolean(obj.solved || obj.is_solved || obj.correct || obj.status === 'Отправлено' && obj.solved) || false;
+  // Нормализуем solved
+  const solved = Boolean(obj.solved || obj.is_solved || obj.correct || (obj.status === 'Отправлено' && obj.solved)) || false;
 
-  // Если пришёл объект с correct=false (и/или solved true) — будем учитывать это
   let correct = null;
   if (typeof obj.correct === 'boolean') correct = obj.correct;
   else if (typeof obj.is_correct === 'boolean') correct = obj.is_correct;
   else if (typeof obj.points === 'number') correct = obj.points > 0;
   else if (typeof obj.base_points === 'number') correct = obj.base_points > 0;
-  // ещё запасные поля
   else if (typeof obj.awarded_points === 'number') correct = obj.awarded_points > 0;
 
-  // Если нет признака solved — не показываем ничего
   if (!solved) return;
 
-  // Если корректность определена — показываем соответствующий баннер
   if (correct === true) {
-    // вычислим XP (источник правды: points -> awarded_points -> base_points)
-    const xp = (obj.points ?? obj.awarded_points ?? obj.base_points ?? 0);
+    const xp = obj.points ?? obj.awarded_points ?? obj.base_points ?? 0;
 
-    // Обновим внутренний текст аккуратно (чтобы сохранить тег <strong id="win-info-xp">)
-    const winText = `Ты победил(а)! Ответ верный и вовремя — ты получаешь <strong id="win-info-xp">+${xp} XP</strong>`;
-    const winTextContainer = winInfo.querySelector('span') || winInfo;
-    winTextContainer.innerHTML = winText;
-
-    // Обновим modal текст если есть
-    const modalXP = document.getElementById('modal-xp');
-    if (modalXP) modalXP.textContent = `Ответ верный и вовремя — ты получаешь +${xp} XP`;
+    const xpEl = document.getElementById('win-info-xp');
+    if (xpEl) xpEl.textContent = `+ ${xp} XP`;
 
     winInfo.style.display = 'flex';
     loseInfo.style.display = 'none';
+
+    // 🔥 обязательно применяем перевод
+    if (typeof applyTranslations === 'function') {
+      applyTranslations(window.i18nDict || {});
+    }
+
     return;
   }
 
   if (correct === false) {
-    // Показываем "неправильно"
-    winInfo.style.display = 'none';
+    // убедимся, что текст перевода на месте (если нужен)
     loseInfo.style.display = 'flex';
+    winInfo.style.display = 'none';
     return;
   }
 
-  // Если не определили correctness (редкий случай) — оставляем оба скрытыми
+  // если не определили correct — оставляем оба скрытыми
   console.debug('updateResultBanners: cannot determine correctness', { solved, correct, obj });
 }
 
@@ -260,20 +298,26 @@ const languageMap = {
   ka: 'Грузинский'
 };
 
+// --- ЗАМЕНА: безопасная версия loadTaskDetails() ---
 async function loadTaskDetails() {
   const urlParams = new URLSearchParams(window.location.search);
-  const olympiadId = urlParams.get('olympiadId');
+  const taskid = urlParams.get('id');
   const datalang = urlParams.get('lang');
 
-  if (!olympiadId || !datalang) {
+  if (!taskid || !datalang) {
     console.error('Не указан id или lang задачи в URL');
     return;
   }
 
-  const endpoint = `https://portal.femo.kz/api/olympiads/participant/dashboard/${olympiadId}/assignments/?language=${datalang}`;
+  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/${encodeURIComponent(taskid)}/olympiad/detail/?language=${encodeURIComponent(datalang)}`;
 
   try {
-    const token = JSON.parse(localStorage.getItem('user'))?.tokens?.access;
+    // token: сначала пробуем access_token (старое место), иначе читаем из user.tokens.access
+    const token = localStorage.getItem('access_token') || (JSON.parse(localStorage.getItem('user') || 'null')?.tokens?.access);
+    if (!token) {
+      console.warn('Токен не найден в localStorage');
+      return;
+    }
 
     const response = await authorizedFetch(endpoint, {
       headers: {
@@ -282,24 +326,45 @@ async function loadTaskDetails() {
     });
 
     if (!response.ok) {
-      throw new Error('Ошибка при получении задачи');
+      throw new Error(`Ошибка при получении задачи: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Задачи с API:', data);
+    console.log('Задача (detail) с API:', data);
 
-    // Сохраняем массив задач в глобальную переменную
-    tasks = Array.isArray(data) ? data : [];
+    // Нормализуем ответ в массив задач:
+    // - если API вернул массив -> используем его
+    // - если API вернул { results: [...] } -> используем results
+    // - если API вернул единичный объект -> поместим его в массив [obj]
+    if (Array.isArray(data)) {
+      tasks = data;
+    } else if (data && Array.isArray(data.results)) {
+      tasks = data.results;
+    } else if (data && typeof data === 'object') {
+      tasks = [data];
+    } else {
+      tasks = [];
+    }
 
-    // Отображаем первую задачу
+    // Отображаем первую задачу, если есть
     if (tasks.length > 0) {
       currentTaskIndex = 0;
       renderTaskByIndex(0);
       renderPagination();
-      updateNavButtons(); // ← ОБЯЗАТЕЛЬНО
+      updateNavButtons();
+    } else {
+      // Если задач нет — покажем сообщение пользователю
+      const mainContainer = document.getElementById('task-main') || document.querySelector('main');
+      if (mainContainer) {
+        mainContainer.insertAdjacentHTML('afterbegin', `
+          <div class="col-span-full flex items-center justify-center rounded-2xl p-8 text-center text-gray-500">
+            No task data available for this id / language
+          </div>
+        `);
+      }
     }
 
-    // Отображаем язык
+    // Отображаем язык человекочитаемо
     const langEl = document.getElementById('task-language');
     if (langEl) {
       langEl.textContent = languageMap[datalang] || datalang;
@@ -308,6 +373,8 @@ async function loadTaskDetails() {
     console.error('Ошибка загрузки задачи:', err);
   }
 }
+// --- конец замены ---
+
 
 document.addEventListener('DOMContentLoaded', () => {
   loadTaskDetails();
@@ -329,7 +396,16 @@ function renderTaskByIndex(index) {
   // Класс и описание
   const taskGradeEl = document.getElementById('task-grade');
   const taskDescEl = document.getElementById('task-description');
-  if (taskGradeEl) taskGradeEl.textContent = task.grade ? `${task.grade} класс` : '';
+  if (taskGradeEl) {
+  if (task.grade) {
+    taskGradeEl.innerHTML = `
+      ${task.grade} <span data-i18n="task.grade"> класс</span>
+    `;
+  } else {
+    taskGradeEl.innerHTML = '';
+  }
+}
+
   if (taskDescEl) taskDescEl.textContent = task.description || `#${task.id} ${task.title}`;
 
   // Вложения
@@ -343,11 +419,13 @@ function renderTaskByIndex(index) {
     hard: 'text-red-primary bg-red-secondary'
   };
 
+  const levelText = getLevelLabel(task.level);
+  const levelClass = levelClassMap[task.level] || 'text-gray-500 bg-gray-100';
+
   const levelEl = document.getElementById('task-level');
-  if (levelEl) {
-    levelEl.textContent = levelMap[task.level] || task.level || '';
-    levelEl.className = `${levelClassMap[task.level] || 'text-gray-500 bg-gray-100'} border-default rounded-xl px-2 py-0.5 text-sm`;
-  }
+  levelEl.textContent = levelText;
+  levelEl.className = `${levelClass} border-default rounded-xl px-2 py-0.5 text-sm`;
+
 
   // Очки и бонусы
   const pointsEl = document.getElementById('task-points');
@@ -495,59 +573,68 @@ document.getElementById('prevTaskBtn')
 
 function renderAttachments(task) {
   const attachmentsContainer = document.getElementById('task-attachments');
-  if (!attachmentsContainer) return;
+  if (!attachmentsContainer) {
+    console.warn('renderAttachments: element #task-attachments не найден');
+    return;
+  }
 
   attachmentsContainer.innerHTML = '';
 
-  // SVG как строка
+  // Оранжевая иконка (строка SVG)
   const fileSvg = `
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-         xmlns="http://www.w3.org/2000/svg">
-      <path d="M6.33301 18.3334H13.6663C15.3232 18.3334 16.6663 16.9903
-               16.6663 15.3334V8.04655C16.6663 7.17078 16.2837 6.33873
-               15.6187 5.76878L11.6756 2.38898C11.1319 1.92292 10.4394
-               1.66675 9.72324 1.66675H6.33301C4.67615 1.66675 3.33301
-               3.00989 3.33301 4.66675V15.3334C3.33301 16.9903 4.67615
-               18.3334 6.33301 18.3334Z"
-            stroke="#F4891E" stroke-linejoin="round"/>
-      <path d="M10.833 2.0835V4.66683C10.833 5.7714 11.7284 6.66683
-               12.833 6.66683H16.2497"
-            stroke="#F4891E" stroke-linejoin="round"/>
-      <path d="M6.66602 15.8335H13.3327"
-            stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M10 8.3335V13.3335"
-            stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M7.5 10.8335L10 13.3335L12.5 10.8335"
-            stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.33203 18.3334H13.6654C15.3222 18.3334 16.6654 16.9903 16.6654 15.3334V8.04655C16.6654 7.17078 16.2827 6.33873 15.6177 5.76878L11.6746 2.38898C11.1309 1.92292 10.4384 1.66675 9.72226 1.66675H6.33203C4.67518 1.66675 3.33203 3.00989 3.33203 4.66675V15.3334C3.33203 16.9903 4.67517 18.3334 6.33203 18.3334Z" stroke="#F4891E" stroke-linejoin="round"/>
+    <path d="M10.832 2.0834V4.66674C10.832 5.77131 11.7275 6.66674 12.832 6.66674H16.2487" stroke="#F4891E" stroke-linejoin="round"/>
+    <path d="M6.66406 15.8335H13.3307" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 8.3335V13.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M7.5 10.8335L10 13.3335L12.5 10.8335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+
   `;
 
-  // НОРМАЛИЗАЦИЯ
-  const files = Array.isArray(task?.attachments) ? task.attachments : [];
+  // Собираем все URL файлов в один массив:
+  const urls = [];
 
-  // Если вложений нет — просто выходим
-  if (files.length === 0) return;
+  // 1) attachments (если массив)
+  if (Array.isArray(task?.attachments) && task.attachments.length) {
+    task.attachments.forEach(a => {
+      const url = a?.file_url || a?.url || a?.file || null;
+      if (url) urls.push(url);
+    });
+  }
 
-  files.forEach(file => {
-    // безопасная обработка URL
-    const url = file?.file_url || file?.url;
-    if (!url) return;
+  // 2) одиночное поле task.file (если есть) — поддерживаем относительный путь
+  if (task?.file) {
+    const f = String(task.file);
+    urls.push(f);
+  }
 
-    const fileName = decodeURIComponent(url.split('/').pop() || 'Файл');
+  // Ничего не найдено — просто выходим (ничего не показываем)
+  if (urls.length === 0) {
+    // ничего не вставляем (пользователь просил не показывать блок, если нет файлов)
+    return;
+  }
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.className = 'flex items-center gap-2 text-[#F4891E] hover:underline';
+  // Для каждого URL — нормализуем и отрисуем
+  urls.forEach(raw => {
+    const url = String(raw).startsWith('http') ? raw : `https://portal.femo.kz${raw}`;
+    const fileName = decodeURIComponent((url.split('/').pop()) || 'Файл');
 
-    link.innerHTML = `
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.className = 'flex items-center gap-2 text-[#F4891E] hover:underline mt-2';
+
+    a.innerHTML = `
       ${fileSvg}
-      <span>${fileName}</span>
+      <span class="text-sm font-medium">${fileName}</span>
     `;
 
-    attachmentsContainer.appendChild(link);
+    attachmentsContainer.appendChild(a);
   });
 }
+
 
 
 
@@ -588,7 +675,7 @@ submitBtn1.addEventListener('click', async () => {
   const taskId = urlParams.get('id');
   const source = urlParams.get('source'); // 'daily' или 'general'
 
-  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/${taskId}/${source}/submit/`;
+  const endpoint = `https://portal.femo.kz/api/assignments/participant/dashboard/${taskId}/olympiad/submit/`;
 
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -642,15 +729,22 @@ submitBtn1.addEventListener('click', async () => {
       toggleModal('modal');
     } else {
       // Неверный ответ
-      winInfo.style.display = 'none';
-      loseInfo.style.display = 'flex';
+      const { winInfo, loseInfo } = getWinLoseElements();
+      if (winInfo) winInfo.classList.remove('preload-hidden');
+      if (loseInfo) loseInfo.classList.remove('preload-hidden');
+
+      if (winInfo) winInfo.style.display = 'none';
+      if (loseInfo) loseInfo.style.display = 'flex';
+
     }
 
   } catch (err) {
     console.error('Ошибка при отправке:', err);
-    alert('Ошибка при отправке ответа.');
-    // Неверный ответ
-    winInfo.style.display = 'none';
-    loseInfo.style.display = 'block';
+    const { winInfo, loseInfo } = getWinLoseElements();
+    if (winInfo) winInfo.classList.remove('preload-hidden');
+    if (loseInfo) loseInfo.classList.remove('preload-hidden');
+
+    if (winInfo) winInfo.style.display = 'none';
+    if (loseInfo) loseInfo.style.display = 'flex';
   }
 });

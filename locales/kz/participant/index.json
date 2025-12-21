@@ -76,7 +76,8 @@
     "tasks.solved": "Тапсырма тапсырылған", 
     "tasks.not_solved": "Тапсырма тапсырылмаған",
     "tasks.show_only_completed_tasks":"Аяқталғандарын көрсету",
-
+    "task.grade": " сынып",
+    "tasks.olympiad": "Олимпиада: ",
     "task.correct_answer":"Сен жеңдің! Жауап дұрыс және уақытында — сен ",
     "task.incorrect_answer":"Өкінішті, жауап дұрыс емес. Қайта жіберіп көріңіз",
     "task.form":"Тапсырма шарты",
