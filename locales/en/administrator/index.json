@@ -64,7 +64,9 @@
   "users.form_representative_num": "Representative's phone number",
   "users.empty": "No data",
 
-
+  "olympiad.format": "Olympiad format",
+  "olympiad.online": "Online",
+  "olympiad.offline": "Offline",
   "olympiads.olympiad": "Olympiad management",
   "olympiads.create_olympiad_btn": "Create olympiad",
   "olympiads.add_olympiad": "Add olympiads",

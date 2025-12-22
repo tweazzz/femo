@@ -554,7 +554,12 @@ async function openEditModal(title, id) {
       throw new Error(`Ошибка загрузки олимпиады: ${response.status}`)
     }
 
-    const data = await response.json()
+    const data = await response.json();
+    const formatEdit = document.getElementById('format-edit');
+    if (formatEdit) {
+      formatEdit.value = data.format || 'online';
+    }
+    updateFormatVisibilityEdit(data.format);
     // Очистим tomSelect и добавим нужные элементы
     tomGradesEdit.clear(); 
     if (Array.isArray(data.grades) && data.grades.length) {
@@ -582,6 +587,25 @@ async function openEditModal(title, id) {
         });
       } else {
         langSelect.value = data.language || 'kazakh';
+      }
+    }
+    if (data.format !== 'online') {
+      // start_at
+      const dateInput = document.querySelector('.date-single-edit');
+      if (dateInput && data.start_at) {
+        const d = new Date(data.start_at);
+        const formatted = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+        dateInput.value = formatted;
+
+        if (dateInput._flatpickr) {
+          dateInput._flatpickr.setDate(formatted, true);
+        }
+      }
+
+      // location
+      const locationEdit = document.getElementById('location-edit');
+      if (locationEdit) {
+        locationEdit.value = data.location || '';
       }
     }
 
@@ -658,6 +682,12 @@ async function openEditModal(title, id) {
     alert(`Ошибка при загрузке олимпиады: ${err.message}`)
   }
 }
+const formatEdit = document.getElementById('format-edit');
+if (formatEdit) {
+  formatEdit.addEventListener('change', () => {
+    updateFormatVisibilityEdit(formatEdit.value);
+  });
+}
 
 function formatDateReverse(dateStr) {
   const [y, m, d] = dateStr.split('-')
@@ -718,6 +748,15 @@ function isAddFormValid() {
     if (!parts[0].includes('.') || parts[0].split('.').length !== 3) return false;
     if (parts.length === 2 && (!parts[1].includes('.') || parts[1].split('.').length !== 3)) return false;
   }
+  // --- Проверка top-level date & location только если формат = offline ---
+  const formatEl = document.getElementById('format-add');
+  if (formatEl && formatEl.value === 'offline') {
+    const topDateInput = document.querySelector('.date-single-add');
+    const locationInput = document.getElementById('location');
+
+    if (!topDateInput || !topDateInput.value.trim()) return false;
+    if (!locationInput || !locationInput.value.trim()) return false;
+  }
 
   return true;
 }
@@ -768,6 +807,76 @@ function focusFirstInvalid() {
     if (!raw) { alert('Заполните период этапа'); dateInput && dateInput.focus(); return; }
     const parts = raw.split('—').map(s => s.trim()).filter(Boolean);
     if (parts.length < 2) { alert('Убедитесь, что диапазон даты указан как "дд.мм.гггг — дд.мм.гггг"'); dateInput && dateInput.focus(); return; }
+  }
+}
+// Функция для переключения видимости start-date и location по формату
+function updateFormatVisibility() {
+  const formatEl = document.getElementById('format-add');
+  const startLabel = document.getElementById('olympiad-start-date'); // label
+  // контейнер с input — предполагаем, что он следующий sibling после label
+  const startWrapper = startLabel ? startLabel.nextElementSibling : null;
+  const locationEl = document.getElementById('location');
+  const locationWrapper = locationEl ? locationEl.closest('div') : null;
+
+  if (!formatEl) return;
+
+  if (formatEl.value === 'offline') {
+    // показываем
+    startLabel && startLabel.classList.remove('hidden');
+    startWrapper && startWrapper.classList.remove('hidden');
+    locationWrapper && locationWrapper.classList.remove('hidden');
+    if (locationEl) locationEl.disabled = false;
+  } else {
+    // онлайн — скрываем и очищаем значения; отправлять будем пустые строки (''), бэкенд должен трактовать как null
+    startLabel && startLabel.classList.add('hidden');
+    startWrapper && startWrapper.classList.add('hidden');
+    // очистим дату и скрываем
+    const topInput = document.querySelector('.date-single-add');
+    if (topInput) {
+      if (topInput._flatpickr) topInput._flatpickr.clear();
+      topInput.value = '';
+    }
+
+    if (locationWrapper) locationWrapper.classList.add('hidden');
+    if (locationEl) {
+      locationEl.value = '';
+      locationEl.disabled = true;
+    }
+  }
+}
+
+// вызовем один раз при загрузке и повесим слушатель на change
+updateFormatVisibility();
+const formatSelect = document.getElementById('format-add');
+if (formatSelect) formatSelect.addEventListener('change', updateFormatVisibility);
+
+function updateFormatVisibilityEdit(formatValue) {
+  const formatEl = document.getElementById('format-edit');
+  const startLabel = document.getElementById('olympiad-start-date-edit');
+  const startWrapper = startLabel ? startLabel.nextElementSibling : null;
+  const locationEl = document.getElementById('location-edit');
+  const locationWrapper = locationEl ? locationEl.closest('div') : null;
+
+  const value = formatValue || formatEl?.value;
+
+  if (value !== 'online') {
+    startLabel?.classList.remove('hidden');
+    startWrapper?.classList.remove('hidden');
+    locationWrapper?.classList.remove('hidden');
+    if (locationEl) locationEl.disabled = false;
+  } else {
+    startLabel?.classList.add('hidden');
+    startWrapper?.classList.add('hidden');
+    locationWrapper?.classList.add('hidden');
+
+    const dateInput = document.querySelector('.date-single-edit');
+    if (dateInput?._flatpickr) dateInput._flatpickr.clear();
+    if (dateInput) dateInput.value = '';
+
+    if (locationEl) {
+      locationEl.value = '';
+      locationEl.disabled = true;
+    }
   }
 }
 
@@ -821,6 +930,20 @@ function attachAddFormListeners() {
 // Вызови attachAddFormListeners() после инициализации tomGradesAdd
 // например, внутри DOMContentLoaded сразу после создания tomGradesAdd
 
+// d.d.m.y -> YYYY-MM-DD (оставляем для стадий)
+function formatDate(dateStr) {
+  const [d, m, y] = dateStr.split('.');
+  return `${y}-${m}-${d}`;
+}
+
+// НОВАЯ: d.d.m.y -> ISO datetime (00:00:00Z). Используем для start_at.
+function formatDateToISO(dateStr) {
+  if (!dateStr) return '';
+  const [d, m, y] = dateStr.split('.');
+  if (!d || !m || !y) return '';
+  // Возвращаем UTC midnight (сервер обычно принимает YYYY-MM-DDT00:00:00Z)
+  return `${y}-${m}-${d}T00:00:00Z`;
+}
 
 async function submitOlympiadForm() {
   const token = localStorage.getItem('access_token');
@@ -846,7 +969,27 @@ async function submitOlympiadForm() {
 
   const rawAdd = tomGradesAdd.items || [];
   const gradesArr = rawAdd.map(v => String(v));
+  // --- Формат и top-level дата/локация ---
+  const formatEl = document.getElementById('format-add');
+  const formatValRaw = formatEl ? formatEl.value : ''; // это то, что пользователь выбрал в селекте
+  // Если backend ожидает какие-то числовые коды вместо "online"/"offline" —
+  // можно преобразовать через маппинг. По умолчанию отправляем то, что в селекте.
+  const formatToSend = String(formatValRaw);
 
+  // Сохраняем top-level дату под ключом start_at (не start_date)
+  let start_at_to_send = null;   // null по умолчанию
+  let locationToSend = null;
+
+if (formatValRaw === 'offline') {
+  const topDateInput = document.querySelector('.date-single-add');
+  const topVal = topDateInput && topDateInput.value ? topDateInput.value.trim() : '';
+  start_at_to_send = topVal ? formatDateToISO(topVal) : null;
+  locationToSend = document.getElementById('location') ? document.getElementById('location').value.trim() || null : null;
+} else {
+  // online — НЕ отправляем поля (будут отсутствовать в formData), backend должен трактовать отсутствие как null.
+  start_at_to_send = null;
+  locationToSend = null;
+}
   // --- Stages: собираем .stage-block и видимый шаблон, если есть ---
   const stages = [];
   let stageNodes = Array.from(document.querySelectorAll('#stages-container .stage-block'));
@@ -909,7 +1052,18 @@ async function submitOlympiadForm() {
   formData.append('website',                    websiteEl.value.trim());
   formData.append('cost',                       costEl.value);
   formData.append('description',                descriptionEl.value.trim());
-
+// Добавляем start_at и location ТОЛЬКО если они не null
+if (start_at_to_send !== null) {
+  formData.append('start_at', start_at_to_send);
+}
+if (locationToSend !== null) {
+  formData.append('location', locationToSend);
+}
+  // --- НУЖНО: отправляем format (строка) ---
+  formData.append('format', formatToSend);
+  // --- НУЖНО: отправляем start_at (именно такое имя) и location ---
+  formData.append('start_at', start_at_to_send);
+  formData.append('location', locationToSend);
   // Для совместимости: отправляем первое как single "language"
   formData.append('language', selectedLangs[0]);
   // И отправляем все как массив languages[]
