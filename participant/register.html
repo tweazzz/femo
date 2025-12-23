@@ -203,13 +203,13 @@
         <!-- Телефон и Email учителя в одну строку -->
         <div class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
-            <label class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.parent_phone">Телефон учителя</label>
+            <label class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.teacher_phone">Телефон учителя</label>
             <input id="teacher_phone" type="tel" name="teacher_phone" class="input-base border-default w-full">
         </div>
 
         
             <div class="flex-1">
-            <label class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.parent_email">Email учителя</label>
+            <label class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.teacher_email">Email учителя</label>
             <input
                 type="email"
                 name="teacher_email"
@@ -223,6 +223,7 @@
         <button
           type="submit"
           class="bg-orange-primary w-full cursor-pointer rounded-xl py-2 text-white transition"
+          data-i18n="participant_register.start_learn"
         >
             Начать учиться
         </button>

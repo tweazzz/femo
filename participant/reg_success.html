@@ -8,7 +8,71 @@
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
 
-  <body class="bg-gray-background">
+  <body class="bg-gray-background" 
+  data-role="public"
+  data-page="login"
+  data-public-page="true">
+
+  <div class="flex justify-between mx-auto my-8 max-w-lg rounded-3xl p-5" style="margin-bottom:80px;">
+    <div>
+      <svg width="107" height="24" viewBox="0 0 107 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="107" height="24" fill="url(#pattern0_17_17537)"/>
+        <defs>
+        <pattern id="pattern0_17_17537" patternContentUnits="objectBoundingBox" width="1" height="1">
+        <use xlink:href="#image0_17_17537" transform="matrix(0.00625 0 0 0.0278646 0 -0.0015625)"/>
+        </pattern>
+        <image id="image0_17_17537" width="160" height="36" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAkCAYAAAAO7jHjAAAEDmlDQ1BrQ0dDb2xvclNwYWNlR2VuZXJpY1JHQgAAOI2NVV1oHFUUPpu5syskzoPUpqaSDv41lLRsUtGE2uj+ZbNt3CyTbLRBkMns3Z1pJjPj/KRpKT4UQRDBqOCT4P9bwSchaqvtiy2itFCiBIMo+ND6R6HSFwnruTOzu5O4a73L3PnmnO9+595z7t4LkLgsW5beJQIsGq4t5dPis8fmxMQ6dMF90A190C0rjpUqlSYBG+PCv9rt7yDG3tf2t/f/Z+uuUEcBiN2F2Kw4yiLiZQD+FcWyXYAEQfvICddi+AnEO2ycIOISw7UAVxieD/Cyz5mRMohfRSwoqoz+xNuIB+cj9loEB3Pw2448NaitKSLLRck2q5pOI9O9g/t/tkXda8Tbg0+PszB9FN8DuPaXKnKW4YcQn1Xk3HSIry5ps8UQ/2W5aQnxIwBdu7yFcgrxPsRjVXu8HOh0qao30cArp9SZZxDfg3h1wTzKxu5E/LUxX5wKdX5SnAzmDx4A4OIqLbB69yMesE1pKojLjVdoNsfyiPi45hZmAn3uLWdpOtfQOaVmikEs7ovj8hFWpz7EV6mel0L9Xy23FMYlPYZenAx0yDB1/PX6dledmQjikjkXCxqMJS9WtfFCyH9XtSekEF+2dH+P4tzITduTygGfv58a5VCTH5PtXD7EFZiNyUDBhHnsFTBgE0SQIA9pfFtgo6cKGuhooeilaKH41eDs38Ip+f4At1Rq/sjr6NEwQqb/I/DQqsLvaFUjvAx+eWirddAJZnAj1DFJL0mSg/gcIpPkMBkhoyCSJ8lTZIxk0TpKDjXHliJzZPO50dR5ASNSnzeLvIvod0HG/mdkmOC0z8VKnzcQ2M/Yz2vKldduXjp9bleLu0ZWn7vWc+l0JGcaai10yNrUnXLP/8Jf59ewX+c3Wgz+B34Df+vbVrc16zTMVgp9um9bxEfzPU5kPqUtVWxhs6OiWTVW+gIfywB9uXi7CGcGW/zk98k/kmvJ95IfJn/j3uQ+4c5zn3Kfcd+AyF3gLnJfcl9xH3OfR2rUee80a+6vo7EK5mmXUdyfQlrYLTwoZIU9wsPCZEtP6BWGhAlhL3p2N6sTjRdduwbHsG9kq32sgBepc+xurLPW4T9URpYGJ3ym4+8zA05u44QjST8ZIoVtu3qE7fWmdn5LPdqvgcZz8Ww8BWJ8X3w0PhQ/wnCDGd+LvlHs8dRy6bLLDuKMaZ20tZrqisPJ5ONiCq8yKhYM5cCgKOu66Lsc0aYOtZdo5QCwezI4wm9J/v0X23mlZXOfBjj8Jzv3WrY5D+CsA9D7aMs2gGfjve8ArD6mePZSeCfEYt8CONWDw8FXTxrPqx/r9Vt4biXeANh8vV7/+/16ffMD1N8AuKD/A/8leAvFY9bLAAAAOGVYSWZNTQAqAAAACAABh2kABAAAAAEAAAAaAAAAAAACoAIABAAAAAEAAACgoAMABAAAAAEAAAAkAAAAAMBCLeEAAAueSURBVHgB7Zx7bBTHGcBndu/8tg9MiAn4iAlEKXYwYJv4gQsOj4SINkBb8iBVAlFFKOlDaVUlUCCnFKT8UVVtgRKa5oValQINkCgEY0xd2uAQHj5MnBZsjCGYAgFsY2Pf+W53+s2ex76z93G7t3t3kVjJntvZ7/vm29nfffPNzNr4SnYeQfFxtCaIqCzzcsPFwe5UvniP8L3HKrjB9dE+JwRd9RN/qefxneeD2y7Z3DLxzLHTf+rp6ikLro/JZ1vHZ8LorSt8vzleZ0b7z09/Kz2x1/80QuQ7mOAxYDOT/jTWb7mKiJgC8NzECN8gGB3isf+9Sm9Dk552bXqELZRVhI+2+Y3GK9xHQjWa/63ZFrqgbloJPqqVmpyIC2ZMLj15+NSnAGGJuiULr9o6j5PxWwoQJ0TUiAu5uGuF98xBGC9FXv9CMJaMEJazORJqRwKcCBNUJhJ+zVx7/r8ByHd6ff4dNaihS04puC4Oogq5oBT5gh3NOXcNfbz3INxr9AM2QaRVLvIF+8dhTCEsTklLPhZcH7XPEnyb8zEmNiRAPDJ4/OihN4quFY1+H3irhM6GyEfh03WUQ3+9ZbdzRx9JmPykCyFVxjh4oNF/on33A01fsHkF2WFX7pbHtnyFDuypQkgU5S5bUkfhE4hQNnjYlWusD8JpKRkptXLXraojfHcdGS/BlxBJGz8sfONlUcSfAXgLIrET0MW58Hy3f5KQv28OKnQo2VOlU0nJjHoG38jrZy7rsTfm4g10aPeBqEDI4Ov59s6L4foIgRAVlOeXpmakwIO0/qDwofGbJkLkG4CP1xcBF+ftSFhZ9Mf3wPfXwWPD0VP2bgl6FNt7j8xKnkzzxyFHrABsppFPL3zM+6xLbRKEnBBZrsPsKZQXaOTTAx+zQyGcWp7/UMbwtKOszoqS8D31EnyckBRiX7SFDdHywq2Okclt1RD1ng2xYeoJzuV95Ogj9kmFg81SAKM9BDcjn6fUKHzsBiiE1e8fQLw1EF4QBGIIPuYfhXBy2aTi9Mz046zOzLIPvgl4MHw6G7Fz6HegUq5TTb84RhAB8duPoeKMYOVoR0AJvlFXYUah44BnKXvcfbkdVf+90mwIJfi6F2wPOzXANuU8ekrpg0XDRjhMhZBwns/RfZvvx5w/RbZjwqxcWbTVBZ4/F6Z4xGIQ6fL9ds+uQlRoZ8aiBiDc6Bka+fTCRx1VfrywBvC/DnRoVyWsPJgyHOuGT/LPr/QVCXTzpJLcIscIhynDMcHeL9CETTmY9ynPTjntHHBFyZYc8O7lgIfR/E3mZtp7n2EtAoCwgmPxQeFLRcJ0I/CF49pdVzrQQZiYRAhhMx129US+cHxjMvklucWOERkRzY4h8p1G928cizlfGrMrW4raAHJ+jk44QnNHWWNWVOJ1FShHatvyCMjgy2j97w0rboXZzGptlyDEgqElmmZi95RaBR/zMb8kr9SR6fgnO9dTSvCN3wg5nwZ8YRhdUbTlQRB7MgxRq0TG2W3pP6XGLQaQNNDIZzV8rJckCPdWIZ0QSvB1PbpbV17K2tRb5pfmzkwflnZYj14/fLxfedgNNqgxBPOY/36weCw+E4yX0XYpgBYNwaQhsau73Az4FOYgsv026sub6CBAGNZiNaQGNPJFCz7m8JTpk2akZqQeYedqpW74qDFRfS0P1mDp9lpMD3imD8xLmpJjUQQMwDe8vaU9FndJIaz+ALbt1HZM6KQo2TM92vCx/phaPqkMtu0+ZedyJeE9JxEddsONfHJGBtWtnLbZCVUPDKqOySnk3PPMB5AQN418sYKP9eSoCzcCEMpNofvg65yz29K8lPkiV0qL1bB3nJSaJLtEQ7huNxr/+4lG4CMcrzhocAKXK+dPbOrE6RwEa/OGYICP9wozYg0f60wKYdWHEAmDIISPDTTyxRI+5h/dOy6cOaUwMTnxJKujpQTfhI0TYZE5vJwvWFnjs8BjeHslXg7sNC8C9sEHOxyd8XJ71I/R56/3Q0jh6/L3lMcDfKyPKITTZk6dAhCeonUD8ImJTEZ3qbYMI6Lhuu1Zp5BD3wfsX5U22g4ktScTuz2zMtuarYGPDigRxGkK4YHKf3hK583+Jlq0x/S8VNoJiWAdHPOYmzarIP/EJzX7u0dunom5COCjD5FTXtvlhdREYD7sXR4lJkTRcUPkeiNiBx4pscEbH73wAuHAmxRKLSrVQ+SDFwsqLIOPthsBfFSdS+BR7gg+qevzf/0h1YWewS6YJ5p4ENgJUd8L0W4MkKl15KU93X3d92fYHJivraEmQRRHtqzOmfD2KB6tph3Otbr0Dl+n2BGpnQ5FR8NxAnIrKeeLt2E32HcuiUcZ07IQnwLBHuOnupKcu4jL6vXPYA/C+EzQka40NKflpUXtXrt7IYwou8PQMiQCaUibIUVrlFqMA/i1gM+GMoqyEJc88JcHEKoWxROEENxrKHy1Tzh7pGfsQn7vWfdi+Lzd8DNXyQExtt00bNdkRfiiSQDqHuBA4Rid7cZz5KMRzwGRj0sagI/1X/xASKrsndnz+uFjDu5Egmd93RI43caqdJUqOyEE+b7UZctCYUj9zumOgBQ+7OMfjmv4Uu0oHSIfTuQVu68fwh1IWUhRO/IL0I8f3ex1zv/4J9irYI0AhEshR39T4bqh6qxhX9WDYochZZOVIBmt0gUgg2/U1frbJvtimjk+HeArhMgHEw+tg0J4u3nsXhJtCAna7c/JXnjiBezT8JF417uXQ962SUMu9LKovBD9wokiHzzHmlCFmJzdEm55D1EAwR/t4+sAny09AWVI8On4XmE0P7oQku3D0rIX1zyM/dq9HpDwbqj7MeRLvw5XXksOVrU+1JKJwvV9DcjVG9aTijl8ihtLA91kcyRA5LsbYVtYtzSgSD8xCF1oaMIYKil7pvZGdKgCebdqqXPJziew7lVD7wb3LyBUvB5qT+GME1SDiuD3/wU0zytoR6Uai+JG2pDm04o5fNRL1e5EiEa+9KkG4aP26UEhTHbugyUa3RDSdcCAEeXfEMG2AXzPw1KQxt0o2/BsqFsFdn6rLBG4YkO86nN1tYzzEExe07Jj4fW/uTvXSG8DgaPKHRIX8Gn0ggSf0cg3xDaeaxTCIaaCKih8B5c5l0YCHzMHkfAlmJhsYeeyJdF+I3pd49h3QbdOVt/aSg/k3q+wJpS/KbA4Sme78TzhiGjYZT0wpDQXQjPhY67CxGSlSNDb7HxIqbIOGCIrSm9FXw+ps/YE3lTES9ztq1pYM/CfEWQGOIAvq/X27LiHryDCYZf1wpCyH0LjW5Rg0wr4mKu9G+p+oAohE1Qp1zY7G2Ep5HEQCSyCq8iacQkSlZ+fal8VssszNAL2wYdRi8eMRq2wIUU+Cp96qhNh0wBhkrMSckJDEFoJX9+NEQohUE4nFKGHykJ0qCBC65qya0UsLoB6a9cGMXrN3b56SP4aCuAd+EKfD8YVRiCMAnzMT+Kxu5+FQWwXqzBSvtp4bxWPxDLQbTWir6HTCxOe5061r35VTo6D6VtgVnYHPrn+gTkagzDwZ4TyQgO10JlvmjXhGLCq8gne7PGecT8VAqHKQrSSpdVN936BOVQMN/yBkoyB+rMi5ubWt/9ym5JuIALegU+pfwL1AGFXklhNXOoQ9sG33IzZrrpDg67C3nEAQhQRPGvOOlvXNmUvIIgrgBb2wE8gOA1qTusUvgz/gYn4klMdvRNPt79yWE0eACS1WbhjTjznfNwwWOezPOdT6yYaCFGZGoT98Kmbse4qhdBW913wYz+s7mquS6o5sq5pTN3aJuciiIhOgOlFkN0PP0p71syUG1pdD/81tbi+Y3Ve/a1Vf0XIpfneZUSOspatLnt+lTXLb7Nr3ozVflD7vIAaU9ZcCsmVKt45n1SzbFx8TNpceTBpSrgLueoum90frvvOjeW4xDEAzZjKtj1Cl9DZhkR/a3JG6qXaSz8zNJP+PynhtyMFFHwlAAAAAElFTkSuQmCC"/>
+        </defs>
+        </svg>        
+    </div>
+    <!-- DROPDOWN -->
+    <div class="relative inline-block text-left" id="lang-dropdown">
+      <!-- Кнопка -->
+      <button
+        type="button"
+        id="lang-dropdown-btn"
+        class="flex items-center justify-between w-[85px] h-[23px] px-2 rounded-md"
+      >
+        <div class="flex items-center gap-2">
+          <img id="lang-flag" src="https://flagcdn.com/w24/ru.png" class="w-6 h-[17px] object-contain" />
+          <span id="lang-text" class="text-[12px] font-medium">RU</span>
+        </div>
+    
+        <!-- стрелочка -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 10L12.0008 14.58L17 10" stroke="#0A090B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    
+      <!-- Выпадающий список -->
+      <div
+        id="lang-menu"
+        class="absolute z-20 mt-1 w-[120px] bg-white border border-gray-200 rounded-md shadow-md hidden"
+      >
+        <!-- RU -->
+        <div data-lang="ru"
+          class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+          <img src="https://flagcdn.com/w40/ru.png" class="w-6 h-[17px] object-contain" />
+          <span class="text-sm">RU</span>
+        </div>
+    
+        <!-- KZ -->
+        <div data-lang="kz"
+          class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+          <img src="https://flagcdn.com/w40/kz.png" class="w-6 h-[17px] object-contain" />
+          <span class="text-sm">KZ</span>
+        </div>
+    
+        <!-- EN -->
+        <div data-lang="en"
+          class="lang-option flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100">
+          <img src="https://flagcdn.com/w40/gb.png" class="w-6 h-[17px] object-contain" />
+          <span class="text-sm">EN</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <div class="mx-auto my-8 max-w-lg rounded-3xl bg-white p-5 shadow-md">
 
       <div class="flex justify-center">
@@ -264,26 +328,189 @@
 
       </div>
       <div class="mb-2 text-center text-2xl font-bold" style="margin-top:50px;">
-        <p>Поздравляем!</p>
-        <p>Вы зарегистрированы</p>
+        <p data-i18n="participant_register.reg_success_congrats">Поздравляем!</p>
+        <p data-i18n="participant_register.reg_success">Вы зарегистрированы</p>
       </div>
 
       <div class="text-primary mb-6 rounded-lg text-center text-sm">
-        <span class="block">Чтобы начать пользоваться платформой,</span>
-        <span class="block">пожалуйста, авторизуйтесь.</span>
+        <span class="block" data-i18n="participant_register.txt1">Чтобы начать пользоваться платформой,</span>
+        <span class="block" data-i18n="participant_register.txt2">пожалуйста, авторизуйтесь.</span>
       </div>
 
 
 
       <a href="/index.html"
-        class="bg-orange-primary flex items-center justify-center w-full block cursor-pointer rounded-full py-3 font-bold text-white transition">
+        class="bg-orange-primary flex items-center justify-center w-full block cursor-pointer rounded-full py-3 font-bold text-white transition" data-i18n="participant_register.btn">
         Авторизоваться
       </a>
 
     </div>
   </body>
 </html>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const dropdownBtn = document.getElementById("lang-dropdown-btn");
+    const menu = document.getElementById("lang-menu");
+  
+    const flagEl = document.getElementById("lang-flag");
+    const textEl = document.getElementById("lang-text");
+  
+    const langMap = {
+      ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
+      kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
+      en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
+    };
+  
+    // открыть / закрыть меню
+    dropdownBtn.addEventListener("click", () => {
+      menu.classList.toggle("hidden");
+    });
+  
+    // подсветка языка
+    function highlightSelected(lang) {
+      document.querySelectorAll(".lang-option").forEach(opt => {
+        opt.classList.toggle("active", opt.dataset.lang === lang);
+      });
+    }
+  
+    // загрузка текущего языка
+    const current = localStorage.getItem("lang") || "ru";
+    flagEl.src = langMap[current].flag;
+    textEl.textContent = langMap[current].label;
+    highlightSelected(current);
+  
+    // обработчик выбора
+    document.querySelectorAll("#lang-menu .lang-option").forEach(opt => {
+      opt.addEventListener("click", async () => {
+        const lang = opt.dataset.lang;
+  
+        // UI
+        flagEl.src = langMap[lang].flag;
+        textEl.textContent = langMap[lang].label;
+        highlightSelected(lang);
+        menu.classList.add("hidden");
+  
+        // сохраняем локально
+        localStorage.setItem("lang", lang);
+  
+        // меняем язык без сервера
+        await changeLanguageAndReload(lang, { reload: true, waitForApp: false });
+        location.reload();
+      });
+    });
+  
+    // закрытие при клике вне
+    document.addEventListener("click", (e) => {
+      if (!document.getElementById("lang-dropdown").contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+  });
+</script>
+<script>
+  // 1) сохраняем язык фронта
+const lang = localStorage.getItem("lang") || "ru";
 
+// 2) переводим в backend формат
+function frontendToBackend(frontend) {
+  if (frontend === "kz" || frontend === "kk") return "kk";
+  if (frontend === "en") return "en";
+  return "ru";
+}
+
+const backendLang = frontendToBackend(lang);
+
+// 3) шлём язык на backend
+fetch("https://portal.femo.kz/api/users/settings/", {
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${data.access}`,
+  },
+  body: JSON.stringify({
+    language: backendLang,
+  }),
+})
+.then(() => {
+  console.log("Language saved:", backendLang);
+})
+.catch(e => console.warn("Error saving language:", e));
+
+</script>
+<script src="/src/scripts/i18n.js" defer></script>
+<script src="/src/scripts/langInit.js" defer></script>
+<script>
+  (function() {
+    // список региональных кодов СНГ (в верхнем регистре)
+    const CIS_REGIONS = new Set(['RU','BY','AM','AZ','KG','MD','TJ','TM','UZ','UA']);
+    const SUPPORTED = ['ru','kz','en'];
+  
+    // возвращает frontend-код: 'kz'|'ru'|'en'
+    function decideLangByRegion() {
+      // получим массив языков из браузера
+      const navs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || navigator.userLanguage || 'en'];
+  
+      for (const raw of navs) {
+        if (!raw) continue;
+        // normalise: ru-RU or ru_RU -> ['ru','RU']
+        const tag = String(raw).replace('_','-');
+        const parts = tag.split('-');
+        const lang = parts[0].toLowerCase();            // ru, en, kk ...
+        const region = (parts[1] ? parts[1].toUpperCase() : null); // RU, KZ, US ...
+  
+        // 1) если регион явно KZ -> kazakhstan
+        if (region === 'KZ' || lang === 'kk') return 'kz';
+  
+        // 2) если регион в СНГ (и не KZ) -> русский
+        if (region && CIS_REGIONS.has(region)) return 'ru';
+      }
+  
+      // Если не нашли регион в навигационных тегах — fallback по первому языку:
+      const first = String(navs[0] || '').replace('_','-').split('-')[0].toLowerCase();
+      if (first === 'kk' || first === 'kz') return 'kz';
+      if (first === 'ru') return 'ru';
+  
+      // иначе — английский
+      return 'en';
+    }
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      const autoLang = decideLangByRegion(); // 'ru'|'kz'|'en'
+      const saved = localStorage.getItem('lang');
+  
+      // Не перезаписываем выбор пользователя — только если он ранее не выбирал
+      const chosen = saved || autoLang;
+      if (!saved) {
+        localStorage.setItem('lang', autoLang);
+        console.log('Auto-detected language (by region) ->', autoLang);
+      } else {
+        console.log('Language already chosen by user ->', saved);
+      }
+  
+      // Обновим UI (флаг + текст + подсветка)
+      const langMap = {
+        ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
+        kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
+        en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
+      };
+      const flagEl = document.getElementById("lang-flag");
+      const textEl = document.getElementById("lang-text");
+      if (flagEl && textEl && langMap[chosen]) {
+        flagEl.src = langMap[chosen].flag;
+        textEl.textContent = langMap[chosen].label;
+      }
+      document.querySelectorAll(".lang-option").forEach(opt => {
+        opt.classList.toggle("active", opt.dataset.lang === chosen);
+      });
+  
+      // Если нужно — можно автоматически вызвать смену языка в приложении.
+      // У тебя есть функция changeLanguageAndReload — если хочешь, можно её вызвать:
+      // if (typeof changeLanguageAndReload === 'function' && !saved) {
+      //   changeLanguageAndReload(chosen, { reload: false, waitForApp: false });
+      // }
+    });
+  })();
+</script>
 
 
 

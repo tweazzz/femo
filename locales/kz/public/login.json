@@ -35,7 +35,25 @@
     "participant_register.school" : "Мектеп атауы",
     "participant_register.choose_class" : "Сыныпты таңдаңыз",
     "participant_register.fio_parent" : "Ата-ананың толық аты-жөні",
-    "participant_register.parent_phone" : "participant_register.parent_email",
-    "participant_register.fio_teacher" : "",
-    "" : ""
+    "participant_register.parent_phone" : "Ата-ананың телефон номері",
+    "participant_register.fio_teacher" : "Мұғалімнің толық аты-жөні",
+    "participant_register.teacher_phone" : "Мұғалімнің телефон номері",
+    "participant_register.teacher_email" : "Мұғалімнің поштасы",
+    "participant_register.start_learn" : "Оқуды бастау",
+    "participant_register.reg_success_congrats": "Құттықтаймыз",
+    "participant_register.reg_success" : "Сіз тіркелдіңіз",
+    "participant_register.txt1" : "Платформаны пайдалануды бастау үшін,",
+    "participant_register.txt2" : "өтінеміз, жүйеге кіріңіз.",
+    "participant_register.btn" : "Жүйеге кіру",
+
+    "reset_pass" : "Қол жеткізуді қалпына келтіру",
+    "reset_pass_txt" : "Құпия сөзді қалпына келтіру сілтемесін көрсетілген электрондық поштаға жібереміз.",
+    "reset_pass_btn": "Жіберу",
+
+    "set_new_pass": "Жаңа құпия сөз орнатыңыз",
+    "confirm_new_pass" : "Қауіпсіз құпия сөз ойлап табыңыз және оны растаңыз.",
+    "new_pass" : "Құпия сөз ойлап табыңыз",
+    "new_pass_txt" : "8 немесе одан көп таңба, әріптерді, сандарды және символдарды қамтитын",
+    "repeat_new_pass": "Құпия сөзді қайталаңыз",
+    "new_pass_btn" : "Жіберу"
 }

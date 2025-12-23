@@ -10,7 +10,112 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
+  <style>
+    /* wrapper with padding */
+  .sidebar-video-wrapper {
+    padding: 0 16px;
+    margin-bottom: 35px;
+  }
 
+  /* card (default) */
+  .sidebar-video-card {
+    width: 100%;
+    max-width: 216px;
+    aspect-ratio: 216 / 144;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* thumbnail */
+  .sidebar-video-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* play button */
+  .sidebar-video-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    color: white;
+    background: rgba(0, 0, 0, 0.35);
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-video-card:hover .sidebar-video-play {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  /* -------- Modal -------- */
+
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+  }
+
+  .video-modal.hidden {
+    display: none;
+  }
+
+  .video-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .video-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    aspect-ratio: 16 / 9;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .video-modal-content iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* close button */
+  .video-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+  }
+  /* 🔥 Large screens */
+  @media (min-width: 1600px) {
+    .sidebar-video-card {
+      max-width: 340px;
+      aspect-ratio: 240 / 160;
+    }
+  }
+
+  /* 🔥 Extra large screens */
+  @media (min-width: 1920px) {
+    .sidebar-video-card {
+      max-width: 560px;
+      aspect-ratio: 260 / 174;
+    }
+  }
+  </style>
   <body>
     <div class="flex h-screen">
       <!-- Sidebar -->
@@ -45,7 +150,21 @@
             <span data-i18n="dashboard.nav_payments">Баланс и платежи</span>
           </a>
         </nav>
+        <!-- Video promo block -->
+        <div class="sidebar-video-wrapper">
+          <div class="sidebar-video-card" id="openVideo">
+            <img
+              src="https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg"
+              alt="Video preview"
+              class="sidebar-video-thumb"
+            />
 
+            <div class="sidebar-video-play">
+              ▶
+            </div>
+          </div>
+        </div>
+        <!-- Video promo block -->
         <div class="p-4">
           <a href="/participant/my-way.html" class="sidebar-link">
             <svg
@@ -75,6 +194,24 @@
             </a>
         </div>
       </aside>
+
+
+      <!-- Video Modal -->
+      <div id="videoModal" class="video-modal hidden">
+        <div class="video-modal-backdrop"></div>
+
+        <div class="video-modal-content">
+          <button class="video-modal-close" id="closeVideo">✕</button>
+
+          <iframe
+            id="youtubeFrame"
+            src=""
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
 
       <!-- Overlay -->
       <div
@@ -1112,3 +1249,69 @@
   
   </body>
 </html>
+<script>
+  const VIDEO_BY_LANG = {
+    ru: '6cDlRMMZFOc',
+    kz: 'K5KVEU3aaeQ',
+    en: 'mmeLCAP74KA'
+  };
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const openVideo = document.getElementById('openVideo');
+    const videoModal = document.getElementById('videoModal');
+    const closeVideo = document.getElementById('closeVideo');
+    const youtubeFrame = document.getElementById('youtubeFrame');
+    const thumbImg = document.querySelector('.sidebar-video-thumb');
+
+    if (!openVideo || !videoModal || !closeVideo || !youtubeFrame || !thumbImg) {
+      console.warn('Video modal elements not found');
+      return;
+    }
+
+    const VIDEO_BY_LANG = {
+      ru: 'RU_VIDEO_ID',
+      kz: 'KZ_VIDEO_ID',
+      en: 'EN_VIDEO_ID'
+    };
+
+    function getCurrentLang() {
+      return localStorage.getItem('lang') || 'ru';
+    }
+
+    function getVideoIdByLang() {
+      const lang = getCurrentLang();
+      return VIDEO_BY_LANG[lang] || VIDEO_BY_LANG.ru;
+    }
+
+    function updateThumbnail() {
+      const videoId = getVideoIdByLang();
+      thumbImg.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+
+    // 🔄 initial thumbnail
+    updateThumbnail();
+
+    // ▶ open modal
+    openVideo.addEventListener('click', () => {
+      const videoId = getVideoIdByLang();
+      youtubeFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      videoModal.classList.remove('hidden');
+    });
+
+    // ❌ close modal
+    closeVideo.addEventListener('click', closeModal);
+    videoModal.querySelector('.video-modal-backdrop')
+      .addEventListener('click', closeModal);
+
+    function closeModal() {
+      youtubeFrame.src = '';
+      videoModal.classList.add('hidden');
+    }
+
+    // 🌍 реакция на смену языка (твоя система i18n)
+    window.addEventListener('i18n:languageReady', (e) => {
+      updateThumbnail();
+    });
+  });
+</script>
