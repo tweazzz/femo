@@ -1255,8 +1255,7 @@
     kz: 'K5KVEU3aaeQ',
     en: 'mmeLCAP74KA'
   };
-</script>
-<script>
+
   document.addEventListener('DOMContentLoaded', () => {
     const openVideo = document.getElementById('openVideo');
     const videoModal = document.getElementById('videoModal');
@@ -1269,19 +1268,13 @@
       return;
     }
 
-    const VIDEO_BY_LANG = {
-      ru: 'RU_VIDEO_ID',
-      kz: 'KZ_VIDEO_ID',
-      en: 'EN_VIDEO_ID'
-    };
-
     function getCurrentLang() {
-      return localStorage.getItem('lang') || 'ru';
+      const lang = (localStorage.getItem('lang') || 'ru').toLowerCase();
+      return VIDEO_BY_LANG[lang] ? lang : 'ru';
     }
 
     function getVideoIdByLang() {
-      const lang = getCurrentLang();
-      return VIDEO_BY_LANG[lang] || VIDEO_BY_LANG.ru;
+      return VIDEO_BY_LANG[getCurrentLang()];
     }
 
     function updateThumbnail() {
@@ -1289,29 +1282,24 @@
       thumbImg.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
     }
 
-    // 🔄 initial thumbnail
     updateThumbnail();
 
-    // ▶ open modal
     openVideo.addEventListener('click', () => {
       const videoId = getVideoIdByLang();
       youtubeFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
       videoModal.classList.remove('hidden');
     });
 
-    // ❌ close modal
     closeVideo.addEventListener('click', closeModal);
     videoModal.querySelector('.video-modal-backdrop')
-      .addEventListener('click', closeModal);
+      ?.addEventListener('click', closeModal);
 
     function closeModal() {
       youtubeFrame.src = '';
       videoModal.classList.add('hidden');
     }
 
-    // 🌍 реакция на смену языка (твоя система i18n)
-    window.addEventListener('i18n:languageReady', (e) => {
-      updateThumbnail();
-    });
+    window.addEventListener('i18n:languageReady', updateThumbnail);
   });
 </script>
+

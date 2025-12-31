@@ -480,89 +480,89 @@ function renderTaskByIndex(index) {
   }
 }
 
-// Пагинация
-function renderPagination() {
-  const pagination = document.getElementById('pagination');
-  if (!pagination || tasks.length === 0) return;
+// // Пагинация
+// function renderPagination() {
+//   const pagination = document.getElementById('pagination');
+//   if (!pagination || tasks.length === 0) return;
 
-  pagination.innerHTML = '';
+//   pagination.innerHTML = '';
 
-  const totalPages = tasks.length;
-  const maxPagesToShow = 5;
+//   const totalPages = tasks.length;
+//   const maxPagesToShow = 5;
 
-  let start = Math.max(0, currentTaskIndex - 2);
-  let end = Math.min(totalPages, start + maxPagesToShow);
+//   let start = Math.max(0, currentTaskIndex - 2);
+//   let end = Math.min(totalPages, start + maxPagesToShow);
 
-  if (end - start < maxPagesToShow) {
-    start = Math.max(0, end - maxPagesToShow);
-  }
+//   if (end - start < maxPagesToShow) {
+//     start = Math.max(0, end - maxPagesToShow);
+//   }
 
-  for (let i = start; i < end; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i + 1;
+//   for (let i = start; i < end; i++) {
+//     const btn = document.createElement('button');
+//     btn.textContent = i + 1;
 
-    btn.className =
-      i === currentTaskIndex
-        ? 'px-3 py-1 bg-orange-500 text-white rounded'
-        : 'px-3 py-1 bg-gray-200 rounded hover:bg-gray-300';
+//     btn.className =
+//       i === currentTaskIndex
+//         ? 'px-3 py-1 bg-orange-500 text-white rounded'
+//         : 'px-3 py-1 bg-gray-200 rounded hover:bg-gray-300';
 
-    btn.onclick = () => {
-      currentTaskIndex = i;
-      renderTaskByIndex(i);
-      renderPagination();
-      updateNavButtons(); // ← ВАЖНО
-    };
+//     btn.onclick = () => {
+//       currentTaskIndex = i;
+//       renderTaskByIndex(i);
+//       renderPagination();
+//       updateNavButtons(); // ← ВАЖНО
+//     };
 
-    pagination.appendChild(btn);
-  }
-}
+//     pagination.appendChild(btn);
+//   }
+// }
 
-function showNextTask() {
-  if (currentTaskIndex < tasks.length - 1) {
-    currentTaskIndex++;
-    renderTaskByIndex(currentTaskIndex);
-    renderPagination();
-    updateNavButtons();
-  }
-}
+// function showNextTask() {
+//   if (currentTaskIndex < tasks.length - 1) {
+//     currentTaskIndex++;
+//     renderTaskByIndex(currentTaskIndex);
+//     renderPagination();
+//     updateNavButtons();
+//   }
+// }
 
-function showPrevTask() {
-  if (currentTaskIndex > 0) {
-    currentTaskIndex--;
-    renderTaskByIndex(currentTaskIndex);
-    renderPagination();
-    updateNavButtons();
-  }
-}
+// function showPrevTask() {
+//   if (currentTaskIndex > 0) {
+//     currentTaskIndex--;
+//     renderTaskByIndex(currentTaskIndex);
+//     renderPagination();
+//     updateNavButtons();
+//   }
+// }
 
-function updateNavButtons() {
-  const prevBtn = document.getElementById('prevTaskBtn');
-  const nextBtn = document.getElementById('nextTaskBtn');
+// function updateNavButtons() {
+//   const prevBtn = document.getElementById('prevTaskBtn');
+//   const nextBtn = document.getElementById('nextTaskBtn');
 
-  if (!prevBtn || !nextBtn) return;
+//   if (!prevBtn || !nextBtn) return;
 
-  // Предыдущая
-  if (currentTaskIndex === 0) {
-    prevBtn.disabled = true;
-    prevBtn.className =
-      'px-4 py-2 bg-gray-200 text-gray-400 rounded cursor-not-allowed';
-  } else {
-    prevBtn.disabled = false;
-    prevBtn.className =
-      'px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600';
-  }
+//   // Предыдущая
+//   if (currentTaskIndex === 0) {
+//     prevBtn.disabled = true;
+//     prevBtn.className =
+//       'task-btn';
+//   } else {
+//     prevBtn.disabled = false;
+//     prevBtn.className =
+//       'task-btn';
+//   }
 
-  // Следующая
-  if (currentTaskIndex === tasks.length - 1) {
-    nextBtn.disabled = true;
-    nextBtn.className =
-      'px-4 py-2 bg-gray-200 text-gray-400 rounded cursor-not-allowed';
-  } else {
-    nextBtn.disabled = false;
-    nextBtn.className =
-      'px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600';
-  }
-}
+//   // Следующая
+//   if (currentTaskIndex === tasks.length - 1) {
+//     nextBtn.disabled = true;
+//     nextBtn.className =
+//       'task-btn';
+//   } else {
+//     nextBtn.disabled = false;
+//     nextBtn.className =
+//       'next-task-btn';
+//   }
+// }
 
 document.getElementById('nextTaskBtn')
   ?.addEventListener('click', showNextTask);

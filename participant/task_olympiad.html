@@ -13,6 +13,18 @@
 <style>
   /* скрывает до тех пор, пока JS не снимет класс */
   .preload-hidden { display: none !important; }
+  #pag-tasks {
+  margin-top: 100px;
+  padding: 20px;
+  max-width: 68%;
+}
+
+@media screen and (max-width: 1279px) {
+  #pag-tasks {
+    max-width: 100%;
+  }
+}
+
 </style>
 
   <body>
@@ -215,10 +227,24 @@
                   clip-rule="evenodd"
                 />
               </svg>
+              <a id="olympiad_tasks_list" href="#" class="text-orange-primary font-medium">Задачи олимпиады</a>
+              
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="size-5"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                clip-rule="evenodd"
+              />
+              </svg>
 
               <span class="text-orange-primary font-medium" id="task-title"
-                ></span
-              >
+                ></span>
+        
             </nav>
           </div>
 
@@ -294,14 +320,6 @@
                     style="display: none;"
                   >
               </label>
-
-              <div class="flex justify-between items-center" style="margin-top: 100px;">
-                <button id="prevTaskBtn" class="px-4 py-2 bg-gray-200 rounded">Предыдущая</button>
-
-                <div id="pagination" class="flex gap-2"></div>
-
-                <button id="nextTaskBtn" class="px-4 py-2 bg-orange-500 text-white rounded">Следующая</button>
-              </div>
             </div>
 
 
@@ -613,7 +631,36 @@
             </div>
           </div>
         </main>
+        
+        <div class="flex justify-between items-center" id="pag-tasks">
+          <!-- Кнопка "Предыдущая" -->
+          <button id="prevTaskBtn" class="task-btn prevbtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.668 8L1.33464 8M1.33464 8L7.33464 14M1.33464 8L7.33464 2" stroke="#071E22" stroke-width="1.5"/>
+            </svg>
+            <span style="margin-left: 8px;">Предыдущая</span>
+          </button>
+          
+        <!-- Пагинация -->
+        <div id="pagination" class="flex gap-2">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+        </div>
 
+          
+          <!-- Кнопка "Следующая" -->
+          <button id="nextTaskBtn" class="task-btn nextbtn">
+            <span style="margin-right: 8px;">Следующая</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.33203 8L14.664 8M14.664 8L8.664 14M14.664 8L8.664 2" stroke="#071E22" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+        
+        
+        
+        
       <div
         id="overlayModal"
         class="overlay fixed inset-0 z-20 hidden bg-black/50 transition"
@@ -838,6 +885,129 @@
 
 
     </style>
+    <script>
+      // получаем параметры текущего URL
+      const params = new URLSearchParams(window.location.search);
 
+      const lang = params.get('lang');
+      const olympId = params.get('olymp_id');
+
+      // если параметры есть — формируем ссылку
+      if (lang && olympId) {
+        const link = document.getElementById('olympiad_tasks_list');
+        link.href = `/participant/list_tasks_olympiad.html?olympiadId=${olympId}&lang=${lang}`;
+      }
+
+    </script>
+
+  <style>
+/* Стили для пагинации */
+#pagination {
+  display: flex;
+  gap: 12px; /* Отступ между кнопками 12px */
+}
+
+/* Общие стили для кнопок пагинации */
+.page-btn {
+  width: 40px; /* Фиксированная ширина 40px */
+  height: 40px; /* Фиксированная высота 40px */
+  border-radius: 8px; /* Радиус углов 8px */
+  border: 1px solid #EFEFEF; /* Бордера для неактивных кнопок */
+  background-color: transparent; /* Прозрачный фон по умолчанию */
+  padding: 10px 20px; /* Внутренние отступы */
+  font-family: "Helvetica Neue", sans-serif; /* Шрифт */
+  font-weight: 400; /* Вес шрифта */
+  font-size: 16px; /* Размер шрифта */
+  color: #222222; /* Цвет текста по умолчанию (темно-серый) */
+  cursor: pointer; /* Курсор для кликабельных кнопок */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Стиль для активной кнопки */
+.page-btn.active {
+  background-color: #FEF1E4; /* Фон для активной кнопки */
+  border-color: #F4891E; /* Бордер для активной кнопки */
+  color: #F4891E; /* Цвет текста для активной кнопки */
+}
+
+/* Стиль для неактивных кнопок */
+.page-btn:not(.active):hover {
+  border-color: #F4891E; /* Бордер для неактивной кнопки при наведении */
+  color: #F4891E; /* Цвет текста для неактивной кнопки при наведении */
+}
+
+/* Для неактивной кнопки просто оставляем стандартный бордер */
+.page-btn:not(.active) {
+  border-color: #EFEFEF; /* Цвет бордера для неактивных кнопок */
+}
+
+
+    /* Стили для кнопок */
+    .task-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 20px; /* Паддинги сверху/снизу 8px, по бокам 20px */
+      width: 164px; /* Ширина 164px */
+      height: 40px; /* Высота 40px */
+      border-radius: 8px; /* Радиус углов 8px */
+      border: 2px solid var(--color-gray-border); /* Граница 1px и цвет #EFEFEF */
+      cursor: not-allowed; /* Курсор при неактивной кнопке */
+      opacity: 0.6; /* Сделаем кнопку полупрозрачной для неактивного состояния */
+    }
+
+    /* Стили для текста */
+    .task-btn span {
+      font-family: "Helvetica Neue", sans-serif; /* Шрифт */
+      font-weight: 400; /* Вес шрифта */
+      font-style: normal; /* Обычный стиль */
+      font-size: 16px; /* Размер шрифта */
+      line-height: 148%; /* Межстрочный интервал */
+      letter-spacing: 0%; /* Без межбуквенного расстояния */
+      color: #071E22; /* Цвет текста для неактивной кнопки */
+    }
+
+    /* Цвет для стрелок */
+    .task-btn svg {
+      stroke: #071E22; /* Цвет стрелки для неактивной кнопки */
+    }
+
+    /* Когда кнопка активна (не disabled) */
+    .task-btn:not(:disabled) {
+      opacity: 1; /* Убираем полупрозрачность */
+      cursor: pointer; /* Курсор для активной кнопки */
+    }
+
+    .task-btn:not(:disabled) span {
+      color: #222222; /* Цвет текста для активной кнопки */
+    }
+
+    .task-btn:not(:disabled) svg {
+      stroke: #222222; /* Цвет стрелки для активной кнопки */
+    }
+
+
+
+  </style>
+
+  <script>
+    // Получаем все кнопки пагинации
+  const pageButtons = document.querySelectorAll('.page-btn');
+
+  // Добавляем обработчик событий на все кнопки
+  pageButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Удаляем класс 'active' с всех кнопок
+      pageButtons.forEach(btn => btn.classList.remove('active'));
+
+      // Добавляем класс 'active' на ту кнопку, на которую кликнули
+      button.classList.add('active');
+    });
+  });
+
+  </script>
   </body>
 </html>

@@ -583,7 +583,26 @@
                                 <input id="title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
+                            <div style="margin-top:0px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
+                              <label
+                                id="task-author-label"
+                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="tasks.author"
+                              >
+                                Автор задачи <span class="text-red-primary">*</span>
+                              </label>
 
+                              <!-- Инпуты для каждого языка -->
+                              <div id="author-add-participant">
+                                <input id="author-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
+                                <input id="author-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="author-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="author-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="author-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="author-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="author-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                              </div>
+                            </div>
                             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
                                 <label
                                   id="task-textarea-label"
@@ -1192,6 +1211,26 @@
                                 <input id="edit-title-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
                                 <input id="edit-title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
                                 <input id="edit-title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                              </div>
+                            </div>
+                            <div style="margin-top:0px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
+                              <label
+                                id="edit-task-author-label"
+                                class="text-gray-primary mb-1 block text-sm font-medium"
+                                data-i18n="tasks.author"
+                              >
+                                Автор задачи <span class="text-red-primary">*</span>
+                              </label>
+
+                              <!-- Инпуты для каждого языка -->
+                              <div id="author-edit-participant">
+                                <input id="author-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
+                                <input id="author-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="author-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="author-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="author-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="author-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="author-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
                             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
@@ -2385,7 +2424,7 @@ function auto_grow(el) {
       });
   
     </script>
-    <script src="/src/admin/settings.js" defer></script>
+    <!-- <script src="/src/admin/settings.js" defer></script> -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const dropdownBtn = document.getElementById("lang-dropdown-btn");

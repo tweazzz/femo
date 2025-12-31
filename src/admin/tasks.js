@@ -291,9 +291,9 @@ function renderAssignmentTable(assignments) {
         <td>${task.title}</td>
         <td>${task.grade}</td>
         <td>${deadline}</td>
-        <td><span class="card ${getLevelClass(task.level)}">${getTaskLevelLabel(task.level)}</span></td>
+        <td><span style='width: fit-content !important;' class="card ${getLevelClass(task.level)}">${getTaskLevelLabel(task.level)}</span></td>
         <td><span>${getTaskTypeLabel(task.type)}</span></td>
-        <td><span class="card ${getStatusClass(task.status)}">${getTaskStatusLabel(task.status)}</span></td>
+        <td><span style='width: fit-content !important;' class="card ${getStatusClass(task.status)}">${getTaskStatusLabel(task.status)}</span></td>
         <td>
           <div class="flex justify-between gap-2">
             <button onclick="openDeleteModal('${task.title.replace(/'/g, "\\'")}', ${task.id})" class="text-gray-400 hover:text-red-500">
@@ -535,6 +535,22 @@ function showAllRoles() {
     label.classList.remove('btn-option--active');
   });
 }
+function fillAuthors(task) {
+  if (!Array.isArray(task.translations)) return;
+
+  task.translations.forEach(tr => {
+    const lang = tr.language;
+
+    const authorInput = document.querySelector(
+      `#author-edit-participant input[data-lang="${lang}"]`
+    );
+
+    if (authorInput) {
+      authorInput.value = tr.author || '';
+    }
+  });
+}
+
 
 function openEditModal(task) {
   taskBeingEditedId = task.id;
@@ -556,7 +572,7 @@ function openEditModal(task) {
 
    // Правильные ответы
   fillCorrectAnswers(task);
-
+  fillAuthors(task);
   // 🔥 тип задачи
   setTaskType(task.type);
 
@@ -713,19 +729,24 @@ async function submitEditTask() {
 
   for (let lang of languages) {
     const title = document.getElementById(`edit-title-${lang}`)?.value.trim();
+    const author = document.querySelector(
+      `#author-edit-participant input[data-lang="${lang}"]`
+    )?.value.trim();
+    
     const description = document.getElementById(`edit-desc-${lang}`)?.value.trim();
     const correctAnswer =
       document.getElementById(`answer-${lang}-edit`)?.value.trim();
 
     const files = attachments['edit-participant'][lang];
 
-    if (!title || !description || !correctAnswer) {
+    if (!title || !author || !description || !correctAnswer) {
       return alert(`Заполните все поля для языка ${languageLabels[lang]}`);
     }
 
     translations.push({
       language: lang,
       title,
+      author,
       description,
       correct_answer: correctAnswer,
       files
@@ -746,6 +767,7 @@ async function submitEditTask() {
   translations.forEach((tr, idx) => {
     fd.append(`translations[${idx}]language`, tr.language);
     fd.append(`translations[${idx}]title`, tr.title);
+    fd.append(`translations[${idx}]author`, tr.author);
     fd.append(`translations[${idx}]description`, tr.description);
     fd.append(`translations[${idx}]correct_answer`, tr.correct_answer);
 
@@ -1027,15 +1049,18 @@ async function submitNewTask() {
   let translations = [];
   for (let lang of languages) {
     const title = activeForm.querySelector(`input[data-lang="${lang}"]`)?.value.trim() || "";
+    const author = activeForm.querySelector(
+      `#author-add-participant input[data-lang="${lang}"]`
+    )?.value.trim() || "";
     const description = activeForm.querySelector(`textarea[data-lang="${lang}"]`)?.value.trim() || "";
     const correctAnswer = activeForm.querySelector(`#answer-add-participant input[data-lang="${lang}"]`)?.value.trim() || "";
     const files = attachments[formKey]?.[lang];
 
-    if (!title || !description || !correctAnswer) {
+    if (!title || !author || !description || !correctAnswer) {
       return alert(`Пожалуйста, заполните все поля для языка ${languageLabels[lang]}`);
     }
 
-    translations.push({ language: lang, title, description, correct_answer: correctAnswer, files });
+    translations.push({ language: lang, title, author, description, correct_answer: correctAnswer, files });
   }
 
   // ----------------------
@@ -1052,6 +1077,7 @@ async function submitNewTask() {
   translations.forEach((trans, idx) => {
       fd.append(`translations[${idx}]language`, trans.language);
       fd.append(`translations[${idx}]title`, trans.title);
+      fd.append(`translations[${idx}]author`, trans.author);
       fd.append(`translations[${idx}]description`, trans.description);
       fd.append(`translations[${idx}]correct_answer`, trans.correct_answer);
 
