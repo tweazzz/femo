@@ -269,6 +269,61 @@ function getLevelClass(level) {
   };
   return map[level] || '';
 }
+const USER_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+function formatDeadline(utcString) {
+  if (!utcString) return '—';
+
+  const date = new Date(utcString);
+
+  return date.toLocaleString('ru-RU', {
+    timeZone: USER_TIMEZONE,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+const languageFlags = {
+  ru: { code: 'ru', alt: 'Флаг России' },
+  kk: { code: 'kz', alt: 'Флаг Казахстана' },
+  en: { code: 'gb', alt: 'Флаг Великобритании' },
+  de: { code: 'de', alt: 'Флаг Германии' },
+  az: { code: 'az', alt: 'Флаг Азербайджана' },
+  ka: { code: 'ge', alt: 'Флаг Грузии' },
+  es: { code: 'es', alt: 'Флаг Испании' }
+};
+function renderLanguages(languages) {
+  if (!languages) return '';
+
+  // если приходит строка "az,de,en"
+  const langs = typeof languages === 'string'
+    ? languages.split(',').map(l => l.trim())
+    : languages;
+
+  return langs
+    .map((lang, index) => {
+      const flag = languageFlags[lang];
+      if (!flag) return '';
+
+      const comma =
+        index < langs.length - 1
+          ? `<span class="lang-comma">, </span>`
+          : '';
+
+      return `
+        <span class="inline-flex items-center">
+          <img
+            src="https://flagcdn.com/w40/${flag.code}.png"
+            alt="${flag.alt}"
+            class="w-6 h-[17px] object-contain"
+          /> 
+          ${comma}
+        </span>
+      `;
+    })
+    .join('');
+}
 
 // 5. Рендер таблицы заданий
 function renderAssignmentTable(assignments) {
@@ -284,12 +339,17 @@ function renderAssignmentTable(assignments) {
     .map((task) => {
       // Кодируем задачу в data-task для редактирования
       const encodedTask = encodeURIComponent(JSON.stringify(task));
-      const deadline = task.deadline || '';
+      const deadline = formatDeadline(task.deadline);
       return `
       <tr class="hover:bg-gray-50">
         <td>${task.id}</td>
         <td>${task.title}</td>
-        <td>${task.grade}</td>
+        <td>${task.grade}</td>\
+        <td>
+          <div class="flex items-center gap-2">
+            ${renderLanguages(task.languages)}
+          </div>
+        </td>
         <td>${deadline}</td>
         <td><span style='width: fit-content !important;' class="card ${getLevelClass(task.level)}">${getTaskLevelLabel(task.level)}</span></td>
         <td><span>${getTaskTypeLabel(task.type)}</span></td>
@@ -542,7 +602,7 @@ function fillAuthors(task) {
     const lang = tr.language;
 
     const authorInput = document.querySelector(
-      `#author-edit-participant input[data-lang="${lang}"]`
+      `#author-edit-participant input[data-locale="${lang}"]`
     );
 
     if (authorInput) {
@@ -621,7 +681,7 @@ function renderAttachments(task) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const radios = document.querySelectorAll('input[name="lang"]');
+  const radios = document.querySelectorAll('input[name="task-locale"]');
 
   radios.forEach(radio => {
     radio.addEventListener('change', () => {
@@ -636,13 +696,13 @@ const editLabelFile = document.getElementById('edit-file-label');
 
 editFileInputs.forEach(inp => {
   inp.addEventListener('change', () =>
-    handleEditFilesChange(inp, inp.dataset.lang)
+    handleEditFilesChange(inp, inp.dataset.locale)
   );
 });
 
 editLabelFile.addEventListener('click', () => {
   const activeInput = document.querySelector(
-    `#files-edit-participant .file-input[data-lang="${currentLang}"]`
+    `#files-edit-participant .file-input[data-locale="${currentLang}"]`
   );
   activeInput?.click();
 });
@@ -730,7 +790,7 @@ async function submitEditTask() {
   for (let lang of languages) {
     const title = document.getElementById(`edit-title-${lang}`)?.value.trim();
     const author = document.querySelector(
-      `#author-edit-participant input[data-lang="${lang}"]`
+      `#author-edit-participant input[data-locale="${lang}"]`
     )?.value.trim();
     
     const description = document.getElementById(`edit-desc-${lang}`)?.value.trim();
@@ -886,7 +946,7 @@ function renderPaginatedAssignments() {
   renderAssignmentPagination()
 }
 
-const radios = document.querySelectorAll('input[name="lang"]');
+const radios = document.querySelectorAll('input[name="task-locale"]');
 const inputs = document.querySelectorAll('.lang-input');
 const textareas = document.querySelectorAll('.lang-textarea');
 const correct_answer_inputs = document.querySelectorAll('.lang-input-answer');
@@ -898,16 +958,16 @@ radios.forEach(radio => {
 
     // 🔹 Переключаем поля ввода
     inputs.forEach(input => {
-      input.style.display = input.dataset.lang === lang ? 'block' : 'none';
+      input.style.display = input.dataset.locale === lang ? 'block' : 'none';
     });
 
     // 🔹 Переключаем поля ввода
     correct_answer_inputs.forEach(input => {
-      input.style.display = input.dataset.lang === lang ? 'block' : 'none';
+      input.style.display = input.dataset.locale === lang ? 'block' : 'none';
     });
 
     textareas.forEach(textarea => {
-      textarea.style.display = textarea.dataset.lang === lang ? 'block' : 'none';
+      textarea.style.display = textarea.dataset.locale === lang ? 'block' : 'none';
     });
   });
 });
@@ -1010,7 +1070,7 @@ function renderFiles(formKey, lang) {
 // ПОДПИСЫВАЕМСЯ НА onchange для input[type=file]
 // ----------------------
 fileInputs.forEach(inp => {
-  const lang = inp.dataset.lang;
+  const lang = inp.dataset.locale;
   inp.addEventListener('change', () => handleFilesChange(inp, formKey, lang));
 });
 
@@ -1018,7 +1078,7 @@ fileInputs.forEach(inp => {
 // КЛИК ПО LABEL → открыть активный input
 // ----------------------
 labelFile.addEventListener('click', () => {
-  const activeInput = document.querySelector(`.file-input[data-lang="${currentLang}"]`);
+  const activeInput = document.querySelector(`.file-input[data-locale="${currentLang}"]`);
   activeInput.click();
 });
 
@@ -1048,12 +1108,12 @@ async function submitNewTask() {
   // ----------------------
   let translations = [];
   for (let lang of languages) {
-    const title = activeForm.querySelector(`input[data-lang="${lang}"]`)?.value.trim() || "";
+    const title = activeForm.querySelector(`input[data-locale="${lang}"]`)?.value.trim() || "";
     const author = activeForm.querySelector(
-      `#author-add-participant input[data-lang="${lang}"]`
+      `#author-add-participant input[data-locale="${lang}"]`
     )?.value.trim() || "";
-    const description = activeForm.querySelector(`textarea[data-lang="${lang}"]`)?.value.trim() || "";
-    const correctAnswer = activeForm.querySelector(`#answer-add-participant input[data-lang="${lang}"]`)?.value.trim() || "";
+    const description = activeForm.querySelector(`textarea[data-locale="${lang}"]`)?.value.trim() || "";
+    const correctAnswer = activeForm.querySelector(`#answer-add-participant input[data-locale="${lang}"]`)?.value.trim() || "";
     const files = attachments[formKey]?.[lang];
 
     if (!title || !author || !description || !correctAnswer) {
@@ -1129,7 +1189,7 @@ radios.forEach(radio => {
     // inputs остаются скрытыми
 
     // очищаем input, чтобы он был пустым
-    const activeInput = document.querySelector(`.file-input[data-lang="${lang}"]`);
+    const activeInput = document.querySelector(`.file-input[data-locale="${lang}"]`);
     activeInput.value = '';
 
     renderFiles(formKey, lang);

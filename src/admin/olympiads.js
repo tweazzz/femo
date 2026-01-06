@@ -175,9 +175,21 @@ document
     }
   });
 let tomGradesAdd, tomGradesEdit;
+
+
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
+
+
+
+  const formatAddEl = document.getElementById('format-add');
+  if (formatAddEl) {
+    if (!formatAddEl.value) formatAddEl.value = 'online'; // дефолт
+    updateFormatVisibilityAdd(formatAddEl.value);         // первичная отрисовка
+    formatAddEl.addEventListener('change', () => updateFormatVisibilityAdd(formatAddEl.value));
+  }
+  
 
   tomGradesAdd = new TomSelect('#grades-add', {
     plugins: ['remove_button'],        // кнопка удаления у каждого тега
@@ -203,7 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3) Рисуем шапку
     renderUserInfo(profileData);
     await loadOlympiads()
-
+    attachAddFormListeners();
     let sortAscending = true
 
     const sortHeader = document.getElementById('sort-year-header')
@@ -842,30 +854,96 @@ function focusFirstInvalid() {
 
 
 
-function updateFormatVisibilityEdit(formatValue) {
-  const formatEl     = document.getElementById('format-edit');
-  const startLabel   = document.getElementById('olympiad-start-date-edit');
-  const startWrapper = startLabel ? startLabel.nextElementSibling : null;
-  const locationEl   = document.getElementById('location-edit');
-  const locationWrap = locationEl ? locationEl.closest('div') : null;
-  const value        = formatValue ?? formatEl?.value;
+// Показывает/скрывает Время олимпиады и Локацию в МОДАЛКЕ ДОБАВЛЕНИЯ
+function updateFormatVisibilityAdd(formatValue) {
+  const formatEl = document.getElementById('format-add');
+  const v = formatValue ?? formatEl?.value ?? 'online';
 
-  // Дата: ВСЕГДА показываем и НЕ очищаем
-  startLabel?.classList.remove('hidden');
-  startWrapper?.classList.remove('hidden');
+  // ЛЕЙБЛ даты в Add (по твоей верстке id="olympiad-start-date")
+  const dateLabel = document.querySelector('#modalAdd #olympiad-start-date');
 
-  if (value === 'online') {
-    // Скрываем только локацию
+  // Поля времени (desktop + mobile) в Add
+  const dateText   = document.querySelector('#modalAdd .date-single-add:not(.flatpickr-mobile)');
+  const dateMobile = document.querySelector('#modalAdd .date-single-add.flatpickr-mobile');
+
+  // Обёртка вокруг инпута даты — это <div class="flex items-center gap-1 border-default">
+  // Берём ближайший подходящий контейнер от текстового инпута
+  const dateWrap =
+    (dateText && (dateText.closest('.form-control-group') || dateText.closest('.border-default') || dateText.closest('div'))) || null;
+
+  // Локация (Add)
+  const locationEl   = document.getElementById('location');
+  const locationWrap = locationEl ? (locationEl.closest('.form-control-group') || locationEl.closest('div')) : null;
+
+  if (v === 'online') {
+    // Скрыть и выключить оба поля
+    dateLabel?.classList.add('hidden');
+    dateWrap?.classList.add('hidden');
+    if (dateText)   dateText.disabled = true;
+    if (dateMobile) dateMobile.disabled = true;
+
     locationWrap?.classList.add('hidden');
-    if (locationEl) { locationEl.value = ''; locationEl.disabled = true; }
+    if (locationEl) locationEl.disabled = true;
   } else {
+    // Показать и включить оба поля
+    dateLabel?.classList.remove('hidden');
+    dateWrap?.classList.remove('hidden');
+    if (dateText)   dateText.disabled = false;
+    if (dateMobile) dateMobile.disabled = false;
+
     locationWrap?.classList.remove('hidden');
     if (locationEl) locationEl.disabled = false;
   }
 }
 
 
-``
+
+function updateFormatVisibilityEdit(formatValue) {
+  const formatEl = document.getElementById('format-edit');
+  const v = formatValue ?? formatEl?.value ?? 'online';
+
+  // Поле времени внутри modalEdit
+  // (пытаемся быть совместимыми с твоей разметкой: либо по id, либо по классам)
+  const dateText =
+    document.querySelector('#modalEdit .date-single-edit:not(.flatpickr-mobile)') ||
+    document.querySelector('#modalEdit #olympiad-start-date-input');
+  const dateMobile = document.querySelector('#modalEdit .date-single-edit.flatpickr-mobile') ||
+                     document.querySelector('#modalEdit #olympiad-start-date-input-mobile');
+
+  // Если есть label с id, как в твоём коде — используем его, иначе берём ближайший контейнер инпута
+  const startLabel = document.getElementById('olympiad-start-date-edit');
+  const dateWrap = startLabel?.nextElementSibling ||
+                   (dateText && (dateText.closest('.form-control-group') || dateText.closest('div'))) ||
+                   null;
+
+  // Поле локации (edit)
+  const locationEl = document.getElementById('location-edit');
+  const locationWrap = locationEl ? (locationEl.closest('.form-control-group') || locationEl.closest('div')) : null;
+
+  if (v === 'online') {
+    // Скрыть и выключить оба поля
+    startLabel?.classList.add('hidden');
+    dateWrap?.classList.add('hidden');
+    if (dateText)   dateText.disabled = true;
+    if (dateMobile) dateMobile.disabled = true;
+
+    locationWrap?.classList.add('hidden');
+    if (locationEl) locationEl.disabled = true;
+  } else {
+    // Показать и включить оба поля
+    startLabel?.classList.remove('hidden');
+    dateWrap?.classList.remove('hidden');
+    if (dateText)   dateText.disabled = false;
+    if (dateMobile) dateMobile.disabled = false;
+
+    locationWrap?.classList.remove('hidden');
+    if (locationEl) locationEl.disabled = false;
+  }
+}
+
+
+
+
 
 // Подвяжем слушатели — вызовем setSubmitAddState на input/change
 function attachAddFormListeners() {

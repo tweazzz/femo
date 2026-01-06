@@ -19,7 +19,14 @@
   </head>
 
 
-
+  <style>
+    .lang-comma {
+    font-family: 'Proxima Nova', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+  }
+  </style>
   <body>
     <div class="flex h-screen">
       <!-- Sidebar -->
@@ -515,50 +522,50 @@
                               Содержание задачи
                             </p>
 
-                            <div class="flex flex-wrap items-center gap-4" data-lang="ru">
+                            <div class="flex flex-wrap items-center gap-4" data-locale="ru">
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="ru" class="hidden" checked>
+                                <input type="radio" name="task-locale" value="ru" class="hidden" checked>
                                 Русский
                               </label>
 
-                              <label class="switch-btn flex items-center gap-2" data-lang="kk">
+                              <label class="switch-btn flex items-center gap-2" data-locale="kk">
                                 <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="kk" class="hidden">
+                                <input type="radio" name="task-locale" value="kk" class="hidden">
                                 Қазақша
                               </label>
 
-                              <label class="switch-btn flex items-center gap-2" data-lang="en">
+                              <label class="switch-btn flex items-center gap-2" data-locale="en">
                                 <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="en" class="hidden">
+                                <input type="radio" name="task-locale" value="en" class="hidden">
                                 English
                               </label>
 
                               <!-- Spanish -->
-                              <label class="switch-btn flex items-center gap-2" data-lang="es">
+                              <label class="switch-btn flex items-center gap-2" data-locale="es">
                                 <img src="https://flagcdn.com/w40/es.png" alt="Флаг Испании" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="es" class="hidden">
+                                <input type="radio" name="task-locale" value="es" class="hidden">
                                 Spanish
                               </label>
 
                               <!-- German -->
-                              <label class="switch-btn flex items-center gap-2" data-lang="de">
+                              <label class="switch-btn flex items-center gap-2" data-locale="de">
                                 <img src="https://flagcdn.com/w40/de.png" alt="Флаг Германии" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="de" class="hidden">
+                                <input type="radio" name="task-locale" value="de" class="hidden">
                                 German
                               </label>
 
                               <!-- Azerbaijani -->
-                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="az">
+                              <label class="switch-btn lang-option flex items-center gap-2" data-locale="az">
                                 <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="az" class="hidden">
+                                <input type="radio" name="task-locale" value="az" class="hidden">
                                 <span class="lang-label">Азербайджанский</span>
                               </label>
 
                               <!-- Georgian -->
-                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="ka">
+                              <label class="switch-btn lang-option flex items-center gap-2" data-locale="ka">
                                 <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
-                                <input type="radio" name="lang" value="ka" class="hidden">
+                                <input type="radio" name="task-locale" value="ka" class="hidden">
                                 <span class="lang-label">Грузинский</span>
                               </label>
                             </div>
@@ -574,13 +581,13 @@
 
                               <!-- Инпуты для каждого языка -->
                               <div id="title-add-participant">
-                                <input id="title-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
-                                <input id="title-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
-                                <input id="title-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
-                                <input id="title-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
-                                <input id="title-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
-                                <input id="title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
-                                <input id="title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                                <input id="title-ru" class="lang-input input-base border-default" data-locale="ru" placeholder="Комбинаторика (RU)">
+                                <input id="title-kk" class="lang-input input-base border-default" data-locale="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="title-en" class="lang-input input-base border-default" data-locale="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="title-es" class="lang-input input-base border-default" data-locale="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="title-de" class="lang-input input-base border-default" data-locale="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="title-az" class="lang-input input-base border-default" data-locale="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="title-ka" class="lang-input input-base border-default" data-locale="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
                             <div style="margin-top:0px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
@@ -594,13 +601,13 @@
 
                               <!-- Инпуты для каждого языка -->
                               <div id="author-add-participant">
-                                <input id="author-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
-                                <input id="author-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
-                                <input id="author-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
-                                <input id="author-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
-                                <input id="author-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
-                                <input id="author-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
-                                <input id="author-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                                <input id="author-ru" class="lang-input input-base border-default" data-locale="ru" placeholder="Комбинаторика (RU)">
+                                <input id="author-kk" class="lang-input input-base border-default" data-locale="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="author-en" class="lang-input input-base border-default" data-locale="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="author-es" class="lang-input input-base border-default" data-locale="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="author-de" class="lang-input input-base border-default" data-locale="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="author-az" class="lang-input input-base border-default" data-locale="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="author-ka" class="lang-input input-base border-default" data-locale="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
                             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
@@ -613,14 +620,14 @@
                                   <div id="desc-add-participant">
                                     <textarea id="desc-ru"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="ru"
+                                      data-locale="ru"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(RU)"
                                     ></textarea>
 
                                     <textarea id="desc-kk"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="kk"
+                                      data-locale="kk"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(KZ)"
                                       style="display:none"
@@ -628,7 +635,7 @@
 
                                     <textarea id="desc-en"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="en"
+                                      data-locale="en"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(EN)"
                                       style="display:none"
@@ -636,7 +643,7 @@
 
                                     <textarea id="desc-es"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="es"
+                                      data-locale="es"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(ES)"
                                       style="display:none"
@@ -644,7 +651,7 @@
 
                                     <textarea id="desc-de"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="de"
+                                      data-locale="de"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(DE)"
                                       style="display:none"
@@ -652,7 +659,7 @@
 
                                     <textarea id="desc-az"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="az"
+                                      data-locale="az"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(AZ)"
                                       style="display:none"
@@ -660,7 +667,7 @@
 
                                     <textarea id="desc-ka"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="ka"
+                                      data-locale="ka"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(GE)"
                                       style="display:none"
@@ -677,13 +684,13 @@
                                 </label>
                                 <!-- Файлы для каждого языка -->
                                 <div id="files-add-participant">
-                                  <input id="files-ru" type="file" data-lang="ru" class="hidden file-input" />
-                                  <input id="files-kk" type="file" data-lang="kk" class="hidden file-input" />
-                                  <input id="files-en" type="file" data-lang="en" class="hidden file-input" />
-                                  <input id="files-es" type="file" data-lang="es" class="hidden file-input" />
-                                  <input id="files-de" type="file" data-lang="de" class="hidden file-input" />
-                                  <input id="files-az" type="file" data-lang="az" class="hidden file-input" />
-                                  <input id="files-ka" type="file" data-lang="ka" class="hidden file-input" />
+                                  <input id="files-ru" type="file" data-locale="ru" class="hidden file-input" />
+                                  <input id="files-kk" type="file" data-locale="kk" class="hidden file-input" />
+                                  <input id="files-en" type="file" data-locale="en" class="hidden file-input" />
+                                  <input id="files-es" type="file" data-locale="es" class="hidden file-input" />
+                                  <input id="files-de" type="file" data-locale="de" class="hidden file-input" />
+                                  <input id="files-az" type="file" data-locale="az" class="hidden file-input" />
+                                  <input id="files-ka" type="file" data-locale="ka" class="hidden file-input" />
                                 </div>
                                 <!-- Список выбранных файлов -->
                                 <div id="files-list-add-participant" class="space-y-2"></div>
@@ -755,7 +762,7 @@
                                 <div id="answer-add-participant">
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="ru"
+                                    data-locale="ru"
                                     placeholder="RU"
                                     type="text"
                                     name="answer-ru"
@@ -765,7 +772,7 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="kk"
+                                    data-locale="kk"
                                     placeholder="KZ"
                                     type="text"
                                     name="answer-kk"
@@ -775,7 +782,7 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="en"
+                                    data-locale="en"
                                     placeholder="EN"
                                     type="text"
                                     name="answer-en"
@@ -785,7 +792,7 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="es"
+                                    data-locale="es"
                                     placeholder="ES"
                                     type="text"
                                     name="answer-es"
@@ -795,7 +802,7 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="de"
+                                    data-locale="de"
                                     placeholder="DE"
                                     type="text"
                                     name="answer-de"
@@ -805,7 +812,7 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="az"
+                                    data-locale="az"
                                     placeholder="AZ"
                                     type="text"
                                     name="answer-az"
@@ -815,7 +822,7 @@
                                   />
                                   <input
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="ka"
+                                    data-locale="ka"
                                     placeholder="GE"
                                     type="text"
                                     name="answer-ka"
@@ -1145,48 +1152,48 @@
                               Содержание задачи
                             </p>
 
-                            <div class="flex flex-wrap items-center gap-4" data-lang="ru">
+                            <div class="flex flex-wrap items-center gap-4" data-locale="ru">
                               <label class="switch-btn flex items-center gap-2">
                                 <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="ru" class="hidden" checked>
                                 Русский
                               </label>
 
-                              <label class="switch-btn flex items-center gap-2" data-lang="kk">
+                              <label class="switch-btn flex items-center gap-2" data-locale="kk">
                                 <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="kk" class="hidden">
                                 Қазақша
                               </label>
 
-                              <label class="switch-btn flex items-center gap-2" data-lang="en">
+                              <label class="switch-btn flex items-center gap-2" data-locale="en">
                                 <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="en" class="hidden">
                                 English
                               </label>
 
                               <!-- Spanish -->
-                              <label class="switch-btn flex items-center gap-2" data-lang="es">
+                              <label class="switch-btn flex items-center gap-2" data-locale="es">
                                 <img src="https://flagcdn.com/w40/es.png" alt="Флаг Испании" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="es" class="hidden">
                                 Spanish
                               </label>
 
                               <!-- German -->
-                              <label class="switch-btn flex items-center gap-2" data-lang="de">
+                              <label class="switch-btn flex items-center gap-2" data-locale="de">
                                 <img src="https://flagcdn.com/w40/de.png" alt="Флаг Германии" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="de" class="hidden">
                                 German
                               </label>
 
                               <!-- Azerbaijani -->
-                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="az">
+                              <label class="switch-btn lang-option flex items-center gap-2" data-locale="az">
                                 <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="az" class="hidden">
                                 <span class="lang-label">Азербайджанский</span>
                               </label>
 
                               <!-- Georgian -->
-                              <label class="switch-btn lang-option flex items-center gap-2" data-lang="ka">
+                              <label class="switch-btn lang-option flex items-center gap-2" data-locale="ka">
                                 <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
                                 <input type="radio" name="lang" value="ka" class="hidden">
                                 <span class="lang-label">Грузинский</span>
@@ -1204,13 +1211,13 @@
 
                               <!-- Инпуты для каждого языка -->
                               <div id="title-edit-participant">
-                                <input id="edit-title-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
-                                <input id="edit-title-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
-                                <input id="edit-title-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
-                                <input id="edit-title-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
-                                <input id="edit-title-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
-                                <input id="edit-title-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
-                                <input id="edit-title-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                                <input id="edit-title-ru" class="lang-input input-base border-default" data-locale="ru" placeholder="Комбинаторика (RU)">
+                                <input id="edit-title-kk" class="lang-input input-base border-default" data-locale="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="edit-title-en" class="lang-input input-base border-default" data-locale="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="edit-title-es" class="lang-input input-base border-default" data-locale="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="edit-title-de" class="lang-input input-base border-default" data-locale="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="edit-title-az" class="lang-input input-base border-default" data-locale="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="edit-title-ka" class="lang-input input-base border-default" data-locale="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
                             <div style="margin-top:0px;" class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
@@ -1224,13 +1231,13 @@
 
                               <!-- Инпуты для каждого языка -->
                               <div id="author-edit-participant">
-                                <input id="author-ru" class="lang-input input-base border-default" data-lang="ru" placeholder="Комбинаторика (RU)">
-                                <input id="author-kk" class="lang-input input-base border-default" data-lang="kk" placeholder="Комбинаторика (KZ)" style="display:none">
-                                <input id="author-en" class="lang-input input-base border-default" data-lang="en" placeholder="Комбинаторика (EN)" style="display:none">
-                                <input id="author-es" class="lang-input input-base border-default" data-lang="es" placeholder="Комбинаторика (ES)" style="display:none">
-                                <input id="author-de" class="lang-input input-base border-default" data-lang="de" placeholder="Комбинаторика (DE)" style="display:none">
-                                <input id="author-az" class="lang-input input-base border-default" data-lang="az" placeholder="Комбинаторика (AZ)" style="display:none">
-                                <input id="author-ka" class="lang-input input-base border-default" data-lang="ka" placeholder="Комбинаторика (GE)" style="display:none">
+                                <input id="author-ru" class="lang-input input-base border-default" data-locale="ru" placeholder="Комбинаторика (RU)">
+                                <input id="author-kk" class="lang-input input-base border-default" data-locale="kk" placeholder="Комбинаторика (KZ)" style="display:none">
+                                <input id="author-en" class="lang-input input-base border-default" data-locale="en" placeholder="Комбинаторика (EN)" style="display:none">
+                                <input id="author-es" class="lang-input input-base border-default" data-locale="es" placeholder="Комбинаторика (ES)" style="display:none">
+                                <input id="author-de" class="lang-input input-base border-default" data-locale="de" placeholder="Комбинаторика (DE)" style="display:none">
+                                <input id="author-az" class="lang-input input-base border-default" data-locale="az" placeholder="Комбинаторика (AZ)" style="display:none">
+                                <input id="author-ka" class="lang-input input-base border-default" data-locale="ka" placeholder="Комбинаторика (GE)" style="display:none">
                               </div>
                             </div>
                             <div class="border-default grid grid-cols-1 gap-4 rounded-2xl p-4">
@@ -1243,14 +1250,14 @@
                                   <div id="desc-edit-participant">
                                     <textarea id="edit-desc-ru"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="ru"
+                                      data-locale="ru"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(RU)"
                                     ></textarea>
 
                                     <textarea id="edit-desc-kk"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="kk"
+                                      data-locale="kk"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(KZ)"
                                       style="display:none"
@@ -1258,7 +1265,7 @@
 
                                     <textarea id="edit-desc-en"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="en"
+                                      data-locale="en"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(EN)"
                                       style="display:none"
@@ -1266,7 +1273,7 @@
 
                                     <textarea id="edit-desc-es"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="es"
+                                      data-locale="es"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(ES)"
                                       style="display:none"
@@ -1274,7 +1281,7 @@
 
                                     <textarea id="edit-desc-de"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="de"
+                                      data-locale="de"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(DE)"
                                       style="display:none"
@@ -1282,7 +1289,7 @@
 
                                     <textarea id="edit-desc-az"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="az"
+                                      data-locale="az"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(AZ)"
                                       style="display:none"
@@ -1290,7 +1297,7 @@
 
                                     <textarea id="edit-desc-ka"
                                       class="lang-textarea textarea input-base border-default px-4"
-                                      data-lang="ka"
+                                      data-locale="ka"
                                       rows="2"
                                       placeholder="Введите ваше сообщение...(GE)"
                                       style="display:none"
@@ -1307,13 +1314,13 @@
                                 </label>
                                 <!-- Файлы для каждого языка -->
                                 <div id="files-edit-participant">
-                                  <input id="edit-files-ru" type="file" data-lang="ru" class="hidden file-input" />
-                                  <input id="edit-files-kk" type="file" data-lang="kk" class="hidden file-input" />
-                                  <input id="edit-files-en" type="file" data-lang="en" class="hidden file-input" />
-                                  <input id="edit-files-es" type="file" data-lang="es" class="hidden file-input" />
-                                  <input id="edit-files-de" type="file" data-lang="de" class="hidden file-input" />
-                                  <input id="edit-files-az" type="file" data-lang="az" class="hidden file-input" />
-                                  <input id="edit-files-ka" type="file" data-lang="ka" class="hidden file-input" />
+                                  <input id="edit-files-ru" type="file" data-locale="ru" class="hidden file-input" />
+                                  <input id="edit-files-kk" type="file" data-locale="kk" class="hidden file-input" />
+                                  <input id="edit-files-en" type="file" data-locale="en" class="hidden file-input" />
+                                  <input id="edit-files-es" type="file" data-locale="es" class="hidden file-input" />
+                                  <input id="edit-files-de" type="file" data-locale="de" class="hidden file-input" />
+                                  <input id="edit-files-az" type="file" data-locale="az" class="hidden file-input" />
+                                  <input id="edit-files-ka" type="file" data-locale="ka" class="hidden file-input" />
                                 </div>
                                 <!-- Список выбранных файлов -->
                                 <div id="files-list-edit-participant" class="space-y-2"></div>
@@ -1382,7 +1389,7 @@
                                   <input
                                     id="answer-ru-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="ru"
+                                    data-locale="ru"
                                     type="text"
                                     placeholder="RU"
                                   />
@@ -1390,7 +1397,7 @@
                                   <input
                                     id="answer-kk-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="kk"
+                                    data-locale="kk"
                                     type="text"
                                     placeholder="KZ"
                                     style="display:none"
@@ -1399,7 +1406,7 @@
                                   <input
                                     id="answer-en-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="en"
+                                    data-locale="en"
                                     type="text"
                                     placeholder="EN"
                                     style="display:none"
@@ -1408,7 +1415,7 @@
                                   <input
                                     id="answer-es-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="es"
+                                    data-locale="es"
                                     type="text"
                                     placeholder="ES"
                                     style="display:none"
@@ -1417,7 +1424,7 @@
                                   <input
                                     id="answer-de-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="de"
+                                    data-locale="de"
                                     type="text"
                                     placeholder="DE"
                                     style="display:none"
@@ -1426,7 +1433,7 @@
                                   <input
                                     id="answer-az-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="az"
+                                    data-locale="az"
                                     type="text"
                                     placeholder="AZ"
                                     style="display:none"
@@ -1435,7 +1442,7 @@
                                   <input
                                     id="answer-ka-edit"
                                     class="lang-input-answer input-base border-default"
-                                    data-lang="ka"
+                                    data-locale="ka"
                                     type="text"
                                     placeholder="GE"
                                     style="display:none"
@@ -1693,6 +1700,7 @@
                     </div>
                   </th>
                   <th class="p-table" data-i18n="tasks.sort-class">Класс</th>
+                  <th class="p-table" data-i18n="tasks.sort-language">Языки</th>
                   <th class="p-table">
                     <div class="flex items-center gap-1" data-i18n="tasks.sort-deadline">
                       Дедлайн
@@ -2424,7 +2432,7 @@ function auto_grow(el) {
       });
   
     </script>
-    <!-- <script src="/src/admin/settings.js" defer></script> -->
+    <script src="/src/admin/settings.js" defer></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const dropdownBtn = document.getElementById("lang-dropdown-btn");
