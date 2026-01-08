@@ -350,8 +350,8 @@ async function loadTaskDetails() {
     if (tasks.length > 0) {
       currentTaskIndex = 0;
       renderTaskByIndex(0);
-      renderPagination();
-      updateNavButtons();
+      // renderPagination();
+      // updateNavButtons();
     } else {
       // Если задач нет — покажем сообщение пользователю
       const mainContainer = document.getElementById('task-main') || document.querySelector('main');
@@ -564,11 +564,11 @@ function renderTaskByIndex(index) {
 //   }
 // }
 
-document.getElementById('nextTaskBtn')
-  ?.addEventListener('click', showNextTask);
+// document.getElementById('nextTaskBtn')
+//   ?.addEventListener('click', showNextTask);
 
-document.getElementById('prevTaskBtn')
-  ?.addEventListener('click', showPrevTask);
+// document.getElementById('prevTaskBtn')
+//   ?.addEventListener('click', showPrevTask);
 
 
 function renderAttachments(task) {
