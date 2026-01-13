@@ -1314,14 +1314,14 @@
   <div
     id="edit-classes-container"
     data-scope="online-edit"
-    data-template-id="edit-class-template"
+    data-template-id="edit-online-class-template"
     data-add-btn-id="add-edit-online-class-btn"
     data-id-prefix="online-edit"
     class="border-default rounded-2xl p-4"
   >
 
     <!-- Шаблон класса (edit) -->
-    <div id="edit-class-template" class="edit-class-block flex items-end gap-4 mb-4 flex-nowrap hidden">
+    <div id="edit-online-class-template" class="edit-class-block flex items-end gap-4 mb-4 flex-nowrap hidden">
 
       <!-- Класс -->
       <div class="flex-none w-[120px]">
@@ -1378,13 +1378,13 @@
     id="edit-offline-classes-container"
     class="border-default rounded-2xl p-4"
     data-scope="offline-edit"
-    data-template-id="edit-offline-class-template"
+    data-template-id="edit-offline-class-template-edit"
     data-add-btn-id="add-edit-offline-class-btn"
     data-id-prefix="offline-edit"
   >
 
     <!-- Шаблон класса (edit) -->
-    <div id="edit-offline-class-template" class="edit-class-block flex items-end gap-4 mb-4 flex-wrap hidden">
+    <div id="edit-offline-class-template-edit" class="edit-class-block flex items-end gap-4 mb-4 flex-wrap hidden">
 
       <!-- Класс -->
       <div class="flex-none w-[120px]">
@@ -1539,6 +1539,7 @@
                               >
                               <input
                                 type="text"
+                                id = "title_certificate"
                                 name="title_certificate"
                                 class="input-base border-default"
                                 placeholder="Диплом участника олимпиады"

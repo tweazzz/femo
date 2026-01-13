@@ -578,7 +578,6 @@ async function openEditModal(title, id) {
     const data = await res.json();
 
     /* ================= ОСНОВНЫЕ ПОЛЯ ================= */
-
     setVal(q('#title-edit'), data.title);
     setVal(q('#tour-edit'), data.type);
     setVal(q('#year-edit'), data.year);
@@ -588,32 +587,33 @@ async function openEditModal(title, id) {
     setVal(q('#disc-edit'), data.description);
 
     /* ================= ФОРМАТ ================= */
-
     const formatSelect = q('#format-edit');
     if (formatSelect) {
       formatSelect.value = data.format;
       updateFormatVisibilityEdit(data.format);
-      formatSelect.onchange = () =>
-        updateFormatVisibilityEdit(formatSelect.value);
+      formatSelect.onchange = () => updateFormatVisibilityEdit(formatSelect.value);
     }
 
     /* ================= ЯЗЫК ================= */
-
     if (q('#language-edit')) {
       q('#language-edit').value = data.language;
     }
 
     /* ================= КЛАССЫ (TomSelect) ================= */
-
     if (window.tomGradesEdit) {
       tomGradesEdit.clear();
-      (data.grades || []).forEach(g =>
-        tomGradesEdit.addItem(String(g))
-      );
+      (data.grades || []).forEach(g => tomGradesEdit.addItem(String(g)));
+    }
+    // если используется select с id="grades-edit"
+    const gradesSelect = q('#grades-edit');
+    if (gradesSelect) {
+      qa('option', gradesSelect).forEach(opt => {
+        opt.selected = data.grades?.includes(Number(opt.value)) ?? false;
+      });
+      if (window.tomGradesEdit) tomGradesEdit.refreshItems(); // если TomSelect активен
     }
 
     /* ================= ЭТАПЫ ================= */
-
     const stageContainer = q('#stages-container-edit');
     const stageTemplate  = q('#stage-template-edit');
     const stageAddWrap   = stageContainer.querySelector('.mt-4');
@@ -622,15 +622,14 @@ async function openEditModal(title, id) {
 
     if (data.stages?.length) {
       stageTemplate.classList.add('hidden');
-
       data.stages.forEach(stage => {
         const clone = stageTemplate.cloneNode(true);
         clone.removeAttribute('id');
+        clone.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
         clone.classList.remove('hidden');
         clone.classList.add('stage-block');
 
         setVal(clone.querySelector('.step-name-add'), stage.name);
-
         const input = clone.querySelector('.date-range-add');
         input.value =
           `${stage.start_date.split('-').reverse().join('.')} — ` +
@@ -648,70 +647,81 @@ async function openEditModal(title, id) {
       stageTemplate.classList.remove('hidden');
     }
 
-    /* ================= СЕРТИФИКАТ ================= */
-
-    setVal(
-      q('input[name="title_certificate"]'),
-      data.certificate_template?.header_text
-    );
-
-    setVal(
-      q('#certificate-description-edit'),
-      data.certificate_template?.description
-    );
-
-    if (data.certificate_template?.background) {
-      q('#file-name-edit').textContent =
-        data.certificate_template.background.split('/').pop();
-    }
-
     /* ================= СЛОТЫ КЛАССОВ ================= */
-
     const setups = [
       {
         format: 'online',
         container: q('#edit-classes-container'),
-        template: q('#edit-class-template'),
+        template: q('#edit-online-class-template'),
         addBtnId: '#add-edit-online-class-btn'
       },
       {
         format: 'offline',
         container: q('#edit-offline-classes-container'),
-        template: q('#edit-offline-class-template'),
+        template: q('#edit-offline-class-template-edit'),
         addBtnId: '#add-edit-offline-class-btn'
       }
     ];
 
+    // 1) очищаем контейнеры и скрываем шаблоны
     setups.forEach(s => {
+      if (!s.template || !s.container) return;
       s.template.classList.add('hidden');
       qa('.class-block', s.container).forEach(e => e.remove());
     });
 
-    (data.assignment_slots || []).forEach(slot => {
-      const s = setups.find(x => x.format === slot.format);
-      if (!s) return;
+// 2) добавляем блоки из API
+(data.assignment_slots || []).forEach(slot => {
+  const s = setups.find(x => x.format === slot.format);
+  if (!s || !s.template || !s.container) return;
 
-      const addWrap = s.container.querySelector(s.addBtnId).closest('.mt-4');
+  // --- Сделаем контейнер видимым, если оффлайн ---
+  if (slot.format === 'offline') {
+    const editOfflineEl = document.querySelector('.edit-classes-offline');
+    if (editOfflineEl) editOfflineEl.classList.remove('hidden');
+  }
 
-      const clone = s.template.cloneNode(true);
-      clone.removeAttribute('id');
-      clone.classList.remove('hidden');
-      clone.classList.add('class-block');
+  const addBtn = s.container.querySelector(s.addBtnId);
+  const addWrap = addBtn.closest('div') || s.container;
 
-      clone.querySelector('.edit-class-select').value = slot.grade;
-      setVal(clone.querySelector('.edit-start-datetime'), toDatetimeLocal(slot.start_at));
-      setVal(clone.querySelector('.edit-end-datetime'), toDatetimeLocal(slot.end_at));
+  const clone = s.template.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+  clone.classList.remove('hidden');
+  clone.classList.add('class-block');
 
-      if (slot.format === 'offline') {
-        setVal(clone.querySelector('.edit-offline-class-city'), slot.city);
-        setVal(clone.querySelector('.edit-offline-class-address'), slot.address);
-      }
+  const select = clone.querySelector('.edit-class-select');
+  if (select) select.value = slot.grade;
 
-      s.container.insertBefore(clone, addWrap);
+  const startInput = clone.querySelector('.edit-start-datetime');
+  const endInput = clone.querySelector('.edit-end-datetime');
+  if (startInput) startInput.value = toDatetimeLocal(slot.start_at);
+  if (endInput) endInput.value = toDatetimeLocal(slot.end_at);
+
+  if (slot.format === 'offline') {
+    setVal(clone.querySelector('.edit-offline-class-city'), slot.city);
+    setVal(clone.querySelector('.edit-offline-class-address'), slot.address);
+  }
+
+  s.container.insertBefore(clone, addWrap);
+});
+
+
+    // 3) если слотов нет — показываем пустой шаблон
+    setups.forEach(s => {
+      if (!s.template || !s.container) return;
+      const hasBlocks = s.container.querySelectorAll('.class-block').length > 0;
+      if (!hasBlocks) s.template.classList.remove('hidden');
     });
 
-    /* ================= ПОКАЗ ================= */
+    /* ================= СЕРТИФИКАТ ================= */
+    setVal(q('#certificate-description-edit'), data.certificate_template?.description);
+    const fileLabel = q('#file-name-edit');
+    if (fileLabel && data.certificate_template?.background) {
+      fileLabel.textContent = data.certificate_template.background.split('/').pop();
+    }
 
+    /* ================= ПОКАЗ МОДАЛКИ ================= */
     q('#modalEdit').classList.remove('hidden');
     q('#overlayModal').classList.remove('hidden');
 
@@ -720,6 +730,7 @@ async function openEditModal(title, id) {
     alert('Ошибка загрузки олимпиады');
   }
 }
+
 
 
 
@@ -1275,160 +1286,151 @@ document
     if (isSubmittingEdit) return; // защита от двойного клика
     isSubmittingEdit = true;
   
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      alert('Пожалуйста, войдите заново.');
-      isSubmittingEdit = false;
-      return;
-    }
-  
-    // --- Основные поля ---
-    const title = document.getElementById('title-edit').value.trim();
-    const type = document.getElementById('tour-edit').value;
-    const gradesArr = tomGradesEdit.items || [];
-    const year = document.getElementById('year-edit').value;
-    const status = document.getElementById('status-edit').value;
-    const website = document.getElementById('link-edit').value.trim();
-    const cost = document.getElementById('price').value;
-    const description = document.getElementById('disc-edit').value.trim();
-    const languageEl = document.getElementById('language-edit');
-  
-    const formatVal = document.getElementById('format-edit')?.value.trim().toLowerCase() || 'online';
-  
-    // --- Дата и локация ---
-    const mobileDateInput = document.querySelector('#modalEdit .date-single-edit.flatpickr-mobile');
-    const textDateInput = document.querySelector('#modalEdit .date-single-edit:not(.flatpickr-mobile)');
-    const rawDate = (mobileDateInput?.value || textDateInput?.value || '').trim();
-  
-    let startAtToSend = '';
-    if (rawDate) {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
-        startAtToSend = `${rawDate}T00:00:00Z`;
-      } else {
-        startAtToSend = formatDateToISO(rawDate);
-      }
-    }
-  
-    const locationToSend = (formatVal === 'offline' || formatVal === 'hybrid')
-      ? (document.getElementById('location-edit')?.value || '').trim()
-      : '';
-  
-    // --- Языки ---
-    const selectedLangs = Array.from(languageEl.selectedOptions).map(o => o.value).filter(Boolean);
-    if (!selectedLangs.length) {
-      alert('Выберите хотя бы один язык');
-      isSubmittingEdit = false;
-      return;
-    }
-  
-    // --- Этапы ---
-    const stages = [];
-    const stageNodesEdit = Array.from(document.querySelectorAll('#stages-container-edit .stage-block'));
-    for (const block of stageNodesEdit) {
-      const nameEl = block.querySelector('.step-name-add');
-      const dateEl = block.querySelector('.date-range-add');
-      const name = nameEl ? nameEl.value.trim() : '';
-      const raw = dateEl ? dateEl.value.trim() : '';
-      if (!raw) {
-        alert(`Укажите период для этапа "${name || 'без названия'}"`);
-        isSubmittingEdit = false;
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert('Пожалуйста, войдите заново.');
         return;
       }
-      const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim()).filter(Boolean);
-      const d1 = parts[0] || '';
-      const d2 = parts[1] || parts[0] || '';
-      stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
-    }
   
-    // --- Сертификат ---
-    const headerText = document.querySelector('input[name="title_certificate"]').value.trim();
-    const certDescriptionEl = document.getElementById('certificate-description-edit');
-    const certDescription = certDescriptionEl ? certDescriptionEl.value.trim() : '';
-    const backgroundFile = document.getElementById('certificate-background-edit').files[0];
+      // --- Основные поля ---
+      const title = document.getElementById('title-edit')?.value.trim() || '';
+      const type = document.getElementById('tour-edit')?.value || '';
+      const gradesArr = tomGradesEdit?.items || [];
+      const year = document.getElementById('year-edit')?.value || '';
+      const status = document.getElementById('status-edit')?.value || '';
+      const website = document.getElementById('link-edit')?.value.trim() || '';
+      const cost = document.getElementById('price')?.value || '';
+      const description = document.getElementById('disc-edit')?.value.trim() || '';
+      const languageEl = document.getElementById('language-edit');
+      const formatVal = document.getElementById('format-edit')?.value.trim().toLowerCase() || 'online';
   
-    // --- Формируем FormData ---
-    const formData = new FormData();
-    formData.append('format', formatVal);
-    if (startAtToSend) formData.append('start_at', startAtToSend);
-    if (locationToSend) formData.append('location', locationToSend);
+      // --- Дата и локация ---
+      const mobileDateInput = document.querySelector('#modalEdit .date-single-edit.flatpickr-mobile');
+      const textDateInput = document.querySelector('#modalEdit .date-single-edit:not(.flatpickr-mobile)');
+      const rawDate = (mobileDateInput?.value || textDateInput?.value || '').trim();
+      let startAtToSend = '';
+      if (rawDate) {
+        startAtToSend = /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+          ? `${rawDate}T00:00:00Z`
+          : formatDateToISO(rawDate);
+      }
   
-    formData.append('title', title);
-    formData.append('type', type);
-    formData.append('grades', gradesArr.join(','));
-    formData.append('year', year);
-    formData.append('status', status);
-    formData.append('website', website);
-    formData.append('cost', cost);
-    formData.append('description', description);
+      const locationToSend = (formatVal === 'offline' || formatVal === 'hybrid')
+        ? (document.getElementById('location-edit')?.value || '').trim()
+        : '';
   
-    formData.append('language', selectedLangs[0]);
-    selectedLangs.forEach(lang => formData.append('languages', lang));
+      // --- Языки ---
+      const selectedLangs = Array.from(languageEl?.selectedOptions || []).map(o => o.value).filter(Boolean);
+      if (!selectedLangs.length) {
+        alert('Выберите хотя бы один язык');
+        return;
+      }
   
-    stages.forEach((st, i) => {
-      formData.append(`stages[${i}].name`, st.name);
-      formData.append(`stages[${i}].start_date`, st.start_date);
-      formData.append(`stages[${i}].end_date`, st.end_date);
-    });
+      // --- Этапы ---
+      const stages = [];
+      const stageNodesEdit = Array.from(document.querySelectorAll('#stages-container-edit .stage-block'));
+      for (const block of stageNodesEdit) {
+        const name = block.querySelector('.step-name-add')?.value.trim() || '';
+        const raw = block.querySelector('.date-range-add')?.value.trim() || '';
+        if (!raw) {
+          alert(`Укажите период для этапа "${name || 'без названия'}"`);
+          return;
+        }
+        const parts = raw.split(/\s*[-–—]\s*/).map(s => s.trim()).filter(Boolean);
+        const d1 = parts[0] || '';
+        const d2 = parts[1] || parts[0] || '';
+        stages.push({ name, start_date: formatDate(d1), end_date: formatDate(d2) });
+      }
   
-    formData.append('certificate_template.header_text', headerText);
-    formData.append('certificate_template.description', certDescription);
-    if (backgroundFile) {
-      formData.append('certificate_template.background', backgroundFile);
-    }
+      // --- Сертификат ---
+      const headerText = document.getElementById('title_certificate')?.value.trim() || '';
+      if (!headerText) {
+        alert('Введите текст заголовка сертификата');
+        return;
+      }
+      const certDescription = document.getElementById('certificate-description-edit')?.value.trim() || '';
+      const backgroundFile = document.getElementById('certificate-background-edit')?.files[0];
   
-    // --- Слоты ---
-    let slotIndex = 0;
-    if (formatVal === 'online' || formatVal === 'hybrid') {
-      const onlineBlocks = document.querySelectorAll('.edit-classes-online .class-block');
-      onlineBlocks.forEach(block => {
-        const grade = block.querySelector('.class-select')?.value || '';
-        const startAt = block.querySelector('.start-datetime')?.value || '';
-        const endAt = block.querySelector('.end-datetime')?.value || '';
-        formData.append(`assignment_slots[${slotIndex}].grade`, grade);
-        formData.append(`assignment_slots[${slotIndex}].format`, 'online');
-        formData.append(`assignment_slots[${slotIndex}].start_at`, startAt);
-        formData.append(`assignment_slots[${slotIndex}].end_at`, endAt);
-        slotIndex++;
+      // --- Формируем FormData ---
+      const formData = new FormData();
+      formData.append('format', formatVal);
+      if (startAtToSend) formData.append('start_at', startAtToSend);
+      if (locationToSend) formData.append('location', locationToSend);
+  
+      formData.append('title', title);
+      formData.append('type', type);
+      formData.append('grades', gradesArr.join(','));
+      formData.append('year', year);
+      formData.append('status', status);
+      formData.append('website', website);
+      formData.append('cost', cost);
+      formData.append('description', description);
+  
+      formData.append('language', selectedLangs[0]);
+      selectedLangs.forEach(lang => formData.append('languages', lang));
+  
+      stages.forEach((st, i) => {
+        formData.append(`stages[${i}].name`, st.name);
+        formData.append(`stages[${i}].start_date`, st.start_date);
+        formData.append(`stages[${i}].end_date`, st.end_date);
       });
-    }
   
-    if (formatVal === 'offline' || formatVal === 'hybrid') {
-      const offlineBlocks = document.querySelectorAll('.edit-classes-offline .class-block');
-      offlineBlocks.forEach(block => {
-        const grade = block.querySelector('.class-select')?.value || '';
-        const startAt = block.querySelector('.start-datetime')?.value || '';
-        const endAt = block.querySelector('.end-datetime')?.value || '';
-        const city = block.querySelector('.offline-class-city-add')?.value || '';
-        const address = block.querySelector('.offline-class-address-add')?.value || '';
-        formData.append(`assignment_slots[${slotIndex}].grade`, grade);
-        formData.append(`assignment_slots[${slotIndex}].format`, 'offline');
-        formData.append(`assignment_slots[${slotIndex}].start_at`, startAt);
-        formData.append(`assignment_slots[${slotIndex}].end_at`, endAt);
-        formData.append(`assignment_slots[${slotIndex}].city`, city);
-        formData.append(`assignment_slots[${slotIndex}].address`, address);
-        slotIndex++;
-      });
-    }
+      formData.append('certificate_template.header_text', headerText);
+      formData.append('certificate_template.description', certDescription);
+      if (backgroundFile) formData.append('certificate_template.background', backgroundFile);
   
-    // --- PUT запрос ---
-    try {
+      // --- Слоты ---
+      let slotIndex = 0;
+  
+      // Онлайн
+      if (formatVal === 'online' || formatVal === 'hybrid') {
+        const onlineBlocks = document.querySelectorAll('.edit-classes-online .class-block');
+        onlineBlocks.forEach(block => {
+          formData.append(`assignment_slots[${slotIndex}].grade`, block.querySelector('.edit-class-select')?.value || '');
+          formData.append(`assignment_slots[${slotIndex}].format`, 'online');
+          formData.append(`assignment_slots[${slotIndex}].start_at`, block.querySelector('.edit-start-datetime')?.value || '');
+          formData.append(`assignment_slots[${slotIndex}].end_at`, block.querySelector('.edit-end-datetime')?.value || '');
+          slotIndex++;
+        });
+      }
+  
+      // Оффлайн
+      if (formatVal === 'offline' || formatVal === 'hybrid') {
+        const offlineBlocks = document.querySelectorAll('.edit-classes-offline .class-block');
+        offlineBlocks.forEach(block => {
+          formData.append(`assignment_slots[${slotIndex}].grade`, block.querySelector('.edit-class-select')?.value || '');
+          formData.append(`assignment_slots[${slotIndex}].format`, 'offline');
+          formData.append(`assignment_slots[${slotIndex}].start_at`, block.querySelector('.edit-start-datetime')?.value || '');
+          formData.append(`assignment_slots[${slotIndex}].end_at`, block.querySelector('.edit-end-datetime')?.value || '');
+          formData.append(`assignment_slots[${slotIndex}].city`, block.querySelector('.edit-offline-class-city')?.value || '');
+          formData.append(`assignment_slots[${slotIndex}].address`, block.querySelector('.edit-offline-class-address')?.value || '');
+          slotIndex++;
+        });
+      }
+  
+      // --- PUT запрос ---
       const res = await fetch(`https://portal.femo.kz/api/olympiads/dashboard/${olympiadId}/`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
       });
+  
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
+  
       alert('Олимпиада успешно обновлена!');
       toggleModal('modalEdit', false);
       await loadOlympiads();
       window.location.reload();
+  
     } catch (err) {
       alert(`Ошибка при обновлении олимпиады: ${err.message}`);
     } finally {
       isSubmittingEdit = false;
     }
   }
+  
   
   
   
