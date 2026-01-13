@@ -508,6 +508,7 @@
                                 <select id="format-add" class="input-base border-default appearance-none" required="">
                                   <option value="online" selected="" data-i18n="olympiad.online">Онлайн</option>
                                   <option value="offline" data-i18n="olympiad.offline">Оффлайн</option>
+                                  <option value="hybrid" data-i18n="olympiad.hybrid">Гибрид</option>
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2">
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -516,30 +517,7 @@
                                 </div>
                               </div>
                             </div>
-                            <div>
-                              <label id="olympiad-start-date" class="text-gray-primary mb-1 block text-sm font-medium" for="olympiad-start-date" data-i18n="olympiad-start-date">Время олимпиады
-                                <span class="text-red-primary">*</span>
-                              </label>
-                              <div class="flex items-center gap-1 border-default">
-                                  <input class="date-single-add input-base flatpickr-input active" placeholder="Выберите дату" data-i18n="olympiad.dates_placeholder" data-i18n-attr="placeholder" readonly="readonly" type="text">
-                                  <!-- <svg width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.66699 1.66699V4.16699" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M13.333 1.66699V4.16699" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M2.91699 7.5752H17.0837" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M17.5 7.08366V14.167C17.5 16.667 16.25 18.3337 13.3333 18.3337H6.66667C3.75 18.3337 2.5 16.667 2.5 14.167V7.08366C2.5 4.58366 3.75 2.91699 6.66667 2.91699H13.3333C16.25 2.91699 17.5 4.58366 17.5 7.08366Z" stroke="#616161" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M13.0788 11.4167H13.0863" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M13.0788 13.9167H13.0863" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M9.99632 11.4167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M9.99632 13.9167H10.0038" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M6.91185 11.4167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    <path d="M6.91185 13.9167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"></path>
-                                  </svg> -->
-                                </div>
-                            </div>
-                            <div>
-                              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.location">Локация</label>
-                              <input placeholder="Алматы" type="text" name="location" class="input-base border-default" id="location">
-                            </div>
+
 
                             <br />
                             <div class="sm:col-span-2">
@@ -560,6 +538,144 @@
                             </div>
                           </div>
                         </div>
+
+<!-- Онлайн олимпиада -->
+<div class="add-classes-online hidden">
+  <p class="mb-4 text-lg font-semibold text-gray-900">Онлайн олимпиада</p>
+  <div 
+  id="classes-container"
+  data-scope="online"
+  data-template-id="class-template"
+  data-add-btn-id="add-online-class-btn"
+  data-id-prefix="online"
+  class="border-default rounded-2xl p-4">
+
+    <!-- Шаблон класса -->
+    <div id="class-template" class="class-block flex items-end gap-4 mb-4 flex-nowrap">
+      
+      <!-- Класс -->
+      <div class="flex-none w-[120px]">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Класс</label>
+        <select class="class-select input-base border-default w-full" id="class-select-1">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+        </select>
+      </div>
+
+      <!-- Дата начала + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата начала, время</label>
+        <input type="datetime-local" class="start-datetime input-base border-default w-full h-[22px]" id="start-datetime-1">
+      </div>
+
+      <!-- Дата окончания + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата окончания, время</label>
+        <input type="datetime-local" class="end-datetime input-base border-default w-full h-[22px]" id="end-datetime-1">
+      </div>
+
+    </div>
+
+    <!-- Кнопка добавить класс -->
+    <div class="mt-4 flex justify-end">
+      <button type="button" class="btn-white" id="add-online-class-btn">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>
+          </svg>
+        </span>
+        Добавить класс
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Оффлайн олимпиада -->
+<div class="add-classes-offline hidden">
+  <p class="mb-4 text-lg font-semibold text-gray-900">Оффлайн олимпиада</p>
+  <div
+    id="offline-classes-container"
+    class="border-default rounded-2xl p-4"
+    data-scope="offline"
+    data-template-id="offline-class-template"
+    data-add-btn-id="add-offline-class-btn"
+    data-id-prefix="offline"
+  >
+
+    <!-- Шаблон класса -->
+    <div id="offline-class-template" class="class-block flex items-end gap-4 mb-4 flex-wrap">
+      <!-- Класс -->
+      <div class="flex-none w-[120px]">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Класс</label>
+        <select class="class-select input-base border-default w-full" id="offline-class-select-1">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+        </select>
+      </div>
+
+      <!-- Дата начала + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата начала, время</label>
+        <input type="datetime-local" class="start-datetime input-base border-default w-full h-[22px]" id="offline-start-datetime-1">
+      </div>
+
+      <!-- Дата окончания + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата окончания, время</label>
+        <input type="datetime-local" class="end-datetime input-base border-default w-full h-[22px]" id="offline-end-datetime-1">
+      </div>
+      <br>
+
+      <!-- Город -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Город <span class="text-red-primary">*</span></label>
+        <input type="text" class="offline-class-city-add input-base border-default" placeholder="" required="">
+      </div>
+
+      <!-- Адрес -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Адрес</label>
+        <input type="text" class="offline-class-address-add input-base border-default" placeholder="" required="">
+      </div>
+    </div>
+
+    <!-- Кнопка добавить класс -->
+    <div class="mt-4 flex justify-end">
+      <button type="button" class="btn-white" id="add-offline-class-btn">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>
+          </svg>
+        </span>
+        Добавить класс
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+
 
                         <!-- Этапы олимпиады -->
                         <div>
@@ -632,7 +748,7 @@
                                     />
                                   </svg>
                                 </span>
-                                <span data-i18n="olympiad.add_stage">Добавить этап</span>
+                                <span id="add-stage-btn" data-i18n="olympiad.add_stage">Добавить этап</span>
                               </button>
                             </div>
                           </div>
@@ -1162,6 +1278,7 @@
                                 <select id="format-edit" class="input-base border-default appearance-none" required="">
                                   <option value="online" selected="" data-i18n="olympiad.online">Онлайн</option>
                                   <option value="offline" data-i18n="olympiad.offline">Оффлайн</option>
+                                  <option value="hybrid" data-i18n="olympiad.hybrid">Гибрид</option>
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pe-2">
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -1169,30 +1286,6 @@
                                   </svg>
                                 </div>
                               </div>
-                            </div>
-                            <div>
-
-                              <label id="olympiad-start-date-edit"
-                              class="text-gray-primary mb-1 block text-sm font-medium"
-                              for="olympiad-start-date-input"
-                              data-i18n="olympiad-start-date">
-                         Время олимпиады <span class="text-red-primary">*</span>
-                       </label>
-                       
-                       <div class="flex items-center gap-1 border-default">
-                         <input id="olympiad-start-date-input"
-                                class="date-single-edit input-base flatpickr-input"
-                                placeholder="Выберите дату"
-                                data-i18n="olympiad.dates_placeholder"
-                                data-i18n-attr="placeholder"
-                                readonly="readonly"
-                                type="text">
-                       </div>
-                       
-                            </div>
-                            <div>
-                              <label class="text-gray-primary mb-1 block text-sm font-medium" data-i18n="olympiads.location">Локация</label>
-                              <input placeholder="Алматы" type="text" name="location" class="input-base border-default" id="location-edit">
                             </div>
 
                             <div class="sm:col-span-2">
@@ -1213,6 +1306,148 @@
                           </div>
                         </div>
 
+
+<!-- Онлайн олимпиада (Edit) -->
+<div class="edit-classes-online hidden">
+  <p class="mb-4 text-lg font-semibold text-gray-900">Онлайн олимпиада (Редактирование)</p>
+
+  <div
+    id="edit-classes-container"
+    data-scope="online-edit"
+    data-template-id="edit-class-template"
+    data-add-btn-id="add-edit-online-class-btn"
+    data-id-prefix="online-edit"
+    class="border-default rounded-2xl p-4"
+  >
+
+    <!-- Шаблон класса (edit) -->
+    <div id="edit-class-template" class="edit-class-block flex items-end gap-4 mb-4 flex-nowrap hidden">
+
+      <!-- Класс -->
+      <div class="flex-none w-[120px]">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Класс</label>
+        <select class="edit-class-select input-base border-default w-full" id="edit-class-select-1">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+        </select>
+      </div>
+
+      <!-- Дата начала + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата начала, время</label>
+        <input type="datetime-local" class="edit-start-datetime input-base border-default w-full h-[22px]" id="edit-start-datetime-1">
+      </div>
+
+      <!-- Дата окончания + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата окончания, время</label>
+        <input type="datetime-local" class="edit-end-datetime input-base border-default w-full h-[22px]" id="edit-end-datetime-1">
+      </div>
+
+    </div>
+
+    <!-- Кнопка добавить класс -->
+    <div class="mt-4 flex justify-end">
+      <button type="button" class="btn-white" id="add-edit-online-class-btn">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>
+          </svg>
+        </span>
+        Добавить класс
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Оффлайн олимпиада (Edit) -->
+<div class="edit-classes-offline hidden">
+  <p class="mb-4 text-lg font-semibold text-gray-900">Оффлайн олимпиада (Редактирование)</p>
+
+  <div
+    id="edit-offline-classes-container"
+    class="border-default rounded-2xl p-4"
+    data-scope="offline-edit"
+    data-template-id="edit-offline-class-template"
+    data-add-btn-id="add-edit-offline-class-btn"
+    data-id-prefix="offline-edit"
+  >
+
+    <!-- Шаблон класса (edit) -->
+    <div id="edit-offline-class-template" class="edit-class-block flex items-end gap-4 mb-4 flex-wrap hidden">
+
+      <!-- Класс -->
+      <div class="flex-none w-[120px]">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Класс</label>
+        <select class="edit-class-select input-base border-default w-full" id="edit-offline-class-select-1">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+        </select>
+      </div>
+
+      <!-- Дата начала + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата начала, время</label>
+        <input type="datetime-local" class="edit-start-datetime input-base border-default w-full h-[22px]" id="edit-offline-start-datetime-1">
+      </div>
+
+      <!-- Дата окончания + время -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата окончания, время</label>
+        <input type="datetime-local" class="edit-end-datetime input-base border-default w-full h-[22px]" id="edit-offline-end-datetime-1">
+      </div>
+
+      <!-- Город -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Город <span class="text-red-primary">*</span></label>
+        <input type="text" class="edit-offline-class-city input-base border-default" placeholder="">
+      </div>
+
+      <!-- Адрес -->
+      <div class="flex-none" style="width: 200px;">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">Адрес</label>
+        <input type="text" class="edit-offline-class-address input-base border-default" placeholder="">
+      </div>
+
+    </div>
+
+    <!-- Кнопка добавить класс -->
+    <div class="mt-4 flex justify-end">
+      <button type="button" class="btn-white" id="add-edit-offline-class-btn">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>
+          </svg>
+        </span>
+        Добавить класс
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+                        
                         <!-- Этапы олимпиады -->
                         <div>
                           <p class="mb-4 text-lg font-semibold text-gray-900" data-i18n="olympiad.stages">
@@ -1283,7 +1518,7 @@
                                     />
                                   </svg>
                                 </span>
-                                <span data-i18n="olympiad.add_stage">Добавить этап</span>
+                                <span id="add-stage-btn-edit" data-i18n="olympiad.add_stage">Добавить этап</span>
                               </button>
                             </div>
                           </div>
@@ -2238,5 +2473,157 @@ document.addEventListener('click', function (e) {
       
       });
     </script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Найдём все контейнеры, которым мы добавили data-* атрибуты
+    const dynamicContainers = document.querySelectorAll("[data-template-id][data-add-btn-id][data-id-prefix]");
+  
+    dynamicContainers.forEach(initDynamicSection);
+  
+    function initDynamicSection(container) {
+      const templateId = container.getAttribute("data-template-id");
+      const addBtnId   = container.getAttribute("data-add-btn-id");
+      const idPrefix   = container.getAttribute("data-id-prefix") || "block";
+  
+      const template = document.getElementById(templateId);
+      const addBtn   = document.getElementById(addBtnId);
+  
+      if (!template || !addBtn) {
+        console.warn(`Не найден template (${templateId}) или кнопка (${addBtnId}) для контейнера`, container);
+        return;
+      }
+  
+      // Начальный счётчик: определим по уже существующим элементам
+      let counter = detectInitialCounter(container, idPrefix);
+  
+      // Навесим обработчик на кнопку "добавить"
+      addBtn.addEventListener("click", function() {
+        counter++;
+        const newBlock = cloneAndPrepareBlock(template, idPrefix, counter);
+        // Вставка перед родителем кнопки (как у вас)
+        container.insertBefore(newBlock, addBtn.parentElement);
+      });
+  
+      // Делегирование события на удаление блока — ловим клики по SVG/обёртке
+      container.addEventListener("click", function(e) {
+        // Находим ближайший элемент с data-action="remove"
+        const removeEl = e.target.closest('[data-action="remove"]');
+        if (removeEl && container.contains(removeEl)) {
+          const block = removeEl.closest(".class-block");
+          // Не удаляем оригинальный template
+          if (block && block.id !== templateId) {
+            block.remove();
+          }
+        }
+      });
+    }
+  
+    function detectInitialCounter(container, prefix) {
+      // Ищем последние id вида `${prefix}-end-datetime-N` / `${prefix}-start-datetime-N` / `${prefix}-class-select-N`
+      const candidates = Array.from(container.querySelectorAll("[id]"))
+        .map(el => el.id)
+        .filter(id => id.startsWith(prefix + "-"))
+        .map(id => {
+          const num = parseInt(id.split("-").pop(), 10);
+          return isNaN(num) ? 0 : num;
+        });
+  
+      const maxExisting = candidates.length ? Math.max(...candidates) : 1; // если нет — стартуем с 1
+      return maxExisting;
+    }
+  
+    function cloneAndPrepareBlock(template, prefix, index) {
+      const newBlock = template.cloneNode(true);
+      // Сбрасываем id шаблона у клона
+      newBlock.id = "";
+  
+      // Проставим уникальные id на ключевые поля
+      const select = newBlock.querySelector(".class-select");
+      const startInput = newBlock.querySelector(".start-datetime");
+      const endInput = newBlock.querySelector(".end-datetime");
+  
+      if (select) {
+        select.id = `${prefix}-class-select-${index}`;
+        select.name = `${prefix}[${index}][class]`;
+        select.value = ""; // сброс
+      }
+  
+      if (startInput) {
+        startInput.id = `${prefix}-start-datetime-${index}`;
+        startInput.name = `${prefix}[${index}][start]`;
+        startInput.value = ""; // сброс
+      }
+  
+      if (endInput) {
+        endInput.id = `${prefix}-end-datetime-${index}`;
+        endInput.name = `${prefix}[${index}][end]`;
+        endInput.value = ""; // сброс
+      }
+  
+      // Сбросим значения у всех input/select/textarea внутри блока
+      resetInputs(newBlock);
+  
+      // Добавим иконку удаления
+      // attachRemoveButton(newBlock);
+  
+      return newBlock;
+    }
+  
+    function resetInputs(root) {
+      const inputs = root.querySelectorAll("input, select, textarea");
+      inputs.forEach(el => {
+        // не трогаем кнопки и скрытые поля, если они есть
+        if (el.type === "button" || el.type === "submit" || el.type === "hidden") return;
+  
+        if (el.tagName === "SELECT") {
+          el.selectedIndex = -1; // сброс выбора
+        } else {
+          el.value = "";
+          el.checked = false;
+        }
+      });
+    }
+  
+    // function attachRemoveButton(block) {
+    //   // Если в шаблоне/блоке уже есть иконка удаления — не дублируем
+    //   if (block.querySelector('[data-action="remove"]')) return;
+
+    //   // Контейнер под иконку справа (можно адаптировать под вашу сетку)
+    //   const tools = document.createElement("div");
+    //   tools.className = "flex items-center gap-2 mt-2";
+
+    //   // Обёртка для клика (лучше чем просто svg — дает большую зону клика)
+    //   const removeWrap = document.createElement("button");
+    //   removeWrap.type = "button";
+    //   removeWrap.setAttribute("data-action", "remove");
+    //   removeWrap.setAttribute("aria-label", "Удалить блок");
+    //   removeWrap.className = "inline-flex items-center justify-center rounded hover:bg-red-50 transition-colors cursor-pointer";
+    //   removeWrap.style.padding = "4px"; // увеличим зону клика
+
+    //   removeWrap.innerHTML = `
+    //     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+    //          xmlns="http://www.w3.org/2000/svg"
+    //          class="remove-icon"
+    //          style="display:block">
+    //       <path d="M17.5 4.98307C14.725 4.70807 11.9333 4.56641 9.15 4.56641C7.5 4.56641 5.85 4.64974 4.2 4.81641L2.5 4.98307"
+    //             stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+    //       <path d="M7.08301 4.14199L7.26634 3.05033C7.39967 2.25866 7.49967 1.66699 8.90801 1.66699H11.0913C12.4997 1.66699 12.608 2.29199 12.733 3.05866L12.9163 4.14199"
+    //             stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+    //       <path d="M15.7087 7.61719L15.167 16.0089C15.0753 17.3172 15.0003 18.3339 12.6753 18.3339H7.32533C5.00033 18.3339 4.92533 17.3172 4.83366 16.0089L4.29199 7.61719"
+    //             stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+    //       <path d="M8.60834 13.75H11.3833" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+    //       <path d="M7.91699 10.417H12.0837" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+    //     </svg>
+    //   `;
+
+    //   tools.appendChild(removeWrap);
+    //   block.appendChild(tools);
+    // }
+  });
+</script>
+
+      
   </body>
 </html>

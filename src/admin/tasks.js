@@ -293,37 +293,38 @@ const languageFlags = {
   ka: { code: 'ge', alt: 'Флаг Грузии' },
   es: { code: 'es', alt: 'Флаг Испании' }
 };
+
 function renderLanguages(languages) {
   if (!languages) return '';
 
-  // если приходит строка "az,de,en"
   const langs = typeof languages === 'string'
     ? languages.split(',').map(l => l.trim())
     : languages;
 
-  return langs
-    .map((lang, index) => {
-      const flag = languageFlags[lang];
-      if (!flag) return '';
+  // Если все языки
+  if (langs.length === Object.keys(languageFlags).length) {
+    return `<span>Все</span>`;
+  }
 
-      const comma =
-        index < langs.length - 1
-          ? `<span class="lang-comma">, </span>`
-          : '';
-
-      return `
-        <span class="inline-flex items-center">
-          <img
-            src="https://flagcdn.com/w40/${flag.code}.png"
-            alt="${flag.alt}"
-            class="w-6 h-[17px] object-contain"
-          /> 
-          ${comma}
-        </span>
-      `;
-    })
-    .join('');
+  return `
+    <div class="flex flex-wrap gap-1">
+      ${langs.map(lang => {
+        const flag = languageFlags[lang];
+        if (!flag) return '';
+        return `
+          <span class="inline-flex items-center">
+            <img
+              src="https://flagcdn.com/w20/${flag.code}.png"
+              alt="${flag.alt}"
+              style="width: 20px; height: 20px; object-fit: contain;"
+            />
+          </span>
+        `;
+      }).join('')}
+    </div>
+  `;
 }
+
 
 // 5. Рендер таблицы заданий
 function renderAssignmentTable(assignments) {
