@@ -460,6 +460,48 @@ function renderTaskByIndex(index) {
   const winInfo = document.getElementById('win-info');
   const loseInfo = document.getElementById('lose-info');
 
+  
+// 1) Определяем: последняя ли задача?
+const isLastTaskOverall = Array.isArray(tasks) && tasks.length > 0
+? (currentTaskIndex === tasks.length - 1)
+: false;
+
+// 2) Настраиваем кнопку "следующая" / "завершить"
+if (nextTaskLink) {
+// Сбросим предыдущие обработчики (на случай повторного рендера)
+const clone = nextTaskLink.cloneNode(true);
+nextTaskLink.parentNode.replaceChild(clone, nextTaskLink);
+const nextBtn = document.getElementById('next-task-button2');
+
+if (isLastTaskOverall) {
+  // ⛳ Последняя задача — меняем текст/стили и кликом открываем модалку
+  nextBtn.textContent = 'Завершить олимпиаду';
+  nextBtn.className = `
+    inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2
+    text-red-600 border-red-600 bg-white hover:bg-red-50
+  `.trim();
+  nextBtn.style.display = 'flex';
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openFinishModal();
+  });
+
+} else {
+  // НЕ последняя — обычная "Перейти к следующей задаче"
+  nextBtn.textContent = 'Перейти к следующей задаче';
+  nextBtn.className = `
+    inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2
+    text-orange-primary border-orange-primary bg-white hover:bg-orange-50
+  `.trim();
+
+  nextBtn.onclick = () => {
+    // переход на список или загрузка следующей — оставляю твою логику
+    window.location.href = '/participant/tasks.html';
+  };
+}
+}
+
   // Сначала скрываем баннеры
   if (winInfo) winInfo.style.display = 'none';
   if (loseInfo) loseInfo.style.display = 'none';
@@ -478,6 +520,52 @@ function renderTaskByIndex(index) {
     if (clearButton) clearButton.style.display = 'flex';
     if (nextTaskLink) nextTaskLink.style.display = 'none';
   }
+}
+
+function openFinishModal() {
+  const modal = document.getElementById('finishOlympiadModal');
+  if (!modal) return;
+
+  // Запрет фона скроллиться
+  document.documentElement.style.overflow = 'hidden';
+
+  // Показать модалку
+  modal.classList.remove('hidden');
+  if (!modal.classList.contains('flex')) {
+    modal.classList.add('flex'); // на случай, если нет
+  }
+
+  const cancelBtn = document.getElementById('cancelFinish');
+  const confirmBtn = document.getElementById('confirmFinish');
+
+  const onCancel = () => closeFinishModal();
+  const onConfirm = () => {
+    closeFinishModal();
+    window.location.href = '/participant/dashboard.html';
+  };
+
+  cancelBtn?.addEventListener('click', onCancel, { once: true });
+  confirmBtn?.addEventListener('click', onConfirm, { once: true });
+
+  // Закрытие по Esc
+  const onEsc = (e) => e.key === 'Escape' && closeFinishModal();
+  document.addEventListener('keydown', onEsc, { once: true });
+
+  // Закрытие по клику вне карточки (если хочешь)
+  modal.addEventListener('click', function onBackdropClick(e) {
+    const card = modal.querySelector('div.bg-white');
+    if (card && !card.contains(e.target)) {
+      closeFinishModal();
+      modal.removeEventListener('click', onBackdropClick);
+    }
+  });
+}
+
+function closeFinishModal() {
+  const modal = document.getElementById('finishOlympiadModal');
+  if (!modal) return;
+  document.documentElement.style.overflow = '';
+  modal.classList.add('hidden');
 }
 
 // // Пагинация
@@ -707,27 +795,26 @@ submitBtn1.addEventListener('click', async () => {
       // Другая ошибка — кидаем исключение
       throw new Error(result.detail || `Ошибка ${response.status}`);
     }
+
     if (result.correct) {
       // Успешный ответ — выключаем кнопки/форму
       if (submitBtn1) submitBtn1.style.display = 'none';
       if (submitBtn2) submitBtn2.style.display = 'none';
       if (clearButton) clearButton.style.display = 'none';
-
-      // Обновляем баннеры и modal по результату от сервера
-      // Результат может иметь поля: correct (bool), points (number)
+    
+      // Обновляем баннеры по результату от сервера
       updateResultBanners(Object.assign({}, result, { solved: true }));
-
-      // Добавим навигацию на кнопку "Перейти к следующей задаче" в модалке
-      const nextTaskBtn = document.getElementById('next-task-button');
-      if (nextTaskBtn) {
-        nextTaskBtn.addEventListener('click', () => {
-          window.location.href = '/participant/tasks.html';
-        });
-      }
-
-      // Открыть модалку (там текст modal-xp уже обновлён в updateResultBanners if modal-xp exists)
-      toggleModal('modal');
-    } else {
+    
+      // Показать кнопку "следующая/завершить" — это делает renderTaskByIndex,
+      // но если элемент есть на странице, покажем сразу:
+      const nextTaskLink2 = document.getElementById('next-task-button2');
+      if (nextTaskLink2) nextTaskLink2.style.display = 'flex';
+    
+      // Если нужно, можно перерендерить текущую задачу, чтобы применить логику "последняя ли":
+      // renderTaskByIndex(currentTaskIndex);
+    }
+    
+     else {
       // Неверный ответ
       const { winInfo, loseInfo } = getWinLoseElements();
       if (winInfo) winInfo.classList.remove('preload-hidden');

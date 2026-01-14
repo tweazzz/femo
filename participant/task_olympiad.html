@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/@lucide/web@latest"></script>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
+
 <style>
   /* скрывает до тех пор, пока JS не снимет класс */
   .preload-hidden { display: none !important; }
@@ -141,6 +142,42 @@
         class="fixed inset-0 z-10 hidden cursor-pointer bg-black/50 transition lg:hidden"
         onclick="toggleSidebar()"
       ></div>
+
+
+      <!-- Модалка -->
+      <div
+        id="finishOlympiadModal"
+        class="fixed inset-0 z-20 hidden items-center justify-center"
+      >
+        <div class="bg-white rounded-xl p-6 w-full max-w-lg text-center">
+
+          <!-- LOGO -->
+          <img src="/src/assets/images/loginImg.png" alt="Logo" class="mx-auto mb-4 h-40 object-contain">
+
+          <h3 class="text-xl font-semibold mb-4">
+            Ты уверен, что хочешь закончить олимпиаду?
+          </h3>
+
+          <p class="text-sm text-gray-600">
+            После отправки изменить ответы будет невозможно.
+          </p>
+          <p class="text-sm text-gray-600 mb-4">
+            Проверь, всё ли ты успел сделать перед завершением.
+          </p>
+
+          <div class="flex justify-center gap-2">
+            <button style="width: 45%;" id="cancelFinish" class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium
+              border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap
+              cursor-pointer">
+              Отменить
+            </button>
+
+            <button style="width: 50%;" id="confirmFinish" class="bg-orange-primary text-white border-orange-primary min-w-[120px] cursor-pointer rounded-xl border-1 px-4 py-2">
+              Да, закончить
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Main Content -->
       <div class="flex flex-1 flex-col overflow-hidden">
@@ -1219,6 +1256,39 @@
      START
   ================================ */
   fetchTasks();
+</script>
+
+<script>
+  function openFinishModal() {
+    const modal = document.getElementById('finishOlympiadModal');
+    if (!modal) return;
+    document.documentElement.style.overflow = 'hidden';
+    modal.classList.remove('hidden');
+    // гарантируем центрирование
+    if (!modal.classList.contains('flex')) {
+      modal.classList.add('flex');
+    }
+
+    const cancelBtn = document.getElementById('cancelFinish');
+    const confirmBtn = document.getElementById('confirmFinish');
+
+    cancelBtn?.addEventListener('click', closeFinishModal, { once: true });
+    confirmBtn?.addEventListener('click', () => {
+      closeFinishModal();
+      // здесь действие после подтверждения
+      window.location.href = '/participant/dashboard.html';
+    }, { once: true });
+
+    const onEsc = (e) => e.key === 'Escape' && closeFinishModal();
+    document.addEventListener('keydown', onEsc, { once: true });
+  }
+
+  function closeFinishModal() {
+    const modal = document.getElementById('finishOlympiadModal');
+    if (!modal) return;
+    document.documentElement.style.overflow = '';
+    modal.classList.add('hidden');
+  }
 </script>
 
   </body>

@@ -209,6 +209,25 @@ function slugify(str) {
     .replace(/\-+/g, '-')
     .replace(/^\-+|\-+$/g, '');
 }
+function formatSecondsToHoursMinutes(seconds) {
+  if (!seconds || isNaN(seconds)) return '—';
+
+  const totalMinutes = Math.floor(seconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+  const minutes = totalMinutes % 60;
+
+  // если есть дни — показываем дни
+  if (days > 0) {
+    return `${days} day: ${hours} hours ${minutes.toString().padStart(2, '0')} minutes`;
+  }
+
+  // если меньше суток — показываем просто часы и минуты
+  return `${hours}:${minutes.toString().padStart(2, '0')}`;
+}
+
 
 async function loadOlympiadCards() {
   const token = localStorage.getItem('access_token');
@@ -300,7 +319,9 @@ async function loadOlympiadCards() {
         dateInfo = (startDate && endDate) ? `${formatDate(olympiad.first_start_date)} - ${formatDate(olympiad.last_end_date)}` : '—';
       } else if (canRegister || isOngoing) {
         dateInfoText = 'Осталось';
-        if (olympiad.time_left) dateInfo = olympiad.time_left;
+        if (olympiad.time_left) {
+          dateInfo = formatSecondsToHoursMinutes(olympiad.time_left);
+        }
         else if (endDate) dateInfo = `${Math.max(0, Math.round((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} дней`;
         else dateInfo = '—';
       } else if ((olympiad.registration_status || '').toString().toLowerCase().includes('soon')) {
