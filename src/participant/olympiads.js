@@ -277,6 +277,8 @@ async function loadOlympiadCards() {
       const statusCode = (olympiad.status_code || '').toString().toLowerCase();
       const isOngoing = statusCode === 'ongoing' ||
                         /идет|ongoing|in progress/i.test(statusRaw);
+      const isUpcoming = statusRaw.trim().toLowerCase().includes('предстоящ');
+                      
       // can register (fallback)
       const canRegister = (olympiad.registration_status || '').toString().toLowerCase().includes('open') ||
                           /registration open|регистрация открыта/i.test(olympiad.registration_status || '');
@@ -414,6 +416,11 @@ async function loadOlympiadCards() {
       detailBtn.rel = 'noopener noreferrer';
       btns.appendChild(detailBtn);
 
+      if (isFinished) {
+        detailBtn.href = '/participant/rate-overall.html';
+        detailBtn.target = '_self'; // чтобы не открывалось в новой вкладке
+      }
+      
       function getSelectedLanguage() {
           const checked = document.querySelector('input[name="lan"]:checked');
           return checked ? checked.value : 'ru';
@@ -440,9 +447,18 @@ async function loadOlympiadCards() {
           registerBtn.textContent = (window.i18nDict && window.i18nDict[keyRegister]) || registerText;
           btns.appendChild(registerBtn);
         }
-      } else {
-        // для других статусов — уже добавлен detailBtn, и можно добавить дополнительные действия при необходимости
-      }
+      } else if (isUpcoming && !isRegistered && canRegister) {
+          btns.innerHTML = ''; // 🔥 УБИРАЕМ "Подробнее"
+
+          const registerBtn = document.createElement('a');
+          registerBtn.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}`;
+          registerBtn.className =
+            'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+          registerBtn.setAttribute('data-i18n', keyRegister);
+          registerBtn.textContent = registerText;
+
+          btns.appendChild(registerBtn);
+        }
 
       bottom.appendChild(btns);
       card.appendChild(bottom);

@@ -378,6 +378,11 @@ async function loadOlympiadCards() {
       detailBtn.textContent = detailText;
       btns.appendChild(detailBtn);
 
+      if (isFinished) {
+        detailBtn.href = '/participant/rate-overall.html';
+        detailBtn.target = '_self'; // чтобы не открывалось в новой вкладке
+      }
+      
       // If ongoing & not registered -> show register; if ongoing & registered -> show start
       if (statusRaw === 'Идет сейчас') {
         if (olympiad.registered === true) {

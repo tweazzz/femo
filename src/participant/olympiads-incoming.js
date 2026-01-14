@@ -257,6 +257,11 @@ async function loadOlympiadCards() {
 
     data.results.forEach(olympiad => {
       const statusRaw = (olympiad.status || '').toString();
+      const isUpcoming = statusRaw.toLowerCase().includes('предстоящ');
+      const canRegister = statusRaw === 'Регистрация открыта';
+      const isOngoing = statusRaw === 'Идет сейчас';
+      const isRegistered = olympiad.registered === true;
+
       const tourRaw = (olympiad.tour_type || '').toString();
 
       const statusKey = statusI18nMap[statusRaw] || `olympiads.status-${slugify(statusRaw)}`;
@@ -406,9 +411,18 @@ async function loadOlympiadCards() {
           registerBtn.textContent = registerText;
           btns.appendChild(registerBtn);
         }
-      } else {
-        // for other statuses we may still want a register button if appropriate
-        // here we append no extra button (only detail). If you want register for other statuses — add logic.
+      } else if (statusRaw === 'Предстоящая'){
+        btns.innerHTML = ''; // убираем "Подробнее"
+
+        const registerBtn = document.createElement('a');
+        registerBtn.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}`;
+        registerBtn.className =
+          'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+        registerBtn.setAttribute('data-i18n', 'olympiads.registrate_btn');
+        registerBtn.textContent =
+          (window.i18nDict && window.i18nDict['olympiads.registrate_btn']) || 'Зарегистрироваться';
+      
+        btns.appendChild(registerBtn);
       }
 
       bottom.appendChild(btns);

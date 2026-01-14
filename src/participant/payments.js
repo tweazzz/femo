@@ -513,6 +513,25 @@ async function loadActiveOlympiads() {
 }
 
 
+function formatTimeLeft(seconds) {
+  // Безопасно приводим к числу
+  const total = Number(seconds);
+  if (!Number.isFinite(total) || total < 0) return '—';
+
+  const days = Math.floor(total / 86400);          // 24 * 3600
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+
+  // Формируем лаконичный вид: "9 д 13 ч 44 мин"
+  const parts = [];
+  if (days > 0) parts.push(`${days} д`);
+  if (hours > 0) parts.push(`${hours} ч`);
+  if (minutes > 0) parts.push(`${minutes} мин`);
+
+  // Если всё меньше минуты
+  return parts.join(' ') || 'менее минуты';
+}
+
 function renderActiveOlympiads(olympiads) {
   const wrapper = document.querySelector('[data-olympiads-wrapper]')
   if (!wrapper) return
@@ -557,7 +576,7 @@ function renderActiveOlympiads(olympiads) {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                   d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
               </svg>
-              <span class="text-sm">${olymp.time_left || '—'}</span>
+              <span class="text-sm">${formatTimeLeft(olymp.time_left) || '—'}</span>
             </div>
           </div>
         </div>
