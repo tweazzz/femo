@@ -548,8 +548,6 @@ function closeModal(id) {
   if (overlay) overlay.classList.add('hidden')
 }
 
-
-
 async function openEditModal(title, id) {
   olympiadIdToDelete = id;
   currentEditId = id;
@@ -731,12 +729,6 @@ async function openEditModal(title, id) {
   }
 }
 
-
-
-
-
-
-
 // yyyy-mm-dd -> dd.mm.yyyy
 function formatDateReverse(dateStr) {
   if (!dateStr) return '';
@@ -751,7 +743,6 @@ if (formatEdit) {
     updateFormatVisibilityEdit(formatEdit.value);
   });
 }
-
 
 // минимальное количество этапов (изменяй на 3 если нужно минимум 3)
 const MIN_STAGE_COUNT = 1;
@@ -818,7 +809,6 @@ function isAddFormValid() {
   return true;
 }
 
-
 // Включает/выключает кнопку "Добавить" в зависимости от валидности формы
 function setSubmitAddState() {
   const submitBtn = document.getElementById('submit-add-btn');
@@ -880,8 +870,6 @@ function focusFirstInvalid() {
     if (parts.length < 2) { alert('Убедитесь, что диапазон даты указан как "дд.мм.гггг — дд.мм.гггг"'); dateInput && dateInput.focus(); return; }
   }
 }
-
-
 
 // Показывает/скрывает поля даты/локации и секции Online/Offline в МОДАЛКЕ ДОБАВЛЕНИЯ
 function updateFormatVisibilityAdd(formatValue) {
@@ -985,11 +973,6 @@ function updateFormatVisibilityEdit(formatValue) {
   if (editOfflineEl) editOfflineEl.classList.toggle('hidden', !showOffline);
 }
 
-
-
-
-
-
 // Подвяжем слушатели — вызовем setSubmitAddState на input/change
 function attachAddFormListeners() {
   const watchSelectors = [
@@ -1036,7 +1019,6 @@ function attachAddFormListeners() {
   setSubmitAddState();
 }
 
-
 // Вызови attachAddFormListeners() после инициализации tomGradesAdd
 // например, внутри DOMContentLoaded сразу после создания tomGradesAdd
 
@@ -1054,7 +1036,6 @@ function formatDateToISO(dateStr) {
   // Возвращаем UTC midnight (сервер обычно принимает YYYY-MM-DDT00:00:00Z)
   return `${y}-${m}-${d}T00:00:00Z`;
 }
-
 
 let isSubmittingAdd = false;
 
@@ -1173,17 +1154,11 @@ function resetSubmitButton() {
   isSubmittingAdd = false;
 }
 
-
-
-
 // Утилита: «дд.мм.гггг» → «гггг‑мм‑дд»
 function formatDate(dateStr) {
   const [d, m, y] = dateStr.split('.')
   return `${y}-${m}-${d}`
 }
-
-
-
 
 function addStageBlock() {
   const container = document.getElementById('stages-container');
@@ -1251,9 +1226,6 @@ if (addBtn) addBtn.addEventListener('click', (e) => { e.preventDefault(); addSta
 const addBtnEdit = document.getElementById('add-stage-btn-edit');
 if (addBtnEdit) addBtnEdit.addEventListener('click', (e) => { e.preventDefault(); addStageBlockEdit(); });
 
-
-
-
 document
   .getElementById('certificate-background-edit')
   .addEventListener('change', function () {
@@ -1276,8 +1248,6 @@ document
       display.textContent = ''
     }
   })
-
-
 
 
   let isSubmittingEdit = false;
@@ -1430,12 +1400,6 @@ document
       isSubmittingEdit = false;
     }
   }
-  
-  
-  
-  
-
-
 
 // Делегируем клик по документу
 document.addEventListener('click', function (e) {

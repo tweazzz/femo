@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/@lucide/web@latest"></script>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
   </head>
-
+  
   <body>
     <div class="flex h-screen">
       <!-- Sidebar -->
@@ -256,7 +256,7 @@
                       />
                     </svg>
                   </div>
-                  <span data-i18n="tasks.show_only_completed_tasks">Показать лишь завершенные задачи</span>
+                  <span data-i18n="tasks.show_only_completed_tasks" id="onlyCompleted">Показать лишь завершенные задачи</span>
                 </label>
               </div>
               <div class="grid gap-4 pb-4 xl:grid-cols-2">
@@ -471,7 +471,7 @@
     <script src="/auth.js" defer></script>
     <script src="/src/participant/tasks.js" defer></script>
     <script src="/src/participant/notifications.js" defer></script>
-    <script src="/src/participant/settings.js" defer></script>
+    <!-- <script src="/src/participant/settings.js" defer></script> -->
     <script>
       async function loadBalance() {
   const token = localStorage.getItem('access_token')

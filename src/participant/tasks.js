@@ -428,7 +428,8 @@ function getLevelLabel(lvl) {
 
     const classFilter = readClassFilter();
     const levelFilter = readLevelFilter();
-    const showCompleted = (document.querySelector('input[type="checkbox"]') || {}).checked || false;
+    const completedCheckbox = document.getElementById('onlyCompleted');
+    const showCompleted = completedCheckbox?.checked || false;
 
     container.innerHTML = '';
 
