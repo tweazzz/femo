@@ -302,15 +302,20 @@ function renderTask(task) {
   const descriptionEl = document.querySelector('.text.border-gray-border')
   descriptionEl.innerHTML = `<p>${task.description}</p>`
 
-  const deadlineEl = document.querySelector('.text-primary')
-  const deadlineDate = new Date(task.deadline)
+  const deadlineEl = document.querySelector('.deadline-value');
+  const deadlineDate = new Date(task.deadline);
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // Форматируем дату с локальной таймзоной
   deadlineEl.textContent = deadlineDate.toLocaleString('ru-RU', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     hour: '2-digit',
     minute: '2-digit',
-  })
+    timeZone: userTimeZone,      // обязательно указываем таймзону
+    timeZoneName: 'short',       // добавляем GMT+X
+  });
+
 
   const timeLeftEl = document.querySelector('.timer')
   timeLeftEl.innerHTML = `<span class="border-default bg-orange-secondary rounded-sm p-2.5">${task.time_left}</span>`
@@ -345,6 +350,57 @@ function renderTask(task) {
   })
 }
 
+function formatTimeLeft(seconds) {
+  if (typeof seconds !== 'number' || seconds <= 0) {
+    return {
+      expired: true,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    };
+  }
+
+  return {
+    expired: false,
+    hours: Math.floor(seconds / 3600),
+    minutes: Math.floor((seconds % 3600) / 60),
+    seconds: seconds % 60,
+  };
+}
+function renderDailyTimer(seconds) {
+  const daily_timer = document.getElementById('daily-task-timer');
+  if (!daily_timer) return;
+
+  const time = formatTimeLeft(seconds);
+
+  if (time.expired) {
+    daily_timer.innerHTML = '<span class="text-orange-500">No deadline</span>';
+    return;
+  }
+
+  daily_timer.querySelector('[data-unit="h"]').textContent =
+    String(time.hours).padStart(2, '0');
+
+  daily_timer.querySelector('[data-unit="m"]').textContent =
+    String(time.minutes).padStart(2, '0');
+
+  daily_timer.querySelector('[data-unit="s"]').textContent =
+    String(time.seconds).padStart(2, '0');
+}
+const TIMER_LABELS = {
+  ru: { h: 'ч', m: 'м', s: 'с' },
+  kz: { h: 'сағ', m: 'м', s: 'с' },
+  en: { h: 'h', m: 'm', s: 's' },
+};
+function renderTimerLabels() {
+  const lang = localStorage.getItem('lang') || 'ru';
+  const L = TIMER_LABELS[lang] || TIMER_LABELS.ru;
+
+  document.querySelectorAll('[data-label]').forEach(el => {
+    const unit = el.dataset.label;
+    el.textContent = L[unit];
+  });
+}
 
 async function loadTaskMock() {
 
@@ -419,11 +475,11 @@ async function loadTaskMock() {
     bonusEl.innerHTML = `<span class="font-bold">15 XP</span> <img src="/src/assets/images/coin.png" alt="coin" class="inline h-4 w-4 ms-1 mb-[.125rem]">`;
     bonusEl.className = 'text-blue-primary bg-blue-secondary border-default rounded-xl px-2 py-0.5 text-sm flex items-center';
 
-    const statusText = task.status
-    const statusClass = levelClassMap[task.status]
+    // const statusText = task.status
+    // const statusClass = levelClassMap[task.status]
     const statusEl = document.getElementById('task-status');
-    statusEl.textContent = statusText;
-    statusEl.className = `${statusClass} border-default rounded-xl px-2 py-0.5 text-sm`;
+    // statusEl.textContent = statusText;
+    statusEl.className = 'border-default rounded-xl px-2 py-0.5 text-sm';
 
     // Сначала скрываем оба баннера
     winInfo.style.display = 'none';
@@ -431,6 +487,7 @@ async function loadTaskMock() {
 
     // Скрываем/показываем элементы формы в зависимости от solved
     if (task.solved) {
+      statusEl.textContent = 'Завершено';
       // если уже решено — прячем форму и показываем результат (win/lose) по данным backend
       const answerLabel = document.querySelector('#answer-input')?.closest('label');
       const submit2Button = document.getElementById('submit-button2');
@@ -448,6 +505,7 @@ async function loadTaskMock() {
       // Покажем баннер по данным task (points, correct и т.д.)
       updateResultBanners(task);
     } else {
+      statusEl.textContent = 'Не завершено';
       // не решено — показываем форму, скрываем ссылку "следующая задача"
       const answerLabel = document.querySelector('#answer-input')?.closest('label');
       const submit2Button = document.getElementById('submit-button2');
@@ -484,6 +542,81 @@ async function loadTaskMock() {
       nextTaskLink.style.display  = 'none';
     }
 
+
+
+
+    const deadlineEl = document.querySelector('.deadline-value');
+
+    if (task.deadline) {
+      const deadlineDate = new Date(task.deadline);
+    
+      // проверяем, что дата валидная
+      if (!isNaN(deadlineDate.getTime())) {
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+        deadlineEl.textContent = deadlineDate.toLocaleString('ru-RU', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'long',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: userTimeZone,
+        });
+      } else {
+        // дата есть, но битая
+        deadlineEl.textContent = '';
+      }
+    } else {
+      // дедлайна нет вообще
+      deadlineEl.textContent = '--';
+    }
+
+    const dailytask_author = document.getElementById('daily-task-author');
+    dailytask_author.textContent = task.author;
+    let timeLeft = task.time_left;
+      if (task.solved == false) {
+      // подписи (ч / м / с)
+      renderTimerLabels();
+      
+      // первый рендер
+      renderDailyTimer(timeLeft);
+      
+      // запуск таймера
+      const timerInterval = setInterval(() => {
+        timeLeft--;
+        renderDailyTimer(timeLeft);
+      
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+    }
+
+    // // подписи (ч / м / с)
+    // renderTimerLabels();
+    
+    // // первый рендер
+    // renderDailyTimer(timeLeft);
+    
+    // // запуск таймера
+    // const timerInterval = setInterval(() => {
+    //   timeLeft--;
+    //   renderDailyTimer(timeLeft);
+    
+    //   if (timeLeft <= 0) {
+    //     clearInterval(timerInterval);
+    //   }
+    // }, 1000);
+    
+    
+    // function onLanguageChangedTasks() {
+    //   loadTaskMock();
+    // }
+    
+    window.addEventListener('i18n:languageChanged', () => {
+      renderTimerLabels();
+    });
+    
   } catch (err) {
     console.error('Ошибка загрузки задачи:', err);
   }
@@ -659,3 +792,4 @@ submitBtn1.addEventListener('click', async () => {
     loseInfo.style.display = 'block';
   }
 });
+

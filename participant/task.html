@@ -13,6 +13,43 @@
 <style>
   /* скрывает до тех пор, пока JS не снимет класс */
   .preload-hidden { display: none !important; }
+  [data-label] {
+  margin-left: 4px; /* ← ВОТ ОТСТУП */
+  white-space: nowrap;
+}
+  .timer {
+  gap: 4px !important;
+}
+
+/* Квадратики */
+.time-box {
+  width: 48px;
+  height: 40px;
+  background: #FEF6ED;
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: 'Proxima Nova', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 124%;
+  letter-spacing: 0%;
+  color: #F4891E;
+}
+
+/* Двоеточие */
+.time-separator {
+  margin: 0 4px;
+  font-family: 'Proxima Nova', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 124%;
+  color: #F4891E;
+}
+
 </style>
 
   <body>
@@ -306,22 +343,31 @@
                 <div class="space-y-4">
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-primary" data-i18n="task.deadline_do">Сдать до</span>
-                    <span class="text-primary"
+                    <span class="deadline-value text-primary font-medium"
                       ></span
                     >
                   </div>
                   <div class="flex justify-between text-sm">
                     <span class="text-gray-primary" data-i18n="task.author">Автор задачи</span>
-                    <span class="text-primary"
+                    <span class="text-primary" id="daily-task-author"
                       ></span
                     >
                   </div>
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-sm text-gray-500" data-i18n="task.deadline_ostalos">Осталось времени</span>
-                    <div
-                      class="timer flex items-center gap-1 text-center text-sm font-bold text-orange-500"
-                    >
-                    </div>
+                    <div id="daily-task-timer" class="timer flex items-center">
+                      <div class="time-box">
+                        <span data-unit="h">00</span><span data-label="h"></span>
+                      </div>
+                      <span class="time-separator">:</span>
+                      <div class="time-box">
+                        <span data-unit="m">00</span><span data-label="m"></span>
+                      </div>
+                      <span class="time-separator">:</span>
+                      <div class="time-box">
+                        <span data-unit="s">00</span><span data-label="s"></span>
+                      </div>
+                    </div>                    
                   </div>
 
                   <div class="flex items-center justify-between">

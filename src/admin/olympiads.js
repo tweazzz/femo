@@ -1038,6 +1038,23 @@ function formatDateToISO(dateStr) {
 }
 
 let isSubmittingAdd = false;
+function localDatetimeToUTC(localValue) {
+  if (!localValue) return '';
+  const localDate = new Date(localValue);
+  if (isNaN(localDate.getTime())) return '';
+  return localDate.toISOString(); // Конвертирует в UTC с Z
+}
+function localDateToStageFormat(localValue) {
+  if (!localValue) return '';
+  const date = new Date(localValue);
+  if (isNaN(date.getTime())) return '';
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`; // YYYY-MM-DD, локальная дата
+}
 
 async function submitOlympiadForm() {
   if (isSubmittingAdd) return; // защита от повторного вызова
@@ -1091,8 +1108,8 @@ async function submitOlympiadForm() {
       const d1 = parts[0] || '';
       const d2 = parts[1] || parts[0] || '';
       formData.append(`stages[${i}].name`, name);
-      formData.append(`stages[${i}].start_date`, formatDate(d1));
-      formData.append(`stages[${i}].end_date`, formatDate(d2));
+      formData.append(`stages[${i}].start_date`, localDateToStageFormat(formatDate(d1)));
+      formData.append(`stages[${i}].end_date`, localDateToStageFormat(formatDate(d2)));      
     });
 
     // Сертификат
@@ -1109,8 +1126,8 @@ async function submitOlympiadForm() {
       document.querySelectorAll('.add-classes-online .class-block').forEach(block => {
         formData.append(`assignment_slots[${slotIndex}].grade`, block.querySelector('.class-select')?.value || '');
         formData.append(`assignment_slots[${slotIndex}].format`, 'online');
-        formData.append(`assignment_slots[${slotIndex}].start_at`, block.querySelector('.start-datetime')?.value || '');
-        formData.append(`assignment_slots[${slotIndex}].end_at`, block.querySelector('.end-datetime')?.value || '');
+        formData.append(`assignment_slots[${slotIndex}].start_at`, localDatetimeToUTC(block.querySelector('.start-datetime')?.value) || '');
+        formData.append(`assignment_slots[${slotIndex}].end_at`, localDatetimeToUTC(block.querySelector('.end-datetime')?.value) || '');
         slotIndex++;
       });
     }
@@ -1118,8 +1135,8 @@ async function submitOlympiadForm() {
       document.querySelectorAll('.add-classes-offline .class-block').forEach(block => {
         formData.append(`assignment_slots[${slotIndex}].grade`, block.querySelector('.class-select')?.value || '');
         formData.append(`assignment_slots[${slotIndex}].format`, 'offline');
-        formData.append(`assignment_slots[${slotIndex}].start_at`, block.querySelector('.start-datetime')?.value || '');
-        formData.append(`assignment_slots[${slotIndex}].end_at`, block.querySelector('.end-datetime')?.value || '');
+        formData.append(`assignment_slots[${slotIndex}].start_at`, localDatetimeToUTC(block.querySelector('.start-datetime')?.value) || '');
+        formData.append(`assignment_slots[${slotIndex}].end_at`, localDatetimeToUTC(block.querySelector('.end-datetime')?.value) || '');
         formData.append(`assignment_slots[${slotIndex}].city`, block.querySelector('.offline-class-city-add')?.value || '');
         formData.append(`assignment_slots[${slotIndex}].address`, block.querySelector('.offline-class-address-add')?.value || '');
         slotIndex++;

@@ -454,8 +454,6 @@ function renderAssignmentTable(assignments) {
   });
 }
 
-
-
 // function renderAssignmentPagination() {
 //   const container = document.querySelector('.pagination')
 //   if (!container) return
@@ -497,47 +495,31 @@ function goToAssignmentPage(page) {
 //   renderAssignmentPagination()
 // }
 
-function formatTimeLeft(timeLeftRaw) {
-  if (!timeLeftRaw || timeLeftRaw === 'expired') return { text: 'Время истекло', expired: true };
-
-  // timeLeftRaw приходит типа "3 hours 36 minutes 23 seconds"
-  const parts = timeLeftRaw
-    .replace(/&nbsp;/g, " ")
-    .split(" ")
-    .map(p => p.trim());
-
-  let h = 0, m = 0, s = 0;
-  for (let i = 0; i < parts.length; i++) {
-    if (!isNaN(parts[i])) {
-      const num = Number(parts[i]);
-      const next = parts[i + 1]?.toLowerCase();
-
-      if (next.includes("hour")) h = num;
-      if (next.includes("minute")) m = num;
-      if (next.includes("second")) s = num;
-    }
+function formatTimeLeft(seconds) {
+  if (typeof seconds !== 'number' || seconds <= 0) {
+    return { text: 'Время истекло', expired: true };
   }
 
-  // Получаем язык
-  let lang = localStorage.getItem("lang") || "ru";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  const lang = localStorage.getItem('lang') || 'ru';
 
   const labels = {
-    ru: { h: "ч", m: "м", s: "с" },
-    kk: { h: "сағ", m: "мин", s: "сек" },
-    en: { h: "h", m: "m", s: "s" },
+    ru: { h: 'ч', m: 'м', s: 'с' },
+    kz: { h: 'сағ', m: 'мин', s: 'сек' },
+    en: { h: 'h', m: 'm', s: 's' },
   };
 
-  const L = labels[lang] || labels["ru"];
-
-  const formatted = `${h} ${L.h} : ${m} ${L.m} : ${s} ${L.s}`;
+  const L = labels[lang] || labels.ru;
 
   return {
-    text: formatted,
+    text: `${h} ${L.h} : ${m} ${L.m} : ${s} ${L.s}`,
+    expired: false,
     hours: h,
-    expired: false
   };
 }
-
 
 async function loadMyTasks() {
   const container = document.querySelector('.tasks')
@@ -564,10 +546,7 @@ async function loadMyTasks() {
         hard: 'card hard',
       }[task.level] || 'card'
 
-      const timeLeft =
-        task.time_left === 'expired'
-          ? '<span class="text-red-primary">Время истекло</span>'
-          : task.time_left.replace(/&nbsp;/g, ' ')
+      const timeData = formatTimeLeft(task.time_left);
 
       const taskHTML = `
         <a href="#" class="border-default flex items-start space-x-4 rounded-2xl bg-white p-4">
@@ -592,7 +571,11 @@ async function loadMyTasks() {
               <path d="M14.6666 7.99998C14.6666 11.68 11.6799 14.6666 7.99992 14.6666C4.31992 14.6666 1.33325 11.68 1.33325 7.99998C1.33325 4.31998 4.31992 1.33331 7.99992 1.33331C11.6799 1.33331 14.6666 4.31998 14.6666 7.99998Z" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M10.4739 10.1199L8.40724 8.88653C8.04724 8.6732 7.75391 8.15986 7.75391 7.73986V5.00653" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              ${timeLeft}</p>
+              ${
+                timeData.expired
+                  ? '<span class="text-red-primary">Время истекло</span>'
+                  : timeData.text
+              }</p>
             </div>
             <div class="flex w-full items-center space-x-4">
               <div class="h-2 w-full overflow-hidden rounded-full bg-gray-100">
@@ -610,3 +593,8 @@ async function loadMyTasks() {
     container.innerHTML = `<p class="text-red-500">Ошибка загрузки задач</p>`
   }
 }
+function onLanguageChangedTasks() {
+  loadMyTasks();
+}
+
+window.addEventListener('i18n:languageChanged', onLanguageChangedTasks);

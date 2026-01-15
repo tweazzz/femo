@@ -93,6 +93,7 @@
     "task.answer_btn": "Submit Answer",
     "task.answer_clear": "Clear answer",
     "task.next_task_btn": "Go to the next task",
+    "task.author": "Task author",
 
     "certificates.header": "Certificates",
     "certificates.table_name_olymp": "Olympiad name",
