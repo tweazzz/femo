@@ -201,14 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     copyClassesToDropdown: false,
     // render можно добавить, чтобы менять вид опций/чипов
   });
-    // Инициализируем TomSelect для Edit
-  tomGradesEdit = new TomSelect('#grades-edit', {
-    plugins: ['remove_button'],
-    persist: false,
-    create: false,
-    maxItems: null,
-    placeholder: 'Выберите классы...',
-  });
+
   try {
         // 2) Подтягиваем актуальный профиль по API
     const profileData = await loadAdminProfile();
@@ -574,7 +567,14 @@ async function openEditModal(title, id) {
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
+    // Инициализируем TomSelect для Edit
+    tomGradesEdit = new TomSelect('#grades-edit', {
+      plugins: ['remove_button'],
+      persist: false,
+      create: false,
+      maxItems: null,
+      placeholder: 'Выберите классы...',
+    });
     /* ================= ОСНОВНЫЕ ПОЛЯ ================= */
     setVal(q('#title-edit'), data.title);
     setVal(q('#tour-edit'), data.type);
@@ -597,19 +597,23 @@ async function openEditModal(title, id) {
       q('#language-edit').value = data.language;
     }
 
+
     /* ================= КЛАССЫ (TomSelect) ================= */
-    if (window.tomGradesEdit) {
+    requestAnimationFrame(() => {
       tomGradesEdit.clear();
-      (data.grades || []).forEach(g => tomGradesEdit.addItem(String(g)));
-    }
+      tomGradesEdit.setValue(data.grades.map(String));
+      tomGradesEdit.refreshItems();
+    });
+    
+
     // если используется select с id="grades-edit"
-    const gradesSelect = q('#grades-edit');
-    if (gradesSelect) {
-      qa('option', gradesSelect).forEach(opt => {
-        opt.selected = data.grades?.includes(Number(opt.value)) ?? false;
-      });
-      if (window.tomGradesEdit) tomGradesEdit.refreshItems(); // если TomSelect активен
-    }
+    // const gradesSelect = q('#grades-edit');
+    // if (gradesSelect) {
+    //   qa('option', gradesSelect).forEach(opt => {
+    //     opt.selected = data.grades?.includes(Number(opt.value)) ?? false;
+    //   });
+    //   if (window.tomGradesEdit) tomGradesEdit.refreshItems(); // если TomSelect активен
+    // }
 
     /* ================= ЭТАПЫ ================= */
     const stageContainer = q('#stages-container-edit');
@@ -722,6 +726,12 @@ async function openEditModal(title, id) {
     /* ================= ПОКАЗ МОДАЛКИ ================= */
     q('#modalEdit').classList.remove('hidden');
     q('#overlayModal').classList.remove('hidden');
+    requestAnimationFrame(() => {
+      if (tomGradesEdit) {
+        tomGradesEdit.refreshOptions(false);
+        tomGradesEdit.refreshItems();
+      }
+    });
 
   } catch (e) {
     console.error('[openEditModal ERROR]', e);

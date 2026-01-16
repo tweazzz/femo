@@ -551,12 +551,17 @@
   class="border-default rounded-2xl p-4">
 
     <!-- Шаблон класса -->
-    <div id="class-template" class="class-block flex items-end gap-4 mb-4 flex-nowrap">
-      
+    <div id="class-template" class="class-block flex items-end gap-4 mb-4">
+
       <!-- Класс -->
-      <div class="flex-none w-[120px]">
-        <label class="text-gray-primary mb-1 block text-sm font-medium">Класс</label>
-        <select class="class-select input-base border-default w-full" id="class-select-1">
+      <div class="flex-1 min-w-0 max-w-[120px]">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">
+          Класс
+        </label>
+        <select
+          class="class-select input-base border-default w-full"
+          id="class-select-1"
+        >
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -570,21 +575,33 @@
           <option value="11">11</option>
         </select>
       </div>
-
+    
       <!-- Дата начала + время -->
-      <div class="flex-none" style="width: 200px;">
-        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата начала, время</label>
-        <input type="datetime-local" class="start-datetime input-base border-default w-full h-[22px]" id="start-datetime-1">
+      <div class="flex-1 min-w-0">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">
+          Дата начала, время
+        </label>
+        <input
+          type="datetime-local"
+          class="start-datetime input-base border-default w-full h-[22px]"
+          id="start-datetime-1"
+        >
       </div>
-
+    
       <!-- Дата окончания + время -->
-      <div class="flex-none" style="width: 200px;">
-        <label class="text-gray-primary mb-1 block text-sm font-medium">Дата окончания, время</label>
-        <input type="datetime-local" class="end-datetime input-base border-default w-full h-[22px]" id="end-datetime-1">
+      <div class="flex-1 min-w-0">
+        <label class="text-gray-primary mb-1 block text-sm font-medium">
+          Дата окончания, время
+        </label>
+        <input
+          type="datetime-local"
+          class="end-datetime input-base border-default w-full h-[22px]"
+          id="end-datetime-1"
+        >
       </div>
-
+    
     </div>
-
+    
     <!-- Кнопка добавить класс -->
     <div class="mt-4 flex justify-end">
       <button type="button" class="btn-white" id="add-online-class-btn">
@@ -1489,15 +1506,24 @@
                                     <path d="M6.91185 11.4167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M6.91185 13.9167H6.91933" stroke="#616161" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    
+                                    <button type="button" class="stage-delete-btn" title="Удалить этап" data-action="delete-stage" style="margin-right: 10px; margin-left: 10px;">
+                                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M17.5 4.98307C14.725 4.70807 11.9333 4.56641 9.15 4.56641C7.5 4.56641 5.85 4.64974 4.2 4.81641L2.5 4.98307" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      <path d="M7.08301 4.14199L7.26634 3.05033C7.39967 2.25866 7.49967 1.66699 8.90801 1.66699H11.0913C12.4997 1.66699 12.608 2.29199 12.733 3.05866L12.9163 4.14199" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      <path d="M15.7087 7.61719L15.167 16.0089C15.0753 17.3172 15.0003 18.3339 12.6753 18.3339H7.32533C5.00033 18.3339 4.92533 17.3172 4.83366 16.0089L4.29199 7.61719" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      <path d="M8.60834 13.75H11.3833" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      <path d="M7.91699 10.417H12.0837" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"></path>
+                                      </svg>
+    
+                                  </button>
                                 </div>
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M17.5 4.98307C14.725 4.70807 11.9333 4.56641 9.15 4.56641C7.5 4.56641 5.85 4.64974 4.2 4.81641L2.5 4.98307" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M7.08301 4.14199L7.26634 3.05033C7.39967 2.25866 7.49967 1.66699 8.90801 1.66699H11.0913C12.4997 1.66699 12.608 2.29199 12.733 3.05866L12.9163 4.14199" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M15.7087 7.61719L15.167 16.0089C15.0753 17.3172 15.0003 18.3339 12.6753 18.3339H7.32533C5.00033 18.3339 4.92533 17.3172 4.83366 16.0089L4.29199 7.61719" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M8.60834 13.75H11.3833" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M7.91699 10.417H12.0837" stroke="#E81C2B" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
+                                </svg> -->
 
                               </div>
                             </div>
