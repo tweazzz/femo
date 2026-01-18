@@ -1051,8 +1051,8 @@
     <script src="/src/participant/dashboard.js" defer></script>
     <script src="/src/participant/notifications.js" defer></script>
     <script src="/src/participant/settings.js" defer></script>
-    <script>
-      async function loadBalance() {
+<script>
+async function loadBalance() {
   const token = localStorage.getItem('access_token')
   if (!token) {
     alert('Токен не найден. Пожалуйста, войдите заново.')
@@ -1072,88 +1072,104 @@
 
     const data = await response.json()
     const balanceEl = document.querySelector('.balance')
-    if (data.balance == 0) {
-      toggleModal('modalBalance');
-    }
-    else {
-      console.log('balance > 0');
-    }
-    if (balanceEl) {
-      balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
+    if (balanceEl) balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
+
+    // Показываем попап только если is_viewed != true
+    const isViewed = localStorage.getItem('is_viewed')
+    if (isViewed !== 'true') {
+      toggleModal('modalBalance', true)
+
+      const modal = document.getElementById('modalBalance')
+      if (modal) {
+        function closeModal() {
+          toggleModal('modalBalance', false)
+          // помечаем как просмотренное
+          localStorage.setItem('is_viewed', 'true')
+        }
+
+        // крестик
+        modal.querySelector('button[onclick*="toggleModal(\'modalBalance\'"]')?.addEventListener('click', closeModal)
+
+        // кнопка "Отменить"
+        modal.querySelectorAll('button[type="button"]').forEach(btn => {
+          btn.addEventListener('click', closeModal)
+        })
+
+        // клик вне контента модалки
+        modal.addEventListener('click', (e) => {
+          const content = modal.querySelector('.flex.flex-col.rounded-3xl')
+          if (content && !content.contains(e.target)) {
+            closeModal()
+          }
+        })
+      }
     }
   } catch (err) {
     console.error('Ошибка при загрузке баланса:', err)
   }
 }
-      document.addEventListener("DOMContentLoaded", () => {
-        const dropdownBtn = document.getElementById("lang-dropdown-btn");
-        const menu = document.getElementById("lang-menu");
 
-        const flagEl = document.getElementById("lang-flag");
-        const textEl = document.getElementById("lang-text");
+// Функция toggleModal
+function toggleModal(id, show) {
+  const modal = document.getElementById(id)
+  if (!modal) return
+  if (show === undefined) show = !modal.classList.contains('hidden')
+  if (show) modal.classList.remove('hidden')
+  else modal.classList.add('hidden')
+}
 
-        const langMap = {
-          ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
-          kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
-          en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
-        };
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', async () => {
+  // --- Dropdown язык ---
+  const dropdownBtn = document.getElementById("lang-dropdown-btn")
+  const menu = document.getElementById("lang-menu")
+  const flagEl = document.getElementById("lang-flag")
+  const textEl = document.getElementById("lang-text")
+  const langMap = {
+    ru: { flag: "https://flagcdn.com/w40/ru.png", label: "RU" },
+    kz: { flag: "https://flagcdn.com/w40/kz.png", label: "KZ" },
+    en: { flag: "https://flagcdn.com/w40/gb.png", label: "EN" }
+  }
 
-        // открыть / закрыть меню
-        dropdownBtn.addEventListener("click", () => {
-          menu.classList.toggle("hidden");
-        });
+  dropdownBtn.addEventListener("click", () => menu.classList.toggle("hidden"))
 
-        // Подсветка выбранного языка
-        function highlightSelected(lang) {
-          document.querySelectorAll(".lang-option").forEach(opt => {
-            opt.classList.toggle("active", opt.dataset.lang === lang);
-          });
-        }
+  function highlightSelected(lang) {
+    document.querySelectorAll(".lang-option").forEach(opt => {
+      opt.classList.toggle("active", opt.dataset.lang === lang)
+    })
+  }
 
-        // установить язык при загрузке
-        const current = localStorage.getItem("lang") || "ru";
-        flagEl.src = langMap[current].flag;
-        textEl.textContent = langMap[current].label;
-        highlightSelected(current);
+  const current = localStorage.getItem("lang") || "ru"
+  flagEl.src = langMap[current].flag
+  textEl.textContent = langMap[current].label
+  highlightSelected(current)
 
-        // Обработчик выбора языка
-        document.querySelectorAll("#lang-menu .lang-option").forEach(opt => {
-          opt.addEventListener("click", async () => {
-            const lang = opt.dataset.lang;
+  document.querySelectorAll("#lang-menu .lang-option").forEach(opt => {
+    opt.addEventListener("click", async () => {
+      const lang = opt.dataset.lang
+      flagEl.src = langMap[lang].flag
+      textEl.textContent = langMap[lang].label
+      highlightSelected(lang)
+      menu.classList.add("hidden")
+      localStorage.setItem("lang", lang)
+      if (typeof updateUserSettings === "function") {
+        await updateUserSettings({ language: lang })
+        window.dispatchEvent(new Event("i18n:languageChanged"))
+      }
+    })
+  })
 
-            // обновляем UI
-            flagEl.src = langMap[lang].flag;
-            textEl.textContent = langMap[lang].label;
-            highlightSelected(lang);
-            menu.classList.add("hidden");
+  document.addEventListener("click", e => {
+    if (!document.getElementById("lang-dropdown").contains(e.target)) {
+      menu.classList.add("hidden")
+    }
+  })
 
-            // сохраняем локально
-            localStorage.setItem("lang", lang);
+  // --- Загрузка баланса и попап ---
+  await loadBalance()
+})
+</script>
 
-            // синхронизация с бэкендом
-            if (typeof updateUserSettings === "function") {
-              await updateUserSettings({ language: lang });
-              window.dispatchEvent(new Event("i18n:languageChanged"));
-            }
-          });
-        });
-
-        // закрытие при клике вне dropdown
-        document.addEventListener("click", (e) => {
-          if (!document.getElementById("lang-dropdown").contains(e.target)) {
-            menu.classList.add("hidden");
-          }
-        });
-      });
-
-      document.addEventListener("DOMContentLoaded", async () => {
-  // ... весь твой код dropdown
-
-  // Загрузка баланса
-  await loadBalance();
-});
-
-    </script>
 
 <script>
   /**
@@ -1243,7 +1259,7 @@
   }
   
   document.addEventListener('DOMContentLoaded', loadRegistrationBannerSimple_v4);
-  </script>
+</script>
   
   
   

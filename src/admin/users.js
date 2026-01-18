@@ -151,6 +151,7 @@ let allUsers = []
 let currentFilters = {
   search: '',
   country: '',
+  city: '',
   role: '',
   grade: '',
 }
@@ -184,7 +185,7 @@ async function loadAllUsers() {
     const tbody = document.querySelector('tbody')
     tbody.innerHTML = `
       <tr>
-        <td colspan="11" class="px-6 py-4 text-center text-red-500">
+        <td colspan="12" class="px-6 py-4 text-center text-red-500">
           ${err.message}
         </td>
       </tr>
@@ -203,7 +204,16 @@ function initFilters(users) {
        .map(c => `<option value="${c}">${c}</option>`)
        .join('')}
   `
+  // Города
+  const cities = [...new Set(users.map(u => u.city))]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, 'ru'));
 
+  const citySelect = document.querySelector('.city-filter');
+  citySelect.innerHTML = `
+    <option value="" data-i18n="users.all_cities">Все города</option>
+    ${cities.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+  `;
   // Роли (уже есть в HTML)
 
   // Классы
@@ -228,6 +238,7 @@ function applyFilters() {
     .value.trim()
     .toLowerCase();
   currentFilters.country = document.querySelector('.country-filter').value;
+  currentFilters.city = document.querySelector('.city-filter').value;
   currentFilters.role    = document.querySelector('.role-filter').value;
   currentFilters.grade   = document.querySelector('.grade-filter').value;
 
@@ -337,6 +348,23 @@ function v(val) {
     ? '—'
     : escapeHtml(String(val));
 }
+const languageMap = {
+  ru: 'Русский',
+  kk: 'Қазақша',
+  en: 'English',
+  es: 'Español',
+  de: 'Deutsch',
+  az: 'Azərbaycanca',
+  ka: 'ქართული'
+};
+function resolveStudyLanguage(value) {
+  if (!value) return '';
+  if (languageMap[value]) {
+    return languageMap[value];
+  }
+  return value;
+}
+
 function renderUsers(users) {
   const tbody = document.querySelector('tbody');
   if (!tbody) return;
@@ -344,7 +372,7 @@ function renderUsers(users) {
   tbody.innerHTML = users.length === 0
     ? `
     <tr>
-      <td colspan="11" class="px-6 py-4 text-center text-gray-500" data-i18n="users.empty">
+      <td colspan="12" class="px-6 py-4 text-center text-gray-500" data-i18n="users.empty">
         ${escapeHtml((window.i18nDict && window.i18nDict['users.empty']) || 'Пользователи не найдены')}
       </td>
     </tr>
@@ -394,7 +422,7 @@ function renderUsers(users) {
           <td class="px-6 py-4 text-sm whitespace-nowrap">${v(user.city)}</td>
 
           <td class="px-6 py-4 text-sm whitespace-nowrap">${v(user.school)}</td>
-
+          <td class="px-6 py-4 text-sm whitespace-nowrap">${v(resolveStudyLanguage(user.study_language))}</td>
           <td class="px-6 py-4 text-sm whitespace-nowrap">${v(user.parent_full_name_ru)}</td>
 
           <td class="px-6 py-4 text-sm whitespace-nowrap">${v(user.student_full_name_en)}</td>

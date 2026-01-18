@@ -175,52 +175,52 @@
             </select>
         </div>
         <div>
-          <label style="margin-bottom: 5px;" class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.lang">Язык обучения</label>
+          <label style="margin-bottom: 7px;" class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.lang">Язык обучения</label>
           <div class="flex flex-wrap items-center gap-4" data-locale="ru">
                                 <label class="switch-btn flex items-center gap-2">
                                   <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="ru" class="hidden" checked="">
+                                  <input type="radio" name="study_language" value="ru" class="hidden" checked="">
                                   Русский
                                 </label>
 
                                 <label class="switch-btn flex items-center gap-2" data-locale="kk">
                                   <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="kk" class="hidden">
+                                  <input type="radio" name="study_language" value="kk" class="hidden">
                                   Қазақша
                                 </label>
 
                                 <label class="switch-btn flex items-center gap-2" data-locale="en">
                                   <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="en" class="hidden">
+                                  <input type="radio" name="study_language" value="en" class="hidden">
                                   English
                                 </label>
 
                                 <!-- Spanish -->
                                 <label class="switch-btn flex items-center gap-2" data-locale="es">
                                   <img src="https://flagcdn.com/w40/es.png" alt="Флаг Испании" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="es" class="hidden">
-                                  Spanish
+                                  <input type="radio" name="study_language" value="es" class="hidden">
+                                  Español
                                 </label>
 
                                 <!-- German -->
                                 <label class="switch-btn flex items-center gap-2" data-locale="de">
                                   <img src="https://flagcdn.com/w40/de.png" alt="Флаг Германии" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="de" class="hidden">
-                                  German
+                                  <input type="radio" name="study_language" value="de" class="hidden">
+                                  Deutsch
                                 </label>
 
                                 <!-- Azerbaijani -->
                                 <label class="switch-btn lang-option flex items-center gap-2" data-locale="az">
                                   <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="az" class="hidden">
-                                  <span class="lang-label">Азербайджанский</span>
+                                  <input type="radio" name="study_language" value="az" class="hidden">
+                                  <span class="lang-label">Azərbaycanca</span>
                                 </label>
 
                                 <!-- Georgian -->
                                 <label class="switch-btn lang-option flex items-center gap-2" data-locale="ka">
                                   <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
-                                  <input type="radio" name="task-locale" value="ka" class="hidden">
-                                  <span class="lang-label">Грузинский</span>
+                                  <input type="radio" name="study_language" value="ka" class="hidden">
+                                  <span class="lang-label">ქართული</span>
                                 </label>
           </div>
         </div>                    
@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const city = (form.elements['city']?.value || '').trim();
       const school = (form.elements['school']?.value || '').trim();
       const gradeValue = (form.elements['grade']?.value || '').trim();
-      const langChecked = form.querySelector('input[name="lang"]:checked');
+      const langChecked = form.querySelector('input[name="study_language"]:checked');
       const studyLanguage = (langChecked?.value || 'ru').trim();
 
       const parent_name_ru = (form.elements['full_name']?.value || '').trim(); // родитель
@@ -593,6 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
           sessionStorage.removeItem('pending_registration');
           sessionStorage.removeItem('pending_password');
           localStorage.removeItem('pending_participant');
+          localStorage.setItem('is_viewed', 'false'); 
         } catch (e) {}
 
         showSuccess('Профиль участника успешно сохранён. Перенаправляем...', 1500);

@@ -1335,14 +1335,14 @@
     data-template-id="edit-online-class-template"
     data-add-btn-id="add-edit-online-class-btn"
     data-id-prefix="online-edit"
-    class="border-default rounded-2xl p-4"
+    class="border-default rounded-2xl p-4 flex flex-col gap-4"
   >
 
     <!-- Шаблон класса (edit) -->
-    <div id="edit-online-class-template" class="edit-class-block flex items-end gap-4 mb-4 flex-nowrap hidden">
+    <div id="edit-online-class-template" class="edit-class-block flex items-end gap-4 mb-4 hidden">
 
       <!-- Класс -->
-      <div class="flex-none w-[120px]">
+      <div class="flex-1 min-w-0 max-w-[120px]"">
         <label class="text-gray-primary mb-1 block text-sm font-medium">Класс</label>
         <select class="edit-class-select input-base border-default w-full" id="edit-class-select-1">
           <option value="1">1</option>
@@ -1360,13 +1360,13 @@
       </div>
 
       <!-- Дата начала + время -->
-      <div class="flex-none" style="width: 200px;">
+      <div class="flex-1 min-w-0">
         <label class="text-gray-primary mb-1 block text-sm font-medium">Дата начала, время</label>
         <input type="datetime-local" class="edit-start-datetime input-base border-default w-full h-[22px]" id="edit-start-datetime-1">
       </div>
 
       <!-- Дата окончания + время -->
-      <div class="flex-none" style="width: 200px;">
+      <div class="flex-1 min-w-0">
         <label class="text-gray-primary mb-1 block text-sm font-medium">Дата окончания, время</label>
         <input type="datetime-local" class="edit-end-datetime input-base border-default w-full h-[22px]" id="edit-end-datetime-1">
       </div>
@@ -1378,7 +1378,7 @@
       <button type="button" class="btn-white" id="add-edit-online-class-btn">
         <span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
-            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>
+            <path fill-rule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"></path>
           </svg>
         </span>
         Добавить класс

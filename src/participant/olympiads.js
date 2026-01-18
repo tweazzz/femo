@@ -403,7 +403,7 @@ async function loadOlympiadCards() {
       function createDetailButton(url, key, text) {
         const a = document.createElement('a');
         a.href = url || '#';
-        a.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap';
+        a.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap';
         if (key) a.setAttribute('data-i18n', key);
         a.textContent = (window.i18nDict && key && window.i18nDict[key]) || text || 'Подробнее';
         try {
@@ -422,7 +422,7 @@ async function loadOlympiadCards() {
       function createRegisterButton(olympiadId, key, text) {
         const a = document.createElement('a');
         a.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiadId)}`;
-        a.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+        a.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
         if (key) a.setAttribute('data-i18n', key);
         a.textContent = (window.i18nDict && key && window.i18nDict[key]) || text || 'Зарегистрироваться';
         return a;
@@ -437,13 +437,22 @@ async function loadOlympiadCards() {
         // only start/register
         btns.innerHTML = '';
         if (isRegistered) {
-          const startBtn = document.createElement('button');
-          startBtn.addEventListener('click', () => openStartOlympiadModal(olympiad.id));
-          startBtn.textContent = (window.i18nDict && window.i18nDict[keyStartNow]) || startText;
-          startBtn.style.backgroundColor = '#0DB459';
-          startBtn.style.color = '#fff';
-          startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer';
-          btns.appendChild(startBtn);
+          // кнопка "Об олимпиаде" — переходим по olympiad.url
+          btns.innerHTML = ''; // очистим
+          const aboutBtn = document.createElement('a');
+          aboutBtn.href = olympiad.url || '#';
+          aboutBtn.target = '_blank'; // открываем в новой вкладке
+          aboutBtn.rel = 'noopener noreferrer';
+          aboutBtn.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap';
+          aboutBtn.textContent = 'Об олимпиаде';
+          btns.appendChild(aboutBtn);
+          // const startBtn = document.createElement('button');
+          // startBtn.addEventListener('click', () => openStartOlympiadModal(olympiad.id));
+          // startBtn.textContent = (window.i18nDict && window.i18nDict[keyStartNow]) || startText;
+          // startBtn.style.backgroundColor = '#0DB459';
+          // startBtn.style.color = '#fff';
+          // startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer';
+          // btns.appendChild(startBtn);
         } else {
           const registerBtn = createRegisterButton(olympiad.id, keyRegister, registerText);
           btns.appendChild(registerBtn);
@@ -451,12 +460,11 @@ async function loadOlympiadCards() {
       } else if (isUpcoming && !isRegistered && canRegister) {
         // Предстоящая: показываем Подробнее (по url) + Зарегистрироваться
         btns.innerHTML = '';
-        // detail (if url provided)
-        const detailBtn = createDetailButton(olympiad.url || '#', keyMore, moreText);
-        btns.appendChild(detailBtn);
-        // register
         const registerBtn = createRegisterButton(olympiad.id, keyRegister, registerText);
         btns.appendChild(registerBtn);
+
+        const detailBtn = createDetailButton(olympiad.url || '#', keyMore, moreText);
+        btns.appendChild(detailBtn);
       } else {
         // default single detail / view-results
         const detailKey = isFinished ? keyViewResults : keyMore;
@@ -464,6 +472,7 @@ async function loadOlympiadCards() {
         const detailBtn = createDetailButton(olympiad.url || '#', detailKey, detailText);
         if (isFinished) {
           // finished should open internal rating page
+          detailBtn.className = 'inline-flex items-center justify-center px-4 py-2 w-full rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap'
           detailBtn.href = '/participant/rate-overall.html';
           detailBtn.target = '_self';
         }

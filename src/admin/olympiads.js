@@ -1552,3 +1552,101 @@ function closeViewModal() {
   document.getElementById('modalView').classList.add('hidden');
   document.getElementById('overlayModal').classList.add('hidden');
 }
+
+/* ====== Утилиты для добавления блока класса (Add / Edit) ====== */
+function insertClassBlock(containerEl, templateEl) {
+  if (!containerEl || !templateEl) {
+    console.warn('insertClassBlock: container или template не найдены', containerEl, templateEl);
+    return null;
+  }
+
+  // Клонируем шаблон
+  const clone = templateEl.cloneNode(true);
+
+  // Убираем id'шники, чтобы не было дублей
+  clone.removeAttribute('id');
+  clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+
+  // Показываем и помечаем как рабочий блок
+  clone.classList.remove('hidden');
+  clone.classList.add('class-block');
+
+  // Очистим значения input/select/textarea внутри клона
+  clone.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+    else el.value = '';
+  });
+
+  // Вставляем перед обёрткой с кнопкой (если есть .mt-4), иначе в конец контейнера
+  const btnWrapper = containerEl.querySelector('.mt-4') || containerEl;
+  containerEl.insertBefore(clone, btnWrapper);
+
+  return clone;
+}
+
+/* ====== Привязка для Edit-модалки (куда относится add-edit-online-class-btn) ====== */
+(function attachEditClassAdders() {
+  try {
+    // Онлайн (edit)
+    const editOnlineContainer = document.getElementById('edit-classes-container');
+    const editOnlineTemplate  = document.getElementById('edit-online-class-template');
+    const addEditOnlineBtn    = document.getElementById('add-edit-online-class-btn');
+
+    if (addEditOnlineBtn) {
+      addEditOnlineBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const newBlock = insertClassBlock(editOnlineContainer, editOnlineTemplate);
+        // если нужно — можно сфокусировать первый input/select внутри:
+        if (newBlock) {
+          const sel = newBlock.querySelector('select, input, textarea');
+          sel && sel.focus();
+        }
+      });
+    }
+
+    // Оффлайн (edit) — аналогично (если у вас есть такие элементы)
+    const editOfflineContainer = document.getElementById('edit-offline-classes-container');
+    const editOfflineTemplate  = document.getElementById('edit-offline-class-template-edit'); // проверьте точный ID шаблона
+    const addEditOfflineBtn    = document.getElementById('add-edit-offline-class-btn');
+
+    if (addEditOfflineBtn) {
+      addEditOfflineBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        insertClassBlock(editOfflineContainer, editOfflineTemplate);
+      });
+    }
+  } catch (err) {
+    console.error('attachEditClassAdders error', err);
+  }
+})();
+
+/* ====== Привязка для Add-модалки (если хотите также там) ======
+   Примеры ID: #add-online-class-btn, #add-offline-class-btn, шаблон #class-template, #offline-class-template
+*/
+(function attachAddClassAdders() {
+  try {
+    const addOnlineContainer = document.querySelector('.add-classes-online'); // или явный ID
+    const addOnlineTemplate  = document.getElementById('class-template');      // проверьте ID шаблона
+    const addOnlineBtn       = document.getElementById('add-online-class-btn');
+
+    if (addOnlineBtn) {
+      addOnlineBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        insertClassBlock(addOnlineContainer, addOnlineTemplate);
+      });
+    }
+
+    const addOfflineContainer = document.querySelector('.add-classes-offline');
+    const addOfflineTemplate  = document.getElementById('offline-class-template'); // проверьте ID шаблона
+    const addOfflineBtn       = document.getElementById('add-offline-class-btn');
+
+    if (addOfflineBtn) {
+      addOfflineBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        insertClassBlock(addOfflineContainer, addOfflineTemplate);
+      });
+    }
+  } catch (err) {
+    console.error('attachAddClassAdders error', err);
+  }
+})();
