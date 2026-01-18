@@ -179,13 +179,12 @@ function formatDate(dateStr) {
     return `${day} ${month} ${year}`;
     }
 
-
-// small helper: create ascii-friendly slug from any string
+// helper: transliterate cyrillic -> latin slug (оставляем только эту реализацию!)
 function slugify(str) {
   return String(str || '')
     .trim()
     .toLowerCase()
-    // replace cyrillic letters with latin approximations (basic)
+    // transliterate basic cyrillic -> latin
     .replace(/а/g,'a').replace(/б/g,'b').replace(/в/g,'v').replace(/г/g,'g').replace(/д/g,'d')
     .replace(/е/g,'e').replace(/ё/g,'e').replace(/ж/g,'zh').replace(/з/g,'z').replace(/и/g,'i')
     .replace(/й/g,'i').replace(/к/g,'k').replace(/л/g,'l').replace(/м/g,'m').replace(/н/g,'n')
@@ -193,22 +192,13 @@ function slugify(str) {
     .replace(/у/g,'u').replace(/ф/g,'f').replace(/х/g,'h').replace(/ц/g,'ts').replace(/ч/g,'ch')
     .replace(/ш/g,'sh').replace(/щ/g,'sch').replace(/ъ/g,'').replace(/ы/g,'y').replace(/ь/g,'')
     .replace(/э/g,'e').replace(/ю/g,'yu').replace(/я/g,'ya')
-    // remove non-alnum, replace spaces with dash
+    // keep only a-z0-9 and dashes
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
-}
-
-// helper: create ascii-friendly slug for fallback i18n keys
-function slugify(str) {
-  return String(str || '')
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9\-]/g, '-')
-    .replace(/\-+/g, '-')
+    .replace(/-+/g, '-')
     .replace(/^\-+|\-+$/g, '');
 }
+
 function formatSecondsToHoursMinutes(seconds) {
   if (!seconds || isNaN(seconds)) return '—';
 
@@ -227,6 +217,8 @@ function formatSecondsToHoursMinutes(seconds) {
   // если меньше суток — показываем просто часы и минуты
   return `${hours}:${minutes.toString().padStart(2, '0')}`;
 }
+
+
 async function loadOlympiadCards() {
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -270,14 +262,13 @@ async function loadOlympiadCards() {
 
       // булевые флаги (ЛОГИКА) — используем API-флаги прежде всего
       const isRegistered = olympiad.registered === true;
-      const isFinished = Boolean(olympiad.is_finished) || statusRaw.trim().toLowerCase().includes('заверш');
+      const isFinished = olympiad.status === 'Завершена';
       // определение ongoing: либо есть специальный код, либо в статусе есть "идет" / "ongoing"
-      const statusCode = (olympiad.status_code || '').toString().toLowerCase();
-      const isOngoing = statusCode === 'ongoing' ||
-                        /идет|ongoing|in progress/i.test(statusRaw);
+      const isOngoing = olympiad.status === 'Идет сейчас';
+      const isUpcoming = olympiad.status=== 'Предстоящая';
+                      
       // can register (fallback)
-      const canRegister = (olympiad.registration_status || '').toString().toLowerCase().includes('open') ||
-                          /registration open|регистрация открыта/i.test(olympiad.registration_status || '');
+      const canRegister = olympiad.status=== 'Предстоящая';;
 
       // Выбираем итоговый i18n-ключ, текст и класс - НА ОСНОВЕ ЛОГИКИ
       let finalStatusKey = '';
@@ -297,10 +288,17 @@ async function loadOlympiadCards() {
         finalStatusText = statusRaw || 'Идет сейчас';
         finalStatusClass = 'bg-red-100 text-red-primary'; // <- красный фон при "Идет сейчас"
       } else if (canRegister) {
-        finalStatusKey = 'olympiads.olympiads-registration-open';
-        finalStatusText = olympiad.registration_status || 'Регистрация открыта';
-        finalStatusClass = 'bg-orange-100 text-orange-primary';
-      } else {
+        if (olympiad.registration_status === 'Registration will be opened soon') {
+            finalStatusKey = 'olympiads.olympiads-registration-soon';
+            finalStatusText = 'Регистрация в скором времени откроется';
+            finalStatusClass = 'bg-orange-100 text-orange-primary';
+        } else {
+            // все остальные случаи "Регистрация открыта"
+            finalStatusKey = 'olympiads.olympiads-registration-open';
+            finalStatusText = 'Регистрация открыта';
+            finalStatusClass = 'bg-orange-100 text-orange-primary';
+        }
+    } else {
         finalStatusKey = statusI18nMap[statusRaw] || `olympiads.status-${slugify(statusRaw)}`;
         finalStatusText = statusRaw || '';
         finalStatusClass = 'bg-grey-100 text-grey-primary';
@@ -412,6 +410,11 @@ async function loadOlympiadCards() {
       detailBtn.rel = 'noopener noreferrer';
       btns.appendChild(detailBtn);
 
+      if (isFinished) {
+        detailBtn.href = '/participant/rate-overall.html';
+        detailBtn.target = '_self'; // чтобы не открывалось в новой вкладке
+      }
+      
       function getSelectedLanguage() {
           const checked = document.querySelector('input[name="lan"]:checked');
           return checked ? checked.value : 'ru';
@@ -438,9 +441,18 @@ async function loadOlympiadCards() {
           registerBtn.textContent = (window.i18nDict && window.i18nDict[keyRegister]) || registerText;
           btns.appendChild(registerBtn);
         }
-      } else {
-        // для других статусов — уже добавлен detailBtn, и можно добавить дополнительные действия при необходимости
-      }
+      } else if (isUpcoming && !isRegistered && canRegister) {
+          btns.innerHTML = ''; // 🔥 УБИРАЕМ "Подробнее"
+
+          const registerBtn = document.createElement('a');
+          registerBtn.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad.id)}`;
+          registerBtn.className =
+            'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+          registerBtn.setAttribute('data-i18n', keyRegister);
+          registerBtn.textContent = registerText;
+
+          btns.appendChild(registerBtn);
+        }
 
       bottom.appendChild(btns);
       card.appendChild(bottom);

@@ -8,6 +8,7 @@
     <title>Регистрация</title>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/css/intlTelInput.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
 <style>
 /* Центрированный небольшой "модал" для fullscreen popup */
@@ -173,8 +174,56 @@
               <option value="11">11</option>
             </select>
         </div>
+        <div>
+          <label style="margin-bottom: 5px;" class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.lang">Язык обучения</label>
+          <div class="flex flex-wrap items-center gap-4" data-locale="ru">
+                                <label class="switch-btn flex items-center gap-2">
+                                  <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="ru" class="hidden" checked="">
+                                  Русский
+                                </label>
 
-                    
+                                <label class="switch-btn flex items-center gap-2" data-locale="kk">
+                                  <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="kk" class="hidden">
+                                  Қазақша
+                                </label>
+
+                                <label class="switch-btn flex items-center gap-2" data-locale="en">
+                                  <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="en" class="hidden">
+                                  English
+                                </label>
+
+                                <!-- Spanish -->
+                                <label class="switch-btn flex items-center gap-2" data-locale="es">
+                                  <img src="https://flagcdn.com/w40/es.png" alt="Флаг Испании" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="es" class="hidden">
+                                  Spanish
+                                </label>
+
+                                <!-- German -->
+                                <label class="switch-btn flex items-center gap-2" data-locale="de">
+                                  <img src="https://flagcdn.com/w40/de.png" alt="Флаг Германии" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="de" class="hidden">
+                                  German
+                                </label>
+
+                                <!-- Azerbaijani -->
+                                <label class="switch-btn lang-option flex items-center gap-2" data-locale="az">
+                                  <img src="https://flagcdn.com/w40/az.png" alt="Флаг Азербайджана" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="az" class="hidden">
+                                  <span class="lang-label">Азербайджанский</span>
+                                </label>
+
+                                <!-- Georgian -->
+                                <label class="switch-btn lang-option flex items-center gap-2" data-locale="ka">
+                                  <img src="https://flagcdn.com/w40/ge.png" alt="Флаг Грузии" class="h-3 w-5 object-contain">
+                                  <input type="radio" name="task-locale" value="ka" class="hidden">
+                                  <span class="lang-label">Грузинский</span>
+                                </label>
+          </div>
+        </div>                    
         <div>
           <label class="text-gray-primary mb-1 block text-sm" data-i18n="participant_register.fio_parent">ФИО родителя</label>
           <input

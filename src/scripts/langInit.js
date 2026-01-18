@@ -205,6 +205,14 @@ async function initLanguageOnPage({ waitForAppPromises = true, appWaitTimeout = 
   try {
     if (typeof window.setLanguage === 'function') {
       await window.setLanguage(frontendLangToApply, role, page);
+      // 🔥 ВАЖНО: шрифт ставим ПОСЛЕ установки языка
+      document.documentElement.style.setProperty(
+        '--font-main',
+        localStorage.getItem('lang') === 'kz' &&
+        localStorage.getItem('backend_lang') === 'kk'
+          ? "'Inter', sans-serif"
+          : ''
+      );
     } else {
       console.warn('i18n: window.setLanguage not found');
     }
