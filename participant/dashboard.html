@@ -1094,7 +1094,7 @@ async function loadBalance() {
     const isViewed = localStorage.getItem('is_viewed')
 
     // показываем ТОЛЬКО если поля нет или оно false
-    if (isViewed === 'true') return
+    if (isViewed === null || isViewed === 'true') return
 
     const modalId = 'modalBalance'
     const modal = document.getElementById(modalId)
