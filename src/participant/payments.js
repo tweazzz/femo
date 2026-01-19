@@ -621,19 +621,11 @@ function downloadPayment(id) {
  * затем открывает платёжное окно.
  */
 async function payOlympiad(olympiadId) {
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem('access_token');
   if (!token) {
-    alert('Требуется авторизация. Пожалуйста, войдите.')
-    return
+    alert('Требуется авторизация. Пожалуйста, войдите.');
+    return;
   }
-
-  // Открываем пустое окно заранее, чтобы браузер не блокировал
-  const payWindow = window.open('', '_blank')
-  if (!payWindow) {
-    alert('Не удалось открыть окно оплаты. Проверьте блокировщик попапов.')
-    return
-  }
-  payWindow.document.write('<p>Подготовка к оплате...</p>')
 
   try {
     const response = await authorizedFetch(
@@ -644,26 +636,29 @@ async function payOlympiad(olympiadId) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({})  // если API требует дополнительные поля — добавьте их здесь
+        body: JSON.stringify({})
       }
-    )
+    );
 
-    const result = await response.json()
-    if (response.ok && result.pg_redirect_url) {
-      // Перенаправляем окно на платёжную страницу
-      payWindow.location.href = result.pg_redirect_url
+    const result = await response.json();
+
+    if (response.ok) {
+      // Оплата прошла успешно — показываем success попап
+      openModal('payment_success');
+    } else if (response.status === 400 && result.detail === 'Insufficient balance.') {
+      // Недостаточно средств — показываем баланс попап
+      openModal('modal_balance');
     } else {
-      // Закрываем окно и показываем ошибку
-      payWindow.close()
-      const errText = result.detail || result.error || 'Не удалось инициировать платёж'
-      alert(errText)
+      // Другие ошибки
+      const errText = result.detail || result.error || 'Не удалось инициировать платёж';
+      alert(errText);
     }
   } catch (err) {
-    console.error('Ошибка при запросе оплаты:', err)
-    payWindow.close()
-    alert('Произошла ошибка при инициации оплаты.')
+    console.error('Ошибка при запросе оплаты:', err);
+    // alert('Произошла ошибка при инициации оплаты.');
   }
 }
+
 
 
 async function submitProfileUpdate() {

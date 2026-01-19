@@ -419,14 +419,14 @@ async function loadOlympiadCards() {
       }
 
       // helper: create register button (internal payments page)
-      function createRegisterButton(olympiadId, key, text) {
-        const a = document.createElement('a');
-        a.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiadId)}`;
-        a.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
-        if (key) a.setAttribute('data-i18n', key);
-        a.textContent = (window.i18nDict && key && window.i18nDict[key]) || text || 'Зарегистрироваться';
-        return a;
-      }
+      // function createRegisterButton(olympiadId, key, text) {
+      //   const a = document.createElement('a');
+      //   a.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiadId)}`;
+      //   a.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+      //   if (key) a.setAttribute('data-i18n', key);
+      //   a.textContent = (window.i18nDict && key && window.i18nDict[key]) || text || 'Зарегистрироваться';
+      //   return a;
+      // }
 
       // --- button logic ---
       // Priority:
@@ -454,13 +454,13 @@ async function loadOlympiadCards() {
           // startBtn.className = 'inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap cursor-pointer';
           // btns.appendChild(startBtn);
         } else {
-          const registerBtn = createRegisterButton(olympiad.id, keyRegister, registerText);
+          const registerBtn = createRegisterButton(olympiad, keyRegister, registerText);
           btns.appendChild(registerBtn);
         }
       } else if (isUpcoming && !isRegistered && canRegister) {
         // Предстоящая: показываем Подробнее (по url) + Зарегистрироваться
         btns.innerHTML = '';
-        const registerBtn = createRegisterButton(olympiad.id, keyRegister, registerText);
+        const registerBtn = createRegisterButton(olympiad, keyRegister, registerText);
         btns.appendChild(registerBtn);
 
         const detailBtn = createDetailButton(olympiad.url || '#', keyMore, moreText);
@@ -493,6 +493,159 @@ async function loadOlympiadCards() {
   } catch (error) {
     console.error('Ошибка загрузки списка олимпиад:', error);
   }
+}
+/* ---------------- Balance helpers & register interception (improved) ---------------- */
+
+let _balanceCache = { value: null, ts: 0 };
+const BALANCE_CACHE_TTL = 15 * 1000; // кешировать баланс 15 секунд
+
+async function getBalance() {
+  const now = Date.now();
+  if (_balanceCache.value && (now - _balanceCache.ts) < BALANCE_CACHE_TTL) {
+    return _balanceCache.value;
+  }
+
+  const token = localStorage.getItem('access_token');
+  if (!token) throw new Error('Токен не найден');
+
+  const res = await authorizedFetch(
+    'https://portal.femo.kz/api/payments/participant/dashboard/balance/',
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  if (!res.ok) throw new Error(`Ошибка при получении баланса: ${res.status}`);
+
+  const data = await res.json();
+
+  const balanceInfo = {
+    balance: Number(data.balance || 0),
+    currency: data.currency || null
+  };
+
+  _balanceCache = {
+    value: balanceInfo,
+    ts: Date.now()
+  };
+
+  return balanceInfo;
+}
+function getOlympiadFeeInfo(olympiad) {
+  if (!olympiad) {
+    return { price: 0, currency: null };
+  }
+
+  const price = Number(olympiad.price || 0);
+  const currency = olympiad.currency || null;
+
+  return {
+    price: isNaN(price) ? 0 : price,
+    currency
+  };
+}
+
+
+function getOlympiadFee(olympiad) {
+  if (!olympiad) return 0;
+  const p = olympiad.price;
+  if (p == null || p === '') return 0;
+  const n = Number(p);
+  return isNaN(n) ? 0 : n;
+}
+
+/**
+ * Показывает modal_balance и подставляет сообщение с недостающей суммой (если возможно).
+ */
+function showBalanceModal() {
+  const modal = document.getElementById('modal_balance');
+  const overlay = document.getElementById('overlayModal') || document.getElementById('overlay');
+
+  if (overlay) {
+    overlay.classList.remove('hidden');
+  }
+
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  // если у тебя есть единая функция открытия модалок
+  if (typeof openModal === 'function') {
+    openModal('modal_balance');
+  }
+}
+
+function restoreAnchor(anchorEl, prevHtml = null) {
+  if (!anchorEl) return;
+
+  if (prevHtml !== null) {
+    anchorEl.innerHTML = prevHtml;
+  }
+
+  anchorEl.classList.remove('opacity-60', 'pointer-events-none');
+}
+
+async function checkBalanceThenProceed(olympiad, href, anchorEl = null) {
+  try {
+    const { price, currency: olympiadCurrency } = getOlympiadFeeInfo(olympiad);
+
+    // бесплатная олимпиада
+    if (!price || price === 0) {
+      window.location.href = href;
+      return;
+    }
+
+    // UI feedback
+    let prevHtml = null;
+    if (anchorEl) {
+      prevHtml = anchorEl.innerHTML;
+      anchorEl.innerHTML = 'Проверка...';
+      anchorEl.classList.add('opacity-60', 'pointer-events-none');
+    }
+
+    const { balance, currency: balanceCurrency } = await getBalance();
+
+    // ❌ валюта не совпадает
+    if (!balanceCurrency || !olympiadCurrency || balanceCurrency !== olympiadCurrency) {
+      showBalanceModal();
+      restoreAnchor(anchorEl, prevHtml);
+      return;
+    }
+
+    // ❌ не хватает денег
+    if (balance < price) {
+      showBalanceModal();
+      restoreAnchor(anchorEl, prevHtml);
+      return;
+    }
+
+    // ✅ всё ок
+    restoreAnchor(anchorEl, prevHtml);
+    window.location.href = href;
+
+  } catch (err) {
+    console.error('Ошибка при проверке баланса:', err);
+    restoreAnchor(anchorEl);
+    // alert('Не удалось проверить баланс. Повторите попытку.');
+  }
+}
+
+
+/* --- createRegisterButton принимает объект olympiad --- */
+function createRegisterButton(olympiad, key, text) {
+  const a = document.createElement('a');
+  a.href = `/participant/payments.html?olympiad=${encodeURIComponent(olympiad?.id)}`;
+  a.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white min-w-[140px] whitespace-nowrap';
+  if (key) a.setAttribute('data-i18n', key);
+  a.textContent = (window.i18nDict && key && window.i18nDict[key]) || text || 'Зарегистрироваться';
+
+  // перехват клика: передаём ссылку и сам элемент (для UI)
+  a.addEventListener('click', function (e) {
+    e.preventDefault();
+    checkBalanceThenProceed(olympiad, a.href, a);
+  });
+
+  return a;
 }
 
 

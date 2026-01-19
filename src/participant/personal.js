@@ -184,7 +184,139 @@ function fillCountryDropdown() {
   }
 }
 
+async function submitProfilePatch() {
+  const form = document.querySelector('form');
+  if (!form) return;
 
+  const data = {};
+
+  // Основные поля
+  const email = form.querySelector('input[name="email"]').value.trim();
+  if (email) data.email = email;
+
+  const fullNameRu = form.querySelector('input[name="fullname_ru"]').value.trim();
+  if (fullNameRu) data.full_name_ru = fullNameRu;
+
+  const fullNameEn = form.querySelector('input[name="fullname_en"]').value.trim();
+  if (fullNameEn) data.full_name_en = fullNameEn;
+
+  const country = form.querySelector('select[name="country"]').value;
+  if (country) data.country = country; // вместо { code: country }
+
+  const city = form.querySelector('input[name="city"]').value.trim();
+  if (city) data.city = city;
+
+  const school = form.querySelector('input[name="school"]').value.trim();
+  if (school) data.school = school;
+
+  const grade = form.querySelector('input[name="class"]').value.trim();
+  if (grade) data.grade = convertGradeToKey(grade); // нужна обратная функция, см. ниже
+
+  // Родитель
+  const parentName = form.querySelector('input[name="parent_name"]').value.trim();
+  const parentNameEn = form.querySelector('input[name="parent_name_en"]').value.trim();
+  const parentPhone = form.querySelector('input[name="parent_phone"]').value.trim();
+
+  if (parentName || parentNameEn || parentPhone) {
+    data.parent = {};
+    if (parentName) data.parent.name_ru = parentName;
+    if (parentNameEn) data.parent.name_en = parentNameEn;
+    if (parentPhone) data.parent.phone_number = parentPhone;
+  }
+
+  // Учитель
+  const teacherName = form.querySelector('input[name="teacher_name"]').value.trim();
+  const teacherNameEn = form.querySelector('input[name="teacher_name_en"]').value.trim();
+  const teacherPhone = form.querySelector('input[name="teacher_phone"]').value.trim();
+
+  if (teacherName || teacherNameEn || teacherPhone) {
+    data.teacher = {};
+    if (teacherName) data.teacher.name_ru = teacherName;
+    if (teacherNameEn) data.teacher.name_en = teacherNameEn;
+    if (teacherPhone) data.teacher.phone_number = teacherPhone;
+  }
+
+  // Изображение (если загрузили новый файл)
+  const imageInput = form.querySelector('input[type="file"]');
+  if (imageInput && imageInput.files.length > 0) {
+    data.image = imageInput.files[0]; // если API поддерживает multipart/form-data
+  }
+
+  console.log('Данные для PATCH:', data);
+
+  // Отправка PATCH
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('Токен не найден. Войдите снова.');
+    return;
+  }
+
+  const formData = new FormData();
+
+  // Переводим объект в FormData (для файлов)
+  for (const key in data) {
+    if (data[key] && typeof data[key] === 'object' && !(data[key] instanceof File)) {
+      formData.append(key, JSON.stringify(data[key]));
+    } else {
+      formData.append(key, data[key]);
+    }
+  }
+
+  const response = await fetch('https://portal.femo.kz/api/users/participant/profile/', {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error('Ошибка при PATCH:', errText);
+    alert('Ошибка: ',errText);
+    return;
+  }
+
+  const updated = await response.json();
+  // console.log('Профиль успешно обновлён:', updated);
+  // // alert('Профиль успешно обновлён!');
+}
+
+// Обратная конвертация числа класса в grade key
+function convertGradeToKey(num) {
+  const map = {
+    '1': 'first',
+    '2': 'second',
+    '3': 'third',
+    '4': 'fourth',
+    '5': 'fifth',
+    '6': 'sixth',
+    '7': 'seventh',
+    '8': 'eighth',
+    '9': 'ninth',
+    '10': 'tenth',
+    '11': 'eleventh',
+  };
+  return map[num] || '';
+}
+
+// Привязка кнопки "Отправить на модерацию"
+const submitBtn = document.getElementById('submit-button')
+
+if (submitBtn) {
+  submitBtn.addEventListener('click', async () => {
+    // Отключаем редактирование
+    toggleEditMode(false)
+
+    // Собираем и отправляем PATCH
+    try {
+      await submitProfilePatch()
+    } catch (err) {
+      console.error('Ошибка при обновлении профиля:', err)
+      alert('Ошибка при сохранении профиля')
+    }
+  })
+}
 
 
 

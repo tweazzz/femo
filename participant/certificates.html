@@ -29,7 +29,7 @@
             <img src="/src/assets/images/olympiad_noactive.svg" alt="Олимпиады" class="mr-3 size-6" />
             Олимпиады
           </a>
-          <a href="/participant/tasks.html" class="sidebar-link" data-i18n="dashboard.nav_tasks">
+          <a href="/participant/tasks.html"style="display: none;" class="sidebar-link" data-i18n="dashboard.nav_tasks">
             <img src="/src/assets/images/task_noactive.svg" alt="Задачи" class="mr-3 size-6" />
             Задачи
           </a>
@@ -37,7 +37,7 @@
             <img src="/src/assets/images/certificate_active.svg" alt="Сертификаты" class="mr-3 size-6" />
             Сертификаты
           </a>
-          <a href="/participant/rate-overall.html" class="sidebar-link" data-i18n="dashboard.nav_ratings">
+          <a href="/participant/rate-overall.html" style="display: none;" class="sidebar-link" data-i18n="dashboard.nav_ratings">
             <img src="/src/assets/images/ranking_noactive.svg" alt="Рейтинг" class="mr-3 size-6" />
             Рейтинг
           </a>
@@ -103,7 +103,7 @@
               <!-- MY BALANCE -->
               <div class="balance-card">
                 <span class="balance-label" data-i18n="dashboard.balance">Баланс:</span>
-                <span class="balance">0 ₸</span>
+                <span class="balance" id="balance_2">0 <span id="balance_currency_2"></span></span>
               </div>
               
 
@@ -508,9 +508,16 @@
     }
 
     const data = await response.json()
-    const balanceEl = document.querySelector('.balance')
-    if (balanceEl) {
-      balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
+    // --- Баланс ---
+    const balanceEl = document.getElementById('balance_2'); // span с числом
+    const currencyEl = document.getElementById('balance_currency_2');
+
+    const balanceNumber = Number(data.balance ?? 0);
+    balanceEl.childNodes[0].textContent = balanceNumber.toLocaleString('ru-RU') + ' ';
+
+    if (currencyEl) {
+      const currencyMap = { 'KZT': '₸', 'USD': '$', 'RUB': '₽', 'EUR': '€' };
+      currencyEl.textContent = currencyMap[data.currency?.toUpperCase()] || data.currency || '₸';
     }
   } catch (err) {
     console.error('Ошибка при загрузке баланса:', err)

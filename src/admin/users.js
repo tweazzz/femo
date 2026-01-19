@@ -232,32 +232,55 @@ function initFilters(users) {
   })
 }
 
+/* ----------------- applyFilters (заменить текущую) ----------------- */
 function applyFilters() {
-  // Обновляем текущие фильтры
+  // Обновляем текущие фильтры (city — нормализованное значение, т.к. option.value = normalized)
   currentFilters.search = document.querySelector('#search_by_id_or_name')
-    .value.trim()
-    .toLowerCase();
+    .value.trim().toLowerCase();
   currentFilters.country = document.querySelector('.country-filter').value;
-  currentFilters.city = document.querySelector('.city-filter').value;
-  currentFilters.role    = document.querySelector('.role-filter').value;
-  currentFilters.grade   = document.querySelector('.grade-filter').value;
+  currentFilters.city = document.querySelector('.city-filter').value || '';
+  currentFilters.role = document.querySelector('.role-filter').value;
+  currentFilters.grade = document.querySelector('.grade-filter').value;
 
-  // Фильтруем allUsers
+  // НЕ СТАВИМ currentPage = 1 здесь — это ломало навигацию при кликах по странице
+
   const filtered = allUsers.filter(user => {
     const term = currentFilters.search;
-    const idStr = user.id.toString();
-    const matchSearch  = user.full_name_ru.toLowerCase().includes(term) || idStr.includes(term);
-    const matchCountry = !currentFilters.country || user.country === currentFilters.country;
-    const matchRole    = !currentFilters.role    || user.role    === currentFilters.role;
-    const matchGrade   = !currentFilters.grade   || user.grade   === currentFilters.grade;
-    return matchSearch && matchCountry && matchRole && matchGrade;
+    const idStr = String(user.id || '');
+
+    const isDigits = /^\d+$/.test(term);
+
+    const matchSearch = isDigits
+      ? idStr.includes(term) // если пользователь ввёл только цифры — ищем по id
+      : ((user.full_name_ru || '').toLowerCase().includes(term) || idStr.includes(term));
+
+    const matchCountry =
+      !currentFilters.country ||
+      (user.country || '') === currentFilters.country;
+
+    const matchCity =
+      !currentFilters.city ||
+      normalize(user.city) === normalize(currentFilters.city);
+
+    const matchRole =
+      !currentFilters.role ||
+      (user.role || '') === currentFilters.role;
+
+    const matchGrade =
+      !currentFilters.grade ||
+      (user.grade || '') === currentFilters.grade;
+
+    return matchSearch && matchCountry && matchCity && matchRole && matchGrade;
   });
 
-  // Рендерим нужный «кусок» по текущей странице
   const start = (currentPage - 1) * pageSize;
   const pageItems = filtered.slice(start, start + pageSize);
   renderUsers(pageItems);
+
+  // и обновляем пагинацию/счётчики
+  updateTotalCountAndPagination();
 }
+
 
 const reverseClassMap = {
   first: 1,
@@ -479,11 +502,18 @@ function getFlagEmoji(country) {
 // Обновленный setupSearch с debounce
 function setupSearch() {
   const searchInput = document.querySelector('#search_by_id_or_name')
-  const debouncedSearch = debounce(() => applyFilters(), 500)
+  const debouncedSearch = debounce(() => {
+    // при изменении поискового текста возвращаемся на 1-ю страницу
+    currentPage = 1;
+    applyFilters();
+  }, 500)
 
   searchInput.addEventListener('input', debouncedSearch)
   searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') applyFilters()
+    if (e.key === 'Enter') {
+      currentPage = 1;
+      applyFilters()
+    }
   })
 }
 
@@ -501,7 +531,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   await populateCountryAndClassOptions()
 
   try {
-    await loadAllUsers()
+    await loadAllUsers();
+    await loadAllOlympiadsAndPopulate();
   } catch (err) {
     console.error('Ошибка инициализации:', err)
   }
@@ -561,45 +592,65 @@ let currentPage = 1
 let totalUserCount = 0
 
 
+/* ----------------- updateTotalCountAndPagination (заменить текущую) ----------------- */
 function updateTotalCountAndPagination() {
-  // Считаем, сколько элементов осталось после фильтрации
+  // Считаем, сколько элементов осталось после фильтрации (включая city)
   const totalCount = allUsers.filter(user => {
-    // та же логика фильтрации, что и в applyFilters, без среза
-    const term = currentFilters.search;
-    const idStr = user.id.toString();
-    return (
-      (user.full_name_ru.toLowerCase().includes(term) || idStr.includes(term)) &&
-      (!currentFilters.country || user.country === currentFilters.country) &&
-      (!currentFilters.role    || user.role    === currentFilters.role) &&
-      (!currentFilters.grade   || user.grade   === currentFilters.grade)
-    );
+    const term = currentFilters.search || '';
+    const idStr = String(user.id || '');
+
+    const matchSearch =
+      (user.full_name_ru || '').toLowerCase().includes(term) ||
+      idStr.includes(term);
+
+    const matchCountry =
+      !currentFilters.country ||
+      (user.country || '') === currentFilters.country;
+
+    const matchCity =
+      !currentFilters.city ||
+      normalize(user.city) === normalize(currentFilters.city);
+
+    const matchRole =
+      !currentFilters.role ||
+      (user.role || '') === currentFilters.role;
+
+    const matchGrade =
+      !currentFilters.grade ||
+      (user.grade || '') === currentFilters.grade;
+
+    return matchSearch && matchCountry && matchCity && matchRole && matchGrade;
   }).length;
 
   totalUserCount = totalCount;
-  document.getElementById('total-users-count').textContent = totalCount;
+  const countEl = document.getElementById('total-users-count');
+  if (countEl) countEl.textContent = totalCount;
   renderPaginationControls(totalCount);
 }
-
 function renderPaginationControls(totalCount) {
   const container = document.getElementById('pagination');
   container.innerHTML = '';
-  const totalPages = Math.ceil(totalCount / pageSize);
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize)); // минимум 1 для корректного отображения
+
+  // Clamp currentPage в допустимый диапазон
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
 
   // Кнопка «←»
   const prev = document.createElement('button');
   prev.innerHTML = '&larr;';
-  prev.disabled = currentPage === 1;
+  prev.disabled = currentPage === 1 || totalCount === 0;
   prev.className = 'px-3 py-1 border rounded';
   prev.onclick = () => {
     if (currentPage > 1) {
       currentPage--;
       applyFilters();
-      updateTotalCountAndPagination();
+      // updateTotalCountAndPagination будет вызван внутри applyFilters уже
     }
   };
   container.appendChild(prev);
 
-  // Номера
+  // Номера — показываем все (если нужно позже можно сделать окно пагинации)
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement('button');
     btn.textContent = i;
@@ -609,9 +660,9 @@ function renderPaginationControls(totalCount) {
         : 'text-gray-600 hover:bg-gray-50'
     }`;
     btn.onclick = () => {
+      if (currentPage === i) return;
       currentPage = i;
       applyFilters();
-      updateTotalCountAndPagination();
     };
     container.appendChild(btn);
   }
@@ -619,17 +670,17 @@ function renderPaginationControls(totalCount) {
   // Кнопка «→»
   const next = document.createElement('button');
   next.innerHTML = '&rarr;';
-  next.disabled = currentPage === totalPages || totalPages === 0;
+  next.disabled = currentPage === totalPages || totalCount === 0;
   next.className = 'px-3 py-1 border rounded';
   next.onclick = () => {
     if (currentPage < totalPages) {
       currentPage++;
       applyFilters();
-      updateTotalCountAndPagination();
     }
   };
   container.appendChild(next);
 }
+
 
 async function addUser(formId, role = 'participant') {
   const form = document.getElementById(formId)
@@ -1046,6 +1097,131 @@ function populateCountryAndClassOptions() {
   });
 }
 
+/* ---------------------- Утилиты для запросов с пагинацией ---------------------- */
+/**
+ * Загружает все страницы API, если ответ содержит { results, next }.
+ * Если ответ — простой массив, вернёт его.
+ * @param {string} url абсолютный или относительный URL
+ * @returns {Promise<Array>}
+ */
+async function fetchAllPages(url) {
+  const items = [];
+  let next = url;
+  while (next) {
+    const res = await authorizedFetch(next);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} при загрузке ${next}`);
+    }
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      // API вернул массив — добавляем и выходим
+      items.push(...data);
+      break;
+    }
+    if (data && Array.isArray(data.results)) {
+      items.push(...data.results);
+      // data.next может быть относительным или абсолютным
+      next = data.next;
+    } else {
+      // неожиданный формат — завершаем
+      break;
+    }
+  }
+  return items;
+}
+
+/* ---------------------- Загрузка и populate для олимпиад ---------------------- */
+/**
+ * Загружает все олимпиады (с пагинацией) и наполняет селект .olympiad-filter
+ */
+async function loadAllOlympiadsAndPopulate() {
+  try {
+    const url = 'https://portal.femo.kz/api/olympiads/dashboard/';
+    const olympiads = await fetchAllPages(url); // массив объектов olympiad
+
+    // сохранить в window для отладки/доступа при необходимости
+    window._femo_olympiads = olympiads;
+
+    const select = document.querySelector('.olympiad-filter');
+    if (!select) {
+      console.warn('Не найден селект .olympiad-filter — добавь его в HTML.');
+      return;
+    }
+
+    // build options: пустой + список
+    const optionsHtml = [
+      `<option value="">${(window.i18nDict && window.i18nDict['users.all_olympiads']) || 'Все олимпиады'}</option>`,
+      ...olympiads.map(o => {
+        const title = o.title || ('#' + o.id);
+        const year = o.year ? ` (${o.year})` : '';
+        // value = id (строка)
+        return `<option value="${String(o.id)}">${escapeHtml(title + year)}</option>`;
+      })
+    ].join('');
+
+    select.innerHTML = optionsHtml;
+
+    // при смене olympiad — грузим пользователей с параметром olympiad
+    select.removeEventListener('change', onOlympiadChanged);
+    select.addEventListener('change', onOlympiadChanged);
+
+    // если словарь уже есть — переведём
+    if (Object.keys(window.i18nDict || {}).length) translateNode(select);
+  } catch (err) {
+    console.error('Ошибка загрузки олимпиад:', err);
+  }
+}
+
+/**
+ * Обработчик смены селекта олимпиад
+ */
+async function onOlympiadChanged(e) {
+  const select = e.target;
+  const val = select.value;
+  currentPage = 1;
+
+  try {
+    if (!val) {
+      // пусто — загружаем всех пользователей (локальный fetch)
+      await loadAllUsers();
+      return;
+    }
+
+    await loadUsersByOlympiad(val);
+  } catch (err) {
+    console.error('onOlympiadChanged error:', err);
+    // на ошибке можно откатиться к полному списку
+    await loadAllUsers();
+  }
+}
+
+/* ---------------------- Загрузка пользователей по олимпиаде ---------------------- */
+/**
+ * Загружает пользователей, отфильтрованных по олимпиады (olympiad id),
+ * поддерживая как массивную, так и paginated-форму ответа.
+ */
+async function loadUsersByOlympiad(olympiadId) {
+  try {
+    const url = `https://portal.femo.kz/api/users/dashboard/?olympiad=${encodeURIComponent(olympiadId)}`;
+    // используем ту же fetchAllPages — если ответ прост: массив -> он вернёт его; если paginated -> тоже вернёт все результаты
+    const users = await fetchAllPages(url);
+
+    if (!Array.isArray(users)) {
+      throw new Error('Ожидался массив пользователей от сервера');
+    }
+
+    allUsers = users;
+    // Пересоздаём фильтры и показываем первую страницу
+    initFilters(allUsers);
+    currentPage = 1;
+    updateTotalCountAndPagination();
+    applyFilters();
+  } catch (err) {
+    console.error('Ошибка загрузки пользователей по олимпиаде:', err);
+    throw err;
+  }
+}
+
 // --- Вспомогательная: переводит элементы внутри node по data-i18n из window.i18nDict ---
 function translateNode(node) {
   const dict = window.i18nDict || {};
@@ -1062,11 +1238,16 @@ function translateNode(node) {
   });
 }
 
-// --- Обновлённый initFilters: использует словарь, ставит data-i18n и переводит сразу, либо позже по событию ---
+// утилита нормализации (вставь рядом с другими утилитами)
+function normalize(val) {
+  return (val || '').toString().trim().toLowerCase();
+}
+
+/* ----------------- initFilters (заменить текущую) ----------------- */
 function initFilters(users) {
   const dict = window.i18nDict || {};
 
-  // Страны
+  // --- Страны (как было) ---
   const countries = [...new Set(users.map(u => u.country))].filter(Boolean);
   const countrySelect = document.querySelector('.country-filter');
   if (countrySelect) {
@@ -1075,11 +1256,35 @@ function initFilters(users) {
       <option value="" data-i18n="users.all_countries">${label}</option>
       ${countries.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
     `;
-    // если словарь уже есть — переведём сразу
     if (Object.keys(dict).length) translateNode(countrySelect);
   }
 
-  // Классы
+  // --- Города: группируем по normalize, показываем читабельный вариант ---
+  const cityMap = new Map(); // key: normalized -> value: first-seen original
+  users.forEach(u => {
+    if (u.city) {
+      const norm = normalize(u.city);
+      if (norm && !cityMap.has(norm)) {
+        cityMap.set(norm, u.city.toString().trim());
+      }
+    }
+  });
+
+  // Сортируем по видимому названию (localeCompare с 'ru' лучше для кириллицы)
+  const cityEntries = Array.from(cityMap.entries())
+    .sort((a, b) => a[1].localeCompare(b[1], 'ru'));
+
+  const citySelect = document.querySelector('.city-filter');
+  if (citySelect) {
+    const label = dict['users.all_cities'] || 'Все города';
+    citySelect.innerHTML = `
+      <option value="">${escapeHtml(label)}</option>
+      ${cityEntries.map(([norm, display]) => `<option value="${escapeHtml(norm)}">${escapeHtml(display)}</option>`).join('')}
+    `;
+    if (Object.keys(dict).length) translateNode(citySelect);
+  }
+
+  // --- Классы (как было) ---
   const grades = [...new Set(users.map((u) => u.grade))].filter(Boolean).sort();
   const gradeSelect = document.querySelector('.grade-filter');
   if (gradeSelect) {
@@ -1091,13 +1296,16 @@ function initFilters(users) {
     if (Object.keys(dict).length) translateNode(gradeSelect);
   }
 
-  // Навешиваем обработчики (если ещё не навешаны)
+  // Навешиваем обработчики (убираем старые чтобы не дублировались)
   document.querySelectorAll('select').forEach((select) => {
-    // avoid double-binding: remove listener first (simple approach)
     select.removeEventListener('change', applyFilters);
-    select.addEventListener('change', applyFilters);
+    select.addEventListener('change', () => {
+      currentPage = 1;
+      applyFilters();
+    });
   });
 }
+
 
 // Простая утилита для безопасного вставления текста в HTML (предотвращает XSS при вставке значений)
 function escapeHtml(str) {
