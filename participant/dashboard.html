@@ -226,7 +226,7 @@
         <div class="relative">
           <div class="flex flex-col rounded-3xl bg-white shadow-xl">
             <div class="flex items-center justify-end px-6 pt-6">
-              <button type="button" onclick="toggleModal('modalBalance')" class="text-gray-400 hover:text-gray-500">
+              <button type="button" class="text-gray-400 hover:text-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" class="lucide lucide-x h-5 w-5 cursor-pointer"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
               </button>
             </div>
@@ -404,10 +404,12 @@
                 </p>
               </div>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="toggleModal('modalBalance')" class="block w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary whitespace-nowrap">
+                <button type="button"  class="block w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary whitespace-nowrap">
                   Отменить
                 </button>
                 <a href="https://www.youtube.com/watch?v=XMqStfX43e0"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   class="block w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white whitespace-nowrap">
                   Посмотреть инструкцию
                 </a>
@@ -1060,62 +1062,86 @@ async function loadBalance() {
   }
 
   try {
-    const response = await authorizedFetch('https://portal.femo.kz/api/payments/participant/dashboard/balance/', {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const response = await authorizedFetch(
+      'https://portal.femo.kz/api/payments/participant/dashboard/balance/',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
 
     if (!response.ok) {
       throw new Error(`Ошибка загрузки баланса: ${response.status}`)
     }
 
     const data = await response.json()
+
+    // --- Баланс ---
     const balanceEl = document.querySelector('.balance')
-    if (balanceEl) balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
-
-    // Показываем попап только если is_viewed != true
-    const isViewed = localStorage.getItem('is_viewed')
-    if (isViewed !== 'true') {
-      toggleModal('modalBalance', true)
-
-      const modal = document.getElementById('modalBalance')
-      if (modal) {
-        function closeModal() {
-          toggleModal('modalBalance', false)
-          // помечаем как просмотренное
-          localStorage.setItem('is_viewed', 'true')
-        }
-
-        // крестик
-        modal.querySelector('button[onclick*="toggleModal(\'modalBalance\'"]')?.addEventListener('click', closeModal)
-
-        // кнопка "Отменить"
-        modal.querySelectorAll('button[type="button"]').forEach(btn => {
-          btn.addEventListener('click', closeModal)
-        })
-
-        // клик вне контента модалки
-        modal.addEventListener('click', (e) => {
-          const content = modal.querySelector('.flex.flex-col.rounded-3xl')
-          if (content && !content.contains(e.target)) {
-            closeModal()
-          }
-        })
-      }
+    if (balanceEl) {
+      balanceEl.textContent = `${data.balance.toLocaleString('ru-RU')} ₸`
     }
+
+    // --- ЛОГИКА ПОПАПА (1 раз за жизнь) ---
+    const isViewed = localStorage.getItem('is_viewed')
+
+    // показываем ТОЛЬКО если поля нет или оно false
+    if (isViewed === 'true') return
+
+    const modalId = 'modalBalance'
+    const modal = document.getElementById(modalId)
+    if (!modal) return
+
+    // открываем модалку
+    toggleModal(modalId, true)
+
+    let alreadyClosed = false
+
+    const closeModal = () => {
+      if (alreadyClosed) return
+      alreadyClosed = true
+
+      toggleModal(modalId, false)
+
+      // 💡 фиксируем навсегда
+      localStorage.setItem('is_viewed', 'true')
+    }
+    // клик по ссылке "Посмотреть инструкцию"
+    const instructionLink = modal.querySelector('a[href*="youtube.com"]')
+    if (instructionLink) {
+      instructionLink.addEventListener(
+        'click',
+        () => {
+          closeModal()
+        },
+        { once: true }
+      )
+    }
+    // // крестик (если есть onclick в HTML — он не мешает)
+    // modal.querySelectorAll('[onclick]').forEach(btn => {
+    //   btn.addEventListener('click', closeModal, { once: true })
+    // })
+
+    // все кнопки типа button (Отменить и т.п.)
+    modal.querySelectorAll('button[type="button"]').forEach(btn => {
+      btn.addEventListener('click', closeModal, { once: true })
+    })
+
+    // клик вне контента
+    modal.addEventListener(
+      'click',
+      (e) => {
+        const content = modal.querySelector('.flex.flex-col.rounded-3xl')
+        if (content && !content.contains(e.target)) {
+          closeModal()
+        }
+      },
+      { once: true }
+    )
   } catch (err) {
     console.error('Ошибка при загрузке баланса:', err)
   }
-}
-
-// Функция toggleModal
-function toggleModal(id, show) {
-  const modal = document.getElementById(id)
-  if (!modal) return
-  if (show === undefined) show = !modal.classList.contains('hidden')
-  if (show) modal.classList.remove('hidden')
-  else modal.classList.add('hidden')
 }
 
 // Инициализация при загрузке страницы

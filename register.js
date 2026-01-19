@@ -1,3 +1,10 @@
+const getCurrentLang = () => {
+  return (
+    document.documentElement.lang ||
+    localStorage.getItem('lang') ||
+    'ru'
+  ).toLowerCase();
+};
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('form');
   if (!form) return;
@@ -63,6 +70,55 @@ document.addEventListener('DOMContentLoaded', () => {
     "LK":"Шри-Ланка","SD":"Судан","SR":"Суринам","SJ":"Шпицберген и Ян-Майен","SE":"Швеция","CH":"Швейцария","SY":"Сирия","TW":"Тайвань","TJ":"Таджикистан","TZ":"Танзания","TH":"Таиланд","TL":"Восточный Тимор","TG":"Того","TK":"Токелау","TO":"Тонга","TT":"Тринидад и Тобаго","TN":"Тунис","TR":"Турция","TM":"Туркменистан","TC":"Тёркс и Кайкос","TV":"Тувалу","UG":"Уганда","UA":"Украина","AE":"Объединённые Арабские Эмираты","GB":"Великобритания","US":"Соединённые Штаты","UM":"Малые отдалённые острова США","UY":"Уругвай","UZ":"Узбекистан",
     "VU":"Вануату","VE":"Венесуэла","VN":"Вьетнам","VG":"Британские Виргинские острова","VI":"Виргинские острова (США)","WF":"Уоллис и Футуна","EH":"Западная Сахара","YE":"Йемен","ZM":"Замбия","ZW":"Зимбабве"
   };
+const COUNTRIES_EN = {
+  "AF":"Afghanistan","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla",
+  "AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan",
+  "BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan",
+  "BO":"Bolivia","BQ":"Bonaire, Sint Eustatius and Saba","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil",
+  "IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi",
+  "KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad",
+  "CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands",
+  "CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands",
+  "CR":"Costa Rica","CI":"Côte d’Ivoire","HR":"Croatia","CU":"Cuba","CW":"Curaçao","CY":"Cyprus","CZ":"Czech Republic",
+  "DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador",
+  "GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","SZ":"Eswatini","ET":"Ethiopia",
+  "FK":"Falkland Islands","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana",
+  "PF":"French Polynesia","TF":"French Southern Territories",
+  "GA":"Gabon","GM":"Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland",
+  "GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey",
+  "GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana",
+  "HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary",
+  "IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy",
+  "JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan",
+  "KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","KW":"Kuwait","KG":"Kyrgyzstan",
+  "LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein",
+  "LT":"Lithuania","LU":"Luxembourg",
+  "MO":"Macau","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta",
+  "MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico",
+  "FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco",
+  "MZ":"Mozambique","MM":"Myanmar",
+  "NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua",
+  "NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MK":"North Macedonia",
+  "MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman",
+  "PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru",
+  "PH":"Philippines","PN":"Pitcairn Islands","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar",
+  "RE":"Réunion","RO":"Romania","RU":"Russia","RW":"Rwanda",
+  "BL":"Saint Barthélemy","SH":"Saint Helena, Ascension and Tristan da Cunha","KN":"Saint Kitts and Nevis",
+  "LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines",
+  "WS":"Samoa","SM":"San Marino","ST":"São Tomé and Príncipe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia",
+  "SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SX":"Sint Maarten","SK":"Slovakia","SI":"Slovenia",
+  "SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa",
+  "GS":"South Georgia and the South Sandwich Islands","SS":"South Sudan","ES":"Spain",
+  "LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SE":"Sweden","CH":"Switzerland",
+  "SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste",
+  "TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey",
+  "TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine",
+  "AE":"United Arab Emirates","GB":"United Kingdom","US":"United States",
+  "UM":"United States Minor Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan",
+  "VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam",
+  "VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna",
+  "EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"
+};
 
   const submitButton = form.querySelector('button[type="submit"]');
 
@@ -77,7 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
     countrySelect.appendChild(placeholder);
 
     const items = Object.keys(mapping).map(code => ({ code, name: mapping[code] || code }));
-    items.sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }));
+    items.sort((a, b) =>
+      a.name.localeCompare(b.name, lang.startsWith('en') ? 'en' : 'ru', {
+        sensitivity: 'base'
+      })
+    );
 
     for (const it of items) {
       const opt = document.createElement('option');
@@ -87,7 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  populateCountrySelect(COUNTRIES_RU);
+  const lang = getCurrentLang();
+
+  const countryMap =
+    lang.startsWith('en')
+      ? COUNTRIES_EN
+      : COUNTRIES_RU;
+
+  populateCountrySelect(countryMap);
 
   const isSelectChosen = (select) => {
     if (!select) return false;
