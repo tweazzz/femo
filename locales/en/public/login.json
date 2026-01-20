@@ -9,7 +9,7 @@
     "login_btn": "Log In",
     "no_account?": "Don't have an account?",
     "register": "Register",
-
+    "register.pass_1": "Create a password",
     "register.welcome": "Welcome to FEMO!",
     "register.welcome_2": "Sign up and start your journey",
     "register.welcome_text": "If you are under 14 years old, parental or guardian consent is required.",
@@ -18,7 +18,8 @@
     "register.representative": "Representative",
     "register.country": "Your Country",
     "register.fio": "Full Name",
-    "register.pass_1": "Create a password",
+    "register.pass_placeholder": "Create a password",
+    "register.pass_repeat_placeholder": "Repeat the password",
     "register.pass_info": "8 or more characters, including letters, numbers, and symbols",
     "register.btn": "Register and Start",
     "register.conf1": "By creating a student account, you agree to the ",
@@ -41,6 +42,8 @@
     "participant_register.teacher_phone": "Teacher's phone number",
     "participant_register.teacher_email": "Teacher's email",
     "participant_register.start_learn" : "Start learning",
+    "register_participant.city": "Almaty",
+    "register_participant.school_name": "Secondary School No. 16 named after A. Sharipov",
 
     "participant_register.reg_success_congrats": "Congratulations",
     "participant_register.reg_success": "You are registered",

@@ -213,9 +213,17 @@
     "profile_settings.current_pass": "Current password",
     "profile_settings.new_pass": "New password",
     "profile_settings.verify_pass": "Confirm password",
-    "profile_settings.update_pass_btn": "Update password"
+    "profile_settings.update_pass_btn": "Update password",
+
+    "balance.not_enough": "Insufficient balance",
+    "balance.top_up_to_register": "Please top up your balance to register for the olympiad.",
+    "common.cancel": "Cancel",
+    "balance.top_up": "Top up balance",
 
 
+    "payment_success.h1": "You are registered!",
+    "payment_success.txt1": "All information about the olympiad will be sent to the email address provided during registration. If you have any questions, you can contact us at: ",
+    "payment_success.btn": "Got it"
 
   }
   

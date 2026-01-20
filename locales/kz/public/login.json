@@ -18,6 +18,8 @@
     "register.representative" : "Өкіл",
     "register.country": "Сіздің еліңіз",
     "register.fio" : "Аты-жөніңіз",
+    "register.pass_placeholder": "Құпиясөзді енгізіңіз",
+    "register.pass_repeat_placeholder": "Құпиясөзді қайталаңыз",
     "register.pass_1": "Құпия сөз ойлаңыз",
     "register.pass_info": "8 немесе одан көп символ, әріптерді, сандарды және таңбаларды қамтуы керек",
     "register.btn": "Тіркеліп бастаңыз",
@@ -42,6 +44,11 @@
     "participant_register.teacher_phone" : "Мұғалімнің телефон номері",
     "participant_register.teacher_email" : "Мұғалімнің поштасы",
     "participant_register.start_learn" : "Оқуды бастау",
+
+    "register_participant.city": "Алматы",
+    "register_participant.school_name": "А. Шәріпов атындағы №16 жалпы білім беретін мектеп",
+
+
     "participant_register.reg_success_congrats": "Құттықтаймыз",
     "participant_register.reg_success" : "Сіз тіркелдіңіз",
     "participant_register.txt1" : "Платформаны пайдалануды бастау үшін,",

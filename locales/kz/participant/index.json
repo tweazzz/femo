@@ -212,7 +212,16 @@
     "profile_settings.current_pass": "Ағымдағы құпиясөз",
     "profile_settings.new_pass": "Жаңа құпиясөз",
     "profile_settings.verify_pass": "Құпиясөзді растау",
-    "profile_settings.update_pass_btn": "Құпиясөзді жаңарту"
+    "profile_settings.update_pass_btn": "Құпиясөзді жаңарту",
+
+    "balance.not_enough": "Баланс жеткіліксіз",
+    "balance.top_up_to_register": "Олимпиадаға тіркелу үшін балансты толықтырыңыз.",
+    "common.cancel": "Бас тарту",
+    "balance.top_up": "Балансты толықтыру",
+
+    "payment_success.h1": "Сіз тіркелдіңіз!",
+    "payment_success.txt1": "Олимпиада туралы барлық ақпарат тіркелу кезінде көрсетілген электрондық поштаға жіберіледі. Барлық сұрақтар бойынша мына мекенжайға жаза аласыз: ",
+    "payment_success.btn": "Түсінікті"
 
 
   }
