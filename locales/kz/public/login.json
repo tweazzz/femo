@@ -33,6 +33,8 @@
     "participant_register.info_text" : "Бұл сенің деңгейіңе сәйкес тапсырмаларды таңдауға көмектеседі.",
     "participant_register.choose_city" : "Қала атауы",
     "participant_register.school" : "Мектеп атауы",
+    "participant_register.class": "Сынып",
+    "participant_register.lang": "Оқыту тілі",
     "participant_register.choose_class" : "Сыныпты таңдаңыз",
     "participant_register.fio_parent" : "Ата-ананың толық аты-жөні",
     "participant_register.parent_phone" : "Ата-ананың телефон номері",

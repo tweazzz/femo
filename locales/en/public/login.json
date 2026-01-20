@@ -32,6 +32,8 @@
     "participant_register.info_text": "This will help us choose tasks that match your level.",
     "participant_register.choose_city": "City",
     "participant_register.school": "School name",
+    "participant_register.class": "Class",
+    "participant_register.lang": "Language of education",
     "participant_register.choose_class": "Select class",
     "participant_register.fio_parent": "Parent's full name",
     "participant_register.parent_phone": "Parent's phone number",
