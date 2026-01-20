@@ -61,7 +61,11 @@
     "olympiads.start_now": "Бастау",
     "olympiads.podrobnee_btn": "Толығырақ",
     "olympiads.view-results": "Нәтижелерді көру",
-
+    "about.olympiad": "Олимпиада жайлы",
+    "time-remaining": "Қалды ",
+    "olympiads.paid": "Төленген",
+    "olympiads.unpaid": "Толенбеген",
+    "olympiad_price": "Баға",
     "tasks.daily_tasks": "Күн тапсырмалары",
     "tasks.all_tasks": "Барлық тапсырмалар",
     "tasks.all_classes": "Барлық сыныптар",

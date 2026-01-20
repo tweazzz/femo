@@ -546,6 +546,8 @@ function renderActiveOlympiads(olympiads) {
     const statusClass = olymp.is_paid ? 'paid' : 'unpaid'
     const statusText  = olymp.is_paid ? 'Оплачено' : 'Не оплачено'
 
+    const statusI18nKey = olymp.is_paid ? 'olympiads.paid' : 'olympiads.unpaid'
+
     // Шаблон кнопки (показывается только если не оплачено)
     const payButton = !olymp.is_paid
       ? `<button
@@ -556,11 +558,11 @@ function renderActiveOlympiads(olympiads) {
 
     return `
       <div class="custom-border w-full max-w-sm rounded-2xl p-4 mb-4">
-        <div class="custom-border card ${statusClass} mb-2" style='width: fit-content;'>${statusText}</div>
+        <div class="custom-border card ${statusClass} mb-2" style='width: fit-content;' data-i18n="${statusI18nKey}">${statusText}</div>
         <p class="mb-4 font-bold">${olymp.title}</p>
         <div class="mb-6 flex *:flex-1">
           <div>
-            <p class="text-gray-primary text-xs">Цена</p>
+            <p class="text-gray-primary text-xs" data-i18n="olympiad_price">Цена</p>
             <div class="text-blue-primary flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -570,7 +572,7 @@ function renderActiveOlympiads(olympiads) {
             </div>
           </div>
           <div>
-            <p class="text-gray-primary text-xs">Осталось</p>
+            <p class="text-gray-primary text-xs" data-i18n="time-remaining">Осталось</p>
             <div class="text-red-primary flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

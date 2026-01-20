@@ -382,6 +382,9 @@ async function loadOlympiadCards() {
       const dateLabel = document.createElement('span');
       dateLabel.className = 'text-gray-secondary mb-1 text-xs';
       dateLabel.textContent = dateInfoText;
+      if (dateInfoText === 'Осталось') {
+        dateLabel.setAttribute('data-i18n', 'time-remaining');
+      }
       const dateP = document.createElement('p');
       dateP.className = 'text-black-primary text-sm leading-relaxed whitespace-normal';
       const useVuesaxIcon = isFinished || isRegistered || (olympiad.registration_status || '').toString().toLowerCase().includes('soon');
@@ -445,6 +448,7 @@ async function loadOlympiadCards() {
           aboutBtn.rel = 'noopener noreferrer';
           aboutBtn.className = 'inline-flex items-center justify-center w-full px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary min-w-[120px] whitespace-nowrap';
           aboutBtn.textContent = 'Об олимпиаде';
+          aboutBtn.setAttribute('data-i18n', 'about.olympiad');
           btns.appendChild(aboutBtn);
           // const startBtn = document.createElement('button');
           // startBtn.addEventListener('click', () => openStartOlympiadModal(olympiad.id));

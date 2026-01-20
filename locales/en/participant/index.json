@@ -61,7 +61,11 @@
     "olympiads.start_now": "Start Now",
     "olympiads.podrobnee_btn": "More details",
     "olympiads.view-results": "View results",
-
+    "about.olympiad": "About the olympiad",
+    "time-remaining": "Left ",
+    "olympiads.paid": "Paid",
+    "olympiads.unpaid": "Unpaid",
+    "olympiad_price": "Price",
     "tasks.daily_tasks": "Daily tasks",
     "tasks.all_tasks": "All tasks",
     "tasks.all_classes": "All grades",
