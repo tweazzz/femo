@@ -303,7 +303,7 @@ async function loadAssignments(page = 1) {
     // ⛔ Если платежей нет — выводим сообщение и прекращаем выполнение
     if (totalAssignmentCount === 0) {
       document.getElementById('payments-tbody').innerHTML = `
-        <tr><td colspan="8" class="text-center text-gray-500 py-4">
+        <tr><td colspan="8" class="text-center text-gray-500 py-4" data-i18n="no_history_payments">
           Нет истории платежей
         </td></tr>
       `
@@ -329,7 +329,7 @@ function renderAssignmentTable(assignments) {
 
   tbody.innerHTML =
     assignments.length === 0
-      ? `<tr><td colspan="8" class="text-center text-gray-500 py-4">Нет данных</td></tr>`
+      ? `<tr><td colspan="8" class="text-center text-gray-500 py-4" data-i18n="no_data">Нет данных</td></tr>`
       : assignments
           .map((task) => {
             const encodedTask = encodeURIComponent(JSON.stringify(task))
@@ -514,30 +514,39 @@ async function loadActiveOlympiads() {
 
 
 function formatTimeLeft(seconds) {
-  // Безопасно приводим к числу
+  const lang = localStorage.getItem('lang') || 'ru'; // текущий язык
+  const labelsMap = {
+    ru: { day: 'д', hour: 'ч', minute: 'мин', less: 'менее минуты' },
+    en: { day: 'd', hour: 'h', minute: 'min', less: 'less than a minute' },
+    kk: { day: 'күн', hour: 'сағ', minute: 'мин', less: 'бір минуттан аз' }
+  };
+  
+  const labels = labelsMap[lang === 'kz' ? 'kk' : (lang === 'en' ? 'en' : 'ru')];
+
   const total = Number(seconds);
   if (!Number.isFinite(total) || total < 0) return '—';
 
-  const days = Math.floor(total / 86400);          // 24 * 3600
+  const days = Math.floor(total / 86400);
   const hours = Math.floor((total % 86400) / 3600);
   const minutes = Math.floor((total % 3600) / 60);
 
-  // Формируем лаконичный вид: "9 д 13 ч 44 мин"
   const parts = [];
-  if (days > 0) parts.push(`${days} д`);
-  if (hours > 0) parts.push(`${hours} ч`);
-  if (minutes > 0) parts.push(`${minutes} мин`);
+  if (days > 0) parts.push(`${days} ${labels.day}`);
+  if (hours > 0) parts.push(`${hours} ${labels.hour}`);
+  if (minutes > 0) parts.push(`${minutes} ${labels.minute}`);
 
-  // Если всё меньше минуты
-  return parts.join(' ') || 'менее минуты';
+  return parts.join(' ') || labels.less;
 }
+
+
 
 function renderActiveOlympiads(olympiads) {
   const wrapper = document.querySelector('[data-olympiads-wrapper]')
   if (!wrapper) return
 
   if (olympiads.length === 0) {
-    wrapper.innerHTML = '<p class="text-gray-500">Нет активных олимпиад</p>'
+    wrapper.innerHTML = '<p class="text-gray-500" data-i18n="no_active_olympiad">Нет активных олимпиад</p>'
+    if (typeof applyTranslations === 'function') applyTranslations(window.i18nDict || {})
     return
   }
 
@@ -552,7 +561,7 @@ function renderActiveOlympiads(olympiads) {
     const payButton = !olymp.is_paid
       ? `<button
            onclick="payOlympiad(${olymp.id})"
-           class="bg-orange-primary block w-full rounded-3xl p-1.5 text-center text-white"
+           class="bg-orange-primary block w-full rounded-3xl p-1.5 text-center text-white" data-i18n="pay_button"
          >Оплатить участие</button>`
       : ''
 
@@ -586,6 +595,8 @@ function renderActiveOlympiads(olympiads) {
       </div>
     `
   }).join('')
+    // 🔹 Важный момент — вызвать перевод сразу после вставки
+  if (typeof applyTranslations === 'function') applyTranslations(window.i18nDict || {})
 }
 
 function downloadPayment(id) {

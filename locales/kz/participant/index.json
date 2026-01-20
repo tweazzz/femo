@@ -66,6 +66,7 @@
     "olympiads.paid": "Төленген",
     "olympiads.unpaid": "Толенбеген",
     "olympiad_price": "Баға",
+    "pay_button": "Қатысу ақысын төлеу",
     "tasks.daily_tasks": "Күн тапсырмалары",
     "tasks.all_tasks": "Барлық тапсырмалар",
     "tasks.all_classes": "Барлық сыныптар",
@@ -222,10 +223,17 @@
     "balance.top_up_to_register": "Олимпиадаға тіркелу үшін балансты толықтырыңыз.",
     "common.cancel": "Бас тарту",
     "balance.top_up": "Балансты толықтыру",
+    "no_history_payments": "Төлемдер тарихы жоқ",
+    "no_data": "Деректер жоқ",
+    "no_active_olympiad": "Белсенді олимпиадалар жоқ",
 
     "payment_success.h1": "Сіз тіркелдіңіз!",
     "payment_success.txt1": "Олимпиада туралы барлық ақпарат тіркелу кезінде көрсетілген электрондық поштаға жіберіледі. Барлық сұрақтар бойынша мына мекенжайға жаза аласыз: ",
-    "payment_success.btn": "Түсінікті"
+    "payment_success.btn": "Түсінікті",
+
+    "dashboard.register_popup_welcome": "Қош келдіңіз!",
+    "dashboard.register_popup_txt": "Біз мұны қалай жасау керектігін түсіндіретін бейне-нұсқаулық дайындадық.",
+    "dashboard.register_popup_watch_tutorial": "Нұсқаулықты көру"
 
 
   }

@@ -395,21 +395,22 @@
                 </svg>
               </div>
               <div class="mb-2 text-center text-2xl font-bold">
-                <p>Добро пожаловать!</p>
+                <p data-i18n="dashboard.register_popup_welcome">Добро пожаловать!</p>
               </div>
               <div class="mt-2 mb-6 text-center">
                 <p class="text-sm text-gray-600">
-                  Чтобы зарегистрироваться на олимпиаду, необходимо пополнить баланс в разделе 
-                  <span style="font-weight: 600;">Баланс и Платежи.</span> Мы подготовили видеоинструкцию где объяснили как это сделать. 
+                  <span>Чтобы зарегистрироваться на олимпиаду, необходимо пополнить баланс в разделе </span>
+                  <span style="font-weight: 600;" data-i18n="dashboard.nav_payments">Баланс и Платежи.</span> <span data-i18n="dashboard.register_popup_txt">Мы подготовили видеоинструкцию где объяснили как это сделать. </span>
                 </p>
               </div>
               <div class="flex items-center gap-3">
-                <button type="button"  class="block w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary whitespace-nowrap">
+                <button data-i18n="my_way.cancel_btn" type="button"  class="block w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium border border-orange-primary bg-white text-orange-primary whitespace-nowrap">
                   Отменить
                 </button>
-                <a href="https://www.youtube.com/watch?v=XMqStfX43e0"
+                <a href="https://www.youtube.com/watch?v=VoxTHevRhHE"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-i18n="dashboard.register_popup_watch_tutorial"
                   class="block w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-orange-primary text-white whitespace-nowrap">
                   Посмотреть инструкцию
                 </a>
@@ -1301,9 +1302,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 </html>
 <script>
   const VIDEO_BY_LANG = {
-    ru: '6cDlRMMZFOc',
-    kz: 'K5KVEU3aaeQ',
-    en: 'mmeLCAP74KA'
+    ru: 'VoxTHevRhHE',
+    kz: 'VoxTHevRhHE',
+    en: 'VoxTHevRhHE'
   };
 
   document.addEventListener('DOMContentLoaded', () => {

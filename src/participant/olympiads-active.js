@@ -200,23 +200,40 @@ function slugify(str) {
 }
 
 function formatSecondsToHoursMinutes(seconds) {
-  if (!seconds || isNaN(seconds)) return '—';
+  const lang = localStorage.getItem('lang') || 'ru';
+  const labelsMap = {
+    ru: { day: 'д', hour: 'ч', minute: 'мин', less: 'менее минуты' },
+    en: { day: 'd', hour: 'h', minute: 'min', less: 'less than a minute' },
+    kk: { day: 'күн', hour: 'сағ', minute: 'мин', less: 'бір минуттан аз' }
+  };
+  const labels = labelsMap[lang === 'kz' ? 'kk' : (lang === 'en' ? 'en' : 'ru')];
 
-  const totalMinutes = Math.floor(seconds / 60);
-  const totalHours = Math.floor(totalMinutes / 60);
+  const total = Number(seconds);
+  if (!Number.isFinite(total) || total < 0) return '—';
 
-  const days = Math.floor(totalHours / 24);
-  const hours = totalHours % 24;
-  const minutes = totalMinutes % 60;
+  const days = Math.floor(total / 86400);        // 24*3600
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
 
-  // если есть дни — показываем дни
-  if (days > 0) {
-    return `${days} day: ${hours} hours ${minutes.toString().padStart(2, '0')} minutes`;
-  }
+  const parts = [];
+  if (days > 0) parts.push(`${days} ${labels.day}`);
+  if (hours > 0) parts.push(`${hours} ${labels.hour}`);
+  if (minutes > 0) parts.push(`${minutes} ${labels.minute}`);
 
-  // если меньше суток — показываем просто часы и минуты
-  return `${hours}:${minutes.toString().padStart(2, '0')}`;
+  return parts.join(' ') || labels.less;
 }
+
+// Для блока с "дней", если нет времени в секундах
+function formatRemainingDays(endDate) {
+  if (!endDate) return '—';
+  const lang = localStorage.getItem('lang') || 'ru';
+  const labelsMap = { ru: 'дней', en: 'days', kk: 'күн' };
+  const label = labelsMap[lang === 'kz' ? 'kk' : (lang === 'en' ? 'en' : 'ru')];
+
+  const remainingDays = Math.max(0, Math.round((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+  return `${remainingDays} ${label}`;
+}
+
 
 
 async function loadOlympiadCards() {
@@ -244,7 +261,7 @@ async function loadOlympiadCards() {
   };
 
   try {
-    const response = await authorizedFetch('https://portal.femo.kz/api/olympiads/participant/dashboard/?tab=active', {
+    const response = await authorizedFetch('https://portal.femo.kz/api/olympiads/participant/dashboard/?active', {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -318,7 +335,9 @@ async function loadOlympiadCards() {
         if (olympiad.time_left) {
           dateInfo = formatSecondsToHoursMinutes(olympiad.time_left);
         }
-        else if (endDate) dateInfo = `${Math.max(0, Math.round((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} дней`;
+        else if (endDate) {
+        dateInfo = formatRemainingDays(endDate);
+      }
         else dateInfo = '—';
       } else if ((olympiad.registration_status || '').toString().toLowerCase().includes('soon')) {
         dateInfoText = 'Откроется';
