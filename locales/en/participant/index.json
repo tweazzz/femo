@@ -206,6 +206,7 @@
     "my_way.status": "Status",
     "my_way.action": "Actions ",
     "my_way.total": "Total: ",
+    "my_way.promo_code": "Promo code",
 
     "profile_settings.choose_lang": "Choose the language to use on the platform",
     "profile_settings.notification": "Notification settings",
