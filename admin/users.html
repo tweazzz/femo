@@ -1995,7 +1995,25 @@
         </div>
       </div>
     </div>
-
+    <script>
+      // Получаем все кнопки "показать пароль"
+      const toggleButtons = document.querySelectorAll('.toggle-pw');
+    
+      toggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Находим связанный input
+          const input = button.closest('.relative').querySelector('input[type="password"], input[type="text"]');
+    
+          // Переключаем тип
+          if (input.type === 'password') {
+            input.type = 'text';
+          } else {
+            input.type = 'password';
+          }
+        });
+      });
+    </script>
+    
     <script>
       lucide.createIcons()
 
