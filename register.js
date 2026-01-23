@@ -217,7 +217,9 @@ const COUNTRIES_EN = {
     }
   
     const roleValue = roleSelect ? roleSelect.value : '';
-    const email = emailInput ? emailInput.value.trim() : '';
+    const email = emailInput
+    ? emailInput.value.trim().toLowerCase()
+    : '';
     const fullName = nameInput ? nameInput.value.trim() : '';
     const password = passwordInput ? passwordInput.value : '';
     const confirmPassword = password2Input ? password2Input.value : '';

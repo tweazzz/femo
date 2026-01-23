@@ -308,14 +308,48 @@ async function updateUserSettings(updatedFields) {
   }
 }
 
+function extractErrorMessage(errorData) {
+  if (!errorData || typeof errorData !== 'object') {
+    return 'Неизвестная ошибка';
+  }
+
+  // detail: "что-то пошло не так"
+  if (typeof errorData.detail === 'string') {
+    return errorData.detail;
+  }
+
+  const messages = [];
+
+  // { field: ["msg1", "msg2"] }
+  for (const [key, value] of Object.entries(errorData)) {
+    if (Array.isArray(value)) {
+      messages.push(value.join(' '));
+    } else if (typeof value === 'string') {
+      messages.push(value);
+    }
+  }
+
+  return messages.length
+    ? messages.join('\n')
+    : 'Не удалось выполнить операцию';
+}
 
 
 function setupPasswordChangeForm() {
   const passwordForm = document.querySelector('form');
   if (!passwordForm) return;
 
+  if (passwordForm.dataset.submitBound === 'true') return;
+  passwordForm.dataset.submitBound = 'true';
+
   passwordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const submitBtn = passwordForm.querySelector('button[type="submit"]');
+    if (!submitBtn) return;
+
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
 
     const oldPassword = document.getElementById('password1')?.value.trim();
     const newPassword = document.getElementById('password2')?.value.trim();
@@ -323,17 +357,20 @@ function setupPasswordChangeForm() {
 
     if (!oldPassword || !newPassword || !confirmPassword) {
       alert('Пожалуйста, заполните все поля');
+      submitBtn.disabled = false;
       return;
     }
 
     if (newPassword !== confirmPassword) {
       alert('Новый пароль и подтверждение не совпадают');
+      submitBtn.disabled = false;
       return;
     }
 
     const token = localStorage.getItem('access_token');
     if (!token) {
       alert('Токен не найден. Пожалуйста, войдите заново.');
+      submitBtn.disabled = false;
       return;
     }
 
@@ -353,7 +390,9 @@ function setupPasswordChangeForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Ошибка: ${errorData.detail || 'Не удалось обновить пароль'}`);
+        const message = extractErrorMessage(errorData);
+        alert(`Ошибка: ${message}`);
+        submitBtn.disabled = false;
         return;
       }
 
@@ -362,6 +401,9 @@ function setupPasswordChangeForm() {
     } catch (error) {
       console.error('Ошибка при обновлении пароля:', error);
       alert('Произошла ошибка при обновлении пароля');
+    } finally {
+      submitBtn.disabled = false;
     }
   });
 }
+
