@@ -232,7 +232,8 @@
     "payment_success.btn": "Түсінікті",
 
     "dashboard.register_popup_welcome": "Қош келдіңіз!",
-    "dashboard.register_popup_txt": "Біз мұны қалай жасау керектігін түсіндіретін бейне-нұсқаулық дайындадық.",
+    "dashboard.register_popup_txt1": "Олимпиадаға тіркелу үшін балансты ",
+    "dashboard.register_popup_txt": "бөлімінде толтыру қажет. Мұны қалай жасау керектігін түсіндіретін бейне-нұсқаулық дайындадық.",
     "dashboard.register_popup_watch_tutorial": "Нұсқаулықты көру"
 
 

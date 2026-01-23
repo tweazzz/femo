@@ -234,7 +234,8 @@
     "payment_success.btn": "Got it",
     
     "dashboard.register_popup_welcome": "Welcome!",
-    "dashboard.register_popup_txt": "We have prepared a video tutorial explaining how to do this.",
+    "dashboard.register_popup_txt1": "To register for the olympiad, you need to top up your balance in the ",
+    "dashboard.register_popup_txt": "section. We have prepared a video tutorial explaining how to do this.",
     "dashboard.register_popup_watch_tutorial": "Watch the tutorial"
     
   }

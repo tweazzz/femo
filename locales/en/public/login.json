@@ -42,7 +42,7 @@
     "participant_register.teacher_phone": "Teacher's phone number",
     "participant_register.teacher_email": "Teacher's email",
     "participant_register.start_learn" : "Start learning",
-    "register_participant.city": "Almaty",
+    "register_participant.city": "City",
     "register_participant.school_name": "Secondary School No. 16 named after A. Sharipov",
 
     "participant_register.reg_success_congrats": "Congratulations",
