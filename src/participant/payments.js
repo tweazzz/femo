@@ -204,8 +204,11 @@ function initTopUpHandler() {
   topUpButton.addEventListener('click', async (e) => {
     e.preventDefault();
 
-    const input = topUpForm.querySelector('input[type="number"]');
-    const amount = parseInt(input.value, 10);
+    const amountInput = topUpForm.querySelector('input[type="number"]');
+    const promoInput  = topUpForm.querySelector('input[name="promo_code"]');
+
+    const amount = parseInt(amountInput.value, 10);
+    const promocode = promoInput ? promoInput.value.trim() : '';
 
     if (isNaN(amount) || amount <= 0) {
       alert('Введите корректную сумму для пополнения.');
@@ -218,14 +221,20 @@ function initTopUpHandler() {
       return;
     }
 
-    // Открываем новое окно заранее, чтобы не блокировалось браузером
+    // Открываем новое окно заранее (чтобы не блокировалось браузером)
     const payWindow = window.open('', '_blank');
     if (!payWindow) {
       alert('Не удалось открыть новое окно. Проверьте блокировщик всплывающих окон.');
       return;
     }
-    // Показатель загрузки можно вставить в payWindow, например:
     payWindow.document.write('<p>Подготовка к оплате...</p>');
+
+    // BODY: amount + опциональный promocode (отправляем только если есть)
+    const body = { amount };
+    if (promocode !== '') {
+      // бэкендер ожидает ключ "promocode" (не "promo_code")
+      body.promocode = promocode;
+    }
 
     try {
       const response = await authorizedFetch(
@@ -236,34 +245,70 @@ function initTopUpHandler() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ amount })
+          body: JSON.stringify(body)
         }
       );
 
+      // Попытка распарсить JSON — если нет JSON, пойдём в catch
       const result = await response.json();
 
-      if (response.ok && result.pg_status === 'ok') {
+      // Успех: либо сервер вернул pg_redirect_url, либо явно pg_status === 'ok'
+      if (response.ok && (result.pg_redirect_url || result.pg_status === 'ok')) {
+        // Закрываем модалку и направляем в платежное окно (если есть URL)
         toggleModal('modal', false);
+
         if (result.pg_redirect_url) {
-          // Перенаправляем новое окно на оплату
           payWindow.location.href = result.pg_redirect_url;
         } else {
-          // Закрываем окно и обновляем страницу
+          // Если URL нет, но сервер признал успех — закрываем окно и перезагружаем
           payWindow.close();
           location.reload();
         }
-      } else {
-        // При ошибке закрываем окно и показываем сообщение
-        payWindow.close();
-        alert('Ошибка при пополнении: ' + (result?.pg_status || 'Неизвестная ошибка'));
+        return;
       }
+
+      // Если мы сюда попали — response.ok может быть true или false, но нет redirect -> обрабатываем ошибки
+      payWindow.close();
+
+      // 1) Ошибки промокода (часто возвращается массив)
+      if (result?.promocode) {
+        const promoErr = result.promocode;
+        const msg = Array.isArray(promoErr) ? promoErr.join(', ') : String(promoErr);
+        alert(msg);
+        return;
+      }
+
+      // 2) Поле detail (общая ошибка)
+      if (result?.detail) {
+        alert(String(result.detail));
+        return;
+      }
+
+      // 3) Если пришёл объект с полями ошибок, возьмём первое сообщение
+      if (typeof result === 'object' && result !== null) {
+        for (const key of Object.keys(result)) {
+          const val = result[key];
+          if (Array.isArray(val) && val.length > 0) {
+            alert(String(val[0]));
+            return;
+          } else if (val) {
+            alert(String(val));
+            return;
+          }
+        }
+      }
+
+      // 4) fallback
+      alert('Ошибка при пополнении. Попробуйте позже.');
     } catch (err) {
       console.error('Ошибка запроса:', err);
-      payWindow.close();
+      try { payWindow.close(); } catch (e) {}
       alert('Произошла ошибка при отправке запроса.');
     }
   });
 }
+
+
 
 
 

@@ -898,10 +898,11 @@
           return
         }
 
-        // Prevent negative numbers
-        if (value < 0) {
+        // Prevent negative numbers ✅ FIX
+        if (Number(input.value) < 0) {
           showError(input, 'Отрицательные числа не допускаются')
           input.value = ''
+          return
         }
       }
 
