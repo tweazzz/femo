@@ -209,10 +209,28 @@ async function loadSummary() {
 
     document.getElementById('assignment_points').textContent = data.assignment_points;
     document.getElementById('assignments_percent').textContent = data.assignments_percent;
+
+    // Custom text for 0 values
+    if (data.assignment_points == 0) {
+      const el = document.getElementById('assignments_text_container');
+      if (el) el.textContent = 'Начните с первой задачи';
+    }
+
     document.getElementById('olympiad_points').textContent = data.olympiad_points;
     document.getElementById('olympiad_percentile').textContent = data.olympiad_percentile;
+
+    if (data.olympiad_points == 0) {
+      const el = document.getElementById('olympiad_text_container');
+      if (el) el.textContent = 'Пройдите олимпиаду чтобы заработать баллы';
+    }
+
     document.getElementById('total_points').textContent = data.total_points;
     document.getElementById('total_percentile').textContent = data.total_percentile;
+
+    if (data.total_points == 0) {
+      const el = document.getElementById('total_text_container');
+      if (el) el.textContent = 'Очки появятся после участия';
+    }
     document.getElementById('current_level').textContent = data.recommendation?.current_level ?? 0;
     document.getElementById('xp_to_next').textContent = data.recommendation?.xp_to_next ?? 100;
 
@@ -382,9 +400,9 @@ function renderAssignmentTable(assignments) {
             || task.grade}
           </td>
           <td>${task.country.name}</td>
-          <td class="text-orange-primary font-bold">${task.total_points}</td>
-          <td>${task.olympiad_points}</td>
-          <td>${task.assignment_points}</td>
+          <td class="text-orange-primary font-bold">${task.total_points || '—'}</td>
+          <td>${task.olympiad_points || '—'}</td>
+          <td>${task.assignment_points || '—'}</td>
         </tr>
       `;
     })

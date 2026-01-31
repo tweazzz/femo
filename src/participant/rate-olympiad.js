@@ -225,12 +225,26 @@ async function loadSummary() {
 
     const data = await response.json();
 
-    safeSetText('assignment_points', data.assignment_points);
+    safeSetText('assignment_points', data.assignment_points || '—');
     safeSetText('assignments_percent', data.assignments_percent);
-    safeSetText('olympiad_points', data.olympiad_points);
+
+    if (data.assignment_points == 0) {
+      safeSetText('assignments_text_container', 'Начните с первой задачи');
+    }
+
+    safeSetText('olympiad_points', data.olympiad_points || '—');
     safeSetText('olympiad_percentile', data.olympiad_percentile);
-    safeSetText('total_points', data.total_points);
+
+    if (data.olympiad_points == 0) {
+      safeSetText('olympiad_text_container', 'Пройдите олимпиаду чтобы заработать баллы');
+    }
+
+    safeSetText('total_points', data.total_points || '—');
     safeSetText('total_percentile', data.total_percentile);
+
+    if (data.total_points == 0) {
+      safeSetText('total_text_container', 'Очки появятся после участия');
+    }
     safeSetText('current_level', data.recommendation?.current_level ?? 0);
     safeSetText('xp_to_next', data.recommendation?.xp_to_next ?? '');
 
@@ -335,8 +349,8 @@ function renderAssignmentTable(assignments) {
         <td>${task.full_name}</td>
         <td>${Object.keys(classMap).find((key) => classMap[key] === task.grade) || task.grade}</td>
         <td>${task.country?.name || '-'}</td>
-        <td>${task.olympiad_points ?? '-'}</td>
-        <td>${task.result ?? '-'}</td>
+        <td>${task.olympiad_points || '—'}</td>
+        <td>${task.result || '—'}</td>
       </tr>
     `;
           })
