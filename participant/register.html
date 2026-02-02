@@ -540,12 +540,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = (sessionStorage.getItem('pending_password') || '').trim();
       const full_name_ru = (pending.full_name_ru || '').trim();
       const country = (pending.country || '').trim();
+      const latinOnlyRegex = /^[A-Za-z\s'-]+$/;
 
       // Валидация
       if (!email) { showError('Не найден email из первой страницы (pending_registration).'); throw new Error('validation'); }
       if (!password) { showError('Не найден пароль (sessionStorage.pending_password).'); throw new Error('validation'); }
       if (!full_name_ru) { showError('Не найдено ФИО пользователя (pending_registration.full_name_ru).'); throw new Error('validation'); }
       if (!country) { showError('Не задана страна (pending_registration.country).'); throw new Error('validation'); }
+      if (!latinOnlyRegex.test(full_name_ru)) { showError('Пишите только латиницу'); throw new Error('validation'); }
 
       if (!city) { showError('Укажите город.'); throw new Error('validation'); }
       if (!school) { showError('Укажите школу.'); throw new Error('validation'); }
