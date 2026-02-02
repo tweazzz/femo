@@ -1023,8 +1023,9 @@ function openEditModal(userId) {
   if (country) country.value = user.country
 
   const balanceInput = activeForm.querySelector('input[name="balance"]')
-  if (role === 'participant' && balanceInput && hasBalanceValue(user))
+  if (role === 'participant' && balanceInput) {
     setBalanceInputValue(balanceInput, user)
+  }
 
   if (role === 'participant') {
     // Делаем GET-запрос, чтобы получить полные данные
@@ -1052,7 +1053,7 @@ function openEditModal(userId) {
         activeForm.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
         activeForm.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
         activeForm.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
-        if (hasBalanceValue(user)) setBalanceInputValue(balanceInput, user)
+        if (balanceInput) setBalanceInputValue(balanceInput, user)
       })
       .catch(err => {
         console.error(err)
