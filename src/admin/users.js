@@ -906,11 +906,15 @@ async function updateUserFromEditForm() {
 
   const isParticipant = form.id === 'participant-form-edit'
   const countryName = form.querySelector('input[name="country"]').value;
-  data = {
+  let data = {
     email: emailInput.value,
-    password: form.querySelector('#password')?.value || '',
     full_name_ru: form.querySelector('input[name="fullname"]').value,
     country: getCountryCode(countryName) || countryName,
+  }
+
+  const passwordVal = form.querySelector('#password')?.value || '';
+  if (passwordVal) {
+    data.password = passwordVal;
   }
   const balanceInput = form.querySelector('input[name="balance"]')
   let balanceValue = null
@@ -946,7 +950,7 @@ async function updateUserFromEditForm() {
     const response = await fetch(
       `https://portal.femo.kz/api/users/dashboard/${userId}/`,
       {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
