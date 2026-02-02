@@ -914,7 +914,7 @@ async function updateUserFromEditForm() {
   }
   const balanceInput = form.querySelector('input[name="balance"]')
   let balanceValue = null
-  if (balanceInput && balanceInput.value !== '') {
+  if (isParticipant && balanceInput && balanceInput.value !== '') {
     const parsedBalance = Number(balanceInput.value)
     if (Number.isFinite(parsedBalance)) {
       balanceValue = parsedBalance
@@ -1023,7 +1023,7 @@ function openEditModal(userId) {
   if (country) country.value = user.country
 
   const balanceInput = activeForm.querySelector('input[name="balance"]')
-  if (balanceInput && hasBalanceValue(user))
+  if (role === 'participant' && balanceInput && hasBalanceValue(user))
     setBalanceInputValue(balanceInput, user)
 
   if (role === 'participant') {
@@ -1057,26 +1057,6 @@ function openEditModal(userId) {
       .catch(err => {
         console.error(err)
         alert('Не удалось загрузить полные данные участника.')
-      })
-  } else if (balanceInput) {
-    const token = localStorage.getItem('access_token')
-    fetch(`https://portal.femo.kz/api/users/dashboard/${userId}/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Ошибка загрузки пользователя')
-        return res.json()
-      })
-      .then(user => {
-        setBalanceInputValue(balanceInput, user)
-      })
-      .catch(err => {
-        console.error(err)
-        if (balanceInput) balanceInput.value = '0'
       })
   }
 
