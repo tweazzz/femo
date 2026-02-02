@@ -973,7 +973,10 @@ async function updateUserFromEditForm() {
         }
       }
     }
-    await loadAllUsers()
+    // Обновляем фильтры и таблицу локально, чтобы не перезатирать данные (в том числе баланс)
+    // старым списком с сервера, где баланса может не быть.
+    initFilters(allUsers)
+    applyFilters()
   } catch (error) {
     alert(`Ошибка при обновлении: ${error.message}`)
   }
