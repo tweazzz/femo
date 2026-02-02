@@ -159,7 +159,7 @@
           class="bg-orange-primary w-full cursor-pointer rounded-full py-3 font-bold text-white transition"
           data-i18n="new_pass_btn"
         >
-          Отправить
+          Сохранить пароль
         </button>
       </form>
     </div>
@@ -172,9 +172,15 @@
       const password2 = document.getElementById("password2");
     
       // Извлекаем uid и token из URL
-      const pathParts = window.location.pathname.split("/");
-      const uid = pathParts[pathParts.length - 2];
-      const token = pathParts[pathParts.length - 1];
+      // Фильтруем пустые части, чтобы корректно обрабатывать URL с закрывающим слешем или без него
+      const pathParts = window.location.pathname.split("/").filter(part => part !== "");
+      // Ожидаем структуру .../uid/token
+      const uid = pathParts.length >= 2 ? pathParts[pathParts.length - 2] : null;
+      const token = pathParts.length >= 1 ? pathParts[pathParts.length - 1] : null;
+
+      if (!uid || !token) {
+        console.warn("UID or Token not found in URL");
+      }
     
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -193,7 +199,7 @@
         }
     
         try {
-          const response = await fetch("https://portal.femo.kz/reset-password/", {
+          const response = await fetch("https://portal.femo.kz/api/users/reset-password", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -207,11 +213,11 @@
     
           if (response.ok) {
             alert("Пароль успешно сброшен!");
-            // Можно перенаправить пользователя, например:
-            // window.location.href = "/login";
+            // Перенаправление на страницу входа
+            window.location.href = "/index.html";
           } else {
             const errorData = await response.json();
-            alert("Ошибка: " + (errorData.message || "Не удалось сбросить пароль."));
+            alert("Ошибка: " + (errorData.message || errorData.detail || "Не удалось сбросить пароль."));
           }
         } catch (error) {
           console.error("Ошибка запроса:", error);
@@ -294,21 +300,24 @@ function frontendToBackend(frontend) {
 
 const backendLang = frontendToBackend(lang);
 
-// 3) шлём язык на backend
-fetch("https://portal.femo.kz/api/users/settings/", {
-  method: "PATCH",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${data.access}`,
-  },
-  body: JSON.stringify({
-    language: backendLang,
-  }),
-})
-.then(() => {
-  console.log("Language saved:", backendLang);
-})
-.catch(e => console.warn("Error saving language:", e));
+// 3) шлём язык на backend (только если есть токен)
+const token = localStorage.getItem('access_token');
+if (token) {
+  fetch("https://portal.femo.kz/api/users/settings/", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      language: backendLang,
+    }),
+  })
+  .then(() => {
+    console.log("Language saved:", backendLang);
+  })
+  .catch(e => console.warn("Error saving language:", e));
+}
 
 </script>
 <script src="/src/scripts/i18n.js" defer></script>
