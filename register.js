@@ -201,6 +201,29 @@ const COUNTRIES_EN = {
     const password2Input = form.querySelector('input[name="password2"], input#password2'); // input для подтверждения пароля
     return { emailInput, nameInput, passwordInput, password2Input };
   };
+
+  const nameInputDirect = form.querySelector('input[name="full_name"]');
+  const latinOnlyRegex = /^[A-Za-z\s'-]+$/;
+  let latinWarning = null;
+
+  const updateLatinWarning = () => {
+    if (!nameInputDirect || !latinWarning) return;
+    const value = nameInputDirect.value.trim();
+    if (!value || latinOnlyRegex.test(value)) {
+      latinWarning.classList.add('hidden');
+      return;
+    }
+    latinWarning.classList.remove('hidden');
+  };
+
+  if (nameInputDirect) {
+    latinWarning = document.createElement('div');
+    latinWarning.className = 'mt-1 text-xs text-red-500 hidden';
+    latinWarning.textContent = 'Пишите только латиницу';
+    nameInputDirect.parentNode.appendChild(latinWarning);
+    nameInputDirect.addEventListener('input', updateLatinWarning);
+    nameInputDirect.addEventListener('blur', updateLatinWarning);
+  }
   
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -224,6 +247,15 @@ const COUNTRIES_EN = {
     const password = passwordInput ? passwordInput.value : '';
     const confirmPassword = password2Input ? password2Input.value : '';
     const countryCode = countrySelect ? countrySelect.value : '';
+
+    if (fullName && !latinOnlyRegex.test(fullName)) {
+      updateLatinWarning();
+      messageContainer.textContent = 'Пишите только латиницу';
+      messageContainer.classList.add('text-red-500');
+      const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
+      if (maybePassword) maybePassword.removeAttribute('name');
+      return;
+    }
 
     if (password !== confirmPassword) {
       alert('Passwords do not match!');  // Показываем ошибку при несовпадении паролей
