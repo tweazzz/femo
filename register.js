@@ -222,7 +222,7 @@ const COUNTRIES_EN = {
     if (!input) return true;
     const value = input.value.trim();
     const isValid = !value || latinOnlyRegex.test(value);
-    input.setCustomValidity(isValid ? '' : 'Пишите только латиницу');
+    input.setCustomValidity(isValid ? '' : 'Используйте латинские буквы');
     return isValid;
   };
 
@@ -244,7 +244,7 @@ const COUNTRIES_EN = {
       latinWarning = document.createElement('div');
       latinWarning.setAttribute('data-latin-warning', 'true');
       latinWarning.className = 'mt-1 text-xs text-red-500 hidden';
-      latinWarning.textContent = 'Пишите только латиницу';
+      latinWarning.textContent = 'B';
       nameInputDirect.parentNode.appendChild(latinWarning);
     }
     nameInputDirect.addEventListener('input', updateLatinWarning);
@@ -277,7 +277,7 @@ const COUNTRIES_EN = {
 
     if (!setLatinValidity(resolvedNameInput)) {
       updateLatinWarning();
-      messageContainer.textContent = 'Пишите только латиницу';
+      messageContainer.textContent = 'B';
       messageContainer.classList.add('text-red-500');
       if (resolvedNameInput) resolvedNameInput.reportValidity();
       const maybePassword = form.querySelector('input[name="password_temp_for_read"]');

@@ -853,11 +853,29 @@ function resolveBalanceValue(user) {
   const raw =
     user?.balance ??
     user?.wallet?.balance ??
+    user?.wallet_balance ??
     user?.account_balance ??
     user?.profile?.balance ??
-    user?.balance_amount
+    user?.balance_amount ??
+    user?.balance_value ??
+    user?.balance?.amount ??
+    user?.wallet?.amount
   const num = Number(raw ?? 0)
   return Number.isFinite(num) ? num : 0
+}
+
+function hasBalanceValue(user) {
+  return (
+    user?.balance != null ||
+    user?.wallet?.balance != null ||
+    user?.wallet_balance != null ||
+    user?.account_balance != null ||
+    user?.profile?.balance != null ||
+    user?.balance_amount != null ||
+    user?.balance_value != null ||
+    user?.balance?.amount != null ||
+    user?.wallet?.amount != null
+  )
 }
 
 function setBalanceInputValue(input, user) {
@@ -895,10 +913,13 @@ async function updateUserFromEditForm() {
     country: getCountryCode(countryName) || countryName,
   }
   const balanceInput = form.querySelector('input[name="balance"]')
+  let balanceValue = null
   if (balanceInput && balanceInput.value !== '') {
-    const balanceValue = Number(balanceInput.value)
-    if (Number.isFinite(balanceValue)) {
-      data.balance = balanceValue
+    const parsedBalance = Number(balanceInput.value)
+    if (Number.isFinite(parsedBalance)) {
+      balanceValue = parsedBalance
+      data.balance = parsedBalance
+      data.account_balance = parsedBalance
     }
   }
 
@@ -941,6 +962,17 @@ async function updateUserFromEditForm() {
 
     alert('Пользователь успешно обновлён!')
     toggleModal('modalEdit', false)
+    if (responseBody && typeof responseBody === 'object') {
+      const targetId = Number(userId)
+      const index = allUsers.findIndex((item) => item.id === targetId)
+      if (index !== -1) {
+        allUsers[index] = { ...allUsers[index], ...responseBody }
+        if (balanceValue !== null) {
+          allUsers[index].balance = balanceValue
+          allUsers[index].account_balance = balanceValue
+        }
+      }
+    }
     await loadAllUsers()
   } catch (error) {
     alert(`Ошибка при обновлении: ${error.message}`)
@@ -991,7 +1023,8 @@ function openEditModal(userId) {
   if (country) country.value = user.country
 
   const balanceInput = activeForm.querySelector('input[name="balance"]')
-  if (balanceInput) setBalanceInputValue(balanceInput, user)
+  if (balanceInput && hasBalanceValue(user))
+    setBalanceInputValue(balanceInput, user)
 
   if (role === 'participant') {
     // Делаем GET-запрос, чтобы получить полные данные
@@ -1019,7 +1052,7 @@ function openEditModal(userId) {
         activeForm.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
         activeForm.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
         activeForm.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
-        setBalanceInputValue(balanceInput, user)
+        if (hasBalanceValue(user)) setBalanceInputValue(balanceInput, user)
       })
       .catch(err => {
         console.error(err)
