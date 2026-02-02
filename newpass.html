@@ -172,11 +172,21 @@
       const password2 = document.getElementById("password2");
     
       // Извлекаем uid и token из URL
-      // Фильтруем пустые части, чтобы корректно обрабатывать URL с закрывающим слешем или без него
-      const pathParts = window.location.pathname.split("/").filter(part => part !== "");
-      // Ожидаем структуру .../uid/token
-      const uid = pathParts.length >= 2 ? pathParts[pathParts.length - 2] : null;
-      const token = pathParts.length >= 1 ? pathParts[pathParts.length - 1] : null;
+      // 1. Пытаемся получить из query parameters (для редиректа с index.html)
+      const urlParams = new URLSearchParams(window.location.search);
+      let uid = urlParams.get('uid');
+      let token = urlParams.get('token');
+
+      // 2. Если нет в query, пытаемся из path (старая логика)
+      if (!uid || !token) {
+        const pathParts = window.location.pathname.split("/").filter(part => part !== "");
+        // Ожидаем структуру .../uid/token
+        // Проверяем, что это не newpass.html
+        if (pathParts.length >= 2) {
+             uid = pathParts[pathParts.length - 2];
+             token = pathParts[pathParts.length - 1];
+        }
+      }
 
       if (!uid || !token) {
         console.warn("UID or Token not found in URL");
