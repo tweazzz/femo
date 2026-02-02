@@ -906,7 +906,7 @@ async function updateUserFromEditForm() {
 
   const isParticipant = form.id === 'participant-form-edit'
   const countryName = form.querySelector('input[name="country"]').value;
-  data = {
+  const data = {
     email: emailInput.value,
     password: form.querySelector('#password')?.value || '',
     full_name_ru: form.querySelector('input[name="fullname"]').value,
@@ -920,6 +920,8 @@ async function updateUserFromEditForm() {
       balanceValue = parsedBalance
       data.balance = parsedBalance
       data.account_balance = parsedBalance
+      data.wallet_balance = parsedBalance
+      data.wallet = { balance: parsedBalance, amount: parsedBalance }
     }
   }
 
@@ -943,14 +945,10 @@ async function updateUserFromEditForm() {
   }
 
   try {
-    const response = await fetch(
+    const response = await authorizedFetch(
       `https://portal.femo.kz/api/users/dashboard/${userId}/`,
       {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(data),
       }
     )
@@ -1032,14 +1030,7 @@ function openEditModal(userId) {
 
   if (role === 'participant') {
     // Делаем GET-запрос, чтобы получить полные данные
-    const token = localStorage.getItem('access_token')
-    fetch(`https://portal.femo.kz/api/users/dashboard/${userId}/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      }
-    })
+    authorizedFetch(`https://portal.femo.kz/api/users/dashboard/${userId}/`)
       .then(res => {
         if (!res.ok) throw new Error('Ошибка загрузки пользователя')
         return res.json()
@@ -1056,7 +1047,23 @@ function openEditModal(userId) {
         activeForm.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
         activeForm.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
         activeForm.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
-        if (balanceInput) setBalanceInputValue(balanceInput, user)
+        
+        // Если сервер вернул объект с балансом — обновляем инпут.
+        // НО: если сервер вернул 0 (или пусто), а у нас локально есть значение (например, только что сохранили),
+        // то не перезатираем его нулём.
+        if (balanceInput) {
+          const serverBalance = resolveBalanceValue(user)
+          // Ищем локального пользователя, чтобы проверить, есть ли у нас "оптимистичное" значение
+          const localUser = allUsers.find(u => u.id === userId)
+          const localBalance = localUser ? resolveBalanceValue(localUser) : 0
+
+          // Если сервер вернул 0, а локально у нас > 0, считаем, что сервер еще не обновился/не вернул данные
+          if (serverBalance === 0 && localBalance > 0) {
+            console.warn('Server returned balance 0, keeping local value:', localBalance)
+          } else if (hasBalanceValue(user)) {
+            setBalanceInputValue(balanceInput, user)
+          }
+        }
       })
       .catch(err => {
         console.error(err)
