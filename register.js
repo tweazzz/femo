@@ -208,6 +208,7 @@ const COUNTRIES_EN = {
 
   const getNameInput = () => {
     const input =
+      form.querySelector('input[name="full_name"][data-fio="true"]') ||
       form.querySelector('input[name="full_name"]') ||
       form.querySelector('input[name="full_name_ru"]') ||
       form.querySelector('input[id="full_name"]') ||
@@ -217,11 +218,19 @@ const COUNTRIES_EN = {
     return input;
   };
 
+  const setLatinValidity = (input) => {
+    if (!input) return true;
+    const value = input.value.trim();
+    const isValid = !value || latinOnlyRegex.test(value);
+    input.setCustomValidity(isValid ? '' : 'Пишите только латиницу');
+    return isValid;
+  };
+
   const updateLatinWarning = () => {
     const input = getNameInput();
     if (!input || !latinWarning) return;
-    const value = input.value.trim();
-    if (!value || latinOnlyRegex.test(value)) {
+    const isValid = setLatinValidity(input);
+    if (isValid) {
       latinWarning.classList.add('hidden');
       return;
     }
@@ -266,10 +275,11 @@ const COUNTRIES_EN = {
     const confirmPassword = password2Input ? password2Input.value : '';
     const countryCode = countrySelect ? countrySelect.value : '';
 
-    if (fullName && !latinOnlyRegex.test(fullName)) {
+    if (!setLatinValidity(resolvedNameInput)) {
       updateLatinWarning();
       messageContainer.textContent = 'Пишите только латиницу';
       messageContainer.classList.add('text-red-500');
+      if (resolvedNameInput) resolvedNameInput.reportValidity();
       const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
       if (maybePassword) maybePassword.removeAttribute('name');
       return;

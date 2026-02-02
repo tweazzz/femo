@@ -860,6 +860,11 @@ function resolveBalanceValue(user) {
   return Number.isFinite(num) ? num : 0
 }
 
+function setBalanceInputValue(input, user) {
+  if (!input) return
+  input.value = resolveBalanceValue(user)
+}
+
 async function updateUserFromEditForm() {
   const modal = document.getElementById('modalEdit')
   const form = modal.querySelector('form:not(.hidden)')
@@ -869,7 +874,7 @@ async function updateUserFromEditForm() {
   }
 
   const emailInput = form.querySelector('input[name="email"]')
-  const userId = emailInput?.dataset.userId
+  const userId = emailInput?.dataset.userId || modal?.dataset?.userId
   if (!userId) {
     alert('ID пользователя не найден')
     return
@@ -948,6 +953,8 @@ function openEditModal(userId) {
     alert('Пользователь не найден')
     return
   }
+  const modal = document.getElementById('modalEdit')
+  if (modal) modal.dataset.userId = String(user.id)
 
   const role = user.role === 'representative' ? 'representative' : 'participant'
 
@@ -964,6 +971,12 @@ function openEditModal(userId) {
   const activeForm = document.getElementById(`${role}-form-edit`)
   activeForm.classList.remove('hidden')
 
+  document
+    .querySelectorAll('#modalEdit input[name="email"]')
+    .forEach((input) => {
+      input.setAttribute('data-user-id', user.id)
+    })
+
   // Установить значения в форму
   const email = activeForm.querySelector('input[name="email"]')
   if (email) {
@@ -978,7 +991,7 @@ function openEditModal(userId) {
   if (country) country.value = user.country
 
   const balanceInput = activeForm.querySelector('input[name="balance"]')
-  if (balanceInput) balanceInput.value = ''
+  if (balanceInput) setBalanceInputValue(balanceInput, user)
 
   if (role === 'participant') {
     // Делаем GET-запрос, чтобы получить полные данные
@@ -1006,7 +1019,7 @@ function openEditModal(userId) {
         activeForm.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
         activeForm.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
         activeForm.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
-        if (balanceInput) balanceInput.value = resolveBalanceValue(user)
+        setBalanceInputValue(balanceInput, user)
       })
       .catch(err => {
         console.error(err)
@@ -1026,11 +1039,11 @@ function openEditModal(userId) {
         return res.json()
       })
       .then(user => {
-        balanceInput.value = resolveBalanceValue(user)
+        setBalanceInputValue(balanceInput, user)
       })
       .catch(err => {
         console.error(err)
-        balanceInput.value = '0'
+        if (balanceInput) balanceInput.value = '0'
       })
   }
 
