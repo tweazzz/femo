@@ -202,13 +202,25 @@ const COUNTRIES_EN = {
     return { emailInput, nameInput, passwordInput, password2Input };
   };
 
-  const nameInputDirect = form.querySelector('input[name="full_name"]');
   const latinOnlyRegex = /^[A-Za-z\s'-]+$/;
   let latinWarning = null;
+  let nameInputDirect = null;
+
+  const getNameInput = () => {
+    const input =
+      form.querySelector('input[name="full_name"]') ||
+      form.querySelector('input[name="full_name_ru"]') ||
+      form.querySelector('input[id="full_name"]') ||
+      form.querySelector('input[id="name"]') ||
+      form.querySelector('input[placeholder*="ФИО"]') ||
+      form.querySelector('input[type="text"]');
+    return input;
+  };
 
   const updateLatinWarning = () => {
-    if (!nameInputDirect || !latinWarning) return;
-    const value = nameInputDirect.value.trim();
+    const input = getNameInput();
+    if (!input || !latinWarning) return;
+    const value = input.value.trim();
     if (!value || latinOnlyRegex.test(value)) {
       latinWarning.classList.add('hidden');
       return;
@@ -216,11 +228,16 @@ const COUNTRIES_EN = {
     latinWarning.classList.remove('hidden');
   };
 
+  nameInputDirect = getNameInput();
   if (nameInputDirect) {
-    latinWarning = document.createElement('div');
-    latinWarning.className = 'mt-1 text-xs text-red-500 hidden';
-    latinWarning.textContent = 'Пишите только латиницу';
-    nameInputDirect.parentNode.appendChild(latinWarning);
+    latinWarning = nameInputDirect.parentNode.querySelector('[data-latin-warning="true"]');
+    if (!latinWarning) {
+      latinWarning = document.createElement('div');
+      latinWarning.setAttribute('data-latin-warning', 'true');
+      latinWarning.className = 'mt-1 text-xs text-red-500 hidden';
+      latinWarning.textContent = 'Пишите только латиницу';
+      nameInputDirect.parentNode.appendChild(latinWarning);
+    }
     nameInputDirect.addEventListener('input', updateLatinWarning);
     nameInputDirect.addEventListener('blur', updateLatinWarning);
   }
@@ -243,7 +260,8 @@ const COUNTRIES_EN = {
     const email = emailInput
     ? emailInput.value.trim().toLowerCase()
     : '';
-    const fullName = nameInput ? nameInput.value.trim() : '';
+    const resolvedNameInput = nameInputDirect || nameInput;
+    const fullName = resolvedNameInput ? resolvedNameInput.value.trim() : '';
     const password = passwordInput ? passwordInput.value : '';
     const confirmPassword = password2Input ? password2Input.value : '';
     const countryCode = countrySelect ? countrySelect.value : '';

@@ -849,6 +849,17 @@ function confirmDeleteUserFromEdit() {
   confirmDeleteUser(parseInt(userId), fullName)
 }
 
+function resolveBalanceValue(user) {
+  const raw =
+    user?.balance ??
+    user?.wallet?.balance ??
+    user?.account_balance ??
+    user?.profile?.balance ??
+    user?.balance_amount
+  const num = Number(raw ?? 0)
+  return Number.isFinite(num) ? num : 0
+}
+
 async function updateUserFromEditForm() {
   const modal = document.getElementById('modalEdit')
   const form = modal.querySelector('form:not(.hidden)')
@@ -877,6 +888,13 @@ async function updateUserFromEditForm() {
     password: form.querySelector('#password')?.value || '',
     full_name_ru: form.querySelector('input[name="fullname"]').value,
     country: getCountryCode(countryName) || countryName,
+  }
+  const balanceInput = form.querySelector('input[name="balance"]')
+  if (balanceInput && balanceInput.value !== '') {
+    const balanceValue = Number(balanceInput.value)
+    if (Number.isFinite(balanceValue)) {
+      data.balance = balanceValue
+    }
   }
 
   if (isParticipant) {
@@ -959,6 +977,9 @@ function openEditModal(userId) {
   const country = activeForm.querySelector('input[name="country"]')
   if (country) country.value = user.country
 
+  const balanceInput = activeForm.querySelector('input[name="balance"]')
+  if (balanceInput) balanceInput.value = ''
+
   if (role === 'participant') {
     // Делаем GET-запрос, чтобы получить полные данные
     const token = localStorage.getItem('access_token')
@@ -985,10 +1006,31 @@ function openEditModal(userId) {
         activeForm.querySelector('input[name="parent_phone"]').value = user.parent_phone_number || ''
         activeForm.querySelector('input[name="teacher_name"]').value = user.teacher_name_ru || ''
         activeForm.querySelector('input[name="teacher_phone"]').value = user.teacher_phone_number || ''
+        if (balanceInput) balanceInput.value = resolveBalanceValue(user)
       })
       .catch(err => {
         console.error(err)
         alert('Не удалось загрузить полные данные участника.')
+      })
+  } else if (balanceInput) {
+    const token = localStorage.getItem('access_token')
+    fetch(`https://portal.femo.kz/api/users/dashboard/${userId}/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Ошибка загрузки пользователя')
+        return res.json()
+      })
+      .then(user => {
+        balanceInput.value = resolveBalanceValue(user)
+      })
+      .catch(err => {
+        console.error(err)
+        balanceInput.value = '0'
       })
   }
 

@@ -130,10 +130,6 @@
         <p data-i18n="participant_register.info">Расскажи немного о себе 👋</p>
       </div>
 
-      <div class="text-primary mb-6 rounded-lg text-center text-sm" data-i18n="participant_register.info_text">
-        Это поможет подобрать задания твоего уровня
-      </div>
-
       <form class="space-y-6">
         <br>
         <div>
@@ -278,7 +274,7 @@
           class="bg-orange-primary w-full cursor-pointer rounded-xl py-2 text-white transition"
           data-i18n="participant_register.start_learn"
         >
-            Начать учиться
+            Завершить регистрацию
         </button>
 
       </form>
@@ -636,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerText = origText || 'Начать учиться';
+        submitBtn.innerText = origText || 'Завершить регистрацию';
       }
     }
   });
