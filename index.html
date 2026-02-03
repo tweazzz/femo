@@ -3,7 +3,6 @@
   <head>
     <script>
       (function() {
-        // Simple client-side routing fallback for reset password
         if (window.location.pathname.startsWith('/reset-password/')) {
           const parts = window.location.pathname.split('/').filter(p => p);
           // Expected: ['reset-password', 'uid', 'token']
