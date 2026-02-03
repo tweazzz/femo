@@ -38,6 +38,7 @@ async function ensureUserAuthenticated() {
 }
 let currentEditId = null;
 let tomGradesAdd, tomGradesEdit;
+let quillAdd, quillEdit; // Quill instances
 // Основная отрисовка профиля
 function renderUserInfo(profile) {
   const p = profile && profile.profile ? profile.profile : (profile || {});
@@ -211,6 +212,42 @@ document.addEventListener('DOMContentLoaded', async () => {
       placeholder: 'Выберите классы...',
     });
   }
+
+  // Initialize Quill Editors
+  if (document.getElementById('editor-container-add')) {
+    quillAdd = new Quill('#editor-container-add', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'header': [1, 2, 3, false] }],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'align': [] }],
+          ['link', 'clean']
+        ]
+      },
+      placeholder: '...'
+    });
+  }
+
+  if (document.getElementById('editor-container-edit')) {
+    quillEdit = new Quill('#editor-container-edit', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'header': [1, 2, 3, false] }],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'align': [] }],
+          ['link', 'clean']
+        ]
+      },
+      placeholder: 'Введите ваше сообщение...'
+    });
+  }
+
   try {
         // 2) Подтягиваем актуальный профиль по API
     const profileData = await loadAdminProfile();
@@ -591,7 +628,7 @@ async function openEditModal(title, id) {
     setVal(q('#status-edit'), data.status);
     setVal(q('#link-edit'), data.website);
     setVal(q('#price'), data.cost);
-    setVal(q('#disc-edit'), data.description);
+    if (quillEdit) quillEdit.root.innerHTML = data.description || '';
 
     /* ================= ФОРМАТ ================= */
     const formatSelect = q('#format-edit');
@@ -997,7 +1034,7 @@ function updateFormatVisibilityEdit(formatValue) {
 function attachAddFormListeners() {
   const watchSelectors = [
     '#title-add', '#tour-add', '#year-add', '#status-add', '#language-add', '#price-add',
-    '#certificate-background', '#disc-add'
+    '#certificate-background'
   ];
   watchSelectors.forEach(sel => {
     const el = document.querySelector(sel);
@@ -1005,6 +1042,10 @@ function attachAddFormListeners() {
     el.addEventListener('input', setSubmitAddState);
     el.addEventListener('change', setSubmitAddState);
   });
+
+  if (quillAdd) {
+    quillAdd.on('text-change', setSubmitAddState);
+  }
 
   const stagesContainer = document.getElementById('stages-container');
   if (stagesContainer) {
@@ -1111,7 +1152,7 @@ async function submitOlympiadForm() {
     formData.append('status', document.getElementById('status-add').value);
     formData.append('website', document.getElementById('link-add').value.trim());
     formData.append('cost', document.getElementById('price-add').value);
-    formData.append('description', document.getElementById('disc-add').value.trim());
+    formData.append('description', quillAdd ? quillAdd.root.innerHTML : '');
     formData.append('format', formatVal);
 
     // Языки
@@ -1308,7 +1349,7 @@ document
       const status = document.getElementById('status-edit')?.value || '';
       const website = document.getElementById('link-edit')?.value.trim() || '';
       const cost = document.getElementById('price')?.value || '';
-      const description = document.getElementById('disc-edit')?.value.trim() || '';
+      const description = quillEdit ? quillEdit.root.innerHTML : '';
       const languageEl = document.getElementById('language-edit');
       const formatVal = document.getElementById('format-edit')?.value.trim().toLowerCase() || 'online';
   
@@ -1496,7 +1537,7 @@ async function openViewModal(id) {
     document.getElementById('view-link-website').textContent      = data.website;
     document.getElementById('view-field-cost').textContent        = data.cost;
     document.getElementById('view-field-language').textContent    = LANG_MAP[data.language] || data.language;
-    document.getElementById('view-field-description').textContent = data.description || '—';
+    document.getElementById('view-field-description').innerHTML   = data.description || '—';
 
     // 3) Этапы
     const stageLabelMap = {

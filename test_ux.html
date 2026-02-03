@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="/dist/style.css?v=fix1" rel="stylesheet" />
+  <title>Test UX Validation</title>
+</head>
+<body class="bg-gray-background p-10">
+  <div class="mx-auto my-8 max-w-lg rounded-3xl bg-white p-5 shadow-md">
+    <h1 class="text-xl font-bold mb-4">UX Validation Test</h1>
+    <p class="mb-4">This page demonstrates the validation logic for FIO fields.</p>
+    
+    <form class="space-y-6">
+      <div>
+        <label class="text-gray-primary mb-1 block text-sm">Surname (Invalid)</label>
+        <input type="text" name="surname" value="Иванов" class="input-base border-default mb-2" pattern="[A-Za-z\s'-]+" />
+        
+        <label class="text-gray-primary mb-1 block text-sm">Name (Valid)</label>
+        <input type="text" name="first_name" value="Ivan" class="input-base border-default mb-2" pattern="[A-Za-z\s'-]+" />
+
+        <label class="text-gray-primary mb-1 block text-sm">Patronymic (Invalid)</label>
+        <input type="text" name="patronymic" value="Иванович" class="input-base border-default" pattern="[A-Za-z\s'-]*" />
+        
+        <div data-latin-warning="true" class="mt-1 text-xs text-red-500 hidden"></div>
+      </div>
+    </form>
+    
+    <div class="mt-6 p-4 bg-gray-100 rounded">
+        <h2 class="font-bold">Test Results:</h2>
+        <div id="test-log"></div>
+    </div>
+  </div>
+
+<script>
+    // Mock i18n
+    window.i18nDict = {
+        'register.latin_only_warning': 'Please use Latin letters (English alphabet).'
+    };
+
+    // Replicate logic from register.js
+    const latinOnlyRegex = /^[A-Za-z\s'-]*$/;
+    const getLatinWarningText = () => window.i18nDict['register.latin_only_warning'];
+    
+    const surnameInput = document.querySelector('input[name="surname"]');
+    const nameInput = document.querySelector('input[name="first_name"]');
+    const patronymicInput = document.querySelector('input[name="patronymic"]');
+    const latinWarning = document.querySelector('[data-latin-warning="true"]');
+    
+    const setLatinValidity = (input) => {
+        if (!input) return true;
+        const value = input.value.trim();
+        const isValid = latinOnlyRegex.test(value);
+        input.setCustomValidity(isValid ? '' : getLatinWarningText());
+        
+        if (isValid) {
+            input.classList.remove('border-red-500', 'text-red-500');
+            input.classList.add('border-default'); // mimic adding default
+            input.style.borderColor = ''; // clear inline style if any
+        } else {
+            input.classList.remove('border-default');
+            input.classList.add('border-red-500', 'text-red-500');
+            input.style.borderColor = 'red'; // Force visible style for test if tailwind missing
+        }
+        return isValid;
+    };
+
+    const updateLatinWarning = () => {
+        let allValid = true;
+        if (!setLatinValidity(surnameInput)) allValid = false;
+        if (!setLatinValidity(nameInput)) allValid = false;
+        if (!setLatinValidity(patronymicInput)) allValid = false;
+
+        latinWarning.textContent = getLatinWarningText();
+        if (allValid) latinWarning.classList.add('hidden');
+        else latinWarning.classList.remove('hidden');
+        
+        return allValid;
+    };
+
+    // Run test
+    const log = document.getElementById('test-log');
+    const logMsg = (msg, color='black') => {
+        const div = document.createElement('div');
+        div.textContent = msg;
+        div.style.color = color;
+        log.appendChild(div);
+    };
+
+    setTimeout(() => {
+        const valid = updateLatinWarning();
+        if (!valid) {
+            logMsg('Validation correctly failed for Cyrillic inputs.', 'green');
+            
+            if (surnameInput.classList.contains('border-red-500')) logMsg('Surname has red border.', 'green');
+            else logMsg('Surname MISSING red border.', 'red');
+            
+            if (!nameInput.classList.contains('border-red-500')) logMsg('Name correctly has NO red border.', 'green');
+            else logMsg('Name HAS red border (wrong).', 'red');
+
+            if (!latinWarning.classList.contains('hidden')) logMsg('Warning message is visible.', 'green');
+            else logMsg('Warning message is HIDDEN (wrong).', 'red');
+        } else {
+            logMsg('Validation failed to detect errors.', 'red');
+        }
+    }, 500);
+
+</script>
+</body>
+</html>

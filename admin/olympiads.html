@@ -9,6 +9,10 @@
     <script src="https://unpkg.com/@lucide/web@latest"></script>
     <!-- <script defer src="src/scripts/showpass.js"></script> -->
 
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
@@ -528,13 +532,7 @@
                                 >Описание олимпиады</label
                               >
                               <div class="relative">
-                                <textarea
-                                  oninput="auto_grow(this)"
-                                  rows="2"
-                                  placeholder="..."
-                                  class="textarea input-base border-default px-4"
-                                  id="disc-add"
-                                ></textarea>
+                                <div id="editor-container-add" style="height: 150px;" class="bg-white rounded-b-lg"></div>
                               </div>
                             </div>
                           </div>
@@ -1312,13 +1310,7 @@
                                 >Описание олимпиады</label
                               >
                               <div class="relative">
-                                <textarea
-                                  id="disc-edit"
-                                  oninput="auto_grow(this)"
-                                  rows="2"
-                                  placeholder="Введите ваше сообщение..."
-                                  class="textarea input-base border-default px-4"
-                                ></textarea>
+                                <div id="editor-container-edit" style="height: 150px;" class="bg-white rounded-b-lg"></div>
                               </div>
                             </div>
                           </div>

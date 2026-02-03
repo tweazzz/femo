@@ -106,18 +106,45 @@
       </div>
 
       <div>
-        <label class="text-gray-primary mb-1 block text-sm" data-i18n="register.fio">ФИО</label>
+        <label class="text-gray-primary mb-1 block text-sm" data-i18n="register.surname">Фамилия</label>
         <input
           type="text"
-          name="full_name"
-          data-fio="true"
-          placeholder="Aizhan Akhmetova"
-          class="input-base border-default"
+          name="surname"
+          required
+          data-fio-part="true"
+          placeholder="Akhmetova"
+          class="input-base border-default mb-2"
           pattern="[A-Za-z\s'-]+"
-          title="Используйте латинские буквы"
-          data-i18n="register.fio"
+          data-i18n="register.surname"
           data-i18n-attr="placeholder"
         />
+        
+        <label class="text-gray-primary mb-1 block text-sm" data-i18n="register.name">Имя</label>
+        <input
+          type="text"
+          name="first_name"
+          required
+          data-fio-part="true"
+          placeholder="Aizhan"
+          class="input-base border-default mb-2"
+          pattern="[A-Za-z\s'-]+"
+          data-i18n="register.name"
+          data-i18n-attr="placeholder"
+        />
+
+        <label class="text-gray-primary mb-1 block text-sm" data-i18n="register.patronymic">Отчество (необязательно)</label>
+        <input
+          type="text"
+          name="patronymic"
+          data-fio-part="true"
+          placeholder=""
+          class="input-base border-default"
+          pattern="[A-Za-z\s'-]*"
+          data-i18n="register.patronymic"
+          data-i18n-attr="placeholder"
+        />
+        <!-- Container for latin warning -->
+        <div data-latin-warning="true" class="mt-1 text-xs text-red-500 hidden"></div>
       </div>
 
       <div class="relative">

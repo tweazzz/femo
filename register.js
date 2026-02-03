@@ -196,59 +196,108 @@ const COUNTRIES_EN = {
 
   const findInputs = (form) => {
     const emailInput = form.querySelector('input[name="email"], input#email, input[type="email"], input[placeholder*="@"]');
-    const nameInput = form.querySelector('input[name="full_name_ru"], input[name="full_name"], input[id="full_name"], input[id="name"], input[placeholder*="ФИО"], input[type="text"]');
+    // New inputs
+    const surnameInput = form.querySelector('input[name="surname"]');
+    const nameInput = form.querySelector('input[name="first_name"]');
+    const patronymicInput = form.querySelector('input[name="patronymic"]');
+    
+    // Legacy support or fallback if needed (though we removed it from HTML)
+    const oldNameInput = form.querySelector('input[name="full_name_ru"], input[name="full_name"]');
+
     const passwordInput = form.querySelector('input[name="password"], input#password, input[type="password"]');
-    const password2Input = form.querySelector('input[name="password2"], input#password2'); // input для подтверждения пароля
-    return { emailInput, nameInput, passwordInput, password2Input };
+    const password2Input = form.querySelector('input[name="password2"], input#password2'); 
+    return { emailInput, surnameInput, nameInput, patronymicInput, oldNameInput, passwordInput, password2Input };
   };
 
-  const latinOnlyRegex = /^[A-Za-z\s'-]+$/;
+  const latinOnlyRegex = /^[A-Za-z\s'-]*$/; // Changed to * to allow empty string (checked separately)
   let latinWarning = null;
+  
+  // We will track the 3 inputs now
+  let surnameInputDirect = null;
   let nameInputDirect = null;
+  let patronymicInputDirect = null;
 
-  const getNameInput = () => {
-    const input =
-      form.querySelector('input[name="full_name"][data-fio="true"]') ||
-      form.querySelector('input[name="full_name"]') ||
-      form.querySelector('input[name="full_name_ru"]') ||
-      form.querySelector('input[id="full_name"]') ||
-      form.querySelector('input[id="name"]') ||
-      form.querySelector('input[placeholder*="ФИО"]') ||
-      form.querySelector('input[type="text"]');
-    return input;
+  const getLatinWarningText = () => {
+     return (window.i18nDict && window.i18nDict['register.latin_only_warning']) || 'Пожалуйста, введите имя латинскими буквами (на английском)';
+   };
+
+  const getFioInputs = () => {
+     return {
+         surname: form.querySelector('input[name="surname"]'),
+         name: form.querySelector('input[name="first_name"]'),
+         patronymic: form.querySelector('input[name="patronymic"]')
+     };
   };
 
   const setLatinValidity = (input) => {
     if (!input) return true;
     const value = input.value.trim();
-    const isValid = !value || latinOnlyRegex.test(value);
-    input.setCustomValidity(isValid ? '' : 'Используйте латинские буквы');
+    // For required fields (surname/name), empty check is handled by browser 'required' or submission check
+    // Here we only check REGEX if value exists.
+    const isValid = latinOnlyRegex.test(value);
+    input.setCustomValidity(isValid ? '' : getLatinWarningText());
+    
+    if (isValid) {
+        input.classList.remove('border-red-500', 'text-red-500');
+        input.classList.add('border-default');
+    } else {
+        input.classList.remove('border-default');
+        input.classList.add('border-red-500', 'text-red-500');
+    }
     return isValid;
   };
 
   const updateLatinWarning = () => {
-    const input = getNameInput();
-    if (!input || !latinWarning) return;
-    const isValid = setLatinValidity(input);
-    if (isValid) {
+    const { surname, name, patronymic } = getFioInputs();
+    
+    // Check all 3
+    let allValid = true;
+    if (surname && !setLatinValidity(surname)) allValid = false;
+    if (name && !setLatinValidity(name)) allValid = false;
+    if (patronymic && !setLatinValidity(patronymic)) allValid = false;
+
+    if (!latinWarning) return;
+    
+    latinWarning.textContent = getLatinWarningText();
+
+    if (allValid) {
       latinWarning.classList.add('hidden');
-      return;
+    } else {
+      latinWarning.classList.remove('hidden');
     }
-    latinWarning.classList.remove('hidden');
   };
 
-  nameInputDirect = getNameInput();
-  if (nameInputDirect) {
-    latinWarning = nameInputDirect.parentNode.querySelector('[data-latin-warning="true"]');
-    if (!latinWarning) {
-      latinWarning = document.createElement('div');
-      latinWarning.setAttribute('data-latin-warning', 'true');
-      latinWarning.className = 'mt-1 text-xs text-red-500 hidden';
-      latinWarning.textContent = 'B';
-      nameInputDirect.parentNode.appendChild(latinWarning);
-    }
-    nameInputDirect.addEventListener('input', updateLatinWarning);
-    nameInputDirect.addEventListener('blur', updateLatinWarning);
+  const fioInputs = getFioInputs();
+  surnameInputDirect = fioInputs.surname;
+  nameInputDirect = fioInputs.name;
+  patronymicInputDirect = fioInputs.patronymic;
+
+  // We assume the warning div is already in the DOM now (added in HTML)
+  // or we can find it relative to one of the inputs
+  if (surnameInputDirect) {
+      // Find the warning container in the same parent div
+      latinWarning = surnameInputDirect.parentNode.querySelector('[data-latin-warning="true"]');
+      
+      [surnameInputDirect, nameInputDirect, patronymicInputDirect].forEach(inp => {
+          if (inp) {
+              inp.addEventListener('input', updateLatinWarning);
+              inp.addEventListener('blur', updateLatinWarning);
+          }
+      });
+
+    // Update validation messages on language change
+    window.addEventListener('i18n:languageChanged', () => {
+       if (latinWarning) {
+           latinWarning.textContent = getLatinWarningText();
+       }
+       // Update titles for all inputs
+       [surnameInputDirect, nameInputDirect, patronymicInputDirect].forEach(inp => {
+           if (inp) {
+               inp.title = getLatinWarningText();
+           }
+       });
+       updateLatinWarning();
+    });
   }
   
   form.addEventListener('submit', async (e) => {
@@ -259,7 +308,7 @@ const COUNTRIES_EN = {
     messageContainer.textContent = '';
     messageContainer.classList.remove('text-red-500', 'text-green-600');
   
-    const { emailInput, nameInput, passwordInput, password2Input } = findInputs(form);
+    const { emailInput, surnameInput, nameInput, patronymicInput, oldNameInput, passwordInput, password2Input } = findInputs(form);
   
     if (passwordInput && !passwordInput.name) {
       passwordInput.name = 'password_temp_for_read';
@@ -269,17 +318,48 @@ const COUNTRIES_EN = {
     const email = emailInput
     ? emailInput.value.trim().toLowerCase()
     : '';
-    const resolvedNameInput = nameInputDirect || nameInput;
-    const fullName = resolvedNameInput ? resolvedNameInput.value.trim() : '';
+    
+    // Construct fullName from split inputs
+    let fullName = '';
+    if (surnameInput && nameInput) {
+        const s = surnameInput.value.trim();
+        const n = nameInput.value.trim();
+        const p = patronymicInput ? patronymicInput.value.trim() : '';
+
+        if (!s || !n) {
+             messageContainer.textContent = 'Пожалуйста, заполните Фамилию и Имя.';
+             messageContainer.classList.add('text-red-500');
+             if (!s) surnameInput.focus();
+             else nameInput.focus();
+             if (submitButton) submitButton.disabled = false;
+             return;
+        }
+
+        // Format: Surname Name Patronymic
+        fullName = `${s} ${n} ${p}`.trim();
+    } else if (oldNameInput) {
+        // Fallback
+        fullName = oldNameInput.value.trim();
+    }
+
     const password = passwordInput ? passwordInput.value : '';
     const confirmPassword = password2Input ? password2Input.value : '';
     const countryCode = countrySelect ? countrySelect.value : '';
 
-    if (!setLatinValidity(resolvedNameInput)) {
-      updateLatinWarning();
-      messageContainer.textContent = 'B';
+    // Validate latin chars
+    updateLatinWarning();
+    const isLatinValid = (surnameInput ? setLatinValidity(surnameInput) : true) &&
+                         (nameInput ? setLatinValidity(nameInput) : true) &&
+                         (patronymicInput ? setLatinValidity(patronymicInput) : true) &&
+                         (oldNameInput ? setLatinValidity(oldNameInput) : true);
+
+    if (!isLatinValid) {
+      messageContainer.textContent = getLatinWarningText();
       messageContainer.classList.add('text-red-500');
-      if (resolvedNameInput) resolvedNameInput.reportValidity();
+      if (surnameInput) surnameInput.reportValidity();
+      else if (nameInput) nameInput.reportValidity();
+      else if (oldNameInput) oldNameInput.reportValidity();
+      
       const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
       if (maybePassword) maybePassword.removeAttribute('name');
       return;
@@ -302,7 +382,7 @@ const COUNTRIES_EN = {
       try {
         const pending = {
           email,
-          full_name_ru: fullName,
+          full_name_ru: fullName, // This preserves the original format "Surname Name Patronymic"
           country: countryCode,
           role: roleValue,
           __saved_at: Date.now()
