@@ -428,7 +428,7 @@ async function loadOlympiadCards() {
 
           .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; white-space: pre-wrap !important; display: block !important; }
           .quill-description strong, .quill-description b { font-weight: bold !important; }
-          .quill-description em, .quill-description i { font-style: italic !important; }
+          .quill-description em, .quill-description i { font-style: italic !important; font-synthesis: style !important; }
           .quill-description u { text-decoration: underline !important; }
           .quill-description s { text-decoration: line-through !important; }
           .quill-description a { color: #2563eb !important; text-decoration: underline !important; }

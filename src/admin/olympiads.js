@@ -119,7 +119,7 @@ function renderUserInfo(profile) {
       /* Text Formatting */
       .ql-editor p { margin-bottom: 1em !important; line-height: 1.5 !important; }
       .ql-editor strong, .ql-editor b { font-weight: bold !important; }
-      .ql-editor em, .ql-editor i { font-style: italic !important; }
+      .ql-editor em, .ql-editor i { font-style: italic !important; font-synthesis: style !important; }
       .ql-editor u { text-decoration: underline !important; }
       .ql-editor s { text-decoration: line-through !important; }
       .ql-editor a { color: #2563eb !important; text-decoration: underline !important; }
