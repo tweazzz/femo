@@ -455,6 +455,16 @@ async function loadOlympiadCards() {
           
           /* Fix for empty paragraphs */
           .quill-description p:empty { min-height: 1em; }
+
+          /* Font Size */
+          .quill-description .ql-size-small { font-size: 0.75em !important; }
+          .quill-description .ql-size-large { font-size: 1.5em !important; }
+          .quill-description .ql-size-huge { font-size: 2.5em !important; }
+
+          /* Robust Italic */
+          .quill-description em, .quill-description i { font-style: italic !important; }
+          .quill-description strong em, .quill-description em strong, 
+          .quill-description b i, .quill-description i b { font-weight: bold !important; font-style: italic !important; }
         `;
         document.head.appendChild(style);
       }

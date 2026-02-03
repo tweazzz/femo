@@ -147,6 +147,16 @@ function renderUserInfo(profile) {
       /* Sub/Super script */
       .ql-editor sub { vertical-align: sub !important; font-size: smaller !important; }
       .ql-editor sup { vertical-align: super !important; font-size: smaller !important; }
+
+      /* Font Size */
+      .ql-editor .ql-size-small { font-size: 0.75em !important; }
+      .ql-editor .ql-size-large { font-size: 1.5em !important; }
+      .ql-editor .ql-size-huge { font-size: 2.5em !important; }
+
+      /* Robust Italic */
+      .ql-editor em, .ql-editor i { font-style: italic !important; }
+      .ql-editor strong em, .ql-editor em strong, 
+      .ql-editor b i, .ql-editor i b { font-weight: bold !important; font-style: italic !important; }
     `;
     document.head.appendChild(style);
   }
@@ -274,6 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       modules: {
         toolbar: [
           ['bold', 'italic', 'underline', 'strike'],
+          [{ 'size': ['small', false, 'large', 'huge'] }],
           [{ 'list': 'ordered'}, { 'list': 'bullet' }],
           [{ 'header': [1, 2, 3, false] }],
           [{ 'color': [] }, { 'background': [] }],
@@ -291,6 +302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       modules: {
         toolbar: [
           ['bold', 'italic', 'underline', 'strike'],
+          [{ 'size': ['small', false, 'large', 'huge'] }],
           [{ 'list': 'ordered'}, { 'list': 'bullet' }],
           [{ 'header': [1, 2, 3, false] }],
           [{ 'color': [] }, { 'background': [] }],
