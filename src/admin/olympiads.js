@@ -97,6 +97,57 @@ function renderUserInfo(profile) {
     console.warn('renderUserInfo: applyTranslations error', e);
   }
 
+  // Inject styles for Quill editor to restore formatting (override Tailwind reset)
+  if (!document.getElementById('quill-fixes')) {
+    const style = document.createElement('style');
+    style.id = 'quill-fixes';
+    style.textContent = `
+      /* Lists */
+      .ql-editor ul { list-style-type: disc !important; padding-left: 1.5em !important; }
+      .ql-editor ol { list-style-type: decimal !important; padding-left: 1.5em !important; }
+      .ql-editor li { margin-bottom: 0.25em !important; }
+
+      /* Headings */
+      .ql-editor h1 { font-size: 2em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; }
+      .ql-editor h2 { font-size: 1.5em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; }
+      .ql-editor h3 { font-size: 1.17em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; }
+      .ql-editor h4 { font-size: 1em !important; font-weight: bold !important; margin-bottom: 0.5em !important; }
+
+      /* Text Formatting */
+      .ql-editor p { margin-bottom: 1em !important; line-height: 1.5 !important; }
+      .ql-editor strong, .ql-editor b { font-weight: bold !important; }
+      .ql-editor em, .ql-editor i { font-style: italic !important; }
+      .ql-editor u { text-decoration: underline !important; }
+      .ql-editor s { text-decoration: line-through !important; }
+      .ql-editor a { color: #2563eb !important; text-decoration: underline !important; }
+
+      /* Blockquotes & Code */
+      .ql-editor blockquote { border-left: 4px solid #ccc !important; padding-left: 16px !important; margin-bottom: 1em !important; font-style: italic !important; color: #555 !important; }
+      .ql-editor pre { background-color: #f0f0f0 !important; padding: 10px !important; border-radius: 4px !important; font-family: monospace !important; margin-bottom: 1em !important; overflow-x: auto !important; }
+      .ql-editor code { background-color: #f0f0f0 !important; padding: 2px 4px !important; border-radius: 3px !important; font-family: monospace !important; }
+
+      /* Alignment */
+      .ql-editor .ql-align-center { text-align: center !important; }
+      .ql-editor .ql-align-right { text-align: right !important; }
+      .ql-editor .ql-align-justify { text-align: justify !important; }
+
+      /* Indentation */
+      .ql-editor .ql-indent-1 { padding-left: 3em !important; }
+      .ql-editor .ql-indent-2 { padding-left: 6em !important; }
+      .ql-editor .ql-indent-3 { padding-left: 9em !important; }
+      .ql-editor .ql-indent-4 { padding-left: 12em !important; }
+      .ql-editor .ql-indent-5 { padding-left: 15em !important; }
+      .ql-editor .ql-indent-6 { padding-left: 18em !important; }
+      .ql-editor .ql-indent-7 { padding-left: 21em !important; }
+      .ql-editor .ql-indent-8 { padding-left: 24em !important; }
+      
+      /* Sub/Super script */
+      .ql-editor sub { vertical-align: sub !important; font-size: smaller !important; }
+      .ql-editor sup { vertical-align: super !important; font-size: smaller !important; }
+    `;
+    document.head.appendChild(style);
+  }
+
   const roleMap = { administrator: 'Администратор' };
   roleEl.textContent = roleMap[p.role] || p.role || '';
 

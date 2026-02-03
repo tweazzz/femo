@@ -402,6 +402,51 @@ function resolveStudyLanguage(value) {
   return value;
 }
 
+/* ----------------- Scrollbar Sync ----------------- */
+function setupScrollSync() {
+  const scrollbar = document.getElementById('table-scrollbar');
+  const tableBodyWrapper = document.getElementById('table-body-wrapper');
+  const tableHeaderWrapper = document.getElementById('table-header-wrapper');
+  
+  if (!scrollbar || !tableBodyWrapper || !tableHeaderWrapper) return;
+
+  // Sync scroll from dummy scrollbar to body and header
+  scrollbar.addEventListener('scroll', () => {
+    const left = scrollbar.scrollLeft;
+    if (tableBodyWrapper.scrollLeft !== left) {
+      tableBodyWrapper.scrollLeft = left;
+    }
+    if (tableHeaderWrapper.scrollLeft !== left) {
+      tableHeaderWrapper.scrollLeft = left;
+    }
+  });
+
+  // Sync scroll from table body to dummy scrollbar and header
+  tableBodyWrapper.addEventListener('scroll', () => {
+    const left = tableBodyWrapper.scrollLeft;
+    if (scrollbar.scrollLeft !== left) {
+      scrollbar.scrollLeft = left;
+    }
+    if (tableHeaderWrapper.scrollLeft !== left) {
+      tableHeaderWrapper.scrollLeft = left;
+    }
+  });
+
+  window.addEventListener('resize', updateScrollbarWidth);
+}
+
+function updateScrollbarWidth() {
+  const scrollbarContent = document.getElementById('table-scrollbar-content');
+  const tableBodyWrapper = document.getElementById('table-body-wrapper');
+  
+  if (!scrollbarContent || !tableBodyWrapper) return;
+  
+  const table = tableBodyWrapper.querySelector('table');
+  if (table) {
+    scrollbarContent.style.width = table.offsetWidth + 'px';
+  }
+}
+
 function renderUsers(users) {
   const tbody = document.querySelector('tbody');
   if (!tbody) return;
@@ -501,6 +546,8 @@ function renderUsers(users) {
   window.addEventListener('i18n:languageReady', onLang);
   window.removeEventListener('i18n:languageChanged', onLang);
   window.addEventListener('i18n:languageChanged', onLang);
+
+  updateScrollbarWidth();
 }
 
 // Вспомогательная функция для флагов
@@ -541,6 +588,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3) Рисуем шапку
     renderUserInfo(profileData);
   setupSearch()
+  setupScrollSync();
 
   await populateCountryAndClassOptions()
 
