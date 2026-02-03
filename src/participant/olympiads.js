@@ -398,7 +398,7 @@ async function loadOlympiadCards() {
       // description
       const desc = document.createElement('div');
       // desc.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal break-words ...'; // old class
-      desc.className = 'quill-description text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal break-words';
+      desc.className = 'quill-description text-gray-primary mb-3 text-sm leading-relaxed whitespace-pre-wrap break-words';
       desc.innerHTML = unescapeHtml(olympiad.description || '');
       top.appendChild(desc);
 
