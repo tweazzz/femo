@@ -407,6 +407,11 @@ async function loadOlympiadCards() {
         const style = document.createElement('style');
         style.id = 'quill-viewer-styles';
         style.textContent = `
+          .quill-description {
+            font-family: 'Inter', sans-serif !important;
+            tab-size: 4 !important;
+            -moz-tab-size: 4 !important;
+          }
           .quill-description ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 1em !important; }
           .quill-description ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 1em !important; }
           .quill-description li { margin-bottom: 0.25em !important; }
@@ -416,7 +421,7 @@ async function loadOlympiadCards() {
           .quill-description h3 { font-size: 1.17em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; }
           .quill-description h4 { font-size: 1em !important; font-weight: bold !important; margin-bottom: 0.5em !important; }
 
-          .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; }
+          .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; white-space: pre-wrap !important; }
           .quill-description strong, .quill-description b { font-weight: bold !important; }
           .quill-description em, .quill-description i { font-style: italic !important; }
           .quill-description u { text-decoration: underline !important; }
@@ -424,7 +429,7 @@ async function loadOlympiadCards() {
           .quill-description a { color: #2563eb !important; text-decoration: underline !important; }
 
           .quill-description blockquote { border-left: 4px solid #ccc !important; padding-left: 16px !important; margin-bottom: 1em !important; font-style: italic !important; color: #555 !important; }
-          .quill-description pre { background-color: #f0f0f0 !important; padding: 10px !important; border-radius: 4px !important; font-family: monospace !important; margin-bottom: 1em !important; overflow-x: auto !important; }
+          .quill-description pre { background-color: #f0f0f0 !important; padding: 10px !important; border-radius: 4px !important; font-family: monospace !important; margin-bottom: 1em !important; overflow-x: auto !important; white-space: pre !important; }
           .quill-description code { background-color: #f0f0f0 !important; padding: 2px 4px !important; border-radius: 3px !important; font-family: monospace !important; }
 
           .quill-description .ql-align-center { text-align: center !important; }

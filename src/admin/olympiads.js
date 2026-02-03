@@ -102,6 +102,9 @@ function renderUserInfo(profile) {
     const style = document.createElement('style');
     style.id = 'quill-fixes';
     style.textContent = `
+      /* General Editor Font */
+      .ql-container, .ql-editor { font-family: 'Inter', sans-serif !important; }
+
       /* Lists */
       .ql-editor ul { list-style-type: disc !important; padding-left: 1.5em !important; }
       .ql-editor ol { list-style-type: decimal !important; padding-left: 1.5em !important; }
