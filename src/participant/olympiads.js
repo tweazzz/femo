@@ -397,9 +397,57 @@ async function loadOlympiadCards() {
 
       // description
       const desc = document.createElement('div');
-      desc.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-bold [&_em]:italic [&_a]:text-blue-600 [&_a]:underline [&_.ql-align-center]:text-center [&_.ql-align-right]:text-right [&_.ql-align-justify]:text-justify [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold';
+      // desc.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal break-words ...'; // old class
+      desc.className = 'quill-description text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal break-words';
       desc.innerHTML = unescapeHtml(olympiad.description || '');
       top.appendChild(desc);
+
+      // Inject styles for Quill content if not already present
+      if (!document.getElementById('quill-viewer-styles')) {
+        const style = document.createElement('style');
+        style.id = 'quill-viewer-styles';
+        style.textContent = `
+          .quill-description ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 1em !important; }
+          .quill-description ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 1em !important; }
+          .quill-description li { margin-bottom: 0.25em !important; }
+
+          .quill-description h1 { font-size: 2em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; }
+          .quill-description h2 { font-size: 1.5em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; }
+          .quill-description h3 { font-size: 1.17em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; }
+          .quill-description h4 { font-size: 1em !important; font-weight: bold !important; margin-bottom: 0.5em !important; }
+
+          .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; }
+          .quill-description strong, .quill-description b { font-weight: bold !important; }
+          .quill-description em, .quill-description i { font-style: italic !important; }
+          .quill-description u { text-decoration: underline !important; }
+          .quill-description s { text-decoration: line-through !important; }
+          .quill-description a { color: #2563eb !important; text-decoration: underline !important; }
+
+          .quill-description blockquote { border-left: 4px solid #ccc !important; padding-left: 16px !important; margin-bottom: 1em !important; font-style: italic !important; color: #555 !important; }
+          .quill-description pre { background-color: #f0f0f0 !important; padding: 10px !important; border-radius: 4px !important; font-family: monospace !important; margin-bottom: 1em !important; overflow-x: auto !important; }
+          .quill-description code { background-color: #f0f0f0 !important; padding: 2px 4px !important; border-radius: 3px !important; font-family: monospace !important; }
+
+          .quill-description .ql-align-center { text-align: center !important; }
+          .quill-description .ql-align-right { text-align: right !important; }
+          .quill-description .ql-align-justify { text-align: justify !important; }
+
+          .quill-description .ql-indent-1 { padding-left: 3em !important; }
+          .quill-description .ql-indent-2 { padding-left: 6em !important; }
+          .quill-description .ql-indent-3 { padding-left: 9em !important; }
+          .quill-description .ql-indent-4 { padding-left: 12em !important; }
+          .quill-description .ql-indent-5 { padding-left: 15em !important; }
+          .quill-description .ql-indent-6 { padding-left: 18em !important; }
+          .quill-description .ql-indent-7 { padding-left: 21em !important; }
+          .quill-description .ql-indent-8 { padding-left: 24em !important; }
+
+          .quill-description sub { vertical-align: sub !important; font-size: smaller !important; }
+          .quill-description sup { vertical-align: super !important; font-size: smaller !important; }
+          
+          /* Fix for empty paragraphs */
+          .quill-description p:empty { min-height: 1em; }
+        `;
+        document.head.appendChild(style);
+      }
 
       card.appendChild(top);
 
