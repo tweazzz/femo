@@ -37,6 +37,10 @@ async function ensureUserAuthenticated() {
   return user
 }
 
+const getTranslatedText = (key, defaultText) => {
+  return (window.i18nDict && window.i18nDict[key]) || defaultText;
+};
+
 // Основная отрисовка профиля
 function renderUserInfo(profile) {
   const p = profile && profile.profile ? profile.profile : (profile || {});
@@ -95,8 +99,12 @@ function renderUserInfo(profile) {
     console.warn('renderUserInfo: applyTranslations error', e);
   }
 
-  const roleMap = { administrator: 'Администратор' };
-  roleEl.textContent = roleMap[p.role] || p.role || '';
+  const updateRoleText = () => {
+      const roleKey = `role.${p.role}`;
+      roleEl.textContent = getTranslatedText(roleKey, p.role === 'administrator' ? 'Администратор' : p.role);
+      roleEl.setAttribute('data-i18n', roleKey); // Optional, if we want applyTranslations to handle it later
+  };
+  updateRoleText();
 
   // Подписка на смену языка (обновит перевод и имя)
   function onLanguageChanged() {
@@ -118,6 +126,8 @@ function renderUserInfo(profile) {
       }
       const newFirst = (newFullName.split && newFullName.split(' ')[0]) || '';
       greetSpan.after(document.createTextNode(' ' + newFirst + ' 👋'));
+      
+      updateRoleText();
     } catch (e) {
       console.warn('onLanguageChanged error', e);
     }
@@ -172,7 +182,7 @@ async function loadAllUsers() {
     console.log('Получены данные:', data)
 
     if (!Array.isArray(data)) {
-      throw new Error('Ожидался массив пользователей')
+      throw new Error(getTranslatedText('error.expected_array', 'Ожидался массив пользователей'))
     }
 
     allUsers = data
@@ -207,7 +217,11 @@ function initFilters(users) {
   // Города
   const cities = [...new Set(users.map(u => u.city))]
     .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b, 'ru'));
+    .sort((a, b) => {
+        const lang = (localStorage.getItem('lang') || 'ru').toLowerCase();
+        const sortLocale = lang === 'en' ? 'en' : (lang === 'kz' || lang === 'kk' ? 'kk' : 'ru');
+        return a.localeCompare(b, sortLocale);
+    });
 
   const citySelect = document.querySelector('.city-filter');
   citySelect.innerHTML = `

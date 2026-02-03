@@ -387,7 +387,7 @@ async function loadOlympiadCards() {
       // description
       const desc = document.createElement('p');
       desc.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal';
-      desc.textContent = olympiad.description || '';
+      desc.innerHTML = olympiad.description || '';
       top.appendChild(desc);
 
       card.appendChild(top);

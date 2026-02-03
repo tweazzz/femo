@@ -87,10 +87,10 @@ async function setLanguage(lang = 'ru', role = null, page = 'index') {
   } catch(e){}
 
   if (frontendLang === 'ru') {
-    window.i18nDict = {};
-    window.dispatchEvent(new CustomEvent('i18n:languageChanged', { detail: { frontendLang, backendLang, role: detectedRole, page } }));
-    console.log('i18n: ru selected — skip frontend JSON (default RU markup).');
-    return;
+    // We used to skip fetching for RU, but now we support ru.json files.
+    // However, to maintain backward compatibility (if file missing), 
+    // fetchLocaleForPage returns {} and we apply empty dict (safe).
+    // So we proceed to fetch logic below.
   }
 
   // try to load page-specific, fallback to index.json

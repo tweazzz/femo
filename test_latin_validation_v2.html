@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Latin Validation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .input-base {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+        }
+        .border-red-500 {
+            border-color: #ef4444;
+        }
+        .text-red-500 {
+            color: #ef4444;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="p-10">
+
+    <h1 class="text-xl font-bold mb-4">Latin Validation Test</h1>
+    
+    <form id="test-form" class="max-w-md mx-auto space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">Surname</label>
+            <input type="text" name="surname" class="input-base" placeholder="Enter surname">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Name</label>
+            <input type="text" name="first_name" class="input-base" placeholder="Enter name">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Patronymic</label>
+            <input type="text" name="patronymic" class="input-base" placeholder="Enter patronymic">
+            
+            <!-- Warning Container -->
+            <div data-latin-warning="true" class="mt-1 text-xs text-red-500 hidden"></div>
+        </div>
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+    </form>
+
+    <div class="mt-8 p-4 bg-gray-100 rounded">
+        <h2 class="font-bold">Instructions:</h2>
+        <ul class="list-disc pl-5">
+            <li>Type Cyrillic characters in any field.</li>
+            <li>Verify that the red warning text appears immediately below Patronymic.</li>
+            <li>Verify that the input border turns red.</li>
+            <li>Try to submit. Verify that the browser popup shows "Please use Latin letters..." instead of the default message.</li>
+        </ul>
+    </div>
+
+    <script>
+        // Mock i18n
+        window.i18nDict = {
+            'register.latin_only_warning': 'Please use Latin letters (English alphabet) for your name. [TEST]'
+        };
+
+        // Logic extracted/adapted from register.js for testing purposes
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('test-form');
+            const latinOnlyRegex = /^[A-Za-z\s'-]*$/;
+            let latinWarning = form.querySelector('[data-latin-warning="true"]');
+            
+            const getLatinWarningText = () => {
+                return window.i18nDict['register.latin_only_warning'];
+            };
+
+            const setLatinValidity = (input) => {
+                if (!input) return true;
+                const value = input.value.trim();
+                const isValid = latinOnlyRegex.test(value);
+                
+                const warningText = getLatinWarningText();
+                input.setCustomValidity(isValid ? '' : warningText);
+                input.title = isValid ? '' : warningText;
+
+                if (isValid) {
+                    input.classList.remove('border-red-500', 'text-red-500');
+                    input.classList.add('border-default'); // Mock class
+                } else {
+                    input.classList.remove('border-default');
+                    input.classList.add('border-red-500', 'text-red-500');
+                }
+                return isValid;
+            };
+
+            const updateLatinWarning = () => {
+                const surname = form.querySelector('input[name="surname"]');
+                const name = form.querySelector('input[name="first_name"]');
+                const patronymic = form.querySelector('input[name="patronymic"]');
+
+                let allValid = true;
+                if (surname && !setLatinValidity(surname)) allValid = false;
+                if (name && !setLatinValidity(name)) allValid = false;
+                if (patronymic && !setLatinValidity(patronymic)) allValid = false;
+
+                if (!latinWarning) return;
+                
+                latinWarning.textContent = getLatinWarningText();
+
+                if (allValid) {
+                    latinWarning.classList.add('hidden');
+                } else {
+                    latinWarning.classList.remove('hidden');
+                }
+            };
+
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(inp => {
+                inp.addEventListener('input', updateLatinWarning);
+                inp.addEventListener('blur', updateLatinWarning);
+            });
+        });
+    </script>
+</body>
+</html>

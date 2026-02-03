@@ -114,7 +114,6 @@
           data-fio-part="true"
           placeholder="Akhmetova"
           class="input-base border-default mb-2"
-          pattern="[A-Za-z\s'-]+"
           data-i18n="register.surname"
           data-i18n-attr="placeholder"
         />
@@ -127,7 +126,6 @@
           data-fio-part="true"
           placeholder="Aizhan"
           class="input-base border-default mb-2"
-          pattern="[A-Za-z\s'-]+"
           data-i18n="register.name"
           data-i18n-attr="placeholder"
         />
@@ -139,7 +137,6 @@
           data-fio-part="true"
           placeholder=""
           class="input-base border-default"
-          pattern="[A-Za-z\s'-]*"
           data-i18n="register.patronymic"
           data-i18n-attr="placeholder"
         />
@@ -283,36 +280,6 @@
       }
     });
   });
-</script>
-<script>
-  // 1) сохраняем язык фронта
-  const lang = localStorage.getItem("lang") || "ru";
-
-  // 2) переводим в backend формат
-  function frontendToBackend(frontend) {
-    if (frontend === "kz" || frontend === "kk") return "kk";
-    if (frontend === "en") return "en";
-    return "ru";
-  }
-
-  const backendLang = frontendToBackend(lang);
-
-  // 3) шлём язык на backend
-  fetch("https://portal.femo.kz/api/users/settings/", {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${data.access}`,
-    },
-    body: JSON.stringify({
-      language: backendLang,
-    }),
-  })
-    .then(() => {
-      console.log("Language saved:", backendLang);
-    })
-    .catch(e => console.warn("Error saving language:", e));
-
 </script>
 <script src="/src/scripts/i18n.js" defer></script>
 <script src="/src/scripts/langInit.js" defer></script>

@@ -149,6 +149,7 @@ async function loadAdminProfile() {
   return await res.json();
 }
 let countryMap = {}
+let languageMap = {}
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
@@ -160,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     await populateCountryFilter()
+    await populateLanguageMap()
     await loadAssignments()
     setupAssignmentFilters()
     await populateOlympiadFilter()
@@ -507,6 +509,22 @@ function setupAssignmentFilters() {
     ?.addEventListener('change', applyAssignmentFilters)
 }
 
+async function populateLanguageMap() {
+  try {
+    const response = await authorizedFetch(
+      'https://portal.femo.kz/api/common/languages/?page=1&page_size=500'
+    )
+    if (!response.ok) throw new Error('Ошибка загрузки языков')
+
+    const data = await response.json()
+    data.results.forEach((language) => {
+      languageMap[language.code] = language.name
+    })
+  } catch (err) {
+    console.error('Не удалось загрузить список языков:', err)
+  }
+}
+
 // 2) В populateCountryFilter после добавления <option> в селект — заполняем countryMap:
 async function populateCountryFilter() {
   try {
@@ -642,19 +660,21 @@ async function exportTableToExcel() {
         'total_tasks',
         'solved_tasks',
         'olympiad_id',
+        'language',
       ],
       ...allData.map((item) => [
         item.id,
         item.participant_id,
         item.rank,
         item.participant_name,
-        item.country,
+        countryMap[item.country] || item.country,
         Object.keys(classMap).find((key) => classMap[key] === item.grade) ||
           item.grade,
         item.score,
         item.result.split('/')[1],
         item.result.split('/')[0],
         item.olympiad_id,
+        languageMap[item.language] || item.language,
       ]),
     ]
 

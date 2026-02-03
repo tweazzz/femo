@@ -105,8 +105,8 @@ function renderUserInfo(profile) {
     console.warn('renderUserInfo: applyTranslations error', e);
   }
 
-  const roleMap = { participant: 'Представитель' };
-  roleEl.textContent = roleMap[p.role] || p.role || '';
+  const roleKey = `role.${p.role}`;
+  roleEl.textContent = getTranslatedText(roleKey, p.role);
 
   // Подписка на смену языка (обновит перевод и имя)
   function onLanguageChanged() {
@@ -144,28 +144,7 @@ function renderUserInfo(profile) {
   }
 }
 function getLevelLabel(level) {
-  const langRaw = localStorage.getItem('lang') || 'ru';
-  const lang = langRaw === 'kk' ? 'kz' : langRaw;
-
-  const LEVEL_MAP = {
-    ru: {
-      easy: 'Лёгкий',
-      medium: 'Средний',
-      hard: 'Сложный',
-    },
-    kz: {
-      easy: 'Оңай',
-      medium: 'Орташа',
-      hard: 'Қиын',
-    },
-    en: {
-      easy: 'Easy',
-      medium: 'Medium',
-      hard: 'Hard',
-    },
-  };
-
-  return LEVEL_MAP[lang]?.[level] || level;
+  return getTranslatedText(`levels.${level}`, level);
 }
 
 /**
@@ -202,13 +181,14 @@ function updateResultBanners(obj = {}) {
     const xp = (obj.points ?? obj.awarded_points ?? obj.base_points ?? 0);
 
     // Обновим внутренний текст аккуратно (чтобы сохранить тег <strong id="win-info-xp">)
-    const winText = `Ты победил(а)! Ответ верный и вовремя — ты получаешь <strong id="win-info-xp">+${xp} XP</strong>`;
+    const part1 = getTranslatedText('task.correct_answer', 'Ты победил(а)! Ответ верный и вовремя — ты получаешь ');
+    const winText = `${part1}<strong id="win-info-xp">+${xp} XP</strong>`;
     const winTextContainer = winInfo.querySelector('span') || winInfo;
     winTextContainer.innerHTML = winText;
 
     // Обновим modal текст если есть
     const modalXP = document.getElementById('modal-xp');
-    if (modalXP) modalXP.textContent = `Ответ верный и вовремя — ты получаешь +${xp} XP`;
+    if (modalXP) modalXP.textContent = `${getTranslatedText('task.win_modal_text', 'Ответ верный и вовремя — ты получаешь ')} +${xp} XP`;
 
     winInfo.style.display = 'flex';
     loseInfo.style.display = 'none';
@@ -217,6 +197,10 @@ function updateResultBanners(obj = {}) {
 
   if (correct === false) {
     // Показываем "неправильно"
+    const loseText = getTranslatedText('task.incorrect_answer', 'К сожалению, ответ неверный. Попробуйте еще раз.');
+    const loseTextContainer = loseInfo.querySelector('span') || loseInfo;
+    loseTextContainer.textContent = loseText;
+
     winInfo.style.display = 'none';
     loseInfo.style.display = 'flex';
     return;
@@ -298,15 +282,20 @@ async function loadTaskDetails() {
 
 function renderTask(task) {
   document.querySelector('h2.text-2xl').textContent = task.title
-  document.querySelector('p.text-gray-600').textContent = `${task.grade} класс`
+  document.querySelector('p.text-gray-600').textContent = `${task.grade} ${getTranslatedText('task.grade', 'класс')}`
   const descriptionEl = document.querySelector('.text.border-gray-border')
   descriptionEl.innerHTML = `<p>${task.description}</p>`
 
   const deadlineEl = document.querySelector('.deadline-value');
   const deadlineDate = new Date(task.deadline);
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+  const lang = localStorage.getItem('lang') || 'ru';
+  const localeMap = { ru: 'ru-RU', kz: 'kk-KZ', en: 'en-US' };
+  const locale = localeMap[lang] || 'ru-RU';
+
   // Форматируем дату с локальной таймзоной
-  deadlineEl.textContent = deadlineDate.toLocaleString('ru-RU', {
+  deadlineEl.textContent = deadlineDate.toLocaleString(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -320,18 +309,21 @@ function renderTask(task) {
   const timeLeftEl = document.querySelector('.timer')
   timeLeftEl.innerHTML = `<span class="border-default bg-orange-secondary rounded-sm p-2.5">${task.time_left}</span>`
 
-  const levelMap = {
-    easy: 'Лёгкий',
-    medium: 'Средний',
-    hard: 'Сложный',
-  }
   document.querySelector('.d-level').textContent = getLevelLabel(task.level);
 
   document.querySelectorAll('.text-gray-primary + span')[0].textContent = `${task.base_points} XP 🟢`
   document.querySelectorAll('.text-gray-primary + span')[1].textContent = `${task.bonus_points} XP 🔵`
 
   const statusEl = document.querySelector('.card.archive')
-  if (statusEl) statusEl.textContent = task.status
+  if (statusEl) {
+    const statusKeyMap = {
+        'Не отправлено': 'not_sent',
+        'Завершено': 'completed',
+        'Отправлено': 'sent'
+    };
+    const statusKey = statusKeyMap[task.status];
+    statusEl.textContent = statusKey ? getTranslatedText(`task.status.${statusKey}`, task.status) : task.status;
+  }
 
   const attachmentsContainer = document.querySelector('.space-y-3')
   attachmentsContainer.innerHTML = ''
@@ -487,7 +479,7 @@ async function loadTaskMock() {
 
     // Скрываем/показываем элементы формы в зависимости от solved
     if (task.solved) {
-      statusEl.textContent = 'Завершено';
+      statusEl.textContent = getTranslatedText('task.status.completed', 'Завершено');
       // если уже решено — прячем форму и показываем результат (win/lose) по данным backend
       const answerLabel = document.querySelector('#answer-input')?.closest('label');
       const submit2Button = document.getElementById('submit-button2');
@@ -505,7 +497,7 @@ async function loadTaskMock() {
       // Покажем баннер по данным task (points, correct и т.д.)
       updateResultBanners(task);
     } else {
-      statusEl.textContent = 'Не завершено';
+      statusEl.textContent = getTranslatedText('task.status.not_completed', 'Не завершено');
       // не решено — показываем форму, скрываем ссылку "следующая задача"
       const answerLabel = document.querySelector('#answer-input')?.closest('label');
       const submit2Button = document.getElementById('submit-button2');
@@ -751,7 +743,7 @@ submitBtn1.addEventListener('click', async () => {
     if (!response.ok) {
       // Если ответ 400 и detail говорит про некорректный формат
       if (result.detail === 'Invalid numeric answer.') {
-        errorEl.textContent = 'Ответ должен быть цифрой';
+        errorEl.textContent = getTranslatedText('error.numeric_answer', 'Ответ должен быть цифрой');
         errorEl.style.display = 'block';
         return;
       }
@@ -786,7 +778,7 @@ submitBtn1.addEventListener('click', async () => {
 
   } catch (err) {
     console.error('Ошибка при отправке:', err);
-    alert('Ошибка при отправке ответа.');
+    alert(getTranslatedText('error.submit_error', 'Ошибка при отправке ответа.'));
     // Неверный ответ
     winInfo.style.display = 'none';
     loseInfo.style.display = 'block';

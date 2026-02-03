@@ -236,6 +236,17 @@ function formatRemainingDays(endDate) {
 
 
 
+function unescapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#x2F;/g, "/");
+}
+
 async function loadOlympiadCards() {
   const token = localStorage.getItem('access_token');
   if (!token) {
@@ -385,9 +396,9 @@ async function loadOlympiadCards() {
       top.appendChild(h3);
 
       // description
-      const desc = document.createElement('p');
-      desc.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal';
-      desc.textContent = olympiad.description || '';
+      const desc = document.createElement('div');
+      desc.className = 'text-gray-primary mb-3 text-sm leading-relaxed whitespace-normal break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-bold [&_em]:italic [&_a]:text-blue-600 [&_a]:underline [&_.ql-align-center]:text-center [&_.ql-align-right]:text-right [&_.ql-align-justify]:text-justify [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold';
+      desc.innerHTML = unescapeHtml(olympiad.description || '');
       top.appendChild(desc);
 
       card.appendChild(top);

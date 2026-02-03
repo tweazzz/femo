@@ -40,7 +40,7 @@
     "members.table_country": "Ел",
     "members.table_total_score": "Жалпы ұпай",
     "members.table_action": "Әрекет",
-    "members.table_empty": "Қатысушылар жок!",
+    "members.table_empty": "Қатысушылар жоқ!",
     "members.delete_user": "Қатысушыны жою",
     "members.delete_user_text": "Қатысушыны жоюға сенімдісіз бе?",
     "members.delete_btn": "Жою",

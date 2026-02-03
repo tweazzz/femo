@@ -206,10 +206,6 @@
                 data-i18n="my_way.personal_info"
                   >Личные данные</a
                 >
-                <a href="/participant/payments.html" class="tabs-link"
-                data-i18n="my_way.payments"
-                  >Баланс и платежи</a
-                >
                 <a href="/participant/settings.html" class="tabs-link active"
                 data-i18n="my_way.settings"
                   >Настройки</a
@@ -219,53 +215,6 @@
           </div>
 
           <div class="space-y-4">
-            <div>
-              <p class="mb-4 text-lg font-bold" data-i18n="my_way.settings">Настройки</p>
-              <div class="border-default rounded-2xl p-6">
-                <p class="mb-3 text-sm" data-i18n="profile_settings.choose_lang">
-                  Выберите язык, который будет использоваться на платформе
-                </p>
-
-                <div class="flex flex-wrap items-center gap-4">
-                  <label class="switch-btn flex items-center gap-2">
-                    <img src="https://flagcdn.com/w40/ru.png" alt="Флаг России" class="h-3 w-5 object-contain">
-                    <input
-                      type="radio"
-                      name="lang"
-                      value="ru"
-                      class="hidden"
-                      required
-                    />
-                    Русский
-                  </label>
-
-                  <label class="switch-btn flex items-center gap-2">
-                    <img src="https://flagcdn.com/w40/kz.png" alt="Флаг Казахстана" class="h-3 w-5 object-contain">
-                    <input
-                      type="radio"
-                      name="lang"
-                      value="kz"
-                      class="hidden"
-                      required
-                    />
-                    Қазақша
-                  </label>
-
-                  <label class="switch-btn flex items-center gap-2">
-                    <img src="https://flagcdn.com/w40/gb.png" alt="Флаг Великобритании" class="h-3 w-5 object-contain">
-                    <input
-                      type="radio"
-                      name="lang"
-                      value="en"
-                      class="hidden"
-                      required
-                    />
-                    English
-                  </label>
-                </div>
-              </div>
-            </div>
-
             <div>
               <p class="mb-4 text-lg font-bold" data-i18n="profile_settings.notification">
                 Настройки уведомлений в сайте
@@ -498,20 +447,20 @@
             </div>
 
             <div class="space-y-6">
-              <p class="text-lg font-bold">Двухэтапная аутентификация</p>
+              <p class="text-lg font-bold" data-i18n="profile_settings.2fa_header">Двухэтапная аутентификация</p>
 
               <div class="border-default space-y-6 rounded-2xl p-6">
                 <div class="flex items-center gap-2 font-bold">
                   <img src="/src/assets/images/unlock.png" alt="unlock" />
-                  Защитите свой аккаунт
+                  <span data-i18n="profile_settings.2fa_protect">Защитите свой аккаунт</span>
                 </div>
 
-                <p class="text-sm">
+                <p class="text-sm" data-i18n="profile_settings.2fa_desc1">
                   Включите двухэтапную аутентификацию и подтвердите вход кодом с
                   телефона.
                 </p>
 
-                <p class="text-sm">
+                <p class="text-sm" data-i18n="profile_settings.2fa_desc2">
                   На ваш номер +7••• ••••45 будет отправляться код при каждом
                   входе.
                 </p>
@@ -539,12 +488,13 @@
                       />
                     </svg>
                   </span>
-                  Изменить номер
+                  <span data-i18n="profile_settings.change_number">Изменить номер</span>
                 </button>
                 <button
                   type="button"
                   onclick="toggleModal('modalOff')"
                   class="border-red-primary text-red-primary block w-full cursor-pointer rounded-xl border-1 px-3 py-2 text-center transition sm:w-auto"
+                  data-i18n="profile_settings.disable_2fa"
                 >
                   Отключить 2FA
                 </button>
@@ -559,7 +509,7 @@
                     <div
                       class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4"
                     >
-                      <p class="text-xl font-bold">Отключить 2FA</p>
+                      <p class="text-xl font-bold" data-i18n="profile_settings.disable_2fa_confirm_header">Отключить 2FA</p>
                       <button
                         type="button"
                         onclick="toggleModal('modalOff')"
@@ -570,7 +520,7 @@
                     </div>
 
                     <div class="px-6 py-4">
-                      <p class="mb-4 text-sm">
+                      <p class="mb-4 text-sm" data-i18n="profile_settings.disable_2fa_confirm_text">
                         Вы уверены, что хотите отключить двухэтапную
                         аутентификацию? Это снизит безопасность аккаунта.
                       </p>
@@ -581,6 +531,7 @@
                         type="button"
                         onclick="toggleModal('modalOff')"
                         class="btn-red"
+                        data-i18n="profile_settings.disable_2fa_btn"
                       >
                         Отключить 2FA
                       </button>
@@ -589,6 +540,7 @@
                         type="button"
                         onclick="toggleModal('modalOff')"
                         class="btn-gray-b"
+                        data-i18n="common.cancel"
                       >
                         Отмена
                       </button>
@@ -601,6 +553,7 @@
                 type="button"
                 onclick="toggleModal('modal')"
                 class="border-orange-primary text-orange-primary ms-auto block w-full cursor-pointer rounded-xl border-1 px-3 py-2 text-center transition sm:w-auto"
+                data-i18n="profile_settings.enable_2fa_btn"
               >
                 Включить двухэтапную аутентификацию
               </button>
@@ -626,7 +579,7 @@
                     />
                   </svg>
                 </span>
-                Удалить Аккаунт
+                <span data-i18n="profile_settings.delete_account">Удалить Аккаунт</span>
               </button>
 
               <div
@@ -638,7 +591,7 @@
                     <div
                       class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4"
                     >
-                      <p class="text-xl font-bold">Удалить аккаунт</p>
+                      <p class="text-xl font-bold" data-i18n="profile_settings.delete_account_header">Удалить аккаунт</p>
                       <button
                         type="button"
                         onclick="toggleModal('modalDel')"
@@ -649,7 +602,7 @@
                     </div>
 
                     <div class="px-6 py-4">
-                      <p class="mb-4 text-sm">
+                      <p class="mb-4 text-sm" data-i18n="profile_settings.delete_account_confirm_text">
                         Вы точно уверены, что хотите удалить аккаунт ? Это
                         действие необратимо. Мы отправим письмо на ваш email для
                         подтверждения
@@ -678,13 +631,14 @@
                             />
                           </svg>
                         </span>
-                        Удалить
+                        <span data-i18n="profile_settings.delete_btn">Удалить</span>
                       </button>
 
                       <button
                         type="button"
                         onclick="toggleModal('modalDel')"
                         class="btn-gray-b"
+                        data-i18n="common.cancel"
                       >
                         Отмена
                       </button>
@@ -702,7 +656,7 @@
                     <div
                       class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4"
                     >
-                      <p class="text-xl font-bold">
+                      <p class="text-xl font-bold" data-i18n="profile_settings.enable_2fa_header">
                         Включить двухэтапную аутентификацию
                       </p>
                       <button
@@ -715,7 +669,7 @@
                     </div>
 
                     <div class="px-6 py-4">
-                      <p class="mb-4 text-sm text-gray-600">
+                      <p class="mb-4 text-sm text-gray-600" data-i18n="profile_settings.enable_2fa_desc">
                         Введите свой номер телефона, чтобы получать коды
                         подтверждения при входе.
                       </p>
@@ -723,6 +677,7 @@
                       <div class="mb-4">
                         <label
                           class="text-gray-primary mb-1 block text-sm font-medium"
+                          data-i18n="profile_settings.phone_number"
                           >Номер телефона</label
                         >
                         <input
@@ -739,6 +694,7 @@
                         type="button"
                         onclick="sendCode()"
                         class="btn-orange w-full justify-center"
+                        data-i18n="profile_settings.send_code"
                       >
                         Отправить код
                       </button>
@@ -757,7 +713,7 @@
                     <div
                       class="flex items-center justify-between border-b border-gray-200 px-6 pt-6 pb-4"
                     >
-                      <p class="text-xl font-bold">Подтвердите номер</p>
+                      <p class="text-xl font-bold" data-i18n="profile_settings.confirm_number_header">Подтвердите номер</p>
                       <button
                         type="button"
                         onclick="toggleModal('modal2')"
@@ -768,13 +724,14 @@
                     </div>
 
                     <div class="px-6 py-4">
-                      <p class="mb-4 text-sm text-gray-600">
+                      <p class="mb-4 text-sm text-gray-600" data-i18n="profile_settings.confirm_code_desc">
                         Введите 6-значный код, отправленный на ваш телефон.
                       </p>
 
                       <div class="mb-4">
                         <label
                           class="text-gray-primary mb-1 block text-sm font-medium"
+                          data-i18n="profile_settings.confirmation_code"
                           >Код подтверждения</label
                         >
                         <input
@@ -790,6 +747,7 @@
                           type="button"
                           onclick="resendCode()"
                           class="text-orange-primary text-sm"
+                          data-i18n="profile_settings.resend_code"
                         >
                           Отправить код повторно
                         </button>
@@ -801,6 +759,7 @@
                         type="button"
                         onclick="verifyCode()"
                         class="btn-orange w-full justify-center"
+                        data-i18n="profile_settings.verify_btn"
                       >
                         Подтвердить
                       </button>

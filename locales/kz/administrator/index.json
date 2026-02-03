@@ -54,7 +54,7 @@
   "users.form_school": "Мектеп ",
   "users.form_school_placeholder": "Мектеп атауы",
   "users.form_class": "Сынып ",
-  "users.form_password": "Құпиясөз ",
+  "users.form_password": "Құпия сөз ",
   "users.form_pass_placeholder": "******",
   "users.form_parents_info": "Ата-ана деректері",
   "users.form_parents_number": "Ата-ана телефон нөмірі ",
@@ -92,7 +92,7 @@
   "olympiad.certificate_desc": "Сертификат сипаттамасы",
   "olympiad.certificate_background": "Сертификат фоны: PNG немесе JPG жүктеу.",
   "olympiad.upload_file": "Файл таңдаңыз",
-  "olympiad.add_olympiad_btn": "Олимпиаада қосу",
+  "olympiad.add_olympiad_btn": "Олимпиада қосу",
   "olympiad.delete_olympiad_btn": "Олимпиаданы жою",
   "olympiad.delete_olympiad_text": "Сіз олимпиаданы жоюға нақты сенімдісіз бе?",
   "olympiads.edit_olympiad": "Олимпиаданы өңдеу",
@@ -217,7 +217,7 @@
 
   "certificate.header":"Қатысушылардың сертификаттары",
   "certificate.succes_msg":"Сертификаттар сәтті жіберілді",
-  "certificate.succes_msg_txt":"Таңдалған қатысушыларға сертификаттар жіберілді.  Олар қатысушылардың профилінде көрінеді.",
+  "certificate.succes_msg_txt":"Таңдалған қатысушыларға сертификаттар жіберілді. Олар қатысушылардың профилінде көрінеді.",
   "certificate.succes_msg_count":"Жалпы жіберілген сертификаттар саны: ",
   "certificate.filter_id":"Қатысушының ID немесе аты бойынша іздеу",
   "certificate.filter_all_cat":"Барлық санат",
@@ -272,5 +272,8 @@
   "profile.2f_auth": "Екі қадамды аутентификация",
   "profile.2f_auth_save":"Аккаунтыңызды қорғаңыз.",
   "profile.2f_auth_save_txt": "Екі қадамды аутентификацияны қосып, телефонға келген код арқылы кіруді растаңыз.",
-  "profile.delete_acc": "Аккаунтты жою"
+  "profile.delete_acc": "Аккаунтты жою",
+  "role.administrator": "Әкімші",
+  "error.load_users": "Қолданушыларды жүктеу қатесі",
+  "error.expected_array": "Қолданушылар тізімі күтілді"
 }

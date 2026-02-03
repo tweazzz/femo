@@ -42,99 +42,38 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Полный маппинг стран (вставлен полностью)
-  const COUNTRIES_RU = {
-    "AF":"Афганистан","AL":"Албания","DZ":"Алжир","AS":"Американское Самоа","AD":"Андорра","AO":"Ангола","AI":"Ангилья",
-    "AQ":"Антарктида","AG":"Антигуа и Барбуда","AR":"Аргентина","AM":"Армения","AW":"Аруба","AU":"Австралия","AT":"Австрия","AZ":"Азербайджан",
-    "BS":"Багамы","BH":"Бахрейн","BD":"Бангладеш","BB":"Барбадос","BY":"Беларусь","BE":"Бельгия","BZ":"Белиз","BJ":"Бенин","BM":"Бермуды","BT":"Бутан",
-    "BO":"Боливия","BQ":"Бонэйр, Синт-Эстатиус и Саба","BA":"Босния и Герцеговина","BW":"Ботсвана","BV":"Остров Буве","BR":"Бразилия","IO":"Британская территория в Индийском океане",
-    "BN":"Бруней","BG":"Болгария","BF":"Буркина-Фасо","BI":"Бурунди",
-    "KH":"Камбоджа","CM":"Камерун","CA":"Канада","CV":"Кабо-Верде","KY":"Каймановы острова","CF":"Центральноафриканская Республика","TD":"Чад","CL":"Чили","CN":"Китай","CX":"Остров Рождества","CC":"Кокосовые (Килинг) острова",
-    "CO":"Колумбия","KM":"Коморы","CG":"Республика Конго","CD":"Демократическая Республика Конго","CK":"Острова Кука","CR":"Коста-Рика","CI":"Кот-д’Ивуар","HR":"Хорватия","CU":"Куба","CW":"Кюрасао","CY":"Кипр","CZ":"Чехия",
-    "DK":"Дания","DJ":"Джибути","DM":"Доминика","DO":"Доминиканская Республика","EC":"Эквадор","EG":"Египет","SV":"Сальвадор","GQ":"Экваториальная Гвинея","ER":"Эритрея","EE":"Эстония","SZ":"Эсватини","ET":"Эфиопия",
-    "FK":"Фолклендские острова","FO":"Фарерские острова","FJ":"Фиджи","FI":"Финляндия","FR":"Франция","GF":"Французская Гвиана","PF":"Французская Полинезия","TF":"Французские Южные территории",
-    "GA":"Габон","GM":"Гамбия","GE":"Грузия","DE":"Германия","GH":"Гана","GI":"Гибралтар","GR":"Греция","GL":"Гренландия","GD":"Гренада","GP":"Гваделупа","GU":"Гуам","GT":"Гватемала","GG":"Гернси",
-    "GN":"Гвинея","GW":"Гвинея-Бисау","GY":"Гайана",
-    "HT":"Гаити","HM":"Остров Херд и острова Макдональд","VA":"Ватикан","HN":"Гондурас","HK":"Гонконг","HU":"Венгрия",
-    "IS":"Исландия","IN":"Индия","ID":"Индонезия","IR":"Иран","IQ":"Ирак","IE":"Ирландия","IM":"Остров Мэн","IL":"Израиль","IT":"Италия",
-    "JM":"Ямайка","JP":"Япония","JE":"Джерси","JO":"Иордания",
-    "KZ":"Казахстан","KE":"Кения","KI":"Кирибати","KP":"Северная Корея","KR":"Южная Корея","KW":"Кувейт","KG":"Киргизия",
-    "LA":"Лаос","LV":"Латвия","LB":"Ливан","LS":"Лесото","LR":"Либерия","LY":"Ливия","LI":"Лихтенштейн","LT":"Литва","LU":"Люксембург",
-    "MO":"Макао","MG":"Мадагаскар","MW":"Малави","MY":"Малайзия","MV":"Мальдивы","ML":"Мали","MT":"Мальта","MH":"Маршалловы Острова","MQ":"Мартиника","MR":"Мавритания","MU":"Маврикий","YT":"Майотта","MX":"Мексика",
-    "FM":"Микронезия","MD":"Молдова","MC":"Монако","MN":"Монголия","ME":"Черногория","MS":"Монтсеррат","MA":"Марокко","MZ":"Мозамбик","MM":"Мьянма",
-    "NA":"Намибия","NR":"Науру","NP":"Непал","NL":"Нидерланды","NC":"Новая Каледония","NZ":"Новая Зеландия","NI":"Никарагуа","NE":"Нигер","NG":"Нигерия","NU":"Ниуэ","NF":"Остров Норфолк","MK":"Северная Македония","MP":"Северные Марианские острова","NO":"Норвегия","OM":"Оман",
-    "PK":"Пакистан","PW":"Палау","PS":"Палестина","PA":"Панама","PG":"Папуа — Новая Гвинея","PY":"Парагвай","PE":"Перу","PH":"Филиппины","PN":"Питкэрн","PL":"Польша","PT":"Португалия","PR":"Пуэрто-Рико","QA":"Катар",
-    "RE":"Реюньон","RO":"Румыния","RU":"Россия","RW":"Руанда",
-    "BL":"Сен-Бартелеми","SH":"Острова Святой Елены, Вознесения и Тристан-да-Кунья","KN":"Сент-Китс и Невис","LC":"Сент-Люсия","MF":"Сен-Мартен","PM":"Сен-Пьер и Микелон","VC":"Сент-Винсент и Гренадины",
-    "WS":"Самоа","SM":"Сан-Марино","ST":"Сан-Томе и Принсипи","SA":"Саудовская Аравия","SN":"Сенегал","RS":"Сербия","SC":"Сейшельские Острова","SL":"Сьерра-Леоне","SG":"Сингапур","SX":"Синт-Мартен","SK":"Словакия","SI":"Словения","SB":"Соломоновы Острова","SO":"Сомали","ZA":"Южно-Африканская Республика","GS":"Южная Георгия и Южные Сандвичевы острова","SS":"Южный Судан","ES":"Испания",
-    "LK":"Шри-Ланка","SD":"Судан","SR":"Суринам","SJ":"Шпицберген и Ян-Майен","SE":"Швеция","CH":"Швейцария","SY":"Сирия","TW":"Тайвань","TJ":"Таджикистан","TZ":"Танзания","TH":"Таиланд","TL":"Восточный Тимор","TG":"Того","TK":"Токелау","TO":"Тонга","TT":"Тринидад и Тобаго","TN":"Тунис","TR":"Турция","TM":"Туркменистан","TC":"Тёркс и Кайкос","TV":"Тувалу","UG":"Уганда","UA":"Украина","AE":"Объединённые Арабские Эмираты","GB":"Великобритания","US":"Соединённые Штаты","UM":"Малые отдалённые острова США","UY":"Уругвай","UZ":"Узбекистан",
-    "VU":"Вануату","VE":"Венесуэла","VN":"Вьетнам","VG":"Британские Виргинские острова","VI":"Виргинские острова (США)","WF":"Уоллис и Футуна","EH":"Западная Сахара","YE":"Йемен","ZM":"Замбия","ZW":"Зимбабве"
-  };
-const COUNTRIES_EN = {
-  "AF":"Afghanistan","AL":"Albania","DZ":"Algeria","AS":"American Samoa","AD":"Andorra","AO":"Angola","AI":"Anguilla",
-  "AQ":"Antarctica","AG":"Antigua and Barbuda","AR":"Argentina","AM":"Armenia","AW":"Aruba","AU":"Australia","AT":"Austria","AZ":"Azerbaijan",
-  "BS":"Bahamas","BH":"Bahrain","BD":"Bangladesh","BB":"Barbados","BY":"Belarus","BE":"Belgium","BZ":"Belize","BJ":"Benin","BM":"Bermuda","BT":"Bhutan",
-  "BO":"Bolivia","BQ":"Bonaire, Sint Eustatius and Saba","BA":"Bosnia and Herzegovina","BW":"Botswana","BV":"Bouvet Island","BR":"Brazil",
-  "IO":"British Indian Ocean Territory","BN":"Brunei","BG":"Bulgaria","BF":"Burkina Faso","BI":"Burundi",
-  "KH":"Cambodia","CM":"Cameroon","CA":"Canada","CV":"Cape Verde","KY":"Cayman Islands","CF":"Central African Republic","TD":"Chad",
-  "CL":"Chile","CN":"China","CX":"Christmas Island","CC":"Cocos (Keeling) Islands",
-  "CO":"Colombia","KM":"Comoros","CG":"Republic of the Congo","CD":"Democratic Republic of the Congo","CK":"Cook Islands",
-  "CR":"Costa Rica","CI":"Côte d’Ivoire","HR":"Croatia","CU":"Cuba","CW":"Curaçao","CY":"Cyprus","CZ":"Czech Republic",
-  "DK":"Denmark","DJ":"Djibouti","DM":"Dominica","DO":"Dominican Republic","EC":"Ecuador","EG":"Egypt","SV":"El Salvador",
-  "GQ":"Equatorial Guinea","ER":"Eritrea","EE":"Estonia","SZ":"Eswatini","ET":"Ethiopia",
-  "FK":"Falkland Islands","FO":"Faroe Islands","FJ":"Fiji","FI":"Finland","FR":"France","GF":"French Guiana",
-  "PF":"French Polynesia","TF":"French Southern Territories",
-  "GA":"Gabon","GM":"Gambia","GE":"Georgia","DE":"Germany","GH":"Ghana","GI":"Gibraltar","GR":"Greece","GL":"Greenland",
-  "GD":"Grenada","GP":"Guadeloupe","GU":"Guam","GT":"Guatemala","GG":"Guernsey",
-  "GN":"Guinea","GW":"Guinea-Bissau","GY":"Guyana",
-  "HT":"Haiti","HM":"Heard Island and McDonald Islands","VA":"Vatican City","HN":"Honduras","HK":"Hong Kong","HU":"Hungary",
-  "IS":"Iceland","IN":"India","ID":"Indonesia","IR":"Iran","IQ":"Iraq","IE":"Ireland","IM":"Isle of Man","IL":"Israel","IT":"Italy",
-  "JM":"Jamaica","JP":"Japan","JE":"Jersey","JO":"Jordan",
-  "KZ":"Kazakhstan","KE":"Kenya","KI":"Kiribati","KP":"North Korea","KR":"South Korea","KW":"Kuwait","KG":"Kyrgyzstan",
-  "LA":"Laos","LV":"Latvia","LB":"Lebanon","LS":"Lesotho","LR":"Liberia","LY":"Libya","LI":"Liechtenstein",
-  "LT":"Lithuania","LU":"Luxembourg",
-  "MO":"Macau","MG":"Madagascar","MW":"Malawi","MY":"Malaysia","MV":"Maldives","ML":"Mali","MT":"Malta",
-  "MH":"Marshall Islands","MQ":"Martinique","MR":"Mauritania","MU":"Mauritius","YT":"Mayotte","MX":"Mexico",
-  "FM":"Micronesia","MD":"Moldova","MC":"Monaco","MN":"Mongolia","ME":"Montenegro","MS":"Montserrat","MA":"Morocco",
-  "MZ":"Mozambique","MM":"Myanmar",
-  "NA":"Namibia","NR":"Nauru","NP":"Nepal","NL":"Netherlands","NC":"New Caledonia","NZ":"New Zealand","NI":"Nicaragua",
-  "NE":"Niger","NG":"Nigeria","NU":"Niue","NF":"Norfolk Island","MK":"North Macedonia",
-  "MP":"Northern Mariana Islands","NO":"Norway","OM":"Oman",
-  "PK":"Pakistan","PW":"Palau","PS":"Palestine","PA":"Panama","PG":"Papua New Guinea","PY":"Paraguay","PE":"Peru",
-  "PH":"Philippines","PN":"Pitcairn Islands","PL":"Poland","PT":"Portugal","PR":"Puerto Rico","QA":"Qatar",
-  "RE":"Réunion","RO":"Romania","RU":"Russia","RW":"Rwanda",
-  "BL":"Saint Barthélemy","SH":"Saint Helena, Ascension and Tristan da Cunha","KN":"Saint Kitts and Nevis",
-  "LC":"Saint Lucia","MF":"Saint Martin","PM":"Saint Pierre and Miquelon","VC":"Saint Vincent and the Grenadines",
-  "WS":"Samoa","SM":"San Marino","ST":"São Tomé and Príncipe","SA":"Saudi Arabia","SN":"Senegal","RS":"Serbia",
-  "SC":"Seychelles","SL":"Sierra Leone","SG":"Singapore","SX":"Sint Maarten","SK":"Slovakia","SI":"Slovenia",
-  "SB":"Solomon Islands","SO":"Somalia","ZA":"South Africa",
-  "GS":"South Georgia and the South Sandwich Islands","SS":"South Sudan","ES":"Spain",
-  "LK":"Sri Lanka","SD":"Sudan","SR":"Suriname","SJ":"Svalbard and Jan Mayen","SE":"Sweden","CH":"Switzerland",
-  "SY":"Syria","TW":"Taiwan","TJ":"Tajikistan","TZ":"Tanzania","TH":"Thailand","TL":"Timor-Leste",
-  "TG":"Togo","TK":"Tokelau","TO":"Tonga","TT":"Trinidad and Tobago","TN":"Tunisia","TR":"Turkey",
-  "TM":"Turkmenistan","TC":"Turks and Caicos Islands","TV":"Tuvalu","UG":"Uganda","UA":"Ukraine",
-  "AE":"United Arab Emirates","GB":"United Kingdom","US":"United States",
-  "UM":"United States Minor Outlying Islands","UY":"Uruguay","UZ":"Uzbekistan",
-  "VU":"Vanuatu","VE":"Venezuela","VN":"Vietnam",
-  "VG":"British Virgin Islands","VI":"U.S. Virgin Islands","WF":"Wallis and Futuna",
-  "EH":"Western Sahara","YE":"Yemen","ZM":"Zambia","ZW":"Zimbabwe"
-};
+  // Полный маппинг стран (удален, используется i18n)
 
   const submitButton = form.querySelector('button[type="submit"]');
 
+  const getTranslatedText = (key, defaultText) => {
+    return (window.i18nDict && window.i18nDict[key]) || defaultText;
+  };
+
   const populateCountrySelect = (mapping) => {
+    // Remember selected value to restore it if possible
+    const currentValue = countrySelect.value;
+
     countrySelect.innerHTML = '';
     const placeholder = document.createElement('option');
     placeholder.value = '';
-    placeholder.textContent = 'Выберите страну';
+    placeholder.textContent = getTranslatedText('choose_country', 'Выберите страну');
     placeholder.disabled = true;
     placeholder.selected = true;
     placeholder.setAttribute('data-i18n', 'choose_country'); 
     countrySelect.appendChild(placeholder);
 
+    // Если маппинга нет или он пуст, ничего не добавляем (или можно добавить дефолт)
+    if (!mapping) return;
+
     const items = Object.keys(mapping).map(code => ({ code, name: mapping[code] || code }));
+    
+    // Determine sort locale
+    const currentLang = getCurrentLang();
+    const sortLocale = currentLang.startsWith('en') ? 'en' : 'ru';
+    
     items.sort((a, b) =>
-      a.name.localeCompare(b.name, lang.startsWith('en') ? 'en' : 'ru', {
+      a.name.localeCompare(b.name, sortLocale, {
         sensitivity: 'base'
       })
     );
@@ -145,16 +84,53 @@ const COUNTRIES_EN = {
       opt.textContent = it.name;
       countrySelect.appendChild(opt);
     }
+    
+    // Restore value if it exists in new mapping
+    if (currentValue && mapping[currentValue]) {
+        countrySelect.value = currentValue;
+    }
   };
 
   const lang = getCurrentLang();
 
-  const countryMap =
-    lang.startsWith('en')
-      ? COUNTRIES_EN
-      : COUNTRIES_RU;
+  // Инициализация: пытаемся взять из словаря. 
+  // Если словарь пуст (еще не загрузился или ru без файла), updateCountrySelect будет вызван при languageReady.
+  const countryMap = (window.i18nDict && window.i18nDict.countries) || {};
 
   populateCountrySelect(countryMap);
+
+  const handleLangChange = (e) => {
+      const { frontendLang } = e.detail || {};
+      const lang = frontendLang || getCurrentLang();
+      
+      // Всегда берем из словаря
+      let countryMap = (window.i18nDict && window.i18nDict.countries) || {};
+      
+      populateCountrySelect(countryMap);
+      
+      // Update Latin Warning text if visible
+      if (latinWarning && !latinWarning.classList.contains('hidden')) {
+          latinWarning.textContent = getLatinWarningText();
+      }
+      
+      // Update titles for all inputs
+      [surnameInputDirect, nameInputDirect, patronymicInputDirect].forEach(inp => {
+           if (inp) {
+               inp.title = getLatinWarningText();
+           }
+      });
+      
+      // Re-validate to update custom validity messages (but don't show red borders if valid)
+      // Actually setLatinValidity sets messages.
+      const { surname, name, patronymic } = getFioInputs();
+      if (surname) setLatinValidity(surname);
+      if (name) setLatinValidity(name);
+      if (patronymic) setLatinValidity(patronymic);
+      
+      if (latinWarning) updateLatinWarning();
+  };
+
+  window.addEventListener('i18n:languageChanged', handleLangChange);
 
   const isSelectChosen = (select) => {
     if (!select) return false;
@@ -235,7 +211,12 @@ const COUNTRIES_EN = {
     // For required fields (surname/name), empty check is handled by browser 'required' or submission check
     // Here we only check REGEX if value exists.
     const isValid = latinOnlyRegex.test(value);
-    input.setCustomValidity(isValid ? '' : getLatinWarningText());
+    
+    const warningText = getLatinWarningText();
+    input.setCustomValidity(isValid ? '' : warningText);
+    
+    // Also set title for hover
+    input.title = isValid ? '' : warningText;
     
     if (isValid) {
         input.classList.remove('border-red-500', 'text-red-500');
@@ -243,6 +224,11 @@ const COUNTRIES_EN = {
     } else {
         input.classList.remove('border-default');
         input.classList.add('border-red-500', 'text-red-500');
+        // Report validity immediately to show browser UI if needed, 
+        // but usually we just want the inline text. 
+        // If we want the browser bubble to show up immediately: input.reportValidity();
+        // But user asked to show message "during input", the inline text handles that.
+        // The browser bubble will appear on submit.
     }
     return isValid;
   };
@@ -275,8 +261,8 @@ const COUNTRIES_EN = {
   // We assume the warning div is already in the DOM now (added in HTML)
   // or we can find it relative to one of the inputs
   if (surnameInputDirect) {
-      // Find the warning container in the same parent div
-      latinWarning = surnameInputDirect.parentNode.querySelector('[data-latin-warning="true"]');
+      // Find the warning container
+      latinWarning = document.querySelector('[data-latin-warning="true"]');
       
       [surnameInputDirect, nameInputDirect, patronymicInputDirect].forEach(inp => {
           if (inp) {
@@ -285,19 +271,7 @@ const COUNTRIES_EN = {
           }
       });
 
-    // Update validation messages on language change
-    window.addEventListener('i18n:languageChanged', () => {
-       if (latinWarning) {
-           latinWarning.textContent = getLatinWarningText();
-       }
-       // Update titles for all inputs
-       [surnameInputDirect, nameInputDirect, patronymicInputDirect].forEach(inp => {
-           if (inp) {
-               inp.title = getLatinWarningText();
-           }
-       });
-       updateLatinWarning();
-    });
+    // Old listener removed, handled by global handleLangChange
   }
   
   form.addEventListener('submit', async (e) => {
@@ -327,7 +301,7 @@ const COUNTRIES_EN = {
         const p = patronymicInput ? patronymicInput.value.trim() : '';
 
         if (!s || !n) {
-             messageContainer.textContent = 'Пожалуйста, заполните Фамилию и Имя.';
+             messageContainer.textContent = getTranslatedText('register.fill_fio', 'Пожалуйста, заполните Фамилию и Имя.');
              messageContainer.classList.add('text-red-500');
              if (!s) surnameInput.focus();
              else nameInput.focus();
@@ -366,12 +340,15 @@ const COUNTRIES_EN = {
     }
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');  // Показываем ошибку при несовпадении паролей
-      return;  // Останавливаем выполнение, форма не отправляется
+      messageContainer.textContent = getTranslatedText('error.passwords_mismatch', 'Пароли не совпадают');
+      messageContainer.classList.add('text-red-500');
+      const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
+      if (maybePassword) maybePassword.removeAttribute('name');
+      return;
     }
   
     if (!isSelectChosen(roleSelect) || !email || !fullName || !password || !isSelectChosen(countrySelect)) {
-      messageContainer.textContent = 'Пожалуйста, заполните все поля корректно (включая страну).';
+      messageContainer.textContent = getTranslatedText('register.fill_all', 'Пожалуйста, заполните все поля корректно (включая страну).');
       messageContainer.classList.add('text-red-500');
       const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
       if (maybePassword) maybePassword.removeAttribute('name');
@@ -399,7 +376,7 @@ const COUNTRIES_EN = {
         return;
       } catch (err) {
         console.error('Не удалось сохранить pending_registration', err);
-        messageContainer.textContent = 'Ошибка при сохранении данных локально.';
+        messageContainer.textContent = getTranslatedText('register.save_error', 'Ошибка при сохранении данных локально.');
         messageContainer.classList.add('text-red-500');
         if (submitButton) submitButton.disabled = false;
         const maybePassword = form.querySelector('input[name="password_temp_for_read"]');
@@ -431,7 +408,7 @@ const COUNTRIES_EN = {
       const data = await response.json().catch(() => null);
   
       if (!response.ok) {
-        const errMsg = data?.detail || data?.message || 'Произошла ошибка при регистрации.';
+        const errMsg = data?.detail || data?.message || getTranslatedText('register.error', 'Произошла ошибка при регистрации.');
         messageContainer.textContent = errMsg;
         messageContainer.classList.add('text-red-500');
         return;
@@ -471,7 +448,7 @@ const COUNTRIES_EN = {
       }
   
       if (!accessToken) {
-        messageContainer.textContent = 'Токен не получен от сервера после логина.';
+        messageContainer.textContent = getTranslatedText('register.token_error', 'Токен не получен от сервера после логина.');
         messageContainer.classList.add('text-red-500');
         return;
       }
@@ -528,7 +505,7 @@ const COUNTRIES_EN = {
   
     } catch (error) {
       console.error('Ошибка при отправке:', error);
-      messageContainer.textContent = 'Ошибка соединения с сервером.';
+      messageContainer.textContent = getTranslatedText('register.connection_error', 'Ошибка соединения с сервером.');
       messageContainer.classList.add('text-red-500');
     } finally {
       if (submitButton) submitButton.disabled = false;

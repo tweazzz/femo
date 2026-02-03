@@ -393,23 +393,58 @@ function renderOlympiadTable(olympiads) {
 }
 
 function getSeasonLabel(type) {
+  const lang = (localStorage.getItem('lang') || 'ru').toLowerCase();
   const map = {
-    spring: '🌸 Весна',
-    summer: '☀️ Лето',
-    autumn: '🍂 Осень',
-    winter: '❄️ Зима',
-    international: '🌍 Международный'
-  }
-  return map[type] || type
+    ru: {
+      spring: '🌸 Весна',
+      summer: '☀️ Лето',
+      autumn: '🍂 Осень',
+      winter: '❄️ Зима',
+      international: '🌍 Международный'
+    },
+    en: {
+      spring: '🌸 Spring',
+      summer: '☀️ Summer',
+      autumn: '🍂 Autumn',
+      winter: '❄️ Winter',
+      international: '🌍 International'
+    },
+    kz: {
+      spring: '🌸 Көктем',
+      summer: '☀️ Жаз',
+      autumn: '🍂 Күз',
+      winter: '❄️ Қыс',
+      international: '🌍 Халықаралық'
+    }
+  };
+  
+  // Handle 'kk' as 'kz' just in case
+  const safeLang = lang === 'kk' ? 'kz' : (map[lang] ? lang : 'ru');
+  return map[safeLang][type] || type;
 }
 
 function getStatusLabel(status) {
+  const lang = (localStorage.getItem('lang') || 'ru').toLowerCase();
   const map = {
-    ongoing: 'Идёт сейчас',
-    finished: 'Завершено',
-    upcoming: 'Скоро',
-  }
-  return map[status] || status
+    ru: {
+      ongoing: 'Идёт сейчас',
+      finished: 'Завершено',
+      upcoming: 'Скоро',
+    },
+    en: {
+      ongoing: 'Ongoing',
+      finished: 'Completed',
+      upcoming: 'Upcoming',
+    },
+    kz: {
+      ongoing: 'Қазір өтуде',
+      finished: 'Аяқталды',
+      upcoming: 'Жақында',
+    }
+  };
+
+  const safeLang = lang === 'kk' ? 'kz' : (map[lang] ? lang : 'ru');
+  return map[safeLang][status] || status;
 }
 
 function getStatusClass(status) {
@@ -587,6 +622,17 @@ function closeModal(id) {
   if (overlay) overlay.classList.add('hidden')
 }
 
+function unescapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#x2F;/g, "/");
+}
+
 async function openEditModal(title, id) {
   olympiadIdToDelete = id;
   currentEditId = id;
@@ -628,7 +674,7 @@ async function openEditModal(title, id) {
     setVal(q('#status-edit'), data.status);
     setVal(q('#link-edit'), data.website);
     setVal(q('#price'), data.cost);
-    if (quillEdit) quillEdit.root.innerHTML = data.description || '';
+    if (quillEdit) quillEdit.root.innerHTML = unescapeHtml(data.description || '');
 
     /* ================= ФОРМАТ ================= */
     const formatSelect = q('#format-edit');

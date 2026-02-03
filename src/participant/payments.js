@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       toggleModal('modal')         // ✅ открыть модалку
       toggleEditMode(false)        // 🔒 выключить редактирование
     } else {
-      alert('Не получилось обновить данные')
+      alert(getTranslatedText('alerts.update_failed', 'Не получилось обновить данные'))
     }
   })
 }
@@ -211,20 +211,20 @@ function initTopUpHandler() {
     const promocode = promoInput ? promoInput.value.trim() : '';
 
     if (isNaN(amount) || amount <= 0) {
-      alert('Введите корректную сумму для пополнения.');
+      alert(getTranslatedText('alerts.enter_valid_amount', 'Введите корректную сумму для пополнения.'));
       return;
     }
 
     const token = localStorage.getItem('access_token');
     if (!token) {
-      alert('Токен не найден. Пожалуйста, войдите заново.');
+      alert(getTranslatedText('error.token_not_found', 'Токен не найден. Пожалуйста, войдите заново.'));
       return;
     }
 
     // Открываем новое окно заранее (чтобы не блокировалось браузером)
     const payWindow = window.open('', '_blank');
     if (!payWindow) {
-      alert('Не удалось открыть новое окно. Проверьте блокировщик всплывающих окон.');
+      alert(getTranslatedText('alerts.popup_blocked', 'Не удалось открыть новое окно. Проверьте блокировщик всплывающих окон.'));
       return;
     }
     payWindow.document.write('<p>Подготовка к оплате...</p>');
@@ -299,11 +299,11 @@ function initTopUpHandler() {
       }
 
       // 4) fallback
-      alert('Ошибка при пополнении. Попробуйте позже.');
+      alert(getTranslatedText('alerts.payment_error', 'Ошибка при пополнении. Попробуйте позже.'));
     } catch (err) {
       console.error('Ошибка запроса:', err);
       try { payWindow.close(); } catch (e) {}
-      alert('Произошла ошибка при отправке запроса.');
+      alert(getTranslatedText('alerts.request_error', 'Произошла ошибка при отправке запроса.'));
     }
   });
 }
@@ -384,7 +384,7 @@ function renderAssignmentTable(assignments) {
         <td>${formatDate(task.created_at)}</td>
         <td>${task.description}</td>
         <td>${formatAmount(task.amount)}</td>
-        <td><span class="card ${getPaymentStatusClass(task.status)}">${getPaymentStatusLabel(task.status)}</span></td>
+        <td><span class="card ${getPaymentStatusClass(task.status)}" data-i18n="${getPaymentStatusKey(task.status)}">${getPaymentStatusDefault(task.status)}</span></td>
         <td>
           <div class="flex justify-between gap-2 *:cursor-pointer">
               <button onclick="downloadPayment(${task.id})" data-task="${encodedTask}" class="text-gray-400 hover:text-blue-primary flex items-center gap-1">
@@ -395,7 +395,7 @@ function renderAssignmentTable(assignments) {
               <path d="M10 8.3335V13.3335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M7.5 10.8335L10 13.3335L12.5 10.8335" stroke="#F4891E" stroke-linecap="round" stroke-linejoin="round"/>
               </svg> 
-              <span class='text-orange-primary'> Скачать</span>             
+              <span class='text-orange-primary' data-i18n="common.download"> Скачать</span>             
             </button>
           </div>
         </td>
@@ -457,7 +457,21 @@ function formatAmount(amount) {
   return `${amount > 0 ? '+' : ''}${amount.toLocaleString('ru-RU')} ₸`
 }
 
-function getPaymentStatusLabel(status) {
+function getTranslatedText(key, defaultText) {
+  const dict = window.i18nDict || {};
+  return dict[key] || defaultText;
+}
+
+function getPaymentStatusKey(status) {
+  const map = {
+    paid: 'payment_status.paid',
+    error: 'payment_status.error',
+    pending: 'payment_status.pending',
+  }
+  return map[status] || ''
+}
+
+function getPaymentStatusDefault(status) {
   const map = {
     paid: 'Оплачено',
     error: 'Ошибка',

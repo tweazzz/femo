@@ -39,6 +39,11 @@ async function ensureUserAuthenticated() {
   return user
 }
 
+
+const getTranslatedText = (key, defaultText) => {
+  return (window.i18nDict && window.i18nDict[key]) || defaultText;
+};
+
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
@@ -105,8 +110,9 @@ function renderUserInfo(profile) {
     console.warn('renderUserInfo: applyTranslations error', e);
   }
 
-  const roleMap = { participant: 'Представитель' };
-  roleEl.textContent = roleMap[p.role] || p.role || '';
+  const roleKey = p.role === 'participant' ? 'register.participant' : 'register.representative';
+  const defaultRole = p.role === 'participant' ? 'Участник' : (p.role === 'representative' ? 'Представитель' : p.role);
+  roleEl.textContent = getTranslatedText(roleKey, defaultRole);
 
   // Подписка на смену языка (обновит перевод и имя)
   function onLanguageChanged() {
@@ -219,18 +225,21 @@ async function loadUserSettings() {
 
     // Установка чекбоксов уведомлений
     const notifyMap = {
-      notify_results: 'О результатах',
-      notify_tasks: 'О задачах',
-      notify_olympiads: 'О олимпиадах',
-      notify_profile: 'О профиле',
-      notify_payments: 'О статусе оплаты',
+      notify_results: 'profile_settings.notification_result',
+      notify_tasks: 'profile_settings.notification_tasks',
+      notify_olympiads: 'profile_settings.notification_olymp',
+      notify_profile: 'profile_settings.notification_profile',
+      notify_payments: 'profile_settings.notification_status_payment',
     };
 
-    Object.entries(notifyMap).forEach(([key, labelText]) => {
-      const label = Array.from(document.querySelectorAll('label')).find(l => l.textContent.includes(labelText));
-      if (label) {
-        const checkbox = label.querySelector('input[type="checkbox"]');
-        if (checkbox) checkbox.checked = settings[key];
+    Object.entries(notifyMap).forEach(([key, i18nKey]) => {
+      const span = document.querySelector(`span[data-i18n="${i18nKey}"]`);
+      if (span) {
+        const label = span.closest('label');
+        if (label) {
+          const checkbox = label.querySelector('input[type="checkbox"]');
+          if (checkbox) checkbox.checked = settings[key];
+        }
       }
     });
 
@@ -262,13 +271,16 @@ async function updateUserSettings(updatedFields) {
     checkboxes.forEach((checkbox) => {
       const label = checkbox.closest('label');
       if (!label) return;
-      const text = label.textContent.trim();
+      
+      const span = label.querySelector('span[data-i18n]');
+      if (!span) return;
+      const i18nKey = span.getAttribute('data-i18n');
 
-      if (text.includes('О результатах')) settings.notify_results = checkbox.checked;
-      if (text.includes('О задачах')) settings.notify_tasks = checkbox.checked;
-      if (text.includes('О олимпиадах')) settings.notify_olympiads = checkbox.checked;
-      if (text.includes('О профиле')) settings.notify_profile = checkbox.checked;
-      if (text.includes('О статусе оплаты')) settings.notify_payments = checkbox.checked;
+      if (i18nKey === 'profile_settings.notification_result') settings.notify_results = checkbox.checked;
+      if (i18nKey === 'profile_settings.notification_tasks') settings.notify_tasks = checkbox.checked;
+      if (i18nKey === 'profile_settings.notification_olymp') settings.notify_olympiads = checkbox.checked;
+      if (i18nKey === 'profile_settings.notification_profile') settings.notify_profile = checkbox.checked;
+      if (i18nKey === 'profile_settings.notification_status_payment') settings.notify_payments = checkbox.checked;
     });
 
     // Проверим, изменилось ли поле language
@@ -310,7 +322,7 @@ async function updateUserSettings(updatedFields) {
 
 function extractErrorMessage(errorData) {
   if (!errorData || typeof errorData !== 'object') {
-    return 'Неизвестная ошибка';
+    return getTranslatedText('error.unknown', 'Неизвестная ошибка');
   }
 
   // detail: "что-то пошло не так"
@@ -331,7 +343,7 @@ function extractErrorMessage(errorData) {
 
   return messages.length
     ? messages.join('\n')
-    : 'Не удалось выполнить операцию';
+    : getTranslatedText('error.operation_failed', 'Не удалось выполнить операцию');
 }
 
 
@@ -356,20 +368,20 @@ function setupPasswordChangeForm() {
     const confirmPassword = document.getElementById('password3')?.value.trim();
 
     if (!oldPassword || !newPassword || !confirmPassword) {
-      alert('Пожалуйста, заполните все поля');
+      alert(getTranslatedText('error.fill_all_fields', 'Пожалуйста, заполните все поля'));
       submitBtn.disabled = false;
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      alert('Новый пароль и подтверждение не совпадают');
+      alert(getTranslatedText('error.passwords_mismatch', 'Новый пароль и подтверждение не совпадают'));
       submitBtn.disabled = false;
       return;
     }
 
     const token = localStorage.getItem('access_token');
     if (!token) {
-      alert('Токен не найден. Пожалуйста, войдите заново.');
+      alert(getTranslatedText('error.token_not_found', 'Токен не найден. Пожалуйста, войдите заново.'));
       submitBtn.disabled = false;
       return;
     }
@@ -391,16 +403,16 @@ function setupPasswordChangeForm() {
       if (!response.ok) {
         const errorData = await response.json();
         const message = extractErrorMessage(errorData);
-        alert(`Ошибка: ${message}`);
+        alert(`${getTranslatedText('error.unknown', 'Ошибка')}: ${message}`);
         submitBtn.disabled = false;
         return;
       }
 
-      alert('Пароль успешно обновлён!');
+      alert(getTranslatedText('success.password_updated', 'Пароль успешно обновлён!'));
       passwordForm.reset();
     } catch (error) {
       console.error('Ошибка при обновлении пароля:', error);
-      alert('Произошла ошибка при обновлении пароля');
+      alert(getTranslatedText('error.password_update_error', 'Произошла ошибка при обновлении пароля'));
     } finally {
       submitBtn.disabled = false;
     }

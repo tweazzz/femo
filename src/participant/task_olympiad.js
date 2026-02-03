@@ -39,6 +39,11 @@ async function ensureUserAuthenticated() {
   return user
 }
 
+function getTranslatedText(key, defaultText) {
+  const dict = window.i18nDict || {};
+  return dict[key] || defaultText;
+}
+
 // 1) Функция для загрузки полного профиля участника
 async function loadUserProfile() {
   const res = await authorizedFetch(
@@ -105,8 +110,9 @@ function renderUserInfo(profile) {
     console.warn('renderUserInfo: applyTranslations error', e);
   }
 
-  const roleMap = { participant: 'Представитель' };
-  roleEl.textContent = roleMap[p.role] || p.role || '';
+  const roleKey = p.role === 'participant' ? 'register.participant' : 'register.representative';
+  const defaultRole = p.role === 'participant' ? 'Участник' : (p.role === 'representative' ? 'Представитель' : p.role);
+  roleEl.textContent = getTranslatedText(roleKey, defaultRole);
 
   // Подписка на смену языка (обновит перевод и имя)
   function onLanguageChanged() {
@@ -152,30 +158,7 @@ function getWinLoseElements() {
     loseTextContainer: document.getElementById('lose-info-text')
   };
 }
-function getLevelLabel(level) {
-  const langRaw = localStorage.getItem('lang') || 'ru';
-  const lang = langRaw === 'kk' ? 'kz' : langRaw;
 
-  const LEVEL_MAP = {
-    ru: {
-      easy: 'Лёгкий',
-      medium: 'Средний',
-      hard: 'Сложный',
-    },
-    kz: {
-      easy: 'Оңай',
-      medium: 'Орташа',
-      hard: 'Қиын',
-    },
-    en: {
-      easy: 'Easy',
-      medium: 'Medium',
-      hard: 'Hard',
-    },
-  };
-
-  return LEVEL_MAP[lang]?.[level] || level;
-}
 /**
  * Показывает/скрывает win/lose баннеры и подставляет реальные очки.
  * Принимает либо объект task (с полями solved, points, status, correct)
@@ -288,16 +271,6 @@ const loseInfo = document.getElementById('lose-info');
 let currentTaskIndex = 0; // текущая задача
 let tasks = []; // массив задач из API
 
-const languageMap = {
-  ru: 'Русский',
-  kk: 'Казахский',
-  en: 'Английский',
-  es: 'Испанский',
-  de: 'Немецкий',
-  az: 'Азербайджанский',
-  ka: 'Грузинский'
-};
-
 // --- ЗАМЕНА: безопасная версия loadTaskDetails() ---
 async function loadTaskDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -367,7 +340,7 @@ async function loadTaskDetails() {
     // Отображаем язык человекочитаемо
     const langEl = document.getElementById('task-language');
     if (langEl) {
-      langEl.textContent = languageMap[datalang] || datalang;
+      langEl.textContent = getTranslatedText(`lang.${datalang}`, datalang);
     }
   } catch (err) {
     console.error('Ошибка загрузки задачи:', err);
@@ -412,14 +385,13 @@ function renderTaskByIndex(index) {
   if (typeof renderAttachments === 'function') renderAttachments(task);
 
   // Уровень сложности
-  const levelMap = { easy: 'Лёгкий', medium: 'Средний', hard: 'Сложный' };
   const levelClassMap = {
     easy: 'text-green-primary bg-green-secondary',
     medium: 'text-orange-primary bg-orange-secondary',
     hard: 'text-red-primary bg-red-secondary'
   };
 
-  const levelText = getLevelLabel(task.level);
+  const levelText = getTranslatedText(`levels.${task.level}`, task.level);
   const levelClass = levelClassMap[task.level] || 'text-gray-500 bg-gray-100';
 
   const levelEl = document.getElementById('task-level');
@@ -475,7 +447,7 @@ const nextBtn = document.getElementById('next-task-button2');
 
 if (isLastTaskOverall) {
   // ⛳ Последняя задача — меняем текст/стили и кликом открываем модалку
-  nextBtn.textContent = 'Завершить олимпиаду';
+  nextBtn.textContent = getTranslatedText('task.finish_olympiad', 'Завершить олимпиаду');
   nextBtn.className = `
     inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2
     text-red-600 border-red-600 bg-white hover:bg-red-50
@@ -489,7 +461,7 @@ if (isLastTaskOverall) {
 
 } else {
   // НЕ последняя — обычная "Перейти к следующей задаче"
-  nextBtn.textContent = 'Перейти к следующей задаче';
+  nextBtn.textContent = getTranslatedText('task.next_task_btn', 'Перейти к следующей задаче');
   nextBtn.className = `
     inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2
     text-orange-primary border-orange-primary bg-white hover:bg-orange-50
@@ -506,7 +478,10 @@ if (isLastTaskOverall) {
   if (winInfo) winInfo.style.display = 'none';
   if (loseInfo) loseInfo.style.display = 'none';
 
+  // Скрываем/показываем элементы формы в зависимости от solved
   if (task.solved) {
+    if (statusEl) statusEl.textContent = getTranslatedText('task.status.completed', 'Завершено');
+
     if (answerLabel) answerLabel.style.display = 'none';
     if (submitBtn1) submitBtn1.style.display = 'none';
     if (submitBtn2) submitBtn2.style.display = 'none';
@@ -514,6 +489,8 @@ if (isLastTaskOverall) {
     if (nextTaskLink) nextTaskLink.style.display = 'flex';
     if (typeof updateResultBanners === 'function') updateResultBanners(task);
   } else {
+    if (statusEl) statusEl.textContent = getTranslatedText('task.status.not_completed', 'Не завершено');
+
     if (answerLabel) answerLabel.style.display = '';
     if (submitBtn1) submitBtn1.style.display = 'flex';
     if (submitBtn2) submitBtn2.style.display = 'flex';
