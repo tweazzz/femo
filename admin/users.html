@@ -1382,52 +1382,32 @@
             </div>
           </div>
           <style>
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
           </style>
-          
-          <!-- Header Wrapper -->
-<div id="table-header-wrapper" class="overflow-hidden border-default border-b-0 rounded-t-2xl mb-0 bg-white">
-  <table class="table-rate w-full min-w-[1200px] table-fixed">
-    <colgroup>
-                <col style="width: 14%">
-                <col style="width: 5%">
-                <col style="width: 14%">
-                <col style="width: 10%">
-                <col style="width: 9%">
-                <col style="width: 9%">
-                <col style="width: 5%">
-                <col style="width: 10%">
-                <col style="width: 10%">
-                <col style="width: 8%">
-                <col style="width: 3%">
-                <col style="width: 3%">
-              </colgroup>
-              <thead class="bg-white shadow-sm">
+          <div id="top-scrollbar" class="border-default border-b-0 overflow-x-auto rounded-t-2xl scrollbar" style="overflow-y: hidden;">
+            <div id="top-scrollbar-content" style="height: 1px;"></div>
+          </div>
+          <div id="table-container" class="border-default border-t-0 mb-6 overflow-auto rounded-b-2xl max-h-[calc(100vh-280px)] no-scrollbar">
+            <table class="table-rate w-full relative whitespace-nowrap">
+              <thead class="sticky top-0 z-10 bg-white shadow-sm">
                 <tr class="table-tr border-gray-border border-b">
-                  <th id="sort-name-header" class="p-table cursor-pointer">
-                    <div class="flex items-center gap-1">
-                      <span data-i18n="users.username_filter">Имя участника</span>
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
-                          class="size-4"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                      </span>
-                    </div>
+                  <th id="sort-name-header" class="p-table flex items-center gap-1 cursor-pointer">
+                    <span data-i18n="users.username_filter">Имя участника</span>
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 16 16"
+                        fill="currentColor"
+                        class="size-4"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </span>
                   </th>
                   <th class="p-table">ID</th>
                   <th class="p-table">Почта</th>
@@ -1442,31 +1422,6 @@
                   <th class="p-table" data-i18n="users.action">Действия</th>
                 </tr>
               </thead>
-            </table>
-          </div>
-
-          <!-- Dummy Scrollbar -->
-          <div id="table-scrollbar" class="overflow-x-auto border-x border-default bg-gray-50">
-              <div id="table-scrollbar-content" class="h-1"></div>
-          </div>
-
-          <!-- Body Wrapper -->
-<div id="table-body-wrapper" class="border-default border-t-0 mb-6 overflow-auto rounded-b-2xl max-h-[calc(100vh-280px)] scrollbar-hide">
-  <table class="table-rate w-full min-w-[1200px] table-fixed">
-    <colgroup>
-                <col style="width: 14%">
-                <col style="width: 5%">
-                <col style="width: 14%">
-                <col style="width: 10%">
-                <col style="width: 9%">
-                <col style="width: 9%">
-                <col style="width: 5%">
-                <col style="width: 10%">
-                <col style="width: 10%">
-                <col style="width: 8%">
-                <col style="width: 3%">
-                <col style="width: 3%">
-              </colgroup>
               <tbody class="divide-y divide-gray-200">
 
               </tbody>
@@ -2195,6 +2150,54 @@
           })
         })
       })
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const topScroll = document.getElementById('top-scrollbar');
+        const topContent = document.getElementById('top-scrollbar-content');
+        const tableContainer = document.getElementById('table-container');
+        const table = tableContainer.querySelector('table');
+
+        function syncScroll() {
+          if (!topScroll || !tableContainer) return;
+          topContent.style.width = table.scrollWidth + 'px';
+          
+          // Sync scrolling
+          topScroll.addEventListener('scroll', () => {
+            if (tableContainer.scrollLeft !== topScroll.scrollLeft) {
+              tableContainer.scrollLeft = topScroll.scrollLeft;
+            }
+          });
+          
+          tableContainer.addEventListener('scroll', () => {
+            if (topScroll.scrollLeft !== tableContainer.scrollLeft) {
+              topScroll.scrollLeft = tableContainer.scrollLeft;
+            }
+          });
+        }
+        
+        // Initial sync
+        syncScroll();
+        
+        // Update on window resize or table content change
+        const resizeObserver = new ResizeObserver(() => {
+          topContent.style.width = table.scrollWidth + 'px';
+          // Force scrollbar visibility check
+          if (table.scrollWidth <= tableContainer.clientWidth) {
+             topScroll.style.display = 'none';
+             // Restore border radius if scrollbar hidden
+             tableContainer.classList.remove('rounded-b-2xl', 'border-t-0');
+             tableContainer.classList.add('rounded-2xl');
+          } else {
+             topScroll.style.display = 'block';
+             tableContainer.classList.add('rounded-b-2xl', 'border-t-0');
+             tableContainer.classList.remove('rounded-2xl');
+          }
+        });
+        
+        resizeObserver.observe(table);
+        resizeObserver.observe(tableContainer);
+      });
     </script>
     <script src="/src/scripts/i18n.js"></script>
     <script src="/src/scripts/langInit.js"></script>
