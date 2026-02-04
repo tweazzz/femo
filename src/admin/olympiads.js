@@ -410,23 +410,46 @@ async function loadOlympiads() {
     }
 
     const data = await response.json()
-    console.log(data.results) // <-- Вставь здесь для проверки данных
-    renderOlympiadTable(data.results)
-    allOlympiads = data.results
+    console.log('API Response:', data)
+
+    let results = []
+    if (Array.isArray(data)) {
+      results = data
+    } else if (data.results && Array.isArray(data.results)) {
+      results = data.results
+    } else {
+      console.warn('Непонятный формат ответа, ожидался массив или объект с results')
+      results = []
+    }
+
+    renderOlympiadTable(results)
+    allOlympiads = results
     filteredOlympiads = allOlympiads
     renderPaginatedTable()
     setupFilters()
   } catch (err) {
     console.error('Ошибка при загрузке олимпиад:', err)
-    document.getElementById('olympiads-tbody').innerHTML = `
-      <tr><td colspan="8" class="text-center text-red-500 py-4">${err.message}</td></tr>
-    `
+    const tbody = document.getElementById('olympiads-tbody')
+    if (tbody) {
+        tbody.innerHTML = `
+        <tr><td colspan="8" class="text-center text-red-500 py-4">${err.message}</td></tr>
+        `
+    }
   }
 }
 
 function renderOlympiadTable(olympiads) {
   const tbody = document.getElementById('olympiads-tbody')
-  if (!tbody) return
+  if (!tbody) {
+    console.error('Элемент #olympiads-tbody не найден!')
+    return
+  }
+
+  if (!olympiads || !Array.isArray(olympiads)) {
+     console.warn('renderOlympiadTable: olympiads is not an array', olympiads)
+     tbody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500 py-4">Нет данных (ошибка формата)</td></tr>`
+     return
+  }
 
   tbody.innerHTML =
     olympiads.length === 0
@@ -438,7 +461,7 @@ function renderOlympiadTable(olympiads) {
         <td>${ol.id}</td>
         <td>${ol.title}</td>
         <td>${getSeasonLabel(ol.type)}</td>
-        <td>${ol.grades.join(', ')}</td>
+        <td>${(ol.grades || []).join(', ')}</td>
         <td>${ol.year}</td>
         <td>${ol.participant_count}</td>
         <td>
