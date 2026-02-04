@@ -154,9 +154,11 @@ function renderUserInfo(profile) {
       .ql-editor .ql-size-huge { font-size: 2.5em !important; }
 
       /* Robust Italic */
-      .ql-editor em, .ql-editor i { font-style: italic !important; }
+      .ql-editor em, .ql-editor i { font-style: italic !important; font-synthesis: style !important; }
       .ql-editor strong em, .ql-editor em strong, 
       .ql-editor b i, .ql-editor i b { font-weight: bold !important; font-style: italic !important; }
+      
+      .ql-editor em *, .ql-editor i * { font-style: italic !important; }
     `;
     document.head.appendChild(style);
   }

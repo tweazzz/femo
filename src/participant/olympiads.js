@@ -419,18 +419,19 @@ async function loadOlympiadCards() {
           }
           .quill-description * {
             box-sizing: border-box !important;
+            font-weight: 400 !important;
           }
           .quill-description ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 1em !important; display: block !important; }
           .quill-description ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 1em !important; display: block !important; }
           .quill-description li { margin-bottom: 0.25em !important; display: list-item !important; }
 
-          .quill-description h1 { font-size: 2em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; display: block !important; }
-          .quill-description h2 { font-size: 1.5em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; display: block !important; }
-          .quill-description h3 { font-size: 1.17em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; display: block !important; }
-          .quill-description h4 { font-size: 1em !important; font-weight: bold !important; margin-bottom: 0.5em !important; display: block !important; }
+          .quill-description h1 { font-size: 2em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; display: block !important; }
+          .quill-description h2 { font-size: 1.5em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; display: block !important; }
+          .quill-description h3 { font-size: 1.17em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; display: block !important; }
+          .quill-description h4 { font-size: 1em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; display: block !important; }
 
           .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; white-space: pre-wrap !important; display: block !important; }
-          .quill-description strong, .quill-description b { font-weight: bold !important; }
+          .quill-description strong, .quill-description b { font-weight: 700 !important; }
           .quill-description em, .quill-description i { font-style: italic !important; font-synthesis: style !important; }
           .quill-description u { text-decoration: underline !important; }
           .quill-description s { text-decoration: line-through !important; }
