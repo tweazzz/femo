@@ -1,3 +1,5 @@
+console.log('src/participant/olympiads.js loaded')
+
 async function ensureUserAuthenticated() {
   let userData = localStorage.getItem('user')
 
@@ -146,6 +148,7 @@ function renderUserInfo(profile) {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('DOMContentLoaded fired in participant/olympiads.js')
   const user = await ensureUserAuthenticated()
   if (!user) return
 

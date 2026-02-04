@@ -121,10 +121,12 @@ async function authorizedFetch(url, options = {}, retry = true) {
   }
 
   // Optional debug: uncomment to see headers in console
-  // console.debug('authorizedFetch headers:', options.headers);
+  console.log('authorizedFetch request:', url, options);
 
   // perform fetch
   let response = await fetch(url, options);
+
+  console.log('authorizedFetch response status:', response.status);
 
   // 401 -> refresh token and retry once
   if (response.status === 401 && retry) {

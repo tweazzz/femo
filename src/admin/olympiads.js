@@ -1,4 +1,7 @@
+console.log('src/admin/olympiads.js loaded')
+
 async function ensureUserAuthenticated() {
+  console.log('ensureUserAuthenticated called')
   let userData = localStorage.getItem('user')
 
   if (!userData) {
@@ -249,11 +252,16 @@ document
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('DOMContentLoaded fired in olympiads.js')
   // Inject Quill styles immediately
   injectQuillStyles();
 
   const user = await ensureUserAuthenticated()
-  if (!user) return
+  if (!user) {
+    console.warn('User authentication failed')
+    return
+  }
+  console.log('User authenticated:', user)
 
 
 
@@ -389,6 +397,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 async function loadOlympiads() {
+  console.log('loadOlympiads called')
   const token = localStorage.getItem('access_token')
   if (!token) {
     alert('Токен не найден. Пожалуйста, войдите заново.')
