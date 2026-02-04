@@ -411,6 +411,7 @@ async function loadOlympiadCards() {
             font-family: 'Inter', sans-serif !important;
             font-size: 13px !important;
             color: #000000 !important;
+            font-weight: 400 !important;
             tab-size: 4 !important;
             -moz-tab-size: 4 !important;
             white-space: pre-wrap !important;
