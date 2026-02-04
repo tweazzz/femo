@@ -417,6 +417,21 @@ async function loadOlympiadCards() {
             white-space: pre-wrap !important;
             word-wrap: break-word !important;
           }
+          /* Force specific color and whitespace on common text containers to override global styles */
+          .quill-description p, 
+          .quill-description span, 
+          .quill-description div, 
+          .quill-description li,
+          .quill-description h1, 
+          .quill-description h2, 
+          .quill-description h3, 
+          .quill-description h4 {
+            color: #000000 !important;
+            white-space: pre-wrap !important;
+            tab-size: 4 !important;
+            -moz-tab-size: 4 !important;
+          }
+
           .quill-description * {
             box-sizing: border-box !important;
             font-weight: 400 !important;

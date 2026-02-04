@@ -258,6 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
   nameInputDirect = fioInputs.name;
   patronymicInputDirect = fioInputs.patronymic;
 
+  // UX: Auto-lowercase email on blur
+  const { emailInput } = findInputs(form);
+  if (emailInput) {
+    emailInput.addEventListener('blur', function() {
+      this.value = this.value.trim().toLowerCase();
+    });
+  }
+
   // We assume the warning div is already in the DOM now (added in HTML)
   // or we can find it relative to one of the inputs
   if (surnameInputDirect) {

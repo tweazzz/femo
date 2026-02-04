@@ -185,7 +185,95 @@ async function loadCurrentOlympiad() {
 
     const olympiad = await res.json();
     titleEl.textContent = olympiad.title;
-    descEl.textContent  = olympiad.description || 'Без описания';
+    
+    // Inject styles for Quill content if not already present
+    if (!document.getElementById('quill-viewer-styles')) {
+      const style = document.createElement('style');
+      style.id = 'quill-viewer-styles';
+      style.textContent = `
+        .quill-description {
+          font-family: 'Inter', sans-serif !important;
+          font-size: 13px !important;
+          color: #000000 !important;
+          font-weight: 400 !important;
+          tab-size: 4 !important;
+          -moz-tab-size: 4 !important;
+          white-space: pre-wrap !important;
+          word-wrap: break-word !important;
+        }
+        /* Force specific color and whitespace on common text containers to override global styles */
+        .quill-description p, 
+        .quill-description span, 
+        .quill-description div, 
+        .quill-description li,
+        .quill-description h1, 
+        .quill-description h2, 
+        .quill-description h3, 
+        .quill-description h4 {
+          color: #000000 !important;
+          white-space: pre-wrap !important;
+          tab-size: 4 !important;
+          -moz-tab-size: 4 !important;
+        }
+
+        .quill-description * {
+          box-sizing: border-box !important;
+          font-weight: 400 !important;
+        }
+        .quill-description ul { list-style-type: disc !important; padding-left: 1.5em !important; margin-bottom: 1em !important; display: block !important; }
+        .quill-description ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 1em !important; display: block !important; }
+        .quill-description li { margin-bottom: 0.25em !important; display: list-item !important; }
+
+        .quill-description h1 { font-size: 2em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; display: block !important; }
+        .quill-description h2 { font-size: 1.5em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; display: block !important; }
+        .quill-description h3 { font-size: 1.17em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; display: block !important; }
+        .quill-description h4 { font-size: 1em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; display: block !important; }
+
+        .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; white-space: pre-wrap !important; display: block !important; }
+        .quill-description strong, .quill-description b { font-weight: 700 !important; }
+        .quill-description em, .quill-description i { font-style: italic !important; font-synthesis: style !important; }
+        .quill-description u { text-decoration: underline !important; }
+        .quill-description s { text-decoration: line-through !important; }
+        .quill-description a { color: #2563eb !important; text-decoration: underline !important; }
+
+        .quill-description blockquote { border-left: 4px solid #ccc !important; padding-left: 16px !important; margin-bottom: 1em !important; font-style: italic !important; color: #555 !important; display: block !important; }
+        .quill-description pre { background-color: #f0f0f0 !important; padding: 10px !important; border-radius: 4px !important; font-family: monospace !important; margin-bottom: 1em !important; overflow-x: auto !important; white-space: pre !important; display: block !important; }
+        .quill-description code { background-color: #f0f0f0 !important; padding: 2px 4px !important; border-radius: 3px !important; font-family: monospace !important; }
+
+        .quill-description .ql-align-center { text-align: center !important; }
+        .quill-description .ql-align-right { text-align: right !important; }
+        .quill-description .ql-align-justify { text-align: justify !important; }
+
+        .quill-description .ql-indent-1 { padding-left: 3em !important; }
+        .quill-description .ql-indent-2 { padding-left: 6em !important; }
+        .quill-description .ql-indent-3 { padding-left: 9em !important; }
+        .quill-description .ql-indent-4 { padding-left: 12em !important; }
+        .quill-description .ql-indent-5 { padding-left: 15em !important; }
+        .quill-description .ql-indent-6 { padding-left: 18em !important; }
+        .quill-description .ql-indent-7 { padding-left: 21em !important; }
+        .quill-description .ql-indent-8 { padding-left: 24em !important; }
+
+        .quill-description sub { vertical-align: sub !important; font-size: smaller !important; }
+        .quill-description sup { vertical-align: super !important; font-size: smaller !important; }
+        
+        /* Fix for empty paragraphs */
+        .quill-description p:empty { min-height: 1em; }
+
+        /* Font Size */
+        .quill-description .ql-size-small { font-size: 0.75em !important; }
+        .quill-description .ql-size-large { font-size: 1.5em !important; }
+        .quill-description .ql-size-huge { font-size: 2.5em !important; }
+
+        /* Robust Italic */
+        .quill-description em, .quill-description i { font-style: italic !important; }
+        .quill-description strong em, .quill-description em strong, 
+        .quill-description b i, .quill-description i b { font-weight: bold !important; font-style: italic !important; }
+      `;
+      document.head.appendChild(style);
+    }
+
+    descEl.className = 'quill-description text-black mb-4 leading-relaxed whitespace-pre-wrap break-words';
+    descEl.innerHTML = unescapeHtml(olympiad.description || 'Без описания');
 
     // очищаем этапы
     stagesContainer.innerHTML = '';
@@ -415,6 +503,17 @@ async function loadAdminProfile() {
   );
   if (!res.ok) throw new Error(`Ошибка загрузки профиля: ${res.status}`);
   return await res.json();
+}
+
+function unescapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#x2F;/g, "/");
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

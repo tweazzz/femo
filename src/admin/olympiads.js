@@ -96,7 +96,9 @@ function renderUserInfo(profile) {
   } catch (e) {
     console.warn('renderUserInfo: applyTranslations error', e);
   }
+}
 
+function injectQuillStyles() {
   // Inject styles for Quill editor to restore formatting (override Tailwind reset)
   if (!document.getElementById('quill-fixes')) {
     const style = document.createElement('style');
@@ -162,6 +164,7 @@ function renderUserInfo(profile) {
     `;
     document.head.appendChild(style);
   }
+}
 
   const roleMap = { administrator: 'Администратор' };
   roleEl.textContent = roleMap[p.role] || p.role || '';
@@ -246,6 +249,9 @@ document
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Inject Quill styles immediately
+  injectQuillStyles();
+
   const user = await ensureUserAuthenticated()
   if (!user) return
 
