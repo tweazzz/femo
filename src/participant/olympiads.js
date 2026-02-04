@@ -425,10 +425,10 @@ async function loadOlympiadCards() {
           .quill-description ol { list-style-type: decimal !important; padding-left: 1.5em !important; margin-bottom: 1em !important; display: block !important; }
           .quill-description li { margin-bottom: 0.25em !important; display: list-item !important; }
 
-          .quill-description h1 { font-size: 2em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; display: block !important; }
-          .quill-description h2 { font-size: 1.5em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; display: block !important; }
-          .quill-description h3 { font-size: 1.17em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; display: block !important; }
-          .quill-description h4 { font-size: 1em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; display: block !important; }
+          .quill-description h1 { font-size: 2em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; display: block !important; }
+          .quill-description h2 { font-size: 1.5em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; display: block !important; }
+          .quill-description h3 { font-size: 1.17em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; display: block !important; }
+          .quill-description h4 { font-size: 1em !important; font-weight: 400 !important; margin-bottom: 0.5em !important; display: block !important; }
 
           .quill-description p { margin-bottom: 1em !important; line-height: 1.5 !important; white-space: pre-wrap !important; display: block !important; }
           .quill-description strong, .quill-description b { font-weight: 700 !important; }
