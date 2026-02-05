@@ -10,10 +10,19 @@
     <script defer src="/src/scripts/showpass.js"></script>
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
   </head>
 
   <body>
-    <div class="flex h-[100dvh]">
+    <div class="flex h-full w-full fixed inset-0 overflow-hidden">
       <!-- Sidebar -->
       <aside id="sidebar" class="sidebar">
         <div class="mb-10 px-6 py-7">
