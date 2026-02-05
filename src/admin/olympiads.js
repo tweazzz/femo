@@ -330,14 +330,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  try {
-        // 2) Подтягиваем актуальный профиль по API
-    const profileData = await loadAdminProfile();
-    // 3) Рисуем шапку
-    renderUserInfo(profileData);
-    await loadOlympiads()
-    attachAddFormListeners();
-    let sortAscending = true
+  // Parallel loading to prevent one blocking the other
+  const profilePromise = loadAdminProfile()
+    .then(profileData => {
+      console.log('Profile loaded')
+      renderUserInfo(profileData)
+    })
+    .catch(err => console.error('Ошибка загрузки профиля:', err));
+
+  const olympiadsPromise = loadOlympiads()
+    .then(() => console.log('Olympiads loaded'))
+    .catch(err => console.error('Ошибка загрузки олимпиад (в main):', err));
+
+  await Promise.allSettled([profilePromise, olympiadsPromise]);
+
+  attachAddFormListeners();
+  let sortAscending = true
 
     const sortHeader = document.getElementById('sort-year-header')
     const sortHeader2 = document.getElementById('sort-id-header')
@@ -391,9 +399,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderPaginatedTable()
     })}
 
-  } catch (err) {
-    console.error('Ошибка при загрузке данных:', err)
-  }
+  // Removed global try-catch around loading logic
 })
 
 async function loadOlympiads() {
