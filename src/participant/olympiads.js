@@ -152,21 +152,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const user = await ensureUserAuthenticated()
   if (!user) return
 
-  // сначала загрузим детали профиля
-  let profile
-  try {
-    profile = await loadUserProfile()
-  } catch (e) {
-    console.error(e)
-    return
-  }
-  renderUserInfo(profile)
+  // Parallel loading using Promise.allSettled
+  const profilePromise = loadUserProfile()
+    .then(profile => {
+      renderUserInfo(profile)
+    })
+    .catch(e => {
+      console.error('Ошибка загрузки профиля:', e)
+    })
 
-  try {
-    await loadOlympiadCards()
-  } catch (err) {
-    console.error('Ошибка при загрузке данных:', err)
-  }
+  const olympiadsPromise = loadOlympiadCards()
+    .catch(err => {
+      console.error('Ошибка при загрузке данных:', err)
+    })
+
+  await Promise.allSettled([profilePromise, olympiadsPromise])
 })
 
 
