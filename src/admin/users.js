@@ -961,7 +961,7 @@ async function updateUserFromEditForm() {
     const response = await authorizedFetch(
       `https://portal.femo.kz/api/users/dashboard/${userId}/`,
       {
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify(data),
       }
     )
