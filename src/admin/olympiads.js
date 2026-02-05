@@ -57,14 +57,14 @@ function injectQuillStyles() {
       .ql-editor li { margin-bottom: 0.25em !important; }
 
       /* Headings */
-      .ql-editor h1 { font-size: 2em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; }
-      .ql-editor h2 { font-size: 1.5em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; }
-      .ql-editor h3 { font-size: 1.17em !important; font-weight: bold !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; }
-      .ql-editor h4 { font-size: 1em !important; font-weight: bold !important; margin-bottom: 0.5em !important; }
+      .ql-editor h1 { font-size: 2em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.2 !important; }
+      .ql-editor h2 { font-size: 1.5em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.25 !important; }
+      .ql-editor h3 { font-size: 1.17em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; margin-top: 0.5em !important; line-height: 1.3 !important; }
+      .ql-editor h4 { font-size: 1em !important; font-weight: 700 !important; margin-bottom: 0.5em !important; }
 
       /* Text Formatting */
       .ql-editor p { margin-bottom: 1em !important; line-height: 1.5 !important; }
-      .ql-editor strong, .ql-editor b { font-weight: bold !important; }
+      .ql-editor strong, .ql-editor b { font-weight: 700 !important; }
       .ql-editor em, .ql-editor i { font-style: italic !important; font-synthesis: style !important; }
       .ql-editor u { text-decoration: underline !important; }
       .ql-editor s { text-decoration: line-through !important; }
@@ -102,7 +102,7 @@ function injectQuillStyles() {
       /* Robust Italic */
       .ql-editor em, .ql-editor i { font-style: italic !important; font-synthesis: style !important; }
       .ql-editor strong em, .ql-editor em strong, 
-      .ql-editor b i, .ql-editor i b { font-weight: bold !important; font-style: italic !important; }
+      .ql-editor b i, .ql-editor i b { font-weight: 700 !important; font-style: italic !important; }
       
       .ql-editor em *, .ql-editor i * { font-style: italic !important; }
     `;

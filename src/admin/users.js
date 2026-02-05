@@ -38,7 +38,7 @@ async function ensureUserAuthenticated() {
 }
 
 const getTranslatedText = (key, defaultText) => {
-  return (window.i18nDict && window.i18nDict[key]) || defaultText;
+return (window.i18nDict && window.i18nDict[key]) || defaultText;
 };
 
 // Основная отрисовка профиля
@@ -922,7 +922,6 @@ async function updateUserFromEditForm() {
   const countryName = form.querySelector('input[name="country"]').value;
   const data = {
     email: emailInput.value,
-    password: form.querySelector('#password')?.value || '',
     full_name_ru: form.querySelector('input[name="fullname"]').value,
     country: getCountryCode(countryName) || countryName,
   }
