@@ -49,7 +49,7 @@ function injectQuillStyles() {
     style.id = 'quill-fixes';
     style.textContent = `
       /* General Editor Font */
-      .ql-container, .ql-editor { font-family: 'Inter', sans-serif !important; }
+      .ql-container, .ql-editor { font-family: 'Inter', sans-serif !important; font-weight: 400 !important; }
 
       /* Lists */
       .ql-editor ul { list-style-type: disc !important; padding-left: 1.5em !important; }
