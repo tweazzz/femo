@@ -64,7 +64,7 @@ function injectQuillStyles() {
 
       /* Text Formatting */
       .ql-editor p { margin-bottom: 1em !important; line-height: 1.5 !important; }
-      .ql-editor strong, .ql-editor b { font-weight: 700 !important; }
+      .ql-editor strong, .ql-editor b { font-weight: 700 !important; color: #000000 !important; }
       .ql-editor em, .ql-editor i { font-style: italic !important; font-synthesis: style !important; }
       .ql-editor u { text-decoration: underline !important; }
       .ql-editor s { text-decoration: line-through !important; }
