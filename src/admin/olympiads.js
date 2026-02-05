@@ -360,7 +360,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       sortAscending = !sortAscending
       renderPaginatedTable()
-    })}
+    })
+  }
 
         if (sortHeader2) {
     sortHeader2.addEventListener('click', () => {
@@ -371,7 +372,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       sortAscending = !sortAscending
       renderPaginatedTable()
-    })}
+    })
+  }
 
 
     let sortDescriptionAsc = true
@@ -386,7 +388,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       sortDescriptionAsc = !sortDescriptionAsc
       renderPaginatedTable()
-    })}
+    })
+  }
 
             if (sortHeader4) {
     sortHeader4.addEventListener('click', () => {
@@ -397,7 +400,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       sortAscending = !sortAscending
       renderPaginatedTable()
-    })}
+    })
+  }
 
   // Removed global try-catch around loading logic
 })
