@@ -160,6 +160,7 @@ async function loadAdminProfile() {
 let allUsers = []
 let currentFilters = {
   search: '',
+  email: '',
   country: '',
   city: '',
   role: '',
@@ -251,6 +252,9 @@ function applyFilters() {
   // Обновляем текущие фильтры (city — нормализованное значение, т.к. option.value = normalized)
   currentFilters.search = document.querySelector('#search_by_id_or_name')
     .value.trim().toLowerCase();
+  currentFilters.email = document.querySelector('#search_by_email')
+    ? document.querySelector('#search_by_email').value.trim().toLowerCase()
+    : '';
   currentFilters.country = document.querySelector('.country-filter').value;
   currentFilters.city = document.querySelector('.city-filter').value || '';
   currentFilters.role = document.querySelector('.role-filter').value;
@@ -260,6 +264,7 @@ function applyFilters() {
 
   const filtered = allUsers.filter(user => {
     const term = currentFilters.search;
+    const emailTerm = currentFilters.email;
     const idStr = String(user.id || '');
 
     const isDigits = /^\d+$/.test(term);
@@ -267,6 +272,8 @@ function applyFilters() {
     const matchSearch = isDigits
       ? idStr.includes(term) // если пользователь ввёл только цифры — ищем по id
       : ((user.full_name_ru || '').toLowerCase().includes(term) || idStr.includes(term));
+
+    const matchEmail = !emailTerm || (user.email || '').toLowerCase().includes(emailTerm);
 
     const matchCountry =
       !currentFilters.country ||
@@ -284,7 +291,7 @@ function applyFilters() {
       !currentFilters.grade ||
       (user.grade || '') === currentFilters.grade;
 
-    return matchSearch && matchCountry && matchCity && matchRole && matchGrade;
+    return matchSearch && matchEmail && matchCountry && matchCity && matchRole && matchGrade;
   });
 
   const start = (currentPage - 1) * pageSize;
@@ -516,6 +523,8 @@ function getFlagEmoji(country) {
 // Обновленный setupSearch с debounce
 function setupSearch() {
   const searchInput = document.querySelector('#search_by_id_or_name')
+  const emailInput = document.querySelector('#search_by_email')
+
   const debouncedSearch = debounce(() => {
     // при изменении поискового текста возвращаемся на 1-ю страницу
     currentPage = 1;
@@ -529,6 +538,16 @@ function setupSearch() {
       applyFilters()
     }
   })
+
+  if (emailInput) {
+    emailInput.addEventListener('input', debouncedSearch)
+    emailInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        currentPage = 1;
+        applyFilters()
+      }
+    })
+  }
 }
 
 // Инициализация
