@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function parseLines(msg) {
+    if (!msg) return [];
     return msg.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
   }
 
@@ -327,8 +328,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       container.appendChild(p);
     } else {
       notes.forEach(n => {
-        const el = createNotificationElement(n);
-        container.appendChild(el);
+        try {
+          const el = createNotificationElement(n);
+          container.appendChild(el);
+        } catch (e) {
+          console.error('Ошибка рендера уведомления', n, e);
+        }
       });
     }
   }
@@ -462,8 +467,12 @@ function updateCountsAndFill() {
       cont.appendChild(p);
     } else {
       toRender.forEach(n => {
-        const el = createNotificationElement(n);
-        cont.appendChild(el);
+        try {
+          const el = createNotificationElement(n);
+          cont.appendChild(el);
+        } catch (e) {
+          console.error('Ошибка рендера в табе', n, e);
+        }
       });
     }
   });

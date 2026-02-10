@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     messageContainer.textContent = ''
     messageContainer.classList.remove('text-red-500')
 
+    // Приводим email к нижнему регистру перед отправкой
     const email = emailInput.value.trim().toLowerCase()
     const password = passwordInput.value
 
