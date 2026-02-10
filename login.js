@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     messageContainer.textContent = ''
     messageContainer.classList.remove('text-red-500')
 
-    const email = emailInput.value.trim()
+    const email = emailInput.value.trim().toLowerCase()
     const password = passwordInput.value
 
     if (!email || !password) {

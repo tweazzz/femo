@@ -203,21 +203,62 @@ document.addEventListener('DOMContentLoaded', async () => {
       p0.textContent = lines[0];
       body.appendChild(p0);
     }
-    if (lines.length > 1) {
+    const changes = n.changes || (n.payload && n.payload.changes);
+    const hasChanges = changes && typeof changes === 'object';
+
+    if (lines.length > 1 || hasChanges) {
       const ul = document.createElement('ul');
       ul.className = 'ms-4 mt-1 list-inside list-disc';
-      lines.slice(1).forEach(line => {
-        const li = document.createElement('li');
-        const colonIndex = line.indexOf(':');
-        if (colonIndex > -1) {
-          const key = line.substring(0, colonIndex + 1);
-          const value = line.substring(colonIndex + 1).trim().replace(/→/g, '➜');
-          li.innerHTML = `${key} <span class="text-gray-primary">${value}</span>`;
-        } else {
-          li.textContent = line.replace(/→/g, '➜');
-        }
-        ul.appendChild(li);
-      });
+
+      // 1) Строки из message
+      if (lines.length > 1) {
+        lines.slice(1).forEach(line => {
+          const li = document.createElement('li');
+          const colonIndex = line.indexOf(':');
+          if (colonIndex > -1) {
+            const key = line.substring(0, colonIndex + 1);
+            const value = line.substring(colonIndex + 1).trim().replace(/→/g, '➜');
+            li.innerHTML = `${key} <span class="text-gray-primary">${value}</span>`;
+          } else {
+            li.textContent = line.replace(/→/g, '➜');
+          }
+          ul.appendChild(li);
+        });
+      }
+
+      // 2) Структурированные changes (если есть)
+      if (hasChanges) {
+        const entries = Array.isArray(changes) ? changes : Object.entries(changes);
+        entries.forEach(entry => {
+          let field, oldVal, newVal;
+          if (Array.isArray(changes)) {
+             // [{field:..., old:..., new:...}]
+             field = entry.field || entry.name || 'Field';
+             oldVal = entry.old || entry.old_value;
+             newVal = entry.new || entry.new_value || entry.value;
+          } else {
+             // { "Field": {old:..., new:...} } или { "Field": "NewValue" }
+             field = entry[0];
+             const val = entry[1];
+             if (val && typeof val === 'object' && ('old' in val || 'new' in val)) {
+                 oldVal = val.old;
+                 newVal = val.new;
+             } else {
+                 newVal = val;
+             }
+          }
+
+          const li = document.createElement('li');
+          const valueHtml = oldVal
+            ? `${oldVal} ➜ ${newVal}`
+            : newVal;
+          // Добавляем двоеточие, если его нет в названии поля
+          const label = field.endsWith(':') ? field : field + ':';
+          li.innerHTML = `${label} <span class="text-gray-primary">${valueHtml}</span>`;
+          ul.appendChild(li);
+        });
+      }
+
       body.appendChild(ul);
     }
     content.appendChild(body);
