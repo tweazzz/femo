@@ -204,8 +204,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       p0.textContent = lines[0];
       body.appendChild(p0);
     }
-    const changes = n.changes || (n.payload && n.payload.changes);
-    const hasChanges = changes && typeof changes === 'object';
+    // Пытаемся извлечь changes из разных мест и форматов
+    let changes = n.changes;
+    if (!changes && n.payload) {
+      let p = n.payload;
+      if (typeof p === 'string') {
+        try { p = JSON.parse(p); } catch (e) {}
+      }
+      if (p && typeof p === 'object') {
+        changes = p.changes;
+        // Если внутри payload нет changes, но есть признаки структуры изменений (old/new)
+        if (!changes) {
+           const vals = Object.values(p);
+           if (vals.some(v => v && typeof v === 'object' && ('old' in v || 'new' in v || 'old_value' in v))) {
+             changes = p;
+           }
+        }
+      }
+    }
+    const hasChanges = changes && typeof changes === 'object' && Object.keys(changes).length > 0;
 
     if (lines.length > 1 || hasChanges) {
       const ul = document.createElement('ul');
@@ -218,10 +235,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           const colonIndex = line.indexOf(':');
           if (colonIndex > -1) {
             const key = line.substring(0, colonIndex + 1);
-            const value = line.substring(colonIndex + 1).trim().replace(/→/g, '➜');
+            const value = line.substring(colonIndex + 1).trim()
+              .replace(/→/g, '➜').replace(/->/g, '➜');
             li.innerHTML = `${key} <span class="text-gray-primary">${value}</span>`;
           } else {
-            li.textContent = line.replace(/→/g, '➜');
+            li.textContent = line.replace(/→/g, '➜').replace(/->/g, '➜');
           }
           ul.appendChild(li);
         });
@@ -241,18 +259,23 @@ document.addEventListener('DOMContentLoaded', async () => {
              // { "Field": {old:..., new:...} } или { "Field": "NewValue" }
              field = entry[0];
              const val = entry[1];
-             if (val && typeof val === 'object' && ('old' in val || 'new' in val)) {
-                 oldVal = val.old;
-                 newVal = val.new;
+             if (val && typeof val === 'object' && ('old' in val || 'new' in val || 'old_value' in val || 'new_value' in val)) {
+                 oldVal = val.old !== undefined ? val.old : val.old_value;
+                 newVal = val.new !== undefined ? val.new : val.new_value;
              } else {
                  newVal = val;
              }
           }
 
           const li = document.createElement('li');
-          const valueHtml = oldVal
-            ? `${oldVal} ➜ ${newVal}`
-            : newVal;
+          // Формируем строку значения
+          let valueHtml = '';
+          if (oldVal !== undefined && oldVal !== null && oldVal !== '') {
+             valueHtml = `${oldVal} ➜ ${newVal}`;
+          } else {
+             valueHtml = `${newVal}`;
+          }
+          
           // Добавляем двоеточие, если его нет в названии поля
           const label = field.endsWith(':') ? field : field + ':';
           li.innerHTML = `${label} <span class="text-gray-primary">${valueHtml}</span>`;
