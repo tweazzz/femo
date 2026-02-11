@@ -207,19 +207,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     // Пытаемся извлечь changes из разных мест и форматов
     let changes = n.changes;
-    if (!changes && n.payload) {
-      let p = n.payload;
-      if (typeof p === 'string') {
-        try { p = JSON.parse(p); } catch (e) {}
+    if (!changes) {
+      // 1. Проверяем структуру request.difference (новый формат)
+      if (n.request && n.request.difference) {
+        changes = n.request.difference;
       }
-      if (p && typeof p === 'object') {
-        changes = p.changes;
-        // Если внутри payload нет changes, но есть признаки структуры изменений (old/new)
-        if (!changes) {
-           const vals = Object.values(p);
-           if (vals.some(v => v && typeof v === 'object' && ('old' in v || 'new' in v || 'old_value' in v))) {
-             changes = p;
-           }
+      // 2. Проверяем старый payload формат
+      else if (n.payload) {
+        let p = n.payload;
+        if (typeof p === 'string') {
+          try { p = JSON.parse(p); } catch (e) {}
+        }
+        if (p && typeof p === 'object') {
+          changes = p.changes;
+          if (!changes) {
+             const vals = Object.values(p);
+             if (vals.some(v => v && typeof v === 'object' && ('old' in v || 'new' in v || 'old_value' in v))) {
+               changes = p;
+             }
+          }
         }
       }
     }
@@ -248,6 +254,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // 2) Структурированные changes (если есть)
       if (hasChanges) {
+        // Словарь для красивых названий полей
+        const fieldLabels = {
+          city: 'Город',
+          email: 'Email',
+          grade: 'Класс',
+          image: 'Фото',
+          school: 'Школа',
+          country: 'Страна',
+          full_name_en: 'ФИО (EN)',
+          full_name_ru: 'ФИО (RU)',
+          phone: 'Телефон',
+          birth_date: 'Дата рождения'
+        };
+
         const entries = Array.isArray(changes) ? changes : Object.entries(changes);
         entries.forEach(entry => {
           let field, oldVal, newVal;
@@ -257,7 +277,7 @@ document.addEventListener('DOMContentLoaded', async () => {
              oldVal = entry.old || entry.old_value;
              newVal = entry.new || entry.new_value || entry.value;
           } else {
-             // { "Field": {old:..., new:...} } или { "Field": "NewValue" }
+             // { "city": {old:..., new:...} }
              field = entry[0];
              const val = entry[1];
              if (val && typeof val === 'object' && ('old' in val || 'new' in val || 'old_value' in val || 'new_value' in val)) {
@@ -271,14 +291,24 @@ document.addEventListener('DOMContentLoaded', async () => {
           const li = document.createElement('li');
           // Формируем строку значения
           let valueHtml = '';
-          if (oldVal !== undefined && oldVal !== null && oldVal !== '') {
-             valueHtml = `${oldVal} ➜ ${newVal}`;
+          
+          // Обработка null значений для отображения
+          const formatVal = (v) => (v === null || v === undefined || v === '') ? '—' : v;
+          
+          if (oldVal !== undefined) {
+             valueHtml = `${formatVal(oldVal)} ➜ ${formatVal(newVal)}`;
           } else {
-             valueHtml = `${newVal}`;
+             valueHtml = `${formatVal(newVal)}`;
           }
           
-          // Добавляем двоеточие, если его нет в названии поля
-          const label = field.endsWith(':') ? field : field + ':';
+          // Используем словарь или форматируем ключ
+          let labelText = fieldLabels[field] || field;
+          // Если не нашли в словаре, делаем Capitalize
+          if (!fieldLabels[field]) {
+             labelText = labelText.charAt(0).toUpperCase() + labelText.slice(1);
+          }
+          
+          const label = labelText.endsWith(':') ? labelText : labelText + ':';
           li.innerHTML = `${label} <span class="text-gray-primary">${valueHtml}</span>`;
           ul.appendChild(li);
         });
