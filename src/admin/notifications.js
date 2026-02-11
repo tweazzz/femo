@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function createNotificationElement(n) {
+    console.log('Notification item:', n); // Log individual notification
     const lines = parseLines(n.message);
     const title = n.title;
     const ago = timeAgo(n.created_at);
