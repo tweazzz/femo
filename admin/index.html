@@ -287,10 +287,33 @@
               <div
                 class="border-default bg-green-secondary rounded-xl p-4 sm:p-6"
               >
-                <div class="mb-6 flex items-center justify-between">
+                <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
                   <h3 class="text-lg font-bold" data-i18n="dinamic_chart">
-                    Динамика участников по годам
+                    Динамика участников
                   </h3>
+                  <div class="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                    <button 
+                      class="chart-toggle-btn active bg-white shadow-sm text-gray-900 px-3 py-1 text-xs font-medium rounded-md transition-all" 
+                      data-period="week"
+                      data-i18n="chart.week"
+                    >
+                      Неделя
+                    </button>
+                    <button 
+                      class="chart-toggle-btn text-gray-500 hover:text-gray-900 px-3 py-1 text-xs font-medium rounded-md transition-all" 
+                      data-period="month"
+                      data-i18n="chart.month"
+                    >
+                      Месяц
+                    </button>
+                    <button 
+                      class="chart-toggle-btn text-gray-500 hover:text-gray-900 px-3 py-1 text-xs font-medium rounded-md transition-all" 
+                      data-period="year"
+                      data-i18n="chart.year"
+                    >
+                      Год
+                    </button>
+                  </div>
                 </div>
                 <div class="chart-container relative h-86">
                   <canvas id="participantsChart"></canvas>
@@ -732,8 +755,8 @@
       });
   
     </script>
-    <script src="/src/admin/index.js?v=fix1" defer></script>
-    <script src="/src/admin/notifications.js?v=fix2" defer></script>
+    <script src="/src/admin/index.js" defer></script>
+    <script src="/src/admin/notifications.js" defer></script>
     <script src="/src/admin/settings.js" defer></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {

@@ -412,10 +412,17 @@ async function loadCurrentOlympiadStats() {
 
 
 
-async function loadParticipantsTrend() {
+async function loadParticipantsTrend(period = 'week') {
   try {
+    // Новый API поддерживает period=year | day.
+    // Карта соответствия UI-переключателей:
+    // - 'year'  -> 'year'
+    // - 'week'  -> 'day'
+    // - 'month' -> 'day'
+    const apiPeriod = period === 'year' ? 'year' : 'day'
+
     const res = await authorizedFetch(
-      'https://portal.femo.kz/api/results/dashboard/trend/'
+      `https://portal.femo.kz/api/registrations/trend/?period=${apiPeriod}`
     )
     if (!res.ok)
       throw new Error('Ошибка при получении данных тренда участников')
@@ -423,8 +430,24 @@ async function loadParticipantsTrend() {
     const trendData = await res.json()
     console.log('Данные тренда участников:', trendData)
 
-    // Преобразуем данные для графика
-    const labels = trendData.map((item) => String(item.year))
+    // Преобразуем данные для графика под новый контракт:
+    // [{ period: 'YYYY' | 'YYYY-MM-DD', count: number }, ...]
+    const labels = trendData.map((item) => {
+      const p = item.period
+      if (!p) return ''
+      if (period === 'year') {
+        return String(p)
+      }
+      // week/month -> day-уровень. Форматируем YYYY-MM-DD -> DD.MM
+      if (typeof p === 'string' && p.includes('-')) {
+        const parts = p.split('-') // [YYYY, MM, DD]
+        if (parts.length === 3) {
+          const [, mm, dd] = parts
+          return `${dd}.${mm}`
+        }
+      }
+      return String(p)
+    })
     const counts = trendData.map((item) => item.count)
 
     console.log('labels:', labels)
@@ -449,11 +472,11 @@ async function loadParticipantsTrend() {
               data: counts,
               borderColor: '#10b981',
               backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              borderWidth: 1,
-              pointRadius: 3,
-              pointHoverRadius: 10,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
               pointBackgroundColor: '#fff',
-              tension: 0.6,
+              tension: 0.4,
               fill: true,
               borderCapStyle: 'round',
               borderJoinStyle: 'round',
@@ -464,25 +487,45 @@ async function loadParticipantsTrend() {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index',
+          },
           scales: {
             y: {
               beginAtZero: true,
-              suggestedMax: Math.max(...counts) + 10,
+              suggestedMax: Math.max(...counts, 10),
               ticks: {
-                callback: (value) => (value === 0 ? 0 : value + ' участников'),
-                stepSize: 20,
+                callback: (value) => (value % 1 === 0 ? value : ''),
+                stepSize: 1,
+                precision: 0, 
               },
-              precision: 0,
-              autoSkip: false,
+              grid: {
+                borderDash: [2, 2],
+                drawBorder: false,
+              },
             },
             x: {
               grid: { display: false },
-              ticks: { autoSkip: false },
+              ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 },
             },
           },
           plugins: {
             legend: { display: false },
-            tooltip: { mode: 'index', intersect: false },
+            tooltip: { 
+              backgroundColor: '#fff',
+              titleColor: '#1f2937',
+              bodyColor: '#1f2937',
+              borderColor: '#e5e7eb',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y + ' участников';
+                }
+              }
+            },
           },
         },
       })
@@ -529,9 +572,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadCurrentOlympiad()
     await loadCurrentOlympiadStats()
     await loadParticipantsTrend()
+
+    // Инициализация переключателей графика
+    const chartTabs = document.querySelectorAll('.chart-toggle-btn');
+    chartTabs.forEach(tab => {
+      tab.addEventListener('click', async (e) => {
+        // Сброс стилей для всех кнопок (inactive state)
+        chartTabs.forEach(t => {
+          t.classList.remove('active', 'bg-white', 'shadow-sm', 'text-gray-900');
+          t.classList.add('text-gray-500', 'hover:text-gray-900');
+        });
+
+        // Установка активного стиля для нажатой кнопки
+        const target = e.currentTarget; // use currentTarget to ensure we get the button
+        target.classList.remove('text-gray-500', 'hover:text-gray-900');
+        target.classList.add('active', 'bg-white', 'shadow-sm', 'text-gray-900');
+        
+        const period = target.dataset.period;
+        if (period) {
+          await loadParticipantsTrend(period);
+        }
+      });
+    });
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err)
   }
 })
-
 
