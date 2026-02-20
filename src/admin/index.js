@@ -416,7 +416,21 @@ async function loadParticipantsTrend(period = 'week') {
   try {
     const apiPeriod = period === 'year' ? 'year' : 'day'
     let res = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/trend/?period=${apiPeriod}`)
-    if (!res.ok) throw new Error('Ошибка при получении данных тренда участников')
+    if (!res.ok) {
+      let errorText = ''
+      try { errorText = await res.text() } catch (e) { /* ignore */ }
+      const reqId = res.headers && (res.headers.get('x-request-id') || res.headers.get('X-Request-ID') || res.headers.get('request-id') || null)
+      console.error({
+        event: 'trend_fetch_error',
+        url: `https://portal.femo.kz/api/results/dashboard/trend/?period=${apiPeriod}`,
+        ui_period: period,
+        api_period: apiPeriod,
+        status: res.status,
+        request_id: reqId,
+        body: errorText
+      })
+      throw new Error('Ошибка при получении данных тренда участников')
+    }
     const trendData = await res.json()
     console.log('Данные тренда участников:', trendData)
 
