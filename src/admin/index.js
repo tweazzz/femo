@@ -414,50 +414,63 @@ async function loadCurrentOlympiadStats() {
 
 async function loadParticipantsTrend(period = 'week') {
   try {
-    // Новый API поддерживает period=year | day.
-    // Карта соответствия UI-переключателей:
-    // - 'year'  -> 'year'
-    // - 'week'  -> 'day'
-    // - 'month' -> 'day'
     const apiPeriod = period === 'year' ? 'year' : 'day'
-
-    const res = await authorizedFetch(
-      `https://portal.femo.kz/api/registrations/trend/?period=${apiPeriod}`
-    )
-    if (!res.ok)
-      throw new Error('Ошибка при получении данных тренда участников')
-
+    let res = await authorizedFetch(`https://portal.femo.kz/api/registrations/trend/?period=${apiPeriod}`)
+    if (res.status === 404) {
+      res = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/trend/?period=${period}`)
+    }
+    if (!res.ok) throw new Error('Ошибка при получении данных тренда участников')
     const trendData = await res.json()
     console.log('Данные тренда участников:', trendData)
 
-    // Преобразуем данные для графика под новый контракт:
-    // [{ period: 'YYYY' | 'YYYY-MM-DD', count: number }, ...]
-    const labels = trendData.map((item) => {
-      const p = item.period
-      if (!p) return ''
-      if (period === 'year') {
-        return String(p)
+    let labels = []
+    let counts = []
+    if (Array.isArray(trendData) && trendData.length) {
+      if (Object.prototype.hasOwnProperty.call(trendData[0], 'period')) {
+        labels = trendData.map((item) => {
+          const p = item.period
+          if (!p) return ''
+          if (period === 'year') return String(p)
+          if (typeof p === 'string' && p.includes('-')) {
+            const parts = p.split('-')
+            if (parts.length === 3) {
+              const [, mm, dd] = parts
+              return `${dd}.${mm}`
+            }
+          }
+          return String(p)
+        })
+        counts = trendData.map((item) => item.count)
+      } else {
+        labels = trendData.map((item) => {
+          if (item.date) {
+            if (typeof item.date === 'string' && item.date.includes('-')) {
+              const parts = item.date.split('-')
+              if (parts.length === 3) {
+                const [y, m, d] = parts
+                if (period === 'week' || period === 'month') {
+                  return `${d}.${m}`
+                }
+              }
+            }
+            const d = new Date(item.date)
+            const dd = String(d.getDate()).padStart(2, '0')
+            const mm = String(d.getMonth() + 1).padStart(2, '0')
+            if (period === 'week' || period === 'month') return `${dd}.${mm}`
+            return item.date
+          }
+          return String(item.year || item.date || '')
+        })
+        counts = trendData.map((item) => item.count)
       }
-      // week/month -> day-уровень. Форматируем YYYY-MM-DD -> DD.MM
-      if (typeof p === 'string' && p.includes('-')) {
-        const parts = p.split('-') // [YYYY, MM, DD]
-        if (parts.length === 3) {
-          const [, mm, dd] = parts
-          return `${dd}.${mm}`
-        }
-      }
-      return String(p)
-    })
-    const counts = trendData.map((item) => item.count)
+    }
 
     console.log('labels:', labels)
     console.log('counts:', counts)
 
 
-    // Обновляем график
     const ctx = document.getElementById('participantsChart').getContext('2d')
 
-    // Если график уже создан, обновим его данные, иначе создадим новый
     if (window.participantsChartInstance) {
       window.participantsChartInstance.data.labels = labels
       window.participantsChartInstance.data.datasets[0].data = counts
@@ -598,4 +611,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Ошибка при загрузке данных:', err)
   }
 })
-
