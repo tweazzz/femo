@@ -414,7 +414,8 @@ async function loadCurrentOlympiadStats() {
 
 async function loadParticipantsTrend(period = 'week') {
   try {
-    let res = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/trend/?period=${period}`)
+    const apiPeriod = period === 'year' ? 'year' : 'day'
+    let res = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/trend/?period=${apiPeriod}`)
     if (!res.ok) throw new Error('Ошибка при получении данных тренда участников')
     const trendData = await res.json()
     console.log('Данные тренда участников:', trendData)
