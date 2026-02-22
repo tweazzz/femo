@@ -412,8 +412,10 @@ async function loadCurrentOlympiadStats() {
 
 
 
+let trendCallSeq = 0
 async function loadParticipantsTrend(period = 'week') {
   try {
+    const mySeq = ++trendCallSeq
     const apiPeriod = period === 'year' ? 'year' : 'day'
     let res = await authorizedFetch(`https://portal.femo.kz/api/results/dashboard/trend/?period=${apiPeriod}`)
     if (!res.ok) {
@@ -479,12 +481,13 @@ async function loadParticipantsTrend(period = 'week') {
     console.log('labels:', labels)
     console.log('counts:', counts)
 
+    if (mySeq !== trendCallSeq) return
+
 
     const ctx = document.getElementById('participantsChart').getContext('2d')
 
     if (window.participantsChartInstance) {
       window.participantsChartInstance.data.labels = labels
-      window.participantsChartInstance.data.datasets[0].data = counts
       window.participantsChartInstance.update()
     } else {
       window.participantsChartInstance = new Chart(ctx, {
