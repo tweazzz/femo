@@ -46,6 +46,12 @@
     "participant_register.fio_teacher" : "Мұғаліміңіздің аты-жөні",
     "participant_register.teacher_phone" : "Мұғаліміңіздің телефон нөмірі",
     "participant_register.teacher_email" : "Мұғаліміңіздің поштасы",
+    "participant_register.source_question": "Біз туралы қайдан білдіңіз?",
+    "participant_register.source.instagram": "Instagram",
+    "participant_register.source.friends": "Достар / Таныстар",
+    "participant_register.source.teacher": "Мұғалім / Мектеп",
+    "participant_register.source.google": "Google / Іздеу",
+    "participant_register.source.other": "Басқа",
     "participant_register.start_learn" : "Тіркеуді аяқтау",
 
     "register_participant.city": "Қала",

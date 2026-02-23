@@ -481,12 +481,17 @@ async function loadParticipantsTrend(period = 'week') {
     console.log('labels:', labels)
     console.log('counts:', counts)
 
+    // Для режима "Неделя" показываем последние 7 дней из дневной серии
+    if (period === 'week' && labels.length > 7) {
+      labels = labels.slice(-7)
+      counts = counts.slice(-7)
+    }
+
     if (mySeq !== trendCallSeq) return
 
 
     const ctx = document.getElementById('participantsChart').getContext('2d')
 
-    if (window.participantsChartInstance) {
       window.participantsChartInstance.data.labels = labels
       window.participantsChartInstance.update()
     } else {

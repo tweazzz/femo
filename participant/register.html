@@ -267,6 +267,33 @@
             />
             </div>
         </div>
+
+        <!-- Источник -->
+        <div class="mb-6">
+          <label class="text-gray-primary mb-2 block text-sm" data-i18n="participant_register.source_question">Откуда вы узнали о нас?</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="source" value="instagram" required class="text-orange-primary focus:ring-orange-primary h-4 w-4 border-gray-300">
+              <span data-i18n="participant_register.source.instagram">Инстаграм</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="source" value="friends" class="text-orange-primary focus:ring-orange-primary h-4 w-4 border-gray-300">
+              <span data-i18n="participant_register.source.friends">Друзья / Знакомые</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="source" value="teacher" class="text-orange-primary focus:ring-orange-primary h-4 w-4 border-gray-300">
+              <span data-i18n="participant_register.source.teacher">Учитель / Школа</span>
+            </label>
+             <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="source" value="google" class="text-orange-primary focus:ring-orange-primary h-4 w-4 border-gray-300">
+              <span data-i18n="participant_register.source.google">Google / Поиск</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="source" value="other" class="text-orange-primary focus:ring-orange-primary h-4 w-4 border-gray-300">
+              <span data-i18n="participant_register.source.other">Другое</span>
+            </label>
+          </div>
+        </div>
   
 
         <button
@@ -281,12 +308,6 @@
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/intlTelInput.min.js"></script>
-    <script>
-      const input = document.querySelector("#phone");
-      window.intlTelInput(input, {
-        loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/utils.js"),
-      });
-    </script>
 
   </body>
 </html>
@@ -500,11 +521,17 @@ document.addEventListener('DOMContentLoaded', () => {
           ? window.intlTelInput.getInstance(document.querySelector('#parent_phone'))
           : null;
         parent_phone = parentInst ? (parentInst.getNumber() || '') : (form.elements['parent_phone']?.value || '');
-        // очистка: оставляем только цифры и ведущий '+'
-        parent_phone = parent_phone.replace(/[^\d+]/g, '');
+        // Do not strip +, backend might need E.164
+        // parent_phone = parent_phone.replace(/[^\d+]/g, ''); 
+        if (!parent_phone.startsWith('+')) {
+            // Try to fix format if missing +
+             parent_phone = parent_phone.replace(/[^\d]/g, '');
+             if (parent_phone.length > 0) parent_phone = '+' + parent_phone;
+        }
       } catch (e) {
         // fallback — если что-то пошло не так, просто оставляем цифры (без +)
         parent_phone = (form.elements['parent_phone']?.value || '').replace(/\D/g, '');
+        if (parent_phone.length > 0) parent_phone = '+' + parent_phone;
       }
 
       const teacher_name_ru = (form.elements['teacher_full_name']?.value || '').trim();
@@ -515,12 +542,22 @@ document.addEventListener('DOMContentLoaded', () => {
           ? window.intlTelInput.getInstance(document.querySelector('#teacher_phone'))
           : null;
         teacher_phone = teacherInst ? (teacherInst.getNumber() || '') : (form.elements['teacher_phone']?.value || '');
-        teacher_phone = teacher_phone.replace(/[^\d+]/g, '');
+        // teacher_phone = teacher_phone.replace(/[^\d+]/g, '');
+        if (!teacher_phone.startsWith('+')) {
+             teacher_phone = teacher_phone.replace(/[^\d]/g, '');
+             if (teacher_phone.length > 0) teacher_phone = '+' + teacher_phone;
+        }
       } catch (e) {
         teacher_phone = (form.elements['teacher_phone']?.value || '').replace(/\D/g, '');
+        if (teacher_phone.length > 0) teacher_phone = '+' + teacher_phone;
       }
       // teacher_email присутствует в форме, но API не требует его в payload; сохраняем если нужно
       const teacher_email = (form.elements['teacher_email']?.value || '').trim();
+
+      // Источник (source)
+      const sourceInput = form.querySelector('input[name="source"]:checked');
+      const source = sourceInput ? sourceInput.value : '';
+      console.log('Source selected:', source);
 
       // Достаём pending данные из sessionStorage (первая страница должна была их положить)
       let pending = {};
@@ -550,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!parent_phone) { showError('Укажите телефон родителя.'); throw new Error('validation'); }
       if (!teacher_name_ru) { showError('Укажите ФИО учителя.'); throw new Error('validation'); }
       if (!teacher_phone) { showError('Укажите телефон учителя.'); throw new Error('validation'); }
+      if (!source) { showError('Укажите откуда вы узнали о нас.'); throw new Error('validation'); }
 
       const grade = gradeMap[gradeValue] || gradeValue;
 
@@ -557,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const payload = {
         email,
         password,
+        source: source, // Ensure explicit assignment
         full_name_ru,
         full_name_en: translitRuToEn(full_name_ru),
         study_language: studyLanguage,
@@ -575,6 +614,8 @@ document.addEventListener('DOMContentLoaded', () => {
           phone_number: teacher_phone
         }
       };
+
+      console.log('Final payload before submit:', payload);
 
       // Отправка POST (без Authorization)
       const url = 'https://portal.femo.kz/api/users/participant/registration/';
