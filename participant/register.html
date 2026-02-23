@@ -292,6 +292,17 @@
               <input type="radio" name="source" value="other" class="text-orange-primary focus:ring-orange-primary h-4 w-4 border-gray-300">
               <span data-i18n="participant_register.source.other">Другое</span>
             </label>
+            <!-- Поле для ввода "Другое", скрыто по умолчанию -->
+            <div id="source_other_container" class="hidden mt-2 ml-6">
+              <input 
+                type="text" 
+                id="source_other_input" 
+                name="source_other_input" 
+                maxlength="64"
+                placeholder="Укажите свой вариант" 
+                class="input-base border-default w-full text-sm"
+              />
+            </div>
           </div>
         </div>
   
@@ -423,6 +434,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // если кто-то кликает по документу — dropdown position может быть пересчитан плагином;
     // для мобильных — плагин сам переключит fullscreen popup; поэтому не трогаем это.
+    // Обработчик переключения радио-кнопок Source
+    const sourceRadios = document.querySelectorAll('input[name="source"]');
+    const otherContainer = document.getElementById('source_other_container');
+    const otherInput = document.getElementById('source_other_input');
+    
+    if (sourceRadios && otherContainer) {
+        sourceRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'other') {
+                    otherContainer.classList.remove('hidden');
+                    if (otherInput) {
+                        otherInput.focus();
+                        otherInput.required = true;
+                    }
+                } else {
+                    otherContainer.classList.add('hidden');
+                    if (otherInput) {
+                        otherInput.value = ''; // clear input when switching away
+                        otherInput.required = false;
+                    }
+                }
+            });
+        });
+    }
+
   });
 });
 </script>
@@ -496,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
+    
     const submitBtn = form.querySelector('button[type="submit"]');
     let origText = '';
     if (submitBtn) {
@@ -556,7 +592,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Источник (source)
       const sourceInput = form.querySelector('input[name="source"]:checked');
-      const source = sourceInput ? sourceInput.value : '';
+      let source = sourceInput ? sourceInput.value : '';
+      
+      // Если выбрано "Другое", берем текст из input
+      if (source === 'other') {
+          const otherInput = document.getElementById('source_other_input');
+          const otherText = otherInput ? otherInput.value.trim() : '';
+          if (!otherText) {
+               showError('Пожалуйста, уточните откуда вы узнали о нас.');
+               throw new Error('validation');
+          }
+          source = otherText;
+      }
+      
       console.log('Source selected:', source);
 
       // Достаём pending данные из sessionStorage (первая страница должна была их положить)

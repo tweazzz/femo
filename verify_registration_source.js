@@ -140,50 +140,49 @@ const puppeteer = require('puppeteer');
     console.log('   [DEBUG] sessionStorage.pending_registration:', sessionData ? 'FOUND' : 'MISSING');
     console.log('   [DEBUG] sessionStorage.pending_password:', sessionPass ? 'FOUND' : 'MISSING');
 
-    // Select Instagram
-    const instagramInput = await page.$('input[value="instagram"]');
-    if (instagramInput) {
-        await page.evaluate(el => el.click(), instagramInput);
+    // Select Other
+    console.log('   Clicking "Other" radio button...');
+    const otherInputRadio = await page.$('input[value="other"]');
+    if (otherInputRadio) {
+        await otherInputRadio.click();
+        // Force change event to ensure listener fires
+        await page.evaluate(el => el.dispatchEvent(new Event('change', { bubbles: true })), otherInputRadio);
     } else {
-        throw new Error('Instagram input not found');
+        throw new Error('Other input radio not found');
     }
 
-    // Debug phone values as seen by intl-tel-input
-    await page.evaluate(() => {
-        const pInput = document.querySelector('#parent_phone');
-        const tInput = document.querySelector('#teacher_phone');
-        
-        if (window.intlTelInput) {
-            const pInst = window.intlTelInput.getInstance(pInput);
-            const tInst = window.intlTelInput.getInstance(tInput);
-            console.log('PAGE LOG: [DEBUG] Parent Phone (ITI):', pInst ? pInst.getNumber() : 'No instance');
-            console.log('PAGE LOG: [DEBUG] Teacher Phone (ITI):', tInst ? tInst.getNumber() : 'No instance');
-            
-            // Fix if empty
-            if (pInst && !pInst.getNumber()) pInst.setNumber('+77001112233');
-            if (tInst && !tInst.getNumber()) tInst.setNumber('+77003334455');
-        } else {
-            console.log('PAGE LOG: [DEBUG] intlTelInput not loaded');
-        }
-    });
+    // Wait for text input to appear
+    console.log('   Waiting for #source_other_input to become visible...');
+    try {
+        await page.waitForSelector('#source_other_input', { visible: true, timeout: 5000 });
+    } catch (e) {
+        // Debug if timeout
+        const html = await page.evaluate(() => document.querySelector('#source_other_container').outerHTML);
+        console.log('   [DEBUG] Container HTML:', html);
+        throw e;
+    }
+    
+    // Fill custom source text
+    await fillInput('#source_other_input', 'Custom Source Text');
 
     // Intercept network request to verify payload
     let payloadVerified = false;
     await page.setRequestInterception(true);
     
     page.on('request', request => {
-      console.log('   [REQ]', request.method(), request.url());
-      // The URL is https://portal.femo.kz/api/users/participant/registration/
+      // console.log('   [REQ]', request.method(), request.url());
       if (request.url().includes('/api/users/participant/registration/') && request.method() === 'POST') {
-        const data = JSON.parse(request.postData());
+        const postData = request.postData();
+        const data = JSON.parse(postData);
         console.log('   Intercepted registration payload:', data);
-        if (data.source === 'instagram') {
+        
+        if (data.source === 'Custom Source Text') {
+          console.log('   SUCCESS: Payload contains source="Custom Source Text"');
           payloadVerified = true;
-          console.log('   SUCCESS: Payload contains source="instagram"');
         } else {
-          console.error('   FAILURE: Payload missing or incorrect source:', data.source);
+          console.error('   FAILURE: Payload incorrect source:', data.source);
         }
-        request.abort(); // Block actual request to backend
+        request.abort(); // Block actual request
       } else {
         request.continue();
       }
