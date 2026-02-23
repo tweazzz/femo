@@ -611,69 +611,66 @@ document.addEventListener('DOMContentLoaded', () => {
         teacher: {
           name_ru: teacher_name_ru,
           name_en: translitRuToEn(teacher_name_ru),
-          phone_number: teacher_phone
+          phone_number: teacher_phone,
+          email: teacher_email // Optional field
         }
       };
 
-      console.log('Final payload before submit:', payload);
+      console.log('Final payload before submit:', JSON.stringify(payload, null, 2));
 
       // Отправка POST (без Authorization)
       const url = 'https://portal.femo.kz/api/users/participant/registration/';
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      let respJson = null;
-      try { respJson = await resp.clone().json(); } catch (e) { respJson = null; }
+        let respJson = null;
+        try { respJson = await resp.clone().json(); } catch (e) { respJson = null; }
 
-      if (resp.ok) {
-        // чистим временные данные
-        try {
-          sessionStorage.removeItem('pending_registration');
-          sessionStorage.removeItem('pending_password');
-          localStorage.removeItem('pending_participant');
-          localStorage.setItem('is_viewed', 'false'); 
-        } catch (e) {}
+        if (resp.ok) {
+          // чистим временные данные
+          try {
+            sessionStorage.removeItem('pending_registration');
+            sessionStorage.removeItem('pending_password');
+            localStorage.removeItem('pending_participant');
+            localStorage.setItem('is_viewed', 'false'); 
+          } catch (e) {}
 
-        showSuccess('Профиль участника успешно сохранён. Перенаправляем...', 1500);
-        setTimeout(() => { window.location.href = '/participant/reg_success.html'; }, 1200);
-        return;
-      } else {
-        // формируем читабельное сообщение об ошибке
-        let errText = `Ошибка сервера: ${resp.status}`;
-        if (respJson) {
-          if (respJson.detail) errText = String(respJson.detail);
-          else if (respJson.code) errText = String(respJson.code);
-          else {
-            // перечислим поля ошибки
-            const parts = [];
-            for (const k in respJson) {
-              const v = respJson[k];
-              if (Array.isArray(v)) parts.push(`${k}: ${v.join(', ')}`);
-              else if (typeof v === 'object') parts.push(`${k}: ${JSON.stringify(v)}`);
-              else parts.push(`${k}: ${String(v)}`);
-            }
-            if (parts.length) errText = parts.join('\n');
-            else errText = String(respJson);
+          showSuccess('Профиль участника успешно сохранён. Перенаправляем...', 1500);
+          setTimeout(() => { window.location.href = '/participant/reg_success.html'; }, 1200);
+          return;
+        } else {
+          // формируем читабельное сообщение об ошибке
+          let errText = `Ошибка сервера: ${resp.status}`;
+          if (respJson) {
+             console.error('Server error details:', respJson); // Log full error details
+             if (typeof respJson === 'object') {
+                 // Try to format object error into string
+                 errText = Object.entries(respJson).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join('\n');
+             } else {
+                 errText = String(respJson);
+             }
+          } else {
+             errText = await resp.text();
           }
+          showError(errText, 8000); // Show longer
         }
-        showError(errText);
-        console.error('participant registration failed', resp.status, respJson);
+      } catch (networkErr) {
+          console.error('Network error:', networkErr);
+          showError('Ошибка сети: ' + networkErr.message);
       }
-
     } catch (err) {
-      if (err && err.message === 'validation') {
-        // vlaidation — сообщение уже показано пользователю
-      } else {
-        console.error('submit handler error', err);
-        showError('Произошла ошибка. Проверьте консоль для деталей.');
-      }
+      if (err.message === 'validation') return; // уже показали ошибку
+      console.error(err);
+      showError('Произошла ошибка. Проверьте консоль для деталей.');
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerText = origText || 'Завершить регистрацию';
+        submitBtn.innerText = origText;
       }
     }
   });
