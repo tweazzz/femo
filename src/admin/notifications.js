@@ -237,27 +237,49 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function handleRequestAction(id, approve) {
+    if (String(id).startsWith('temp_')) {
+      console.warn('Cannot process temporary notification ID:', id);
+      return;
+    }
     const action = approve ? 'approve' : 'decline';
+    // Используем правильный эндпоинт, возможно он отличается.
+    // Обычно в DRF action endpoint выглядит как .../{id}/{action}/
     const url = `https://portal.femo.kz/api/notifications/${id}/${action}/`;
+    
     try {
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!resp.ok) {
-        console.error(`Ошибка при ${action} уведомления ${id}:`, await resp.text());
+      let resp;
+      if (typeof window.authorizedFetch === 'function') {
+         resp = await window.authorizedFetch(url, { method: 'POST' });
+      } else {
+         resp = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+         });
+      }
+
+      if (!resp || !resp.ok) {
+        const txt = resp ? await resp.text() : 'No response';
+        console.error(`Ошибка при ${action} уведомления ${id}:`, txt);
+        alert(`Ошибка: ${txt}`);
       } else {
         console.log(`Уведомление ${id} ${approve ? 'принято' : 'отклонено'}`);
         // Удаляем из all и перерендерим
         allNotifications = allNotifications.filter(n => n.id !== id);
+        
+        // Обновляем кэш
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(allNotifications));
+        } catch (e) {}
+
         if (mainContainer) renderContainer(mainContainer, allNotifications);
         rebuildTabsAndContent();
       }
     } catch (err) {
       console.error('Ошибка сети при запросе действий:', err);
+      alert('Ошибка сети при выполнении действия');
     }
   }
 
@@ -429,17 +451,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Кнопки для Requests
     if (n.type_display === 'Requests' && n.actionable) {
       const actions = document.createElement('div');
-      actions.className = 'flex items-center gap-4';
+      actions.className = 'flex items-center gap-4 mt-2';
+      
       const btnDecline = document.createElement('button');
-      btnDecline.className = 'btn-white';
+      btnDecline.className = 'btn-white px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors cursor-pointer';
       btnDecline.innerHTML = `<span>✖</span> Отклонить`;
-      btnDecline.addEventListener('click', () => handleRequestAction(n.id, false));
+      btnDecline.onclick = (e) => {
+        e.stopPropagation();
+        console.log('Decline clicked', n.id);
+        handleRequestAction(n.id, false);
+      };
       actions.appendChild(btnDecline);
+
       const btnApprove = document.createElement('button');
-      btnApprove.className = 'btn-orange';
+      btnApprove.className = 'btn-orange px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 flex items-center gap-2 transition-colors cursor-pointer';
       btnApprove.innerHTML = `<span>✔</span> Одобрить`;
-      btnApprove.addEventListener('click', () => handleRequestAction(n.id, true));
+      btnApprove.onclick = (e) => {
+        e.stopPropagation();
+        console.log('Approve clicked', n.id);
+        handleRequestAction(n.id, true);
+      };
       actions.appendChild(btnApprove);
+
       content.appendChild(actions);
     }
 
