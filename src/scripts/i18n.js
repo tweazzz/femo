@@ -12,7 +12,16 @@ async function fetchJson(url) {
   try {
     const res = await fetch(url, { cache: 'no-cache' });
     if (!res.ok) return null;
-    return await res.json();
+    
+    // Check Content-Type if possible, or just try text first
+    const text = await res.text();
+    // If it looks like HTML (starts with <), it's probably 404/SPA fallback
+    if (text.trim().startsWith('<')) {
+      console.warn(`i18n: ${url} returned HTML (likely 404/fallback), skipping.`);
+      return null;
+    }
+    
+    return JSON.parse(text);
   } catch (e) {
     console.warn('i18n fetchJson error', e);
     return null;
@@ -21,11 +30,25 @@ async function fetchJson(url) {
 
 // try page-specific then index.json
 async function fetchLocaleForPage(frontendLang, role, page) {
-  const urls = [
-    `/locales/${frontendLang}/${role}/${page}.json`,
-    `/locales/${frontendLang}/${role}/index.json`
+  // Normalize role to lowercase
+  const safeRole = role ? role.toLowerCase() : 'admin';
+  
+  // Possible paths to try
+  const paths = [
+    `/locales/${frontendLang}/${safeRole}/${page}.json`,
+    `/locales/${frontendLang}/${safeRole}/index.json`
   ];
-  for (const u of urls) {
+  
+  // Add alias fallback (admin <-> administrator)
+  if (safeRole === 'administrator') {
+    paths.push(`/locales/${frontendLang}/admin/${page}.json`);
+    paths.push(`/locales/${frontendLang}/admin/index.json`);
+  } else if (safeRole === 'admin') {
+    paths.push(`/locales/${frontendLang}/administrator/${page}.json`);
+    paths.push(`/locales/${frontendLang}/administrator/index.json`);
+  }
+
+  for (const u of paths) {
     const data = await fetchJson(u);
     if (data) return data;
   }

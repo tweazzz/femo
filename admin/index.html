@@ -11,7 +11,7 @@
     <link rel="icon" href="/src/assets/images/cube.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body style="font-family: 'Inter', sans-serif;">
     <div class="flex h-screen">
       <!-- Sidebar -->
       <aside id="sidebar" class="sidebar">
@@ -727,10 +727,11 @@
         })
       })
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/src/scripts/i18n.js"></script>
     <script src="/src/scripts/langInit.js"></script>
     <script src="/auth.js" defer></script>
+    <script src="/src/admin/index.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
         const token = localStorage.getItem("access_token");
@@ -755,7 +756,6 @@
       });
   
     </script>
-    <script src="/src/admin/index.js" defer></script>
     <script src="/src/admin/notifications.js" defer></script>
     <script src="/src/admin/settings.js" defer></script>
     <script>

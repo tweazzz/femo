@@ -37,10 +37,114 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Храним все уведомления
   let allNotifications = [];
+  const CACHE_KEY = 'admin_notifications_cache_v1';
+
+  // Helper для слияния уведомлений
+  function mergeNotifications(incoming) {
+    if (!Array.isArray(incoming)) return;
+    
+    // Debug: check incoming IDs
+    incoming.forEach((n, i) => {
+      // Try to find ID from other fields if missing
+      if (n.id === undefined || n.id === null || n.id === '') {
+        if (n.pk !== undefined) n.id = n.pk;
+        else if (n._id !== undefined) n.id = n._id;
+      }
+
+      if (n.id === undefined || n.id === null || n.id === '') {
+        console.warn('Notification missing ID:', n);
+        // Generate a temporary ID if missing to prevent overwriting
+        n.id = `temp_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+    });
+
+    const noteMap = new Map(allNotifications.map(n => [n.id, n]));
+    incoming.forEach(n => noteMap.set(n.id, n));
+    allNotifications = Array.from(noteMap.values()).sort((a, b) => {
+      // Handle invalid dates
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      if (isNaN(dateA.getTime())) return -1;
+      if (isNaN(dateB.getTime())) return 1;
+      return dateB - dateA;
+    });
+    
+    // Save to cache
+    try {
+      console.log('Saving to cache, count:', allNotifications.length);
+      localStorage.setItem(CACHE_KEY, JSON.stringify(allNotifications));
+    } catch (e) { console.error('Cache save error', e); }
+
+    if (mainContainer) renderContainer(mainContainer, allNotifications);
+    rebuildTabsAndContent();
+  }
+
+  // Load cache helper
+  function loadFromCache() {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log('Restoring from cache:', parsed.length);
+          mergeNotifications(parsed);
+        }
+      }
+    } catch (e) { console.error('Cache load error', e); }
+  }
+
+  // Restore from cache on load
+  loadFromCache();
+
+  // Загрузка начальных уведомлений через REST
+  async function fetchInitialNotifications() {
+    if (typeof window.authorizedFetch !== 'function') return;
+    try {
+      // Список эндпоинтов для проверки
+      // api/admin/notifications/ часто редиректит на логин, если токен не принимается
+      const endpoints = [
+        'https://portal.femo.kz/api/notifications/',
+        'https://portal.femo.kz/api/admin/notifications/',
+        'https://portal.femo.kz/api/v1/notifications/',
+        'https://portal.femo.kz/api/users/notifications/'
+      ];
+
+      for (const url of endpoints) {
+        try {
+          const resp = await window.authorizedFetch(url);
+          // Check for redirect to login (HTML response)
+          if (resp && resp.ok) {
+            // Check content type
+            const contentType = resp.headers.get('content-type');
+            if (contentType && contentType.includes('text/html')) {
+              console.warn(`Endpoint ${url} returned HTML (likely redirect to login). Skipping.`);
+              continue;
+            }
+            
+            const data = await resp.json();
+            const items = Array.isArray(data) ? data : (data.results || []);
+            if (Array.isArray(items)) {
+              console.log(`Initial notifications fetched from ${url}:`, items.length);
+              mergeNotifications(items);
+              return; // Выходим после первого успешного запроса
+            }
+          }
+        } catch (e) {
+          console.warn(`Failed to fetch from ${url}:`, e);
+        }
+      }
+    } catch (e) {
+      console.error('Error in fetchInitialNotifications:', e);
+    }
+  }
 
   // WebSocket
   const ws = new WebSocket(`wss://portal.femo.kz/ws/notifications/?token=${token}`);
-  ws.addEventListener('open', () => console.log('WebSocket подключен'));
+  ws.addEventListener('open', () => {
+    console.log('WebSocket подключен');
+    // После подключения (или параллельно) грузим REST историю
+    fetchInitialNotifications();
+  });
   ws.addEventListener('error', err => console.error('WebSocket ошибка:', err));
   ws.addEventListener('close', () => console.log('WebSocket закрыт'));
   ws.addEventListener('message', event => {
@@ -51,12 +155,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Некорректный JSON из WebSocket:', err);
       return;
     }
-    const notes = data.latest_notifications || [];
-    allNotifications = notes;
-    // Рендер в основной блок
-    if (mainContainer) renderContainer(mainContainer, allNotifications);
-    // Рендер в popup
-    rebuildTabsAndContent();
+
+    // Если пришёл массив уведомлений (полный или частичный) — мержим
+    if (data.latest_notifications && Array.isArray(data.latest_notifications)) {
+      mergeNotifications(data.latest_notifications);
+    } else {
+      // Если сообщения нет или это другой тип события (например, ping/pong без данных),
+      // не затираем список уведомлений.
+      // Можно логировать для отладки, но не сбрасывать allNotifications.
+      // console.log('WS message without latest_notifications:', data);
+    }
   });
 
   // Утилиты

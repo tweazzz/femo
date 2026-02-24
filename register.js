@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Если не хочешь хранить пароль в sessionStorage — просто закомментируй следующую строку.
         sessionStorage.setItem('pending_password', password);
 
-        showSuccessBanner('Данные сохранены локально. Перейдите к заполнению профиля участника...', 900);
+        showSuccessBanner('Данные сохранены. Перейдите к заполнению профиля участника...', 900);
         setTimeout(() => { window.location.href = 'participant/register.html'; }, 900);
         return;
       } catch (err) {
