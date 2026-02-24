@@ -158,6 +158,7 @@ async function loadAdminProfile() {
 }
 
 let allUsers = []
+let filteredUsers = []
 let currentFilters = {
   search: '',
   email: '',
@@ -293,6 +294,8 @@ function applyFilters() {
 
     return matchSearch && matchEmail && matchCountry && matchCity && matchRole && matchGrade;
   });
+  
+  filteredUsers = filtered; // Сохраняем отфильтрованный список для экспорта
 
   const start = (currentPage - 1) * pageSize;
   const pageItems = filtered.slice(start, start + pageSize);
@@ -582,41 +585,85 @@ function debounce(func, delay) {
 
 async function downloadAllUsersExcel() {
   try {
-    const token = localStorage.getItem('access_token')
-
-    if (!token) {
-      console.error('Токен не найден в localStorage')
-      return
+    if (!filteredUsers || filteredUsers.length === 0) {
+      alert(window.i18nDict && window.i18nDict['users.empty_export'] || 'Нет данных для экспорта');
+      return;
     }
 
-    const response = await fetch(
-      'https://portal.femo.kz/api/users/dashboard/export/',
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-
-    if (!response.ok) {
-      throw new Error(
-        `Ошибка скачивания файла: ${response.status} ${response.statusText}`
-      )
+    // Определяем текущую олимпиаду (если выбрана)
+    const olympiadSelect = document.querySelector('.olympiad-filter');
+    const selectedOlympiadId = olympiadSelect ? olympiadSelect.value : '';
+    let selectedOlympiadName = '';
+    if (selectedOlympiadId && window._femo_olympiads) {
+      const o = window._femo_olympiads.find(x => String(x.id) === String(selectedOlympiadId));
+      if (o) selectedOlympiadName = o.title || '';
     }
 
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
+    // Формируем CSV
+    // Поля: ID, ФИО, Email, Страна, Город, Школа, Язык, Роль, Класс, Олимпиада
+    // Можно добавить: Родитель, Телефон и т.д.
+    
+    const headers = [
+      'ID', 
+      'Full Name', 
+      'Email', 
+      'Country', 
+      'City', 
+      'School', 
+      'Study Language', 
+      'Role', 
+      'Grade', 
+      'Olympiad',
+      'Parent Name',
+      'Phone'
+    ];
 
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'users.xlsx' // можно адаптировать имя
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const csvRows = [headers.join(',')];
+
+    for (const u of filteredUsers) {
+      const gradeNum = reverseClassMap[u.grade] || u.grade || '';
+      // Если у юзера есть поле olympiad, берем его, иначе если выбрана олимпиада в фильтре - используем её
+      const olympiadVal = u.olympiad_title || u.olympiad || selectedOlympiadName || '';
+
+      const row = [
+        u.id,
+        u.full_name_ru || u.full_name_en || '',
+        u.email,
+        u.country,
+        u.city,
+        u.school,
+        u.study_language,
+        u.role,
+        gradeNum,
+        olympiadVal,
+        u.parent_name_ru || '',
+        u.phone_number || ''
+      ].map(escapeCsv).join(',');
+      
+      csvRows.push(row);
+    }
+
+    const csvString = '\uFEFF' + csvRows.join('\n'); // BOM for Excel
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `users_export_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
   } catch (err) {
-    console.error('Ошибка при скачивании файла:', err)
+    console.error('Ошибка при экспорте:', err);
+    alert('Ошибка экспорта данных');
   }
 }
 
