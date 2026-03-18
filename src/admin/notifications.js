@@ -18,7 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Селекторы
-  const mainContainer = document.querySelector('div.space-y-4.pr-2.pb-4');
+  const mainContainer =
+    document.querySelector('[data-notifications-list]') ||
+    document.getElementById('notifications-block') ||
+    document.querySelector('div.space-y-4.pr-2.pb-4') ||
+    document.querySelector('div.space-y-4');
   if (!mainContainer) {
     console.warn('Основной контейнер для уведомлений не найден');
   }
@@ -40,32 +44,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   const CACHE_KEY = 'admin_notifications_cache_v1';
 
   // Helper для слияния уведомлений
+  function normalizeNotification(raw, index = 0) {
+    if (!raw || typeof raw !== 'object') return null;
+    const n = { ...raw };
+    let idCandidate = n.id;
+    if (idCandidate === undefined || idCandidate === null || idCandidate === '') {
+      if (n.pk !== undefined) idCandidate = n.pk;
+      else if (n._id !== undefined) idCandidate = n._id;
+    }
+    if (idCandidate === undefined || idCandidate === null || idCandidate === '') {
+      idCandidate = `temp_${Date.now()}_${index}_${Math.random().toString(36).slice(2, 11)}`;
+    }
+    n.id = String(idCandidate);
+    return n;
+  }
+
   function mergeNotifications(incoming) {
     if (!Array.isArray(incoming)) return;
-    
-    // Debug: check incoming IDs
-    incoming.forEach((n, i) => {
-      // Try to find ID from other fields if missing
-      if (n.id === undefined || n.id === null || n.id === '') {
-        if (n.pk !== undefined) n.id = n.pk;
-        else if (n._id !== undefined) n.id = n._id;
-      }
 
-      if (n.id === undefined || n.id === null || n.id === '') {
-        console.warn('Notification missing ID:', n);
-        // Generate a temporary ID if missing to prevent overwriting
-        n.id = `temp_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 9)}`;
-      }
-    });
+    const normalizedIncoming = incoming
+      .map((n, i) => normalizeNotification(n, i))
+      .filter(Boolean);
 
-    const noteMap = new Map(allNotifications.map(n => [n.id, n]));
-    incoming.forEach(n => noteMap.set(n.id, n));
+    const noteMap = new Map(allNotifications.map((n, i) => {
+      const normalized = normalizeNotification(n, i);
+      return [normalized.id, normalized];
+    }));
+    normalizedIncoming.forEach(n => noteMap.set(n.id, n));
     allNotifications = Array.from(noteMap.values()).sort((a, b) => {
-      // Handle invalid dates
       const dateA = new Date(a.created_at);
       const dateB = new Date(b.created_at);
-      if (isNaN(dateA.getTime())) return -1;
-      if (isNaN(dateB.getTime())) return 1;
+      if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+      if (isNaN(dateA.getTime())) return 1;
+      if (isNaN(dateB.getTime())) return -1;
       return dateB - dateA;
     });
     
@@ -98,10 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Загрузка начальных уведомлений через REST
   async function fetchInitialNotifications() {
-    if (typeof window.authorizedFetch !== 'function') return;
     try {
-      // Список эндпоинтов для проверки
-      // api/admin/notifications/ часто редиректит на логин, если токен не принимается
       const endpoints = [
         'https://portal.femo.kz/api/notifications/',
         'https://portal.femo.kz/api/admin/notifications/',
@@ -109,25 +117,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         'https://portal.femo.kz/api/users/notifications/'
       ];
 
+      const request = async (url) => {
+        if (typeof window.authorizedFetch === 'function') {
+          return await window.authorizedFetch(url);
+        }
+        return await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      };
+
       for (const url of endpoints) {
         try {
-          const resp = await window.authorizedFetch(url);
-          // Check for redirect to login (HTML response)
-          if (resp && resp.ok) {
-            // Check content type
-            const contentType = resp.headers.get('content-type');
-            if (contentType && contentType.includes('text/html')) {
-              console.warn(`Endpoint ${url} returned HTML (likely redirect to login). Skipping.`);
-              continue;
-            }
-            
-            const data = await resp.json();
-            const items = Array.isArray(data) ? data : (data.results || []);
-            if (Array.isArray(items)) {
-              console.log(`Initial notifications fetched from ${url}:`, items.length);
-              mergeNotifications(items);
-              return; // Выходим после первого успешного запроса
-            }
+          const resp = await request(url);
+          if (!resp || !resp.ok) continue;
+          const contentType = resp.headers.get('content-type') || '';
+          if (contentType.includes('text/html')) continue;
+          const data = await resp.json();
+          const items = Array.isArray(data) ? data : (data.results || data.notifications || []);
+          if (Array.isArray(items)) {
+            console.log(`Initial notifications fetched from ${url}:`, items.length);
+            mergeNotifications(items);
+            return;
           }
         } catch (e) {
           console.warn(`Failed to fetch from ${url}:`, e);
@@ -139,6 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // WebSocket
+  fetchInitialNotifications();
   const ws = new WebSocket(`wss://portal.femo.kz/ws/notifications/?token=${token}`);
   ws.addEventListener('open', () => {
     console.log('WebSocket подключен');
@@ -156,14 +169,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Если пришёл массив уведомлений (полный или частичный) — мержим
     if (data.latest_notifications && Array.isArray(data.latest_notifications)) {
       mergeNotifications(data.latest_notifications);
-    } else {
-      // Если сообщения нет или это другой тип события (например, ping/pong без данных),
-      // не затираем список уведомлений.
-      // Можно логировать для отладки, но не сбрасывать allNotifications.
-      // console.log('WS message without latest_notifications:', data);
+    } else if (Array.isArray(data.notifications)) {
+      mergeNotifications(data.notifications);
+    } else if (Array.isArray(data.results)) {
+      mergeNotifications(data.results);
+    } else if (data.notification && typeof data.notification === 'object') {
+      mergeNotifications([data.notification]);
+    } else if (data.id || data.pk) {
+      mergeNotifications([data]);
     }
   });
 
@@ -236,40 +251,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     return map[type] || { classes: 'text-gray-primary bg-gray-secondary', svg: '' };
   }
 
+  const actionInProgress = new Set();
+
   async function handleRequestAction(id, approve) {
-    if (String(id).startsWith('temp_')) {
+    const normalizedId = String(id);
+    if (normalizedId.startsWith('temp_')) {
       console.warn('Cannot process temporary notification ID:', id);
       return;
     }
+    if (actionInProgress.has(normalizedId)) return;
+    actionInProgress.add(normalizedId);
     const action = approve ? 'approve' : 'decline';
-    // Используем правильный эндпоинт, возможно он отличается.
-    // Обычно в DRF action endpoint выглядит как .../{id}/{action}/
-    const url = `https://portal.femo.kz/api/notifications/${id}/${action}/`;
+    const urls = [
+      `https://portal.femo.kz/api/notifications/${normalizedId}/${action}/`,
+      `https://portal.femo.kz/api/admin/notifications/${normalizedId}/${action}/`,
+      `https://portal.femo.kz/api/v1/notifications/${normalizedId}/${action}/`,
+      `https://portal.femo.kz/api/users/notifications/${normalizedId}/${action}/`
+    ];
     
     try {
-      let resp;
-      if (typeof window.authorizedFetch === 'function') {
-         resp = await window.authorizedFetch(url, { method: 'POST' });
-      } else {
-         resp = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-         });
+      let resp = null;
+      for (const url of urls) {
+        try {
+          if (typeof window.authorizedFetch === 'function') {
+            resp = await window.authorizedFetch(url, { method: 'POST' });
+          } else {
+            resp = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              }
+            });
+          }
+          if (resp && resp.ok) break;
+        } catch (e) {
+          resp = null;
+        }
       }
 
       if (!resp || !resp.ok) {
         const txt = resp ? await resp.text() : 'No response';
-        console.error(`Ошибка при ${action} уведомления ${id}:`, txt);
+        console.error(`Ошибка при ${action} уведомления ${normalizedId}:`, txt);
         alert(`Ошибка: ${txt}`);
       } else {
-        console.log(`Уведомление ${id} ${approve ? 'принято' : 'отклонено'}`);
-        // Удаляем из all и перерендерим
-        allNotifications = allNotifications.filter(n => n.id !== id);
+        console.log(`Уведомление ${normalizedId} ${approve ? 'принято' : 'отклонено'}`);
+        allNotifications = allNotifications.filter(n => String(n.id) !== normalizedId);
         
-        // Обновляем кэш
         try {
           localStorage.setItem(CACHE_KEY, JSON.stringify(allNotifications));
         } catch (e) {}
@@ -280,6 +308,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
       console.error('Ошибка сети при запросе действий:', err);
       alert('Ошибка сети при выполнении действия');
+    } finally {
+      actionInProgress.delete(normalizedId);
     }
   }
 
@@ -449,11 +479,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     content.appendChild(body);
 
     // Кнопки для Requests
-    if (n.type_display === 'Requests' && n.actionable) {
+    const isActionableRequest =
+      n.type_display === 'Requests' &&
+      n.actionable !== false &&
+      n.is_actionable !== false &&
+      n.can_approve !== false &&
+      n.status !== 'approved' &&
+      n.status !== 'declined';
+
+    if (isActionableRequest) {
       const actions = document.createElement('div');
       actions.className = 'flex items-center gap-4 mt-2';
       
       const btnDecline = document.createElement('button');
+      btnDecline.type = 'button';
       btnDecline.className = 'btn-white px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors cursor-pointer';
       btnDecline.innerHTML = `<span>✖</span> Отклонить`;
       btnDecline.onclick = (e) => {
@@ -464,6 +503,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       actions.appendChild(btnDecline);
 
       const btnApprove = document.createElement('button');
+      btnApprove.type = 'button';
       btnApprove.className = 'btn-orange px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 flex items-center gap-2 transition-colors cursor-pointer';
       btnApprove.innerHTML = `<span>✔</span> Одобрить`;
       btnApprove.onclick = (e) => {

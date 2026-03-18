@@ -585,82 +585,42 @@ function debounce(func, delay) {
 
 async function downloadAllUsersExcel() {
   try {
-    if (!filteredUsers || filteredUsers.length === 0) {
-      alert(window.i18nDict && window.i18nDict['users.empty_export'] || 'Нет данных для экспорта');
+    const endpoint = 'https://portal.femo.kz/api/dashboard/users/export/';
+    let response;
+
+    if (typeof window.authorizedFetch === 'function') {
+      response = await window.authorizedFetch(endpoint, { method: 'GET' });
+    } else {
+      const token = localStorage.getItem('access_token');
+      response = await fetch(endpoint, {
+        method: 'GET',
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+    }
+
+    if (!response || !response.ok) {
+      const errorText = response ? await response.text() : 'No response';
+      console.error('Ошибка при экспорте:', errorText);
+      alert('Ошибка экспорта данных');
       return;
     }
 
-    // Определяем текущую олимпиаду (если выбрана)
-    const olympiadSelect = document.querySelector('.olympiad-filter');
-    const selectedOlympiadId = olympiadSelect ? olympiadSelect.value : '';
-    let selectedOlympiadName = '';
-    if (selectedOlympiadId && window._femo_olympiads) {
-      const o = window._femo_olympiads.find(x => String(x.id) === String(selectedOlympiadId));
-      if (o) selectedOlympiadName = o.title || '';
-    }
+    const fileBlob = await response.blob();
+    const disposition = response.headers.get('content-disposition') || '';
+    const match = disposition.match(/filename\*=UTF-8''([^;]+)|filename="?([^"]+)"?/i);
+    const rawName = match ? (match[1] || match[2] || '').trim() : '';
+    const decodedName = rawName ? decodeURIComponent(rawName) : '';
+    const fallbackName = `users_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    const fileName = decodedName || fallbackName;
 
-    // Формируем CSV
-    // Поля: ID, ФИО, Email, Страна, Город, Школа, Язык, Роль, Класс, Олимпиада
-    // Можно добавить: Родитель, Телефон и т.д.
-    
-    const headers = [
-      'ID', 
-      'Full Name', 
-      'Email', 
-      'Country', 
-      'City', 
-      'School', 
-      'Study Language', 
-      'Role', 
-      'Grade', 
-      'Olympiad',
-      'Parent Name',
-      'Phone'
-    ];
-
-    const escapeCsv = (val) => {
-      if (val === null || val === undefined) return '';
-      const str = String(val).replace(/"/g, '""');
-      return `"${str}"`;
-    };
-
-    const csvRows = [headers.join(',')];
-
-    for (const u of filteredUsers) {
-      const gradeNum = reverseClassMap[u.grade] || u.grade || '';
-      // Если у юзера есть поле olympiad, берем его, иначе если выбрана олимпиада в фильтре - используем её
-      const olympiadVal = u.olympiad_title || u.olympiad || selectedOlympiadName || '';
-
-      const row = [
-        u.id,
-        u.full_name_ru || u.full_name_en || '',
-        u.email,
-        u.country,
-        u.city,
-        u.school,
-        u.study_language,
-        u.role,
-        gradeNum,
-        olympiadVal,
-        u.parent_name_ru || '',
-        u.phone_number || ''
-      ].map(escapeCsv).join(',');
-      
-      csvRows.push(row);
-    }
-
-    const csvString = '\uFEFF' + csvRows.join('\n'); // BOM for Excel
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    
+    const downloadUrl = URL.createObjectURL(fileBlob);
     const link = document.createElement('a');
-    link.href = url;
-    link.download = `users_export_${new Date().toISOString().slice(0,10)}.csv`;
+    link.href = downloadUrl;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
+    URL.revokeObjectURL(downloadUrl);
   } catch (err) {
     console.error('Ошибка при экспорте:', err);
     alert('Ошибка экспорта данных');
