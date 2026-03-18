@@ -479,13 +479,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     content.appendChild(body);
 
     // Кнопки для Requests
-    const isActionableRequest =
-      n.type_display === 'Requests' &&
-      n.actionable !== false &&
-      n.is_actionable !== false &&
-      n.can_approve !== false &&
-      n.status !== 'approved' &&
-      n.status !== 'declined';
+    const typeValue = String(n.type_display || n.type || '').toLowerCase().trim();
+    const statusValue = String(n.status || n.request_status || '').toLowerCase().trim();
+    const titleValue = String(n.title || '').toLowerCase();
+    const rawActionable =
+      n.actionable ??
+      n.is_actionable ??
+      n.can_approve ??
+      n.canApprove ??
+      n.request?.actionable;
+    const actionableStr = String(rawActionable).toLowerCase();
+    const explicitNotActionable =
+      rawActionable === false ||
+      rawActionable === 0 ||
+      rawActionable === '0' ||
+      actionableStr === 'false';
+    const isRequestType =
+      typeValue.includes('request') ||
+      Boolean(n.request) ||
+      titleValue.includes('заявк') ||
+      titleValue.includes('изменени');
+    const isClosedStatus =
+      statusValue === 'approved' ||
+      statusValue === 'declined' ||
+      statusValue === 'rejected' ||
+      statusValue === 'processed' ||
+      statusValue === 'done' ||
+      statusValue === 'cancelled' ||
+      statusValue === 'canceled';
+    const isActionableRequest = isRequestType && !explicitNotActionable && !isClosedStatus;
 
     if (isActionableRequest) {
       const actions = document.createElement('div');
